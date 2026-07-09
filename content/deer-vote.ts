@@ -4,8 +4,10 @@ export const DEER_VOTE = {
   title: "今天鹿幾發？",
   storageKey: "kairu:deer-vote",
   shareUrl: "https://kairu.lol",
+  shareHandle: "@DeerloveRu",
   revealMs: 1250,
-  futureNote: "正式發幣後，符合資格的鹿將可領取 KAIRU。",
+  resetLabel: "重新測一次",
+  futureNote: ["正式發幣後，", "符合資格的鹿將可領取 KAIRU。"] as const,
   options: [
     { id: "one" as const, label: "1 發", display: "🦌 1 發" },
     { id: "three" as const, label: "3 發", display: "🦌🦌 3 發" },
@@ -16,23 +18,34 @@ export const DEER_VOTE = {
       heading: "1 發",
       identity: "你是小鹿。",
       flavor: "低調過活，偶爾現身。",
+      shareLine: "我是「小鹿」🦌",
     },
     three: {
       heading: "3 發",
       identity: "你是公鹿。",
       flavor: "該出手時，絕不客氣。",
+      shareLine: "我是「公鹿」🦌🦌",
     },
     "five-plus": {
       heading: "5+",
       identity: "你是鹿天帝。",
       flavor: "天選之鹿，無需解釋。",
+      shareLine: "我是「鹿天帝」🦌👑",
     },
   },
 } as const;
 
 export function getDeerVoteShareUrl(choice: DeerVoteChoice): string {
-  const { identity } = DEER_VOTE.results[choice];
-  const text = `${identity}\n我們都是 KAIRU。\n${DEER_VOTE.shareUrl}`;
+  const { shareLine } = DEER_VOTE.results[choice];
+  const text = [
+    shareLine,
+    "",
+    "我們都是 KAIRU。",
+    "",
+    DEER_VOTE.shareUrl,
+    "",
+    DEER_VOTE.shareHandle,
+  ].join("\n");
   return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
 }
 

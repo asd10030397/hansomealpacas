@@ -33,5 +33,15 @@ export function useDeerVote() {
     }
   }, [choice]);
 
-  return { choice, vote, ready, hasVoted: choice !== null, justVoted };
+  const reset = useCallback(() => {
+    setChoice(null);
+    setJustVoted(false);
+    try {
+      localStorage.removeItem(DEER_VOTE.storageKey);
+    } catch {
+      /* private browsing or blocked storage */
+    }
+  }, []);
+
+  return { choice, vote, reset, ready, hasVoted: choice !== null, justVoted };
 }
