@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Anton, Noto_Sans_TC } from "next/font/google";
+import { AmbientSound } from "@/components/AmbientSound";
 import { Analytics } from "@/components/Analytics";
 import { MotionProvider } from "@/components/MotionProvider";
 import { ASSETS, PROJECT } from "@/content/project";
@@ -89,6 +90,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <MotionProvider>{children}</MotionProvider>
+        <AmbientSound />
         <Analytics />
       </body>
     </html>

@@ -38,4 +38,5 @@ export const ASSETS = {
   og: "/images/og.png",
   twitterBanner: "/images/twitter-banner.png",
   telegramBanner: "/images/telegram-banner.png",
+  ambient: "/audio/ambient.wav",
 } as const;
