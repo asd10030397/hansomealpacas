@@ -1,27 +1,31 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="KAIRU monochrome">
   <g id="kairu">
-    <g id="kairu-antlers">
-      <rect x="218" y="92" width="12" height="22" rx="6" fill="#FFFFFF" fill-opacity="0.7" />
-      <rect x="282" y="92" width="12" height="22" rx="6" fill="#FFFFFF" fill-opacity="0.7" />
+    <g id="kairu-neck">
+      <path fill="#FFFFFF" d="M222 372 C222 430 238 468 256 468 C274 468 290 430 290 372 L290 358 C278 364 267 368 256 368 C245 368 234 364 222 358 Z" />
     </g>
     <g id="kairu-head">
-      <circle cx="82" cy="278" r="58" fill="#FFFFFF" />
-      <circle cx="430" cy="278" r="58" fill="#FFFFFF" />
-      <ellipse cx="256" cy="278" rx="112" ry="158" fill="#FFFFFF" />
+      <ellipse cx="256" cy="248" rx="76" ry="132" fill="#FFFFFF" />
+      <path fill="#FFFFFF" d="M188 152 C148 168 132 210 150 248 C168 228 182 188 188 152 Z" />
+      <path fill="#FFFFFF" fill-opacity="0.55" d="M182 162 C158 172 148 204 160 232 C170 214 178 184 182 162 Z" />
+      <path fill="#FFFFFF" d="M324 152 C364 168 380 210 362 248 C344 228 330 188 324 152 Z" />
+      <path fill="#FFFFFF" fill-opacity="0.55" d="M330 162 C354 172 364 204 352 232 C342 214 334 184 330 162 Z" />
     </g>
-    <g id="kairu-neck">
-      <path fill="#FFFFFF" d="M214 402 C214 438 232 456 256 456 C280 456 298 438 298 402 L298 388 C284 396 270 400 256 400 C242 400 228 396 214 388 Z" />
+    <g id="kairu-antlers">
+      <path fill="#FFFFFF" fill-opacity="0.7" d="M241 128 C228 112 220 92 216 72 C214 64 218 58 224 60 C228 62 232 76 236 90 C240 104 244 118 246 126 C245 132 241 132 241 128 Z" />
+      <path fill="#FFFFFF" fill-opacity="0.7" d="M230 96 C216 86 208 76 206 70 C204 64 210 62 214 66 C220 74 226 84 232 94 C233 98 231 98 230 96 Z" />
+      <path fill="#FFFFFF" fill-opacity="0.7" d="M271 128 C284 112 292 92 296 72 C298 64 294 58 288 60 C284 62 280 76 276 90 C272 104 268 118 266 126 C267 132 271 132 271 128 Z" />
+      <path fill="#FFFFFF" fill-opacity="0.7" d="M282 96 C296 86 304 76 306 70 C308 64 302 62 298 66 C292 74 286 84 280 94 C279 98 281 98 282 96 Z" />
     </g>
     <g id="kairu-snout">
-      <ellipse cx="256" cy="348" rx="50" ry="68" fill="#FFFFFF" fill-opacity="0.55" />
+      <ellipse cx="256" cy="318" rx="40" ry="62" fill="#FFFFFF" fill-opacity="0.55" />
     </g>
     <g id="kairu-eyes">
-      <rect x="112" y="254" width="68" height="16" rx="8" fill="#090909" />
-      <rect x="332" y="248" width="68" height="16" rx="8" fill="#090909" />
+      <rect x="190" y="210" width="56" height="14" rx="7" fill="#090909" />
+      <rect x="266" y="208" width="56" height="14" rx="7" fill="#090909" />
     </g>
     <g id="kairu-face-details">
-      <circle cx="256" cy="332" r="9" fill="#090909" />
-      <rect x="234" y="378" width="44" height="3" rx="1.5" fill="#090909" />
+      <circle cx="256" cy="312" r="8" fill="#090909" />
+      <rect x="244" y="346" width="24" height="2.5" rx="1.25" fill="#090909" />
     </g>
   </g>
 </svg>
