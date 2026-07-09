@@ -19,6 +19,18 @@ export type AnalyticsEventName = (typeof AnalyticsEvents)[keyof typeof Analytics
 
 export type AnalyticsEventParams = Record<string, string | number | boolean>;
 
+type QueuedGaEvent = {
+  name: string;
+  props?: AnalyticsEventParams;
+};
+
+type DataLayer = unknown[] & {
+  push: (...args: unknown[]) => number;
+};
+
+let gaEventQueue: QueuedGaEvent[] = [];
+let gaFlushHookInstalled = false;
+
 export function getAnalyticsConfig(): AnalyticsConfig {
   const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN?.trim();
   if (plausibleDomain) {
@@ -45,6 +57,58 @@ function toPlausibleProps(props?: AnalyticsEventParams): Record<string, string> 
   );
 }
 
+function getGtag(): ((...args: unknown[]) => void) | undefined {
+  return (window as Window & { gtag?: (...args: unknown[]) => void }).gtag;
+}
+
+function getDataLayer(): DataLayer {
+  const win = window as Window & { dataLayer?: DataLayer };
+  if (!win.dataLayer) {
+    win.dataLayer = [] as unknown as DataLayer;
+  }
+  return win.dataLayer;
+}
+
+function flushGaEventQueue(): void {
+  const gtag = getGtag();
+  if (!gtag || gaEventQueue.length === 0) return;
+
+  const events = gaEventQueue;
+  gaEventQueue = [];
+
+  for (const event of events) {
+    gtag("event", event.name, event.props);
+  }
+}
+
+function installGaFlushHook(): void {
+  if (gaFlushHookInstalled || typeof window === "undefined") return;
+  gaFlushHookInstalled = true;
+
+  const dataLayer = getDataLayer();
+  const originalPush = dataLayer.push.bind(dataLayer);
+
+  dataLayer.push = (...args: unknown[]) => {
+    const result = originalPush(...args);
+    flushGaEventQueue();
+    return result;
+  };
+
+  flushGaEventQueue();
+}
+
+function sendGaEvent(name: string, props?: AnalyticsEventParams): void {
+  const gtag = getGtag();
+  if (gtag) {
+    flushGaEventQueue();
+    gtag("event", name, props);
+    return;
+  }
+
+  gaEventQueue.push({ name, props });
+  installGaFlushHook();
+}
+
 export function trackEvent(name: AnalyticsEventName, props?: AnalyticsEventParams): void;
 export function trackEvent(name: string, props?: AnalyticsEventParams): void;
 export function trackEvent(name: string, props?: AnalyticsEventParams): void {
@@ -68,10 +132,7 @@ export function trackEvent(name: string, props?: AnalyticsEventParams): void {
   }
 
   if (config.provider === "ga") {
-    const gtag = (window as Window & { gtag?: (...args: unknown[]) => void }).gtag;
-    if (gtag) {
-      gtag("event", name, props);
-    }
+    sendGaEvent(name, props);
   }
 }
 
