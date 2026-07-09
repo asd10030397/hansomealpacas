@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="KAIRU light mode">
+  <g id="kairu">
+    <g id="kairu-antlers">
+      <rect x="214" y="72" width="18" height="34" rx="9" fill="#6B5344" />
+      <rect x="280" y="72" width="18" height="34" rx="9" fill="#6B5344" />
+    </g>
+    <g id="kairu-head">
+      <circle cx="98" cy="284" r="50" fill="#8A6D56" />
+      <circle cx="414" cy="284" r="50" fill="#8A6D56" />
+      <circle cx="256" cy="294" r="172" fill="#8A6D56" />
+    </g>
+    <g id="kairu-snout">
+      <circle cx="256" cy="352" r="86" fill="#6B5344" />
+    </g>
+    <g id="kairu-eyes">
+      <rect x="148" y="248" width="84" height="22" rx="11" fill="#222222" />
+      <rect x="280" y="242" width="84" height="22" rx="11" fill="#222222" />
+    </g>
+    <g id="kairu-face-details">
+      <circle cx="256" cy="340" r="12" fill="#3B2F2F" />
+      <rect x="228" y="374" width="56" height="6" rx="3" fill="#3B2F2F" />
+    </g>
+  </g>
+</svg>
