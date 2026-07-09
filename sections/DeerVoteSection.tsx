@@ -159,6 +159,31 @@ function DeerVoteResult({ choice, justVoted, onReset }: DeerVoteResultProps) {
               <p className={`mt-3 text-muted ${rewardTextClass}`}>{t.deerVote.claimProcessNote.footer}</p>
             </div>
 
+            <div className={`mt-8 border-t border-border pt-8 sm:mt-10 sm:pt-10 ${rewardNoticeClass}`}>
+              <p className="font-[family-name:var(--font-anton)] text-xs tracking-[0.15em] text-muted sm:text-sm">
+                {t.deerVote.tokenAbout.solanaLabel}
+              </p>
+              <p className={`mt-3 ${rewardTextClass}`}>{t.deerVote.tokenAbout.intro}</p>
+              {t.deerVote.tokenAbout.beforeItems.map((line) => (
+                <p key={line} className={`mt-3 ${rewardTextClass}`}>
+                  {line}
+                </p>
+              ))}
+              <ul className="mt-2 space-y-1">
+                {t.deerVote.tokenAbout.utilityItems.map((item) => (
+                  <li key={item} className={rewardTextClass}>
+                    • {item}
+                  </li>
+                ))}
+              </ul>
+              {t.deerVote.tokenAbout.afterItems.map((line) => (
+                <p key={line} className={`mt-2 ${rewardTextClass}`}>
+                  {line}
+                </p>
+              ))}
+              <p className={`mt-3 text-muted ${rewardTextClass}`}>{t.deerVote.tokenAbout.footer}</p>
+            </div>
+
             <m.a
               href={getDeerVoteShareUrl(choice, locale)}
               target="_blank"

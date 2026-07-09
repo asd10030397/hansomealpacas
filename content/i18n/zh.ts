@@ -60,6 +60,14 @@ export const zh: Messages = {
       ],
       footer: "詳細規則將於發幣前公布。",
     },
+    tokenAbout: {
+      solanaLabel: "Built on Solana",
+      intro: "KAIRU 是建立於 Solana 上的社群代幣。",
+      beforeItems: ["除了領取（Claim）之外，", "KAIRU 未來也可能成為："],
+      utilityItems: ["社群活動", "身份象徵", "特殊體驗", "更多未來功能"],
+      afterItems: ["的一部分。"],
+      footer: "詳細內容將隨著 KAIRU 的成長逐步公布。",
+    },
     shareTagline: "我們都是 KAIRU。",
     options: [
       { id: "one", display: "🦌 1 發" },

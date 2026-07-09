@@ -62,6 +62,19 @@ export const en: Messages = {
       ],
       footer: "Full claim rules will be announced before launch.",
     },
+    tokenAbout: {
+      solanaLabel: "Built on Solana",
+      intro: "KAIRU is a community token built on Solana.",
+      beforeItems: ["Beyond claiming,", "KAIRU may become part of:"],
+      utilityItems: [
+        "Community events",
+        "Identity",
+        "Exclusive experiences",
+        "Future features",
+      ],
+      afterItems: [],
+      footer: "More will be revealed as the forest grows.",
+    },
     shareTagline: "We are all KAIRU.",
     options: [
       { id: "one", display: "🦌 1x" },

@@ -89,6 +89,14 @@ export type Messages = {
       verificationLines: readonly string[];
       footer: string;
     };
+    tokenAbout: {
+      solanaLabel: string;
+      intro: string;
+      beforeItems: readonly string[];
+      utilityItems: readonly string[];
+      afterItems: readonly string[];
+      footer: string;
+    };
     shareTagline: string;
     options: readonly DeerVoteOptionCopy[];
     results: Record<DeerVoteChoice, DeerVoteResultCopy>;
