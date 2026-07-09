@@ -6,6 +6,7 @@ import { ASSETS } from "@/content/project";
 import { float } from "@/lib/motion";
 
 type MascotProps = {
+  src?: string;
   floating?: boolean;
   className?: string;
   alt?: string;
@@ -14,6 +15,7 @@ type MascotProps = {
 };
 
 export function Mascot({
+  src = ASSETS.logo,
   floating = false,
   className = "h-64 w-64 sm:h-72 sm:w-72 md:h-80 md:w-80",
   alt = "KAIRU mascot",
@@ -24,7 +26,7 @@ export function Mascot({
 
   const image = (
     <img
-      src={ASSETS.logo}
+      src={src}
       alt={alt}
       className="pointer-events-none object-contain select-none absolute inset-0 h-full w-full"
     />

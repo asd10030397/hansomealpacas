@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="">
+  <!-- KAIRU identity:   small antlers, slim neck, tiny body -->
+  <g id="kolittle">
+    <g id="kolittle-neck">
+      <path fill="#A98C74" d="M238 368 C238 408 246 432 256 432 C266 432 274 408 274 368 L274 358 C268 362 262 364 256 364 C250 364 244 362 238 358 Z" />
+    </g>
+
+    <g id="kolittle-head">
+      <ellipse cx="256" cy="252" rx="58" ry="100" fill="#A98C74" />
+
+      <path fill="#A98C74" d="M200 168 C172 180 160 212 172 240 C184 224 194 192 200 168 Z" />
+      <path fill="#8A6D56" d="M196 176 C176 184 168 208 176 228 C184 214 190 190 196 176 Z" />
+
+      <path fill="#A98C74" d="M312 168 C340 180 352 212 340 240 C328 224 318 192 312 168 Z" />
+      <path fill="#8A6D56" d="M316 176 C336 184 344 208 336 228 C328 214 322 190 316 176 Z" />
+    </g>
+
+    <g id="kolittle-antlers">
+      <path fill="#8A6D56" d="M246 148 C240 138 236 128 234 118 C233 112 237 108 241 110 C244 112 246 122 248 132 C249 138 247 140 246 148 Z" />
+      <path fill="#8A6D56" d="M266 148 C272 138 276 128 278 118 C279 112 275 108 271 110 C268 112 266 122 264 132 C263 138 265 140 266 148 Z" />
+    </g>
+
+    <g id="kolittle-snout">
+      <ellipse cx="256" cy="308" rx="32" ry="48" fill="#8A6D56" />
+    </g>
+
+    <g id="kolittle-eyes">
+      <rect x="200" y="218" width="44" height="11" rx="5.5" fill="#222222" />
+      <rect x="268" y="216" width="44" height="11" rx="5.5" fill="#222222" />
+    </g>
+
+    <g id="kolittle-face-details">
+      <circle cx="256" cy="304" r="6" fill="#3B2F2F" />
+      <rect x="246" y="332" width="20" height="2.5" rx="1.25" fill="#3B2F2F" />
+    </g>
+  </g>
+</svg>

@@ -7,7 +7,10 @@ export const DEER_VOTE = {
   shareHandle: "@DeerloveRu",
   revealMs: 1250,
   resetLabel: "重新測一次",
-  futureNote: ["正式發幣後，", "符合資格的鹿將可領取 KAIRU。"] as const,
+  futureNote: {
+    lead: "正式發幣後，",
+    emphasis: "符合資格的鹿將可領取 KAIRU。",
+  },
   options: [
     { id: "one" as const, label: "1 發", display: "🦌 1 發" },
     { id: "three" as const, label: "3 發", display: "🦌🦌 3 發" },
@@ -16,21 +19,27 @@ export const DEER_VOTE = {
   results: {
     one: {
       heading: "1 發",
+      title: "小鹿",
       identity: "你是小鹿。",
       flavor: "低調過活，偶爾現身。",
       shareLine: "我是「小鹿」🦌",
+      illustration: "/identities/kolittle.svg",
     },
     three: {
       heading: "3 發",
+      title: "公鹿",
       identity: "你是公鹿。",
       flavor: "該出手時，絕不客氣。",
       shareLine: "我是「公鹿」🦌🦌",
+      illustration: "/identities/stag.svg",
     },
     "five-plus": {
       heading: "5+",
+      title: "鹿天帝",
       identity: "你是鹿天帝。",
       flavor: "天選之鹿，無需解釋。",
       shareLine: "我是「鹿天帝」🦌👑",
+      illustration: "/identities/emperor.svg",
     },
   },
 } as const;

@@ -3,6 +3,7 @@
 import { m, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { FadeIn } from "@/components/FadeIn";
+import { Mascot } from "@/components/Mascot";
 import { Section } from "@/components/Section";
 import {
   DEER_VOTE,
@@ -19,12 +20,16 @@ const optionClass =
 const actionButtonClass =
   "inline-flex min-w-[9rem] items-center justify-center border border-border px-6 py-3 font-[family-name:var(--font-anton)] text-xs tracking-[0.2em] text-foreground sm:text-sm";
 
+const identityIllustrationClass =
+  "mx-auto h-[12.5rem] w-[12.5rem] sm:h-[15rem] sm:w-[15rem] md:h-[17.5rem] md:w-[17.5rem] lg:h-[20rem] lg:w-[20rem]";
+
 type DeerVoteResultProps = {
   choice: DeerVoteChoice;
   justVoted: boolean;
+  onReset: () => void;
 };
 
-function DeerVoteResult({ choice, justVoted }: DeerVoteResultProps) {
+function DeerVoteResult({ choice, justVoted, onReset }: DeerVoteResultProps) {
   const reduceMotion = useReducedMotion();
   const result = DEER_VOTE.results[choice];
   const [revealed, setRevealed] = useState(!justVoted);
@@ -66,6 +71,7 @@ function DeerVoteResult({ choice, justVoted }: DeerVoteResultProps) {
             initial={{ opacity: 0, y: reduceMotion ? 0 : 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: reduceMotion ? 0 : 0.55, ease: EASE }}
+            className="flex flex-col items-center"
           >
             <p className="font-[family-name:var(--font-anton)] text-sm tracking-[0.2em] text-muted sm:text-base">
               {result.heading}
@@ -76,25 +82,45 @@ function DeerVoteResult({ choice, justVoted }: DeerVoteResultProps) {
             <p className="mt-5 font-[family-name:var(--font-noto-sans-tc)] text-base leading-relaxed text-muted sm:text-lg">
               {result.flavor}
             </p>
-            <p className="mt-10 text-sm leading-relaxed text-muted sm:text-base">
-              {DEER_VOTE.futureNote.map((line) => (
-                <span key={line} className="block">
-                  {line}
-                </span>
-              ))}
-            </p>
-            <div className="mt-8">
-              <m.a
-                href={getDeerVoteShareUrl(choice)}
-                target="_blank"
-                rel="noopener noreferrer"
+
+            <div className="mt-14 font-[family-name:var(--font-noto-sans-tc)] leading-[1.75] sm:mt-16">
+              <p className="text-base text-muted sm:text-lg">{DEER_VOTE.futureNote.lead}</p>
+              <p className="mt-2 text-base font-semibold text-foreground sm:text-lg">
+                {DEER_VOTE.futureNote.emphasis}
+              </p>
+            </div>
+
+            <div className="mt-16 py-6 sm:mt-20 sm:py-8">
+              <Mascot
+                src={result.illustration}
+                alt={result.title}
+                floating
+                className={identityIllustrationClass}
+              />
+            </div>
+
+            <m.a
+              href={getDeerVoteShareUrl(choice)}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={reduceMotion ? undefined : { opacity: 0.7 }}
+              transition={{ duration: 0.2 }}
+              className={actionButtonClass}
+              onClick={() => trackEvent("share", { method: "x", context: "deer-vote" })}
+            >
+              SHARE ON X
+            </m.a>
+
+            <div className="mt-10 w-full max-w-md border-t border-border pt-10 sm:mt-12">
+              <m.button
+                type="button"
                 whileHover={reduceMotion ? undefined : { opacity: 0.7 }}
                 transition={{ duration: 0.2 }}
                 className={actionButtonClass}
-                onClick={() => trackEvent("share", { method: "x", context: "deer-vote" })}
+                onClick={onReset}
               >
-                SHARE ON X
-              </m.a>
+                {DEER_VOTE.resetLabel}
+              </m.button>
             </div>
           </m.div>
         )}
@@ -143,20 +169,7 @@ export function DeerVoteSection() {
         )}
 
         {ready && hasVoted && choice && (
-          <>
-            <DeerVoteResult choice={choice} justVoted={justVoted} />
-            <div className="mt-8">
-              <m.button
-                type="button"
-                whileHover={reduceMotion ? undefined : { opacity: 0.7 }}
-                transition={{ duration: 0.2 }}
-                className={actionButtonClass}
-                onClick={reset}
-              >
-                {DEER_VOTE.resetLabel}
-              </m.button>
-            </div>
-          </>
+          <DeerVoteResult choice={choice} justVoted={justVoted} onReset={reset} />
         )}
       </Section>
     </FadeIn>

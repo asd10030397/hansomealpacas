@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="l">
+  <!-- KAIRU identity: l  thicker antlers, stronger neck, larger body -->
+  <g id="stag">
+    <g id="stag-neck">
+      <path fill="#A98C74" d="M218 372 C218 434 236 472 256 472 C276 472 294 434 294 372 L294 356 C282 362 269 366 256 366 C243 366 230 362 218 356 Z" />
+    </g>
+
+    <g id="stag-head">
+      <ellipse cx="256" cy="246" rx="76" ry="132" fill="#A98C74" />
+
+      <path fill="#A98C74" d="M188 152 C148 168 132 210 150 248 C168 228 182 188 188 152 Z" />
+      <path fill="#8A6D56" d="M182 162 C158 172 148 204 160 232 C170 214 178 184 182 162 Z" />
+
+      <path fill="#A98C74" d="M324 152 C364 168 380 210 362 248 C344 228 330 188 324 152 Z" />
+      <path fill="#8A6D56" d="M330 162 C354 172 364 204 352 232 C342 214 334 184 330 162 Z" />
+    </g>
+
+    <g id="stag-antlers">
+      <path fill="#8A6D56" d="M239 124 C224 106 214 84 210 62 C208 54 213 48 220 50 C225 52 230 68 234 84 C238 100 242 116 244 124 C243 130 239 130 239 124 Z" />
+      <path fill="#8A6D56" d="M226 88 C210 76 200 64 198 56 C196 50 202 48 207 52 C214 60 220 72 228 84 C229 88 227 88 226 88 Z" />
+      <path fill="#8A6D56" d="M273 124 C288 106 298 84 302 62 C304 54 299 48 292 50 C287 52 282 68 278 84 C274 100 270 116 268 124 C269 130 273 130 273 124 Z" />
+      <path fill="#8A6D56" d="M286 88 C302 76 312 64 314 56 C316 50 310 48 305 52 C298 60 292 72 284 84 C283 88 285 88 286 88 Z" />
+    </g>
+
+    <g id="stag-snout">
+      <ellipse cx="256" cy="318" rx="42" ry="64" fill="#8A6D56" />
+    </g>
+
+    <g id="stag-eyes">
+      <rect x="190" y="210" width="56" height="14" rx="7" fill="#222222" />
+      <rect x="266" y="208" width="56" height="14" rx="7" fill="#222222" />
+    </g>
+
+    <g id="stag-face-details">
+      <circle cx="256" cy="312" r="8" fill="#3B2F2F" />
+      <rect x="244" y="346" width="24" height="2.5" rx="1.25" fill="#3B2F2F" />
+    </g>
+  </g>
+</svg>
