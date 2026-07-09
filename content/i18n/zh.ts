@@ -45,8 +45,10 @@ export const zh: Messages = {
       emphasis: "符合資格的鹿將可領取 KAIRU。",
     },
     shareRewardNotice: {
-      lead: "🦌 分享你的鹿籍到 X",
-      lines: ["完成分享的鹿，", "未來將有資格領取額外 KAIRU 獎勵。"],
+      followPrefix: "🦌 追蹤官方 X（",
+      followSuffix: "）",
+      shareLine: "並分享你的鹿籍。",
+      eligibilityLines: ["完成以上條件的鹿，", "未來將有資格領取額外 KAIRU 獎勵。"],
     },
     shareTagline: "我們都是 KAIRU。",
     options: [

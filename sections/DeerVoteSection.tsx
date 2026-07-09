@@ -9,6 +9,7 @@ import { DEER_VOTE_REVEAL_MS } from "@/content/i18n";
 import { useLocale } from "@/context/LocaleContext";
 import { useDeerVote } from "@/hooks/useDeerVote";
 import { AnalyticsEvents, trackEvent } from "@/lib/analytics";
+import { COMMUNITY_X_HANDLE, COMMUNITY_X_URL } from "@/lib/deer-trail";
 import { getDeerVoteShareUrl } from "@/lib/deer-vote-share";
 import { EASE } from "@/lib/motion";
 import type { DeerVoteChoice } from "@/content/i18n/types";
@@ -116,9 +117,21 @@ function DeerVoteResult({ choice, justVoted, onReset }: DeerVoteResultProps) {
 
             <div className="mt-10 max-w-md font-[family-name:var(--font-noto-sans-tc)] leading-[1.75] sm:mt-12">
               <p className="text-sm text-foreground sm:text-base">
-                {t.deerVote.shareRewardNotice.lead}
+                {t.deerVote.shareRewardNotice.followPrefix}
+                <a
+                  href={COMMUNITY_X_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground underline decoration-border underline-offset-2 transition-opacity hover:opacity-80"
+                >
+                  {COMMUNITY_X_HANDLE}
+                </a>
+                {t.deerVote.shareRewardNotice.followSuffix}
               </p>
-              {t.deerVote.shareRewardNotice.lines.map((line) => (
+              <p className="mt-1 text-sm text-foreground sm:text-base">
+                {t.deerVote.shareRewardNotice.shareLine}
+              </p>
+              {t.deerVote.shareRewardNotice.eligibilityLines.map((line) => (
                 <p key={line} className="mt-1 text-sm text-foreground sm:text-base">
                   {line}
                 </p>

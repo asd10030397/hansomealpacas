@@ -77,8 +77,10 @@ export type Messages = {
       emphasis: string;
     };
     shareRewardNotice: {
-      lead: string;
-      lines: readonly string[];
+      followPrefix: string;
+      followSuffix: string;
+      shareLine: string;
+      eligibilityLines: readonly string[];
     };
     shareTagline: string;
     options: readonly DeerVoteOptionCopy[];

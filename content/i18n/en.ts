@@ -45,9 +45,11 @@ export const en: Messages = {
       emphasis: "eligible deer may claim KAIRU.",
     },
     shareRewardNotice: {
-      lead: "🦌 Share your deer identity on X",
-      lines: [
-        "Deer who share",
+      followPrefix: "🦌 Follow our official X (",
+      followSuffix: ")",
+      shareLine: "and share your deer identity.",
+      eligibilityLines: [
+        "Deer who complete both actions",
         "may become eligible for additional KAIRU rewards.",
       ],
     },
