@@ -51,7 +51,6 @@ export function HeroSection() {
         >
           <Mascot
             floating={!reduceMotion}
-            priority
             interactive
             onClick={handleMascotClick}
             alt={`${PROJECT.name} mascot`}

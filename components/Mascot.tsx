@@ -2,13 +2,11 @@
 
 import type { KeyboardEvent } from "react";
 import { m, useReducedMotion } from "framer-motion";
-import Image from "next/image";
 import { ASSETS } from "@/content/project";
 import { float } from "@/lib/motion";
 
 type MascotProps = {
   floating?: boolean;
-  priority?: boolean;
   className?: string;
   alt?: string;
   interactive?: boolean;
@@ -17,7 +15,6 @@ type MascotProps = {
 
 export function Mascot({
   floating = false,
-  priority = false,
   className = "h-64 w-64 sm:h-72 sm:w-72 md:h-80 md:w-80",
   alt = "KAIRU mascot",
   interactive = false,
@@ -26,13 +23,10 @@ export function Mascot({
   const reduceMotion = useReducedMotion();
 
   const image = (
-    <Image
+    <img
       src={ASSETS.logo}
       alt={alt}
-      fill
-      priority={priority}
-      sizes="(max-width: 640px) 256px, (max-width: 768px) 288px, 320px"
-      className="pointer-events-none object-contain select-none"
+      className="pointer-events-none object-contain select-none absolute inset-0 h-full w-full"
     />
   );
 
