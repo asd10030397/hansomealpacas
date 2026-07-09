@@ -1,14 +1,14 @@
 "use client";
 
 import { m, useReducedMotion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FadeIn } from "@/components/FadeIn";
 import { Mascot } from "@/components/Mascot";
 import { Section } from "@/components/Section";
 import { DEER_VOTE_REVEAL_MS } from "@/content/i18n";
 import { useLocale } from "@/context/LocaleContext";
 import { useDeerVote } from "@/hooks/useDeerVote";
-import { trackEvent } from "@/lib/analytics";
+import { AnalyticsEvents, trackEvent } from "@/lib/analytics";
 import { getDeerVoteShareUrl } from "@/lib/deer-vote-share";
 import { EASE } from "@/lib/motion";
 import type { DeerVoteChoice } from "@/content/i18n/types";
@@ -33,6 +33,11 @@ function DeerVoteResult({ choice, justVoted, onReset }: DeerVoteResultProps) {
   const { locale, t } = useLocale();
   const result = t.deerVote.results[choice];
   const [revealed, setRevealed] = useState(!justVoted);
+  const completedTracked = useRef(false);
+
+  useEffect(() => {
+    completedTracked.current = false;
+  }, [choice]);
 
   useEffect(() => {
     if (!justVoted || reduceMotion) {
@@ -44,6 +49,16 @@ function DeerVoteResult({ choice, justVoted, onReset }: DeerVoteResultProps) {
     const timer = window.setTimeout(() => setRevealed(true), DEER_VOTE_REVEAL_MS);
     return () => window.clearTimeout(timer);
   }, [choice, justVoted, reduceMotion]);
+
+  useEffect(() => {
+    if (!revealed || completedTracked.current) return;
+
+    completedTracked.current = true;
+    trackEvent(AnalyticsEvents.DEER_VOTE_COMPLETED, {
+      identity: choice,
+      returning: !justVoted,
+    });
+  }, [revealed, choice, justVoted]);
 
   return (
     <m.div
@@ -117,7 +132,9 @@ function DeerVoteResult({ choice, justVoted, onReset }: DeerVoteResultProps) {
               whileHover={reduceMotion ? undefined : { opacity: 0.7 }}
               transition={{ duration: 0.2 }}
               className={`${actionButtonClass} mt-8`}
-              onClick={() => trackEvent("share", { method: "x", context: "deer-vote" })}
+              onClick={() =>
+                trackEvent(AnalyticsEvents.SHARE_X_CLICKED, { context: "deer-vote" })
+              }
             >
               {t.contract.shareOnX}
             </m.a>
@@ -145,6 +162,12 @@ export function DeerVoteSection() {
   const { t } = useLocale();
   const { choice, vote, reset, ready, hasVoted, justVoted } = useDeerVote();
 
+  const handleVote = (next: DeerVoteChoice) => {
+    trackEvent(AnalyticsEvents.DEER_VOTE_STARTED);
+    trackEvent(AnalyticsEvents.DEER_IDENTITY_SELECTED, { identity: next });
+    vote(next);
+  };
+
   return (
     <FadeIn as="section" id="deer-vote">
       <Section ariaLabelledBy="deer-vote-title" className="flex flex-col items-center py-0 text-center">
@@ -168,7 +191,7 @@ export function DeerVoteSection() {
                 whileHover={reduceMotion ? undefined : { opacity: 0.7 }}
                 transition={{ duration: 0.2 }}
                 className={optionClass}
-                onClick={() => vote(option.id)}
+                onClick={() => handleVote(option.id)}
               >
                 {option.display}
               </m.button>

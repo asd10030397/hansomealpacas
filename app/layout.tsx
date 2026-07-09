@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Anton, Noto_Sans_TC } from "next/font/google";
 import { AmbientSound } from "@/components/AmbientSound";
 import { Analytics } from "@/components/Analytics";
+import { AnalyticsPageView } from "@/components/AnalyticsPageView";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { MotionProvider } from "@/components/MotionProvider";
 import { SkipLink } from "@/components/SkipLink";
@@ -89,6 +90,7 @@ export default function RootLayout({
         <LocaleProvider>
           <LanguageToggle />
           <SkipLink />
+          <AnalyticsPageView />
           <MotionProvider>{children}</MotionProvider>
         </LocaleProvider>
         <AmbientSound />

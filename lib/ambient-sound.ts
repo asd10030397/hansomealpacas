@@ -1,4 +1,5 @@
 import { ASSETS } from "@/content/project";
+import { AnalyticsEvents, trackEvent } from "@/lib/analytics";
 
 const TARGET_VOLUME = 0.12;
 const FADE_IN_MS = 2000;
@@ -10,6 +11,7 @@ let fadeFrame: number | null = null;
 let hasStarted = false;
 let unlockAttached = false;
 let visibilityAttached = false;
+let ambientTracked = false;
 let mountCount = 0;
 
 function getAudio(): HTMLAudioElement | null {
@@ -122,9 +124,16 @@ async function startPlayback(): Promise<boolean> {
 
     hasStarted = true;
     markStarted();
+    const trigger = unlockAttached ? "interaction" : "autoplay";
     detachUnlockListeners();
     attachVisibilityListener();
     fadeVolume(document.hidden ? 0 : TARGET_VOLUME, FADE_IN_MS);
+
+    if (!ambientTracked) {
+      ambientTracked = true;
+      trackEvent(AnalyticsEvents.AMBIENT_STARTED, { trigger });
+    }
+
     return true;
   } catch {
     attachUnlockListeners();

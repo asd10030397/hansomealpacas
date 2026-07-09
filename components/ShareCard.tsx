@@ -4,7 +4,7 @@ import { m } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { PROJECT } from "@/content/project";
 import { useLocale } from "@/context/LocaleContext";
-import { trackEvent } from "@/lib/analytics";
+import { AnalyticsEvents, trackEvent } from "@/lib/analytics";
 
 type ShareCardProps = {
   websiteUrl: string | undefined;
@@ -69,7 +69,7 @@ export function ShareCard({ websiteUrl, contractAddress }: ShareCardProps) {
           whileHover={{ opacity: 0.7 }}
           transition={{ duration: 0.2 }}
           className={buttonClass}
-          onClick={() => trackEvent("share", { method: "x" })}
+          onClick={() => trackEvent(AnalyticsEvents.SHARE_X_CLICKED, { context: "contract" })}
         >
           {t.contract.shareOnX}
         </m.a>

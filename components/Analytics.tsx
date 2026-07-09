@@ -1,5 +1,5 @@
 import Script from "next/script";
-import { getAnalyticsConfig } from "@/lib/analytics";
+import { getAnalyticsConfig, isGaDebugEnabled } from "@/lib/analytics";
 
 export function Analytics() {
   const config = getAnalyticsConfig();
@@ -16,6 +16,8 @@ export function Analytics() {
   }
 
   if (config.provider === "ga") {
+    const debugMode = isGaDebugEnabled();
+
     return (
       <>
         <Script
@@ -27,7 +29,9 @@ export function Analytics() {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${config.measurementId}');
+            gtag('config', '${config.measurementId}', {
+              send_page_view: false${debugMode ? ", debug_mode: true" : ""}
+            });
           `}
         </Script>
       </>

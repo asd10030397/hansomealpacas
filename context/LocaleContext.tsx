@@ -17,6 +17,7 @@ import {
   type Locale,
 } from "@/content/i18n";
 import type { Messages } from "@/content/i18n/types";
+import { AnalyticsEvents, trackEvent } from "@/lib/analytics";
 
 type LocaleContextValue = {
   locale: Locale;
@@ -44,7 +45,17 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setLocale = useCallback((next: Locale) => {
-    setLocaleState(next);
+    setLocaleState((current) => {
+      if (current === next) return current;
+
+      trackEvent(AnalyticsEvents.LANGUAGE_CHANGED, {
+        language: next,
+        previous_language: current,
+      });
+
+      return next;
+    });
+
     try {
       localStorage.setItem(LOCALE_STORAGE_KEY, next);
     } catch {
