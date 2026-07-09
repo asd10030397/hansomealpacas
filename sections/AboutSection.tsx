@@ -1,6 +1,12 @@
-import { ABOUT_LINES } from "@/content/about";
+import { ABOUT } from "@/content/about";
 import { FadeIn } from "@/components/FadeIn";
 import { Section } from "@/components/Section";
+
+const gapClass = {
+  lg: "mb-10 sm:mb-12",
+  md: "mb-8 sm:mb-10",
+  none: "",
+} as const;
 
 export function AboutSection() {
   return (
@@ -10,14 +16,28 @@ export function AboutSection() {
           id="about-title"
           className="font-[family-name:var(--font-anton)] text-[clamp(2rem,6vw,3.75rem)] tracking-[0.1em] text-foreground"
         >
-          WHO IS KAIRU?
+          {ABOUT.title}
         </h2>
 
-        <div className="mt-16 space-y-5 sm:mt-20 sm:space-y-6">
-          {ABOUT_LINES.map((line) => (
-            <p key={line} className="text-lg text-muted sm:text-xl md:text-2xl">
-              {line}
-            </p>
+        <p className="mt-8 font-[family-name:var(--font-noto-sans-tc)] text-lg text-muted sm:mt-10 sm:text-xl">
+          {ABOUT.subtitle}
+        </p>
+
+        <div className="mt-16 max-w-2xl sm:mt-20">
+          {ABOUT.blocks.map((block, index) => (
+            <div
+              key={index}
+              className={`space-y-2 sm:space-y-3 ${gapClass[block.gapAfter]}`}
+            >
+              {block.lines.map((line) => (
+                <p
+                  key={line}
+                  className="font-[family-name:var(--font-noto-sans-tc)] text-lg leading-relaxed text-foreground sm:text-xl md:text-2xl"
+                >
+                  {line}
+                </p>
+              ))}
+            </div>
           ))}
         </div>
       </Section>
