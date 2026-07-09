@@ -76,6 +76,10 @@ export type Messages = {
       lead: string;
       emphasis: string;
     };
+    shareRewardNotice: {
+      lead: string;
+      lines: readonly string[];
+    };
     shareTagline: string;
     options: readonly DeerVoteOptionCopy[];
     results: Record<DeerVoteChoice, DeerVoteResultCopy>;

@@ -44,6 +44,13 @@ export const en: Messages = {
       lead: "After launch,",
       emphasis: "eligible deer may claim KAIRU.",
     },
+    shareRewardNotice: {
+      lead: "🦌 Share your deer identity on X",
+      lines: [
+        "Deer who share",
+        "may become eligible for additional KAIRU rewards.",
+      ],
+    },
     shareTagline: "We are all KAIRU.",
     options: [
       { id: "one", display: "🦌 1x" },

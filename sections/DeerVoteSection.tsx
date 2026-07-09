@@ -99,13 +99,24 @@ function DeerVoteResult({ choice, justVoted, onReset }: DeerVoteResultProps) {
               />
             </div>
 
+            <div className="mt-10 max-w-md font-[family-name:var(--font-noto-sans-tc)] leading-[1.75] sm:mt-12">
+              <p className="text-sm text-foreground sm:text-base">
+                {t.deerVote.shareRewardNotice.lead}
+              </p>
+              {t.deerVote.shareRewardNotice.lines.map((line) => (
+                <p key={line} className="mt-1 text-sm text-foreground sm:text-base">
+                  {line}
+                </p>
+              ))}
+            </div>
+
             <m.a
               href={getDeerVoteShareUrl(choice, locale)}
               target="_blank"
               rel="noopener noreferrer"
               whileHover={reduceMotion ? undefined : { opacity: 0.7 }}
               transition={{ duration: 0.2 }}
-              className={actionButtonClass}
+              className={`${actionButtonClass} mt-8`}
               onClick={() => trackEvent("share", { method: "x", context: "deer-vote" })}
             >
               {t.contract.shareOnX}

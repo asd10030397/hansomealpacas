@@ -44,6 +44,10 @@ export const zh: Messages = {
       lead: "正式發幣後，",
       emphasis: "符合資格的鹿將可領取 KAIRU。",
     },
+    shareRewardNotice: {
+      lead: "🦌 分享你的鹿籍到 X",
+      lines: ["完成分享的鹿，", "未來將有資格領取額外 KAIRU 獎勵。"],
+    },
     shareTagline: "我們都是 KAIRU。",
     options: [
       { id: "one", display: "🦌 1 發" },
