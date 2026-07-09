@@ -1,14 +1,14 @@
 "use client";
 
 import { AnimatePresence, m, useReducedMotion } from "framer-motion";
-import { PROJECT } from "@/content/project";
 
 type EasterEggOverlayProps = {
   active: boolean;
   fadeMs: number;
+  tagline: string;
 };
 
-export function EasterEggOverlay({ active, fadeMs }: EasterEggOverlayProps) {
+export function EasterEggOverlay({ active, fadeMs, tagline }: EasterEggOverlayProps) {
   const reduceMotion = useReducedMotion();
   const duration = reduceMotion ? 0 : fadeMs / 1000;
 
@@ -18,7 +18,7 @@ export function EasterEggOverlay({ active, fadeMs }: EasterEggOverlayProps) {
         <m.div
           role="status"
           aria-live="polite"
-          aria-label={PROJECT.taglineCN}
+          aria-label={tagline}
           className="fixed inset-0 z-50 flex items-center justify-center bg-background px-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -26,7 +26,7 @@ export function EasterEggOverlay({ active, fadeMs }: EasterEggOverlayProps) {
           transition={{ duration }}
         >
           <p className="text-center text-2xl text-foreground sm:text-3xl md:text-4xl">
-            {PROJECT.taglineCN}
+            {tagline}
           </p>
         </m.div>
       )}

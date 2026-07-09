@@ -5,34 +5,36 @@ import { ActionButton } from "@/components/ActionButton";
 import { EasterEggOverlay } from "@/components/EasterEggOverlay";
 import { Mascot } from "@/components/Mascot";
 import { PROJECT } from "@/content/project";
+import { useLocale } from "@/context/LocaleContext";
 import { useKairuEasterEgg } from "@/hooks/useKairuEasterEgg";
 import { getHeroActions } from "@/lib/launch";
 import { EASE } from "@/lib/motion";
 
 export function HeroSection() {
   const reduceMotion = useReducedMotion();
+  const { t } = useLocale();
   const { active, handleMascotClick, fadeMs } = useKairuEasterEgg();
   const actions = getHeroActions();
 
   const navItems = [
     actions.buy.show ? (
       <ActionButton key="buy" href={actions.buy.href} disabled={actions.buy.disabled}>
-        BUY
+        {t.hero.buy}
       </ActionButton>
     ) : null,
     actions.chart.show ? (
       <ActionButton key="chart" href={actions.chart.href}>
-        CHART
+        {t.hero.chart}
       </ActionButton>
     ) : null,
     actions.twitter.show ? (
       <ActionButton key="x" href={actions.twitter.href}>
-        X
+        {t.hero.x}
       </ActionButton>
     ) : null,
     actions.telegram.show ? (
       <ActionButton key="telegram" href={actions.telegram.href}>
-        TELEGRAM
+        {t.hero.telegram}
       </ActionButton>
     ) : null,
   ].filter(Boolean);
@@ -53,7 +55,7 @@ export function HeroSection() {
             floating={!reduceMotion}
             interactive
             onClick={handleMascotClick}
-            alt={`${PROJECT.name} mascot`}
+            alt={t.a11y.mascotAlt}
             className="mb-12 h-64 w-64 sm:mb-16 sm:h-72 sm:w-72 md:mb-20 md:h-80 md:w-80"
           />
 
@@ -65,12 +67,12 @@ export function HeroSection() {
           </h1>
 
           <p className="mt-5 text-base text-muted sm:mt-7 sm:text-xl md:text-2xl">
-            {PROJECT.taglineCN}
+            {t.hero.tagline}
           </p>
 
           {navItems.length > 0 && (
             <nav
-              aria-label="Primary links"
+              aria-label={t.a11y.primaryLinks}
               className="mt-14 flex flex-wrap items-center justify-center gap-3 sm:mt-16 sm:gap-4"
             >
               {navItems}
@@ -79,7 +81,7 @@ export function HeroSection() {
         </m.div>
       </section>
 
-      <EasterEggOverlay active={active} fadeMs={fadeMs} />
+      <EasterEggOverlay active={active} fadeMs={fadeMs} tagline={t.hero.tagline} />
     </>
   );
 }

@@ -2,7 +2,10 @@ import type { Metadata, Viewport } from "next";
 import { Anton, Noto_Sans_TC } from "next/font/google";
 import { AmbientSound } from "@/components/AmbientSound";
 import { Analytics } from "@/components/Analytics";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import { MotionProvider } from "@/components/MotionProvider";
+import { SkipLink } from "@/components/SkipLink";
+import { LocaleProvider } from "@/context/LocaleContext";
 import { ASSETS, PROJECT } from "@/content/project";
 import { isValidHttpUrl } from "@/lib/links";
 import "@/styles/globals.css";
@@ -81,15 +84,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-TW" className={`${anton.variable} ${notoSansTC.variable}`}>
+    <html lang="zh-Hant" suppressHydrationWarning className={`${anton.variable} ${notoSansTC.variable}`}>
       <body className="min-h-screen bg-background antialiased">
-        <a
-          href="#about"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-6 focus:top-6 focus:z-50 focus:border focus:border-border focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:text-foreground"
-        >
-          Skip to content
-        </a>
-        <MotionProvider>{children}</MotionProvider>
+        <LocaleProvider>
+          <LanguageToggle />
+          <SkipLink />
+          <MotionProvider>{children}</MotionProvider>
+        </LocaleProvider>
         <AmbientSound />
         <Analytics />
       </body>

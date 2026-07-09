@@ -5,14 +5,13 @@ import { useEffect, useState } from "react";
 import { FadeIn } from "@/components/FadeIn";
 import { Mascot } from "@/components/Mascot";
 import { Section } from "@/components/Section";
-import {
-  DEER_VOTE,
-  getDeerVoteShareUrl,
-  type DeerVoteChoice,
-} from "@/content/deer-vote";
+import { DEER_VOTE_REVEAL_MS } from "@/content/i18n";
+import { useLocale } from "@/context/LocaleContext";
 import { useDeerVote } from "@/hooks/useDeerVote";
 import { trackEvent } from "@/lib/analytics";
+import { getDeerVoteShareUrl } from "@/lib/deer-vote-share";
 import { EASE } from "@/lib/motion";
+import type { DeerVoteChoice } from "@/content/i18n/types";
 
 const optionClass =
   "inline-flex min-w-[9rem] items-center justify-center border border-border px-6 py-4 font-[family-name:var(--font-noto-sans-tc)] text-base text-foreground transition-opacity sm:min-w-[10rem] sm:px-8 sm:py-4 sm:text-lg";
@@ -31,7 +30,8 @@ type DeerVoteResultProps = {
 
 function DeerVoteResult({ choice, justVoted, onReset }: DeerVoteResultProps) {
   const reduceMotion = useReducedMotion();
-  const result = DEER_VOTE.results[choice];
+  const { locale, t } = useLocale();
+  const result = t.deerVote.results[choice];
   const [revealed, setRevealed] = useState(!justVoted);
 
   useEffect(() => {
@@ -41,7 +41,7 @@ function DeerVoteResult({ choice, justVoted, onReset }: DeerVoteResultProps) {
     }
 
     setRevealed(false);
-    const timer = window.setTimeout(() => setRevealed(true), DEER_VOTE.revealMs);
+    const timer = window.setTimeout(() => setRevealed(true), DEER_VOTE_REVEAL_MS);
     return () => window.clearTimeout(timer);
   }, [choice, justVoted, reduceMotion]);
 
@@ -84,9 +84,9 @@ function DeerVoteResult({ choice, justVoted, onReset }: DeerVoteResultProps) {
             </p>
 
             <div className="mt-14 font-[family-name:var(--font-noto-sans-tc)] leading-[1.75] sm:mt-16">
-              <p className="text-base text-muted sm:text-lg">{DEER_VOTE.futureNote.lead}</p>
+              <p className="text-base text-muted sm:text-lg">{t.deerVote.futureNote.lead}</p>
               <p className="mt-2 text-base font-semibold text-foreground sm:text-lg">
-                {DEER_VOTE.futureNote.emphasis}
+                {t.deerVote.futureNote.emphasis}
               </p>
             </div>
 
@@ -100,7 +100,7 @@ function DeerVoteResult({ choice, justVoted, onReset }: DeerVoteResultProps) {
             </div>
 
             <m.a
-              href={getDeerVoteShareUrl(choice)}
+              href={getDeerVoteShareUrl(choice, locale)}
               target="_blank"
               rel="noopener noreferrer"
               whileHover={reduceMotion ? undefined : { opacity: 0.7 }}
@@ -108,7 +108,7 @@ function DeerVoteResult({ choice, justVoted, onReset }: DeerVoteResultProps) {
               className={actionButtonClass}
               onClick={() => trackEvent("share", { method: "x", context: "deer-vote" })}
             >
-              SHARE ON X
+              {t.contract.shareOnX}
             </m.a>
 
             <div className="mt-10 w-full max-w-md border-t border-border pt-10 sm:mt-12">
@@ -119,7 +119,7 @@ function DeerVoteResult({ choice, justVoted, onReset }: DeerVoteResultProps) {
                 className={actionButtonClass}
                 onClick={onReset}
               >
-                {DEER_VOTE.resetLabel}
+                {t.deerVote.reset}
               </m.button>
             </div>
           </m.div>
@@ -131,11 +131,8 @@ function DeerVoteResult({ choice, justVoted, onReset }: DeerVoteResultProps) {
 
 export function DeerVoteSection() {
   const reduceMotion = useReducedMotion();
+  const { t } = useLocale();
   const { choice, vote, reset, ready, hasVoted, justVoted } = useDeerVote();
-
-  const handleVote = (next: DeerVoteChoice) => {
-    vote(next);
-  };
 
   return (
     <FadeIn as="section" id="deer-vote">
@@ -144,23 +141,23 @@ export function DeerVoteSection() {
           id="deer-vote-title"
           className="font-[family-name:var(--font-noto-sans-tc)] text-[clamp(1.75rem,5vw,3rem)] tracking-[0.08em] text-foreground"
         >
-          {DEER_VOTE.title}
+          {t.deerVote.title}
         </h2>
 
         {ready && !hasVoted && (
           <div
             className="mt-16 flex w-full max-w-3xl flex-col items-stretch gap-4 sm:mt-20 sm:flex-row sm:justify-center sm:gap-5"
             role="group"
-            aria-label={DEER_VOTE.title}
+            aria-label={t.a11y.deerVoteGroup}
           >
-            {DEER_VOTE.options.map((option) => (
+            {t.deerVote.options.map((option) => (
               <m.button
                 key={option.id}
                 type="button"
                 whileHover={reduceMotion ? undefined : { opacity: 0.7 }}
                 transition={{ duration: 0.2 }}
                 className={optionClass}
-                onClick={() => handleVote(option.id)}
+                onClick={() => vote(option.id)}
               >
                 {option.display}
               </m.button>

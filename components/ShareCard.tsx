@@ -3,6 +3,7 @@
 import { m } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { PROJECT } from "@/content/project";
+import { useLocale } from "@/context/LocaleContext";
 import { trackEvent } from "@/lib/analytics";
 
 type ShareCardProps = {
@@ -13,6 +14,7 @@ type ShareCardProps = {
 type CopyTarget = "website" | "contract" | null;
 
 export function ShareCard({ websiteUrl, contractAddress }: ShareCardProps) {
+  const { t } = useLocale();
   const [copied, setCopied] = useState<CopyTarget>(null);
   const [shareError, setShareError] = useState(false);
   const [canNativeShare, setCanNativeShare] = useState(false);
@@ -40,7 +42,7 @@ export function ShareCard({ websiteUrl, contractAddress }: ShareCardProps) {
     try {
       await navigator.share({
         title: PROJECT.name,
-        text: PROJECT.taglineCN,
+        text: t.hero.tagline,
         url: websiteUrl ?? undefined,
       });
       trackEvent("share", { method: "native" });
@@ -48,11 +50,11 @@ export function ShareCard({ websiteUrl, contractAddress }: ShareCardProps) {
     } catch {
       /* user cancelled */
     }
-  }, [websiteUrl]);
+  }, [t.hero.tagline, websiteUrl]);
 
   const xShareUrl = websiteUrl
-    ? `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${PROJECT.name}\n${PROJECT.taglineCN}`)}&url=${encodeURIComponent(websiteUrl)}`
-    : `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${PROJECT.name}\n${PROJECT.taglineCN}`)}`;
+    ? `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${PROJECT.name}\n${t.hero.tagline}`)}&url=${encodeURIComponent(websiteUrl)}`
+    : `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${PROJECT.name}\n${t.hero.tagline}`)}`;
 
   const buttonClass =
     "inline-flex min-w-[9rem] items-center justify-center border border-border px-6 py-3 font-[family-name:var(--font-anton)] text-xs tracking-[0.2em] text-foreground sm:text-sm";
@@ -69,7 +71,7 @@ export function ShareCard({ websiteUrl, contractAddress }: ShareCardProps) {
           className={buttonClass}
           onClick={() => trackEvent("share", { method: "x" })}
         >
-          SHARE ON X
+          {t.contract.shareOnX}
         </m.a>
 
         {websiteUrl && (
@@ -79,9 +81,9 @@ export function ShareCard({ websiteUrl, contractAddress }: ShareCardProps) {
             transition={{ duration: 0.2 }}
             className={buttonClass}
             onClick={() => copyText(websiteUrl, "website")}
-            aria-label="Copy website URL"
+            aria-label={t.a11y.copyWebsite}
           >
-            {copied === "website" ? "COPIED" : "COPY URL"}
+            {copied === "website" ? t.contract.copied : t.contract.copyUrl}
           </m.button>
         )}
 
@@ -92,9 +94,9 @@ export function ShareCard({ websiteUrl, contractAddress }: ShareCardProps) {
             transition={{ duration: 0.2 }}
             className={buttonClass}
             onClick={() => copyText(contractAddress, "contract")}
-            aria-label="Copy contract address"
+            aria-label={t.a11y.copyContract}
           >
-            {copied === "contract" ? "COPIED" : "COPY CA"}
+            {copied === "contract" ? t.contract.copied : t.contract.copyCa}
           </m.button>
         )}
 
@@ -105,16 +107,16 @@ export function ShareCard({ websiteUrl, contractAddress }: ShareCardProps) {
             transition={{ duration: 0.2 }}
             className={buttonClass}
             onClick={handleNativeShare}
-            aria-label="Share via device"
+            aria-label={t.a11y.shareDevice}
           >
-            SHARE
+            {t.contract.share}
           </m.button>
         )}
       </div>
 
       {shareError && (
         <p className="text-xs text-muted" role="status">
-          Copy failed. Try again.
+          {t.contract.copyFailed}
         </p>
       )}
     </div>

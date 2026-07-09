@@ -1,6 +1,8 @@
-import { ABOUT } from "@/content/about";
+"use client";
+
 import { FadeIn } from "@/components/FadeIn";
 import { Section } from "@/components/Section";
+import { useLocale } from "@/context/LocaleContext";
 
 const gapClass = {
   lg: "mb-10 sm:mb-12",
@@ -9,6 +11,8 @@ const gapClass = {
 } as const;
 
 export function AboutSection() {
+  const { t } = useLocale();
+
   return (
     <FadeIn as="section" id="about">
       <Section ariaLabelledBy="about-title" className="flex flex-col items-center py-0 text-center">
@@ -16,15 +20,15 @@ export function AboutSection() {
           id="about-title"
           className="font-[family-name:var(--font-anton)] text-[clamp(2rem,6vw,3.75rem)] tracking-[0.1em] text-foreground"
         >
-          {ABOUT.title}
+          {t.about.title}
         </h2>
 
         <p className="mt-8 font-[family-name:var(--font-noto-sans-tc)] text-lg text-muted sm:mt-10 sm:text-xl">
-          {ABOUT.subtitle}
+          {t.about.subtitle}
         </p>
 
         <div className="mt-16 max-w-2xl sm:mt-20">
-          {ABOUT.blocks.map((block, index) => (
+          {t.about.blocks.map((block, index) => (
             <div
               key={index}
               className={`space-y-2 sm:space-y-3 ${gapClass[block.gapAfter]}`}

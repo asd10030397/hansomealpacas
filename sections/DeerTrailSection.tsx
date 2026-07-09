@@ -1,10 +1,13 @@
+"use client";
+
 import { FadeIn } from "@/components/FadeIn";
 import { Section } from "@/components/Section";
-import { DEER_TRAIL } from "@/content/deer-trail";
+import { useLocale } from "@/context/LocaleContext";
 import { getDeerTrailItems } from "@/lib/deer-trail";
 
 export function DeerTrailSection() {
-  const items = getDeerTrailItems();
+  const { t } = useLocale();
+  const items = getDeerTrailItems(t.deerTrail.items);
 
   return (
     <FadeIn as="section" id="deer-trail">
@@ -13,7 +16,7 @@ export function DeerTrailSection() {
           id="deer-trail-title"
           className="font-[family-name:var(--font-anton)] text-[clamp(2rem,6vw,3.75rem)] tracking-[0.1em] text-foreground"
         >
-          {DEER_TRAIL.title}
+          {t.deerTrail.title}
         </h2>
 
         <ol className="mt-16 w-full max-w-md border-l border-border sm:mt-20">
@@ -22,7 +25,7 @@ export function DeerTrailSection() {
 
             return (
               <li
-                key={item.label}
+                key={item.id}
                 className={`relative flex items-center gap-5 py-4 pl-8 sm:py-5 ${
                   index < items.length - 1 ? "border-b border-border" : ""
                 }`}
@@ -48,7 +51,7 @@ export function DeerTrailSection() {
         </ol>
 
         <p className="mt-5 max-w-md text-[0.6875rem] leading-relaxed tracking-[0.06em] text-muted/60 sm:text-xs">
-          {DEER_TRAIL.caption}
+          {t.deerTrail.caption}
         </p>
       </Section>
     </FadeIn>

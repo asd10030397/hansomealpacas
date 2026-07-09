@@ -1,10 +1,14 @@
+"use client";
+
 import { CopyButton } from "@/components/CopyButton";
 import { FadeIn } from "@/components/FadeIn";
 import { Section } from "@/components/Section";
 import { ShareCard } from "@/components/ShareCard";
+import { useLocale } from "@/context/LocaleContext";
 import { getContractState, getShareState } from "@/lib/launch";
 
 export function ContractSection() {
+  const { t } = useLocale();
   const contract = getContractState();
   const share = getShareState();
 
@@ -15,7 +19,7 @@ export function ContractSection() {
           id="contract-title"
           className="font-[family-name:var(--font-anton)] text-[clamp(2.5rem,8vw,4.5rem)] tracking-[0.1em] text-foreground"
         >
-          CONTRACT
+          {t.contract.title}
         </h2>
 
         <div className="mt-16 flex flex-col items-center gap-12 sm:mt-20">

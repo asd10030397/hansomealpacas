@@ -2,17 +2,15 @@
 
 import { m } from "framer-motion";
 import { useCallback, useState } from "react";
+import { useLocale } from "@/context/LocaleContext";
 import { shortenContractAddress } from "@/lib/links";
 
 type CopyButtonProps = {
   value: string | null;
-  disabledLabel?: string;
 };
 
-export function CopyButton({
-  value,
-  disabledLabel = "Coming Soon",
-}: CopyButtonProps) {
+export function CopyButton({ value }: CopyButtonProps) {
+  const { t } = useLocale();
   const [copied, setCopied] = useState(false);
   const isDisabled = !value;
 
@@ -40,18 +38,20 @@ export function CopyButton({
           ? "cursor-default border-border text-muted"
           : "cursor-pointer border-border text-foreground"
       }`}
-      aria-label={isDisabled ? disabledLabel : copied ? "Copied" : "Copy contract address"}
+      aria-label={
+        isDisabled ? t.contract.comingSoon : copied ? t.a11y.copiedContract : t.a11y.copyContract
+      }
     >
       {isDisabled ? (
-        disabledLabel
+        t.contract.comingSoon
       ) : copied ? (
-        "COPIED"
+        t.contract.copied
       ) : (
         <>
           <span className="font-[family-name:var(--font-body)] text-xs tracking-normal text-muted sm:text-sm">
             {shortenContractAddress(value)}
           </span>
-          <span>COPY</span>
+          <span>{t.contract.copy}</span>
         </>
       )}
     </m.button>

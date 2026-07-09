@@ -1,17 +1,23 @@
-import { DEER_TRAIL, type DeerTrailItem } from "@/content/deer-trail";
+import type { DeerTrailItemCopy } from "@/content/i18n/types";
 import { getProjectLinks } from "@/lib/links";
+
+export type DeerTrailItem = DeerTrailItemCopy & {
+  status: "done" | "upcoming";
+};
 
 export function isCommunityActive(): boolean {
   const { twitter, telegram } = getProjectLinks();
   return Boolean(twitter && telegram);
 }
 
-export function getDeerTrailItems(): DeerTrailItem[] {
+export function getDeerTrailItems(items: readonly DeerTrailItemCopy[]): DeerTrailItem[] {
   const communityActive = isCommunityActive();
 
-  return DEER_TRAIL.items.map((item) =>
-    item.label === "Community" && communityActive
-      ? { ...item, status: "done" }
-      : { ...item },
-  );
+  return items.map((item) => ({
+    ...item,
+    status:
+      item.id === "website" || item.id === "deer-identity" || (item.id === "community" && communityActive)
+        ? "done"
+        : "upcoming",
+  }));
 }
