@@ -42,13 +42,23 @@ export const zh: Messages = {
     reset: "重新測一次",
     futureNote: {
       lead: "正式發幣後，",
-      emphasis: "符合資格的鹿將可領取 KAIRU。",
+      emphasis: "領取資格將由 KAIRU 團隊人工審核。",
     },
     shareRewardNotice: {
       followPrefix: "🦌 追蹤官方 X（",
       followSuffix: "）",
       shareLine: "並分享你的鹿籍。",
-      eligibilityLines: ["完成以上條件的鹿，", "未來將有資格領取額外 KAIRU 獎勵。"],
+      eligibilityLines: ["完成以上步驟的參與者，", "可能符合日後領取資格。"],
+    },
+    claimProcessNote: {
+      lead: "正式發幣後，",
+      submitLead: "請返回官網提交：",
+      submitItems: ["錢包地址", "X 帳號", "分享貼文連結"],
+      verificationLines: [
+        "符合資格的鹿將由 KAIRU 團隊人工審核，",
+        "完成後發放 KAIRU。",
+      ],
+      footer: "詳細規則將於發幣前公布。",
     },
     shareTagline: "我們都是 KAIRU。",
     options: [

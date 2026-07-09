@@ -42,16 +42,25 @@ export const en: Messages = {
     reset: "Try Again",
     futureNote: {
       lead: "After launch,",
-      emphasis: "eligible deer may claim KAIRU.",
+      emphasis: "Eligibility will be verified manually.",
     },
     shareRewardNotice: {
       followPrefix: "🦌 Follow our official X (",
       followSuffix: ")",
       shareLine: "and share your deer identity.",
       eligibilityLines: [
-        "Deer who complete both actions",
-        "may become eligible for additional KAIRU rewards.",
+        "Eligible participants who complete both steps",
+        "may become eligible for a future KAIRU allocation.",
       ],
+    },
+    claimProcessNote: {
+      lead: "After launch,",
+      submitLead: "return to kairu.lol and submit:",
+      submitItems: ["Wallet address", "X username", "Shared post URL"],
+      verificationLines: [
+        "Eligible Deer will be manually verified by the KAIRU team before receiving KAIRU.",
+      ],
+      footer: "Full claim rules will be announced before launch.",
     },
     shareTagline: "We are all KAIRU.",
     options: [

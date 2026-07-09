@@ -23,6 +23,11 @@ const actionButtonClass =
 const identityIllustrationClass =
   "mx-auto h-[12.5rem] w-[12.5rem] sm:h-[15rem] sm:w-[15rem] md:h-[17.5rem] md:w-[17.5rem] lg:h-[20rem] lg:w-[20rem]";
 
+const rewardNoticeClass =
+  "max-w-md font-[family-name:var(--font-noto-sans-tc)] leading-[1.75]";
+
+const rewardTextClass = "text-sm text-foreground sm:text-base";
+
 type DeerVoteResultProps = {
   choice: DeerVoteChoice;
   justVoted: boolean;
@@ -115,8 +120,8 @@ function DeerVoteResult({ choice, justVoted, onReset }: DeerVoteResultProps) {
               />
             </div>
 
-            <div className="mt-10 max-w-md font-[family-name:var(--font-noto-sans-tc)] leading-[1.75] sm:mt-12">
-              <p className="text-sm text-foreground sm:text-base">
+            <div className={`mt-10 sm:mt-12 ${rewardNoticeClass}`}>
+              <p className={rewardTextClass}>
                 {t.deerVote.shareRewardNotice.followPrefix}
                 <a
                   href={COMMUNITY_X_URL}
@@ -128,14 +133,30 @@ function DeerVoteResult({ choice, justVoted, onReset }: DeerVoteResultProps) {
                 </a>
                 {t.deerVote.shareRewardNotice.followSuffix}
               </p>
-              <p className="mt-1 text-sm text-foreground sm:text-base">
-                {t.deerVote.shareRewardNotice.shareLine}
-              </p>
+              <p className={`mt-1 ${rewardTextClass}`}>{t.deerVote.shareRewardNotice.shareLine}</p>
               {t.deerVote.shareRewardNotice.eligibilityLines.map((line) => (
-                <p key={line} className="mt-1 text-sm text-foreground sm:text-base">
+                <p key={line} className={`mt-1 ${rewardTextClass}`}>
                   {line}
                 </p>
               ))}
+            </div>
+
+            <div className={`mt-8 border-t border-border pt-8 sm:mt-10 sm:pt-10 ${rewardNoticeClass}`}>
+              <p className={rewardTextClass}>{t.deerVote.claimProcessNote.lead}</p>
+              <p className={`mt-1 ${rewardTextClass}`}>{t.deerVote.claimProcessNote.submitLead}</p>
+              <ul className="mt-2 space-y-1">
+                {t.deerVote.claimProcessNote.submitItems.map((item) => (
+                  <li key={item} className={rewardTextClass}>
+                    • {item}
+                  </li>
+                ))}
+              </ul>
+              {t.deerVote.claimProcessNote.verificationLines.map((line) => (
+                <p key={line} className={`mt-3 ${rewardTextClass}`}>
+                  {line}
+                </p>
+              ))}
+              <p className={`mt-3 text-muted ${rewardTextClass}`}>{t.deerVote.claimProcessNote.footer}</p>
             </div>
 
             <m.a

@@ -82,6 +82,13 @@ export type Messages = {
       shareLine: string;
       eligibilityLines: readonly string[];
     };
+    claimProcessNote: {
+      lead: string;
+      submitLead: string;
+      submitItems: readonly string[];
+      verificationLines: readonly string[];
+      footer: string;
+    };
     shareTagline: string;
     options: readonly DeerVoteOptionCopy[];
     results: Record<DeerVoteChoice, DeerVoteResultCopy>;
