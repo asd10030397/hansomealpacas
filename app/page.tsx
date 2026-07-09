@@ -1,9 +1,9 @@
 import { AboutSection } from "@/sections/AboutSection";
 import { ContractSection } from "@/sections/ContractSection";
+import { DeerTrailSection } from "@/sections/DeerTrailSection";
 import { DeerVoteSection } from "@/sections/DeerVoteSection";
 import { FooterSection } from "@/sections/FooterSection";
 import { HeroSection } from "@/sections/HeroSection";
-import { ReactionSection } from "@/sections/ReactionSection";
 
 export default function Home() {
   return (
@@ -11,7 +11,7 @@ export default function Home() {
       <HeroSection />
       <AboutSection />
       <DeerVoteSection />
-      <ReactionSection />
+      <DeerTrailSection />
       <ContractSection />
       <FooterSection />
     </main>
