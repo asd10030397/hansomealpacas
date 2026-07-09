@@ -8,7 +8,7 @@ KAIRU is a deer that never reacts.
 
 ## Tagline
 
-又到了嚕館的時間了。
+又到了撸管的時間了。
 
 ## Description
 

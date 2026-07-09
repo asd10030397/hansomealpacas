@@ -18,7 +18,7 @@ export const PROJECT = {
   name: "KAIRU",
   symbol: "KAIRU",
   chain: "Solana",
-  taglineCN: "又到了嚕館的時間了。",
+  taglineCN: "又到了撸管的時間了。",
   taglineEN: "it's kairu time.",
   description: "KAIRU is a deer that never reacts.",
   website: process.env.NEXT_PUBLIC_WEBSITE ?? "",

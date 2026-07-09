@@ -11,12 +11,12 @@ Never over-explain. Never hype. Never beg.
 - KAIRU never reacts
 - Posts are observations, not announcements
 - Emoji use: 😑 only when necessary
-- Chinese tagline is sacred: 又到了嚕館的時間了。
+- Chinese tagline is sacred: 又到了撸管的時間了。
 
 ## Example Posts
 
 ```
-又到了嚕館的時間了。
+又到了撸管的時間了。
 ```
 
 ```
@@ -48,7 +48,7 @@ nothing changed.
 ```
 KAIRU
 
-又到了嚕館的時間了。
+又到了撸管的時間了。
 
 [website]
 ```
@@ -58,7 +58,7 @@ KAIRU
 ```
 KAIRU is a deer that never reacts.
 
-又到了嚕館的時間了。
+又到了撸管的時間了。
 ```
 
 ## Content Calendar

@@ -40,4 +40,4 @@ Only `content/project.ts` reads from env. No other files need editing at launch.
 
 ---
 
-又到了嚕館的時間了。
+又到了撸管的時間了。

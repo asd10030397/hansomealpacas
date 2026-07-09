@@ -1,24 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="KAIRU monochrome">
   <g id="kairu">
     <g id="kairu-antlers">
-      <rect x="214" y="72" width="18" height="34" rx="9" fill="#FFFFFF" fill-opacity="0.7" />
-      <rect x="280" y="72" width="18" height="34" rx="9" fill="#FFFFFF" fill-opacity="0.7" />
+      <rect x="218" y="92" width="12" height="22" rx="6" fill="#FFFFFF" fill-opacity="0.7" />
+      <rect x="282" y="92" width="12" height="22" rx="6" fill="#FFFFFF" fill-opacity="0.7" />
     </g>
     <g id="kairu-head">
-      <circle cx="98" cy="284" r="50" fill="#FFFFFF" />
-      <circle cx="414" cy="284" r="50" fill="#FFFFFF" />
-      <circle cx="256" cy="294" r="172" fill="#FFFFFF" />
+      <circle cx="82" cy="278" r="58" fill="#FFFFFF" />
+      <circle cx="430" cy="278" r="58" fill="#FFFFFF" />
+      <ellipse cx="256" cy="278" rx="112" ry="158" fill="#FFFFFF" />
+    </g>
+    <g id="kairu-neck">
+      <path fill="#FFFFFF" d="M214 402 C214 438 232 456 256 456 C280 456 298 438 298 402 L298 388 C284 396 270 400 256 400 C242 400 228 396 214 388 Z" />
     </g>
     <g id="kairu-snout">
-      <circle cx="256" cy="352" r="86" fill="#FFFFFF" fill-opacity="0.55" />
+      <ellipse cx="256" cy="348" rx="50" ry="68" fill="#FFFFFF" fill-opacity="0.55" />
     </g>
     <g id="kairu-eyes">
-      <rect x="148" y="248" width="84" height="22" rx="11" fill="#090909" />
-      <rect x="280" y="242" width="84" height="22" rx="11" fill="#090909" />
+      <rect x="112" y="254" width="68" height="16" rx="8" fill="#090909" />
+      <rect x="332" y="248" width="68" height="16" rx="8" fill="#090909" />
     </g>
     <g id="kairu-face-details">
-      <circle cx="256" cy="340" r="12" fill="#090909" />
-      <rect x="228" y="374" width="56" height="6" rx="3" fill="#090909" />
+      <circle cx="256" cy="332" r="9" fill="#090909" />
+      <rect x="234" y="378" width="44" height="3" rx="1.5" fill="#090909" />
     </g>
   </g>
 </svg>

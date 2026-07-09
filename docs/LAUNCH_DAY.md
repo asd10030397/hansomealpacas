@@ -141,7 +141,7 @@ npm run release:check
 
 | Platform | Action |
 | -------- | ------ |
-| X bio | Add website + tagline: 又到了嚕館的時間了。 |
+| X bio | Add website + tagline: 又到了撸管的時間了。 |
 | X pin | Pin Tweet #1 (see Marketing) |
 | Telegram | Pin announcement (see Marketing) |
 | Telegram bio | Add contract + links |
@@ -157,7 +157,7 @@ Tone: short, dry, deadpan. Never over-explain.
 ```
 KAIRU
 
-又到了嚕館的時間了。
+又到了撸管的時間了。
 
 [website]
 ```
@@ -188,7 +188,7 @@ contract
 ```
 KAIRU
 
-又到了嚕館的時間了。
+又到了撸管的時間了。
 
 KAIRU is a deer that never reacts.
 
@@ -206,7 +206,7 @@ Chart: [chart link]
 ```
 KAIRU is live on Solana.
 
-又到了嚕館的時間了。
+又到了撸管的時間了。
 
 Website: [website]
 Contract: [contract address]
@@ -304,7 +304,7 @@ Master launch-day checklist. All items must be complete before calling launch do
 When every box above is checked:
 
 ```
-又到了嚕館的時間了。
+又到了撸管的時間了。
 ```
 
 KAIRU does not react to launches either.
