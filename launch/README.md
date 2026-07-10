@@ -16,6 +16,7 @@ Planning documents for the KAIRU token launch on Solana.
 | [FAQ.md](./FAQ.md) | Common questions |
 | [ANNOUNCEMENT.md](./ANNOUNCEMENT.md) | Launch announcement drafts (EN / zh) |
 | [DO_NOTS.md](./DO_NOTS.md) | Intentional non-promises |
+| [GO_NO_GO.md](./GO_NO_GO.md) | Final readiness gate before token creation |
 | [metadata/](./metadata/) | Token metadata structure (not deployed) |
 
 ## Related folders
