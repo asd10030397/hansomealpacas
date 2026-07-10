@@ -12,6 +12,11 @@ Planning documents for the KAIRU token launch on Solana.
 | [TOKENOMICS.md](./TOKENOMICS.md) | Placeholder allocation model (TBD before launch) |
 | [CLAIM.md](./CLAIM.md) | Manual claim flow and eligibility rules |
 | [CHECKLIST.md](./CHECKLIST.md) | Pre-launch and launch-day checklist |
+| [WHITEPAPER.md](./WHITEPAPER.md) | Short project overview (planning draft) |
+| [FAQ.md](./FAQ.md) | Common questions |
+| [ANNOUNCEMENT.md](./ANNOUNCEMENT.md) | Launch announcement drafts (EN / zh) |
+| [DO_NOTS.md](./DO_NOTS.md) | Intentional non-promises |
+| [metadata/](./metadata/) | Token metadata structure (not deployed) |
 
 ## Related folders
 
