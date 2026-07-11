@@ -25,7 +25,7 @@ export function SocialBar({ className = "", size = "md" }: SocialBarProps) {
       <SocialIcon href={website} label={t.hero.website} className={iconSize} variant="gold">
         <WebsiteIcon />
       </SocialIcon>
-      <SocialIcon href={telegram} label={t.hero.telegram} className={iconSize} variant="gold">
+      <SocialIcon href={telegram ?? "#"} label={t.hero.telegram} className={iconSize} variant="gold">
         <TelegramIcon />
       </SocialIcon>
     </nav>

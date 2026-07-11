@@ -65,6 +65,7 @@ export type Messages = {
     title: string;
     subtitle: string;
     cta: string;
+    launchingSoon: string;
     comingSoon: string;
   };
   about: {
@@ -86,17 +87,39 @@ export type Messages = {
     comingSoon: string;
     copied: string;
     copy: string;
+    viewExplorer: string;
     shareOnX: string;
     copyUrl: string;
     copyCa: string;
     share: string;
     copyFailed: string;
   };
+  liveStatus: {
+    title: string;
+    network: string;
+    token: string;
+    supply: string;
+    tax: string;
+    status: string;
+    statusPreparing: string;
+    statusLive: string;
+  };
+  community: {
+    eyebrow: string;
+    title: string;
+    holders: string;
+    transactions: string;
+    liquidity: string;
+    marketCap: string;
+    comingSoon: string;
+  };
   footer: {
     tagline: string;
     memeLovers: string;
     notFinancialAdvice: string;
     stayUgly: string;
+    builtOn: string;
+    explorer: string;
     copyright: string;
     disclaimer: string;
   };

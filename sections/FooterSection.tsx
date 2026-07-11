@@ -4,9 +4,26 @@ import { FadeIn } from "@/components/FadeIn";
 import { SocialBar } from "@/components/SocialBar";
 import { PROJECT } from "@/content/project";
 import { useLocale } from "@/context/LocaleContext";
+import { getSocialLinks } from "@/lib/launch";
+
+function FooterLink({ href, label }: { href?: string; label: string }) {
+  if (!href) return null;
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-sm tracking-[0.12em] text-muted transition-colors duration-200 hover:text-gold-light sm:text-base"
+    >
+      {label}
+    </a>
+  );
+}
 
 export function FooterSection() {
   const { t } = useLocale();
+  const { twitter, telegram, website, explorer } = getSocialLinks();
 
   return (
     <footer className="relative border-t border-border/80 px-6 pb-16 pt-24 sm:pb-20 sm:pt-32">
@@ -20,6 +37,18 @@ export function FooterSection() {
         </p>
 
         <p className="mt-4 text-base text-muted sm:text-lg">{t.footer.tagline}</p>
+
+        <p className="mt-6 text-sm tracking-[0.14em] text-gold/75 sm:text-base">{t.footer.builtOn}</p>
+
+        <nav
+          aria-label={t.a11y.socialLinks}
+          className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2"
+        >
+          <FooterLink href={twitter} label={t.hero.x} />
+          <FooterLink href={telegram} label={t.hero.telegram} />
+          <FooterLink href={website} label={t.hero.website} />
+          <FooterLink href={explorer} label={t.footer.explorer} />
+        </nav>
 
         <div className="mt-8 space-y-1.5 text-sm text-muted/85 sm:text-base">
           <p>{t.footer.memeLovers}</p>

@@ -80,9 +80,8 @@ export function HeroSection() {
               disabled={buy.comingSoon}
               variant="gold"
               size="lg"
-              sublabel={buy.comingSoon ? t.buy.comingSoon : undefined}
             >
-              {t.buy.cta}
+              {buy.comingSoon ? t.buy.launchingSoon : t.buy.cta}
             </ActionButton>
             <ActionButton href={actions.twitter.href} size="lg">
               {t.hero.followX}

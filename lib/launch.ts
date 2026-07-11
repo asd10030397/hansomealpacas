@@ -1,13 +1,15 @@
-import { getProjectLinks, OFFICIAL_X_URL } from "@/lib/links";
+import { getCommunityStats, getProjectLinks } from "@/lib/links";
+
+export const OFFICIAL_X_URL = "https://x.com/DeerloveRu";
 
 export function getHeroActions() {
   const links = getProjectLinks();
 
   return {
     buy: {
-      show: links.showBuy,
+      show: true,
       href: links.isBuyEnabled ? links.buy : undefined,
-      disabled: links.showBuy && !links.isBuyEnabled,
+      disabled: !links.isBuyEnabled,
     },
     chart: {
       show: Boolean(links.chart),
@@ -30,6 +32,7 @@ export function getContractState() {
   return {
     address: links.contractAddress,
     isLive: links.isContractLive,
+    explorerUrl: links.contractExplorerUrl,
   };
 }
 
@@ -42,17 +45,14 @@ export function getShareState() {
   };
 }
 
-export function getFooterLinks() {
-  return getSocialLinks();
-}
-
 export function getSocialLinks() {
   const links = getProjectLinks();
 
   return {
     twitter: links.twitter ?? OFFICIAL_X_URL,
-    telegram: links.telegram ?? "#",
+    telegram: links.telegram,
     website: links.website ?? "https://kairu.lol",
+    explorer: links.explorer,
   };
 }
 
@@ -62,5 +62,23 @@ export function getBuySectionState() {
   return {
     href: links.isBuyEnabled ? links.buy : undefined,
     comingSoon: !links.isBuyEnabled,
+  };
+}
+
+export function getLiveStatusState() {
+  const links = getProjectLinks();
+
+  return {
+    network: links.network,
+    isLive: links.isContractLive,
+  };
+}
+
+export function getCommunityStatsState() {
+  const links = getProjectLinks();
+
+  return {
+    isLive: links.isContractLive,
+    stats: getCommunityStats(),
   };
 }

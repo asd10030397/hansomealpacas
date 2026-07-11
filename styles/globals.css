@@ -96,6 +96,29 @@ body {
     0 0 56px color-mix(in srgb, var(--color-gold) 10%, transparent);
 }
 
+.live-status-card {
+  border: 1px solid color-mix(in srgb, var(--color-gold) 28%, transparent);
+  background: color-mix(in srgb, white 3%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-gold) 5%, transparent),
+    0 12px 40px color-mix(in srgb, black 40%, transparent);
+}
+
+.live-status-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--color-gold) 70%, transparent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--color-gold) 45%, transparent);
+}
+
+.live-status-dot--live {
+  background: #4ade80;
+  box-shadow: 0 0 12px color-mix(in srgb, #4ade80 55%, transparent);
+}
+
 .gold-glow-bg {
   background: radial-gradient(
     ellipse 80% 50% at 50% 0%,

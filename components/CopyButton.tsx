@@ -8,9 +8,10 @@ import { shortenContractAddress } from "@/lib/links";
 type CopyButtonProps = {
   value: string | null;
   variant?: "default" | "gold";
+  showAddress?: boolean;
 };
 
-export function CopyButton({ value, variant = "default" }: CopyButtonProps) {
+export function CopyButton({ value, variant = "default", showAddress = true }: CopyButtonProps) {
   const { t } = useLocale();
   const [copied, setCopied] = useState(false);
   const isDisabled = !value;
@@ -52,9 +53,11 @@ export function CopyButton({ value, variant = "default" }: CopyButtonProps) {
         t.contract.copied
       ) : (
         <>
-          <span className="font-[family-name:var(--font-body)] text-xs tracking-normal text-muted sm:text-sm">
-            {shortenContractAddress(value)}
-          </span>
+          {showAddress ? (
+            <span className="font-[family-name:var(--font-body)] text-xs tracking-normal text-muted sm:text-sm">
+              {shortenContractAddress(value)}
+            </span>
+          ) : null}
           <span>{t.contract.copy}</span>
         </>
       )}

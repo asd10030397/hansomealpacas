@@ -41,9 +41,8 @@ export function BuySection() {
                 disabled={buy.comingSoon}
                 variant="gold"
                 size="lg"
-                sublabel={buy.comingSoon ? t.buy.comingSoon : undefined}
               >
-                {t.buy.cta}
+                {buy.comingSoon ? t.buy.launchingSoon : t.buy.cta}
               </ActionButton>
             </div>
           </m.div>

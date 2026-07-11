@@ -5,6 +5,7 @@ import { FadeIn } from "@/components/FadeIn";
 import { Section } from "@/components/Section";
 import { useLocale } from "@/context/LocaleContext";
 import { getContractState } from "@/lib/launch";
+import { shortenContractAddress } from "@/lib/links";
 
 export function ContractSection() {
   const { t } = useLocale();
@@ -29,19 +30,39 @@ export function ContractSection() {
             {t.contract.addressLabel}
           </p>
 
-          <div className="mt-6 flex flex-col items-center gap-8">
+          <div className="mt-6 flex flex-col items-center gap-6">
             <div className="w-full overflow-hidden rounded-xl border border-border bg-background/80 px-4 py-6 sm:px-6">
               <p
-                className={`font-[family-name:var(--font-anton)] text-lg tracking-[0.2em] sm:text-xl ${
-                  contract.address ? "font-mono text-sm tracking-wide text-foreground" : "text-gold-light"
+                className={`font-[family-name:var(--font-noto-sans-tc)] text-base sm:text-lg ${
+                  contract.isLive
+                    ? "font-mono text-sm tracking-wide text-foreground sm:text-base"
+                    : "text-gold-light/90"
                 }`}
                 aria-live="polite"
               >
-                {contract.address ?? t.contract.placeholder}
+                {contract.isLive && contract.address
+                  ? shortenContractAddress(contract.address)
+                  : t.contract.placeholder}
               </p>
             </div>
 
-            <CopyButton value={contract.address} variant="gold" />
+            {contract.isLive && contract.address ? (
+              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+                <CopyButton value={contract.address} variant="gold" showAddress={false} />
+                {contract.explorerUrl ? (
+                  <a
+                    href={contract.explorerUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center border border-gold/35 bg-gold/5 px-8 py-3.5 font-[family-name:var(--font-anton)] text-sm tracking-[0.18em] text-gold-light transition-all duration-200 hover:border-gold/55"
+                  >
+                    {t.contract.viewExplorer}
+                  </a>
+                ) : null}
+              </div>
+            ) : (
+              <CopyButton value={null} variant="gold" />
+            )}
           </div>
         </div>
       </Section>

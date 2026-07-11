@@ -16,6 +16,8 @@ export type Project = {
   readonly contractAddress: string;
   readonly buyLink: string;
   readonly chartLink: string;
+  readonly explorer: string;
+  readonly network: string;
   readonly copyright: string;
 };
 
@@ -39,6 +41,8 @@ export const PROJECT = {
   contractAddress: process.env.NEXT_PUBLIC_CONTRACT ?? "",
   buyLink: process.env.NEXT_PUBLIC_BUY ?? "",
   chartLink: process.env.NEXT_PUBLIC_CHART ?? "",
+  explorer: process.env.NEXT_PUBLIC_EXPLORER ?? "",
+  network: process.env.NEXT_PUBLIC_NETWORK ?? "Robinhood Chain",
   copyright: "© 2026 UGLY DEER",
 } as const satisfies Project;
 
