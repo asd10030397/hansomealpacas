@@ -21,8 +21,8 @@ const REQUIRED_ASSETS = [
   "public/icons/favicon-16x16.png",
   "public/icons/favicon-32x32.png",
   "public/icons/apple-touch-icon.png",
-  "public/images/opengraph-image-v2.png",
-  "public/images/twitter-image-v2.png",
+  "public/images/opengraph-image-v3.png",
+  "public/images/twitter-image-v3.png",
   "public/images/avatar.png",
 ];
 

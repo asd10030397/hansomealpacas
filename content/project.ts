@@ -42,7 +42,7 @@ export const PROJECT = {
   copyright: "© 2026 UGLY DEER",
 } as const satisfies Project;
 
-export const SOCIAL_PREVIEW_VERSION = 2 as const;
+export const SOCIAL_PREVIEW_VERSION = 3 as const;
 
 export const ASSETS = {
   logo: "/logo/coin.svg",
@@ -53,8 +53,8 @@ export const ASSETS = {
   favicon: "/icons/favicon-32x32.png",
   apple: "/icons/apple-touch-icon.png",
   avatar: "/images/avatar.png",
-  og: `/images/opengraph-image-v2.png?v=${SOCIAL_PREVIEW_VERSION}`,
-  twitterImage: `/images/twitter-image-v2.png?v=${SOCIAL_PREVIEW_VERSION}`,
+  og: `/images/opengraph-image-v3.png?v=${SOCIAL_PREVIEW_VERSION}`,
+  twitterImage: `/images/twitter-image-v3.png?v=${SOCIAL_PREVIEW_VERSION}`,
   twitterBanner: "/images/twitter-banner.png",
   telegramBanner: "/images/telegram-banner.png",
   ambient: "/audio/ambient.wav",
