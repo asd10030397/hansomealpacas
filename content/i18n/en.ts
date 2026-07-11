@@ -39,7 +39,7 @@ export const en: Messages = {
     tickerLabel: "Ticker",
     ticker: "$HANSOME",
     items: [
-      { label: "TICKER", value: "HANSOME" },
+      { label: "TICKER", value: "HANSOME", variant: "ticker" },
       { label: "SUPPLY", value: "1B", secondary: "1,000,000,000 HANSOME" },
       {
         label: "NETWORK",

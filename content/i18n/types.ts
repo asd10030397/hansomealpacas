@@ -18,7 +18,7 @@ export type TokenomicsItem = {
   valueLines?: readonly string[];
   secondary?: string;
   badge?: string;
-  variant?: "default" | "network";
+  variant?: "default" | "network" | "ticker";
 };
 
 export type Messages = {

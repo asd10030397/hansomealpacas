@@ -39,6 +39,8 @@ function TokenomicsCard({ item }: { item: TokenomicsItem }) {
     return <NetworkTokenomicsCard item={item} />;
   }
 
+  const isTicker = item.variant === "ticker";
+
   return (
     <div className="tokenomics-card flex h-full min-h-[12rem] flex-col items-center justify-center rounded-2xl px-5 py-11 font-[family-name:var(--font-noto-sans-tc)] sm:min-h-[13rem] sm:px-6 sm:py-12">
       <p className={labelClassName}>{item.label}</p>
@@ -55,9 +57,17 @@ function TokenomicsCard({ item }: { item: TokenomicsItem }) {
           ))}
         </div>
       ) : (
-        <p className="mt-8 whitespace-nowrap text-[clamp(1.75rem,3.6vw,2.5rem)] font-medium tabular-nums leading-none tracking-[-0.02em] text-foreground sm:mt-9">
-          {item.value}
-        </p>
+        <div className={isTicker ? "w-full px-3 sm:px-4" : "w-full"}>
+          <p
+            className={`mt-8 whitespace-nowrap text-center font-medium tabular-nums leading-none tracking-[-0.02em] text-foreground sm:mt-9 ${
+              isTicker
+                ? "text-[clamp(1.4rem,2.9vw,2.05rem)]"
+                : "text-[clamp(1.75rem,3.6vw,2.5rem)]"
+            }`}
+          >
+            {item.value}
+          </p>
+        </div>
       )}
 
       {item.secondary ? (

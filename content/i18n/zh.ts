@@ -39,7 +39,7 @@ export const zh: Messages = {
     tickerLabel: "代號",
     ticker: "$HANSOME",
     items: [
-      { label: "代號", value: "HANSOME" },
+      { label: "代號", value: "HANSOME", variant: "ticker" },
       { label: "總供應量", value: "1B", secondary: "1,000,000,000 HANSOME" },
       {
         label: "網路",
