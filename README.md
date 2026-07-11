@@ -4,6 +4,9 @@ The alpaca that won the genetic lottery. Too handsome to be useful.
 Preparing for launch on Robinhood Chain.
 
 Official Website: [hansomealpacas.xyz](https://hansomealpacas.xyz)
+Official X: [@HansomeAlpacas](https://x.com/HansomeAlpacas)
+Official Telegram: [t.me/+3d5_qKK6V0cxNjM1](https://t.me/+3d5_qKK6V0cxNjM1)
+Contract: `0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875` (Robinhood Chain)
 
 > This repo was forked from a previous meme coin project (UGLY DEER, now
 > delisted/unmaintained). See `docs/REBRAND_NOTES.md` for what changed during
@@ -37,14 +40,16 @@ npm run dev
 
 ## Environment
 
-Copy `.env.example` to `.env.local` and set:
+Copy `.env.example` to `.env.local` to override; the values below are also
+hardcoded as fallbacks in `content/project.ts` / `lib/chain.ts`, so the site
+works correctly even without a `.env.local`:
 
 - `NEXT_PUBLIC_WEBSITE` — `https://hansomealpacas.xyz`
-- `NEXT_PUBLIC_X` — official X/Twitter URL (not set yet)
-- `NEXT_PUBLIC_TELEGRAM` — official Telegram invite (not set yet)
-- `NEXT_PUBLIC_CONTRACT` — token contract address (not deployed yet)
+- `NEXT_PUBLIC_X` — `https://x.com/HansomeAlpacas`
+- `NEXT_PUBLIC_TELEGRAM` — `https://t.me/+3d5_qKK6V0cxNjM1`
+- `NEXT_PUBLIC_CONTRACT` — `0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875`
 - `NEXT_PUBLIC_BUY`
-- `NEXT_PUBLIC_CHART`
+- `NEXT_PUBLIC_CHART` — not set yet (no Uniswap v4 pool / chart exists)
 
 ## Brand config
 

@@ -1,5 +1,6 @@
 /**
- * Verify UGLY/ETH v4 pool (fee 500) is swappable via Universal Router staticCall.
+ * Verify HANSOME/ETH v4 pool is swappable via Universal Router staticCall.
+ * PoolId is computed from the pool key — no pre-known pool id is hardcoded.
  * Run: npx hardhat run scripts/verify-v4-swaps.ts --network robinhood
  */
 import {
@@ -7,7 +8,6 @@ import {
   Contract,
   formatEther,
   formatUnits,
-  getAddress,
   parseEther,
   parseUnits,
   solidityPacked,
@@ -16,6 +16,7 @@ import {
 import { ethers } from "hardhat";
 import { computePoolId } from "./lib/v4-math";
 import { getDeployerSigner, getTreasurySigner } from "./lib/signer";
+import { resolveHansomeAddress, resolveLpFee, resolveTickSpacing } from "./lib/pool-config";
 
 const ROBINHOOD_CHAIN_ID = 4663;
 
@@ -28,41 +29,35 @@ const ADDR = {
   permit2: "0x000000000022D473030F116dDEE9F6B43aC78BA3",
 } as const;
 
-const UGLY = getAddress("0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c");
-const POOL_FEE = 500;
-const POOL_ID = "0x7b0294d1917fb2b47417582f84b57850266c43bf77bcdc80ad39da0d94045056";
-
-const POOL_KEY = [ZeroAddress, UGLY, POOL_FEE, 60, ZeroAddress] as const;
-
 const urAbi = ["function execute(bytes commands, bytes[] inputs, uint256 deadline) payable"];
 
-function buildEthToUglyInput(amountIn: bigint, amountOutMin = 0n) {
+function buildEthToHansomeInput(poolKey: readonly unknown[], hansomeAddress: string, amountIn: bigint, amountOutMin = 0n) {
   const actions = solidityPacked(["uint8", "uint8", "uint8"], [0x06, 0x0c, 0x0f]);
   const params = [
     AbiCoder.defaultAbiCoder().encode(
       ["tuple(address,address,uint24,int24,address)", "bool", "uint128", "uint128", "uint256", "bytes"],
-      [POOL_KEY, true, amountIn, amountOutMin, 0n, "0x"],
+      [poolKey, true, amountIn, amountOutMin, 0n, "0x"],
     ),
     AbiCoder.defaultAbiCoder().encode(["address", "uint256"], [ZeroAddress, amountIn]),
-    AbiCoder.defaultAbiCoder().encode(["address", "uint256"], [UGLY, amountOutMin]),
+    AbiCoder.defaultAbiCoder().encode(["address", "uint256"], [hansomeAddress, amountOutMin]),
   ];
   return AbiCoder.defaultAbiCoder().encode(["bytes", "bytes[]"], [actions, params]);
 }
 
-function buildUglyToEthInput(amountIn: bigint, amountOutMin = 0n) {
+function buildHansomeToEthInput(poolKey: readonly unknown[], hansomeAddress: string, amountIn: bigint, amountOutMin = 0n) {
   const actions = solidityPacked(["uint8", "uint8", "uint8"], [0x06, 0x0b, 0x0f]);
   const params = [
     AbiCoder.defaultAbiCoder().encode(
       ["tuple(address,address,uint24,int24,address)", "bool", "uint128", "uint128", "uint256", "bytes"],
-      [POOL_KEY, false, amountIn, amountOutMin, 0n, "0x"],
+      [poolKey, false, amountIn, amountOutMin, 0n, "0x"],
     ),
-    AbiCoder.defaultAbiCoder().encode(["address", "uint256", "bool"], [UGLY, amountIn, true]),
+    AbiCoder.defaultAbiCoder().encode(["address", "uint256", "bool"], [hansomeAddress, amountIn, true]),
     AbiCoder.defaultAbiCoder().encode(["address", "uint256"], [ZeroAddress, amountOutMin]),
   ];
   return AbiCoder.defaultAbiCoder().encode(["bytes", "bytes[]"], [actions, params]);
 }
 
-function quoteFromPoolState(sqrtPriceX96: bigint, liquidity: bigint, zeroForOne: boolean, amountIn: bigint) {
+function quoteFromPoolState(sqrtPriceX96: bigint, liquidity: bigint, lpFee: number, zeroForOne: boolean, amountIn: bigint) {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { SqrtPriceMath } = require("@uniswap/v3-sdk") as typeof import("@uniswap/v3-sdk");
   // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -71,7 +66,7 @@ function quoteFromPoolState(sqrtPriceX96: bigint, liquidity: bigint, zeroForOne:
   const sqrt = JSBI.BigInt(sqrtPriceX96.toString());
   const L = JSBI.BigInt(liquidity.toString());
   const inAmt = JSBI.BigInt(amountIn.toString());
-  const inAfterFee = JSBI.divide(JSBI.multiply(inAmt, JSBI.BigInt(1_000_000 - POOL_FEE)), JSBI.BigInt(1_000_000));
+  const inAfterFee = JSBI.divide(JSBI.multiply(inAmt, JSBI.BigInt(1_000_000 - lpFee)), JSBI.BigInt(1_000_000));
   const sqrtNext = SqrtPriceMath.getNextSqrtPriceFromInput(sqrt, L, inAfterFee, zeroForOne);
   const out = zeroForOne
     ? SqrtPriceMath.getAmount1Delta(sqrt, sqrtNext, L, false)
@@ -85,13 +80,25 @@ async function main() {
     throw new Error(`Wrong network: expected ${ROBINHOOD_CHAIN_ID}, got ${chainId}`);
   }
 
+  const hansomeAddress = resolveHansomeAddress();
+  const lpFee = resolveLpFee();
+  const tickSpacing = resolveTickSpacing();
+  const poolKey = [ZeroAddress, hansomeAddress, lpFee, tickSpacing, ZeroAddress] as const;
+  const poolId = computePoolId({
+    currency0: ZeroAddress,
+    currency1: hansomeAddress,
+    fee: lpFee,
+    tickSpacing,
+    hooks: ZeroAddress,
+  });
+
   const deployer = await getDeployerSigner(ethers.provider);
   const treasury = await getTreasurySigner(ethers.provider);
   const deployerAddr = await deployer.getAddress();
   const treasuryAddr = await treasury.getAddress();
 
-  const ethIn = parseEther("0.001");
-  const uglyIn = parseUnits("100000", 18);
+  const ethIn = process.env.TEST_ETH_AMOUNT ? parseEther(process.env.TEST_ETH_AMOUNT) : parseEther("0.001");
+  const hansomeIn = process.env.TEST_HANSOME_AMOUNT ? parseUnits(process.env.TEST_HANSOME_AMOUNT, 18) : parseUnits("100000", 18);
   const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600);
 
   const stateView = new Contract(ADDR.stateView, [
@@ -108,23 +115,17 @@ async function main() {
     "function allowance(address,address,address) view returns (uint160,uint48,uint48)",
   ], ethers.provider);
 
-  const slot0 = await stateView.getSlot0(POOL_ID);
-  const liquidity: bigint = await stateView.getLiquidity(POOL_ID);
-  const onChainPoolKey = await positionManager.poolKeys(POOL_ID.slice(0, 52));
-  const expectedPoolId = computePoolId({
-    currency0: ZeroAddress,
-    currency1: UGLY,
-    fee: POOL_FEE,
-    tickSpacing: 60,
-    hooks: ZeroAddress,
-  });
+  const slot0 = await stateView.getSlot0(poolId);
+  const liquidity: bigint = await stateView.getLiquidity(poolId);
+  const onChainPoolKey = await positionManager.poolKeys(poolId.slice(0, 52));
 
-  console.log("Verify v4 pool swappability (fee 500 ETH/UGLY)");
-  console.log(`  PoolId:            ${POOL_ID}`);
+  console.log("Verify v4 pool swappability (HANSOME/ETH)");
+  console.log(`  PoolId:            ${poolId}`);
+  console.log(`  Fee:               ${lpFee}`);
+  console.log(`  TickSpacing:       ${tickSpacing}`);
   console.log(`  sqrtPriceX96:      ${slot0[0].toString()}`);
   console.log(`  tick:              ${slot0[1].toString()}`);
   console.log(`  liquidity:         ${liquidity.toString()}`);
-  console.log(`  PoolId matches:    ${expectedPoolId.toLowerCase() === POOL_ID.toLowerCase() ? "yes" : "no"}`);
 
   // Router discovery (on-chain registry)
   console.log("");
@@ -132,48 +133,54 @@ async function main() {
   console.log(`  PositionManager.poolKeys: currency0=${onChainPoolKey[0]} currency1=${onChainPoolKey[1]} fee=${onChainPoolKey[2]} spacing=${onChainPoolKey[3]}`);
   console.log(`  PoolManager initialized:  ${slot0[0] > 0n ? "yes" : "no"}`);
   console.log(`  Pool liquidity > 0:       ${liquidity > 0n ? "yes" : "no"}`);
-  const v3Pool = await v3Factory.getPool(ZeroAddress, UGLY, POOL_FEE);
-  console.log(`  v3Factory pool (500):     ${v3Pool} (none expected — v4 only)`);
+  const v3Pool = await v3Factory.getPool(ZeroAddress, hansomeAddress, lpFee);
+  console.log(`  v3Factory pool (${lpFee}):     ${v3Pool} (none expected — v4 only)`);
 
-  const ethQuote = quoteFromPoolState(slot0[0], liquidity, true, ethIn);
-  const uglyQuote = quoteFromPoolState(slot0[0], liquidity, false, uglyIn);
+  if (slot0[0] === 0n || liquidity === 0n) {
+    console.log("");
+    console.log("Pool not initialized / has no liquidity yet — skipping quote & swap checks.");
+    return;
+  }
+
+  const ethQuote = quoteFromPoolState(slot0[0], liquidity, lpFee, true, ethIn);
+  const hansomeQuote = quoteFromPoolState(slot0[0], liquidity, lpFee, false, hansomeIn);
   console.log("");
   console.log("Expected quotes (pool state math)");
-  console.log(`  0.001 ETH -> UGLY:        ${formatUnits(ethQuote, 18)}`);
-  console.log(`  100000 UGLY -> ETH:       ${formatEther(uglyQuote)}`);
+  console.log(`  ${formatEther(ethIn)} ETH -> HANSOME:     ${formatUnits(ethQuote, 18)}`);
+  console.log(`  ${formatUnits(hansomeIn, 18)} HANSOME -> ETH: ${formatEther(hansomeQuote)}`);
 
   const ur = new Contract(ADDR.universalRouter, urAbi, ethers.provider);
   const commands = solidityPacked(["uint8"], [0x10]);
 
-  // 1. ETH -> UGLY via Universal Router staticCall
+  // 1. ETH -> HANSOME via Universal Router staticCall
   console.log("");
-  console.log("1. Universal Router staticCall: ETH -> UGLY (0.001 ETH)");
+  console.log(`1. Universal Router staticCall: ETH -> HANSOME (${formatEther(ethIn)} ETH)`);
   const deployerEth = await ethers.provider.getBalance(deployerAddr);
   if (deployerEth < ethIn) {
     throw new Error(`Deployer lacks ETH for simulation: have ${formatEther(deployerEth)}, need ${formatEther(ethIn)}`);
   }
-  await ur.execute.staticCall(commands, [buildEthToUglyInput(ethIn)], deadline, {
+  await ur.execute.staticCall(commands, [buildEthToHansomeInput(poolKey, hansomeAddress, ethIn)], deadline, {
     value: ethIn,
     from: deployerAddr,
   });
   console.log(`  staticCall:          PASS`);
-  console.log(`  quote amountOut:     ${formatUnits(ethQuote, 18)} UGLY`);
+  console.log(`  quote amountOut:     ${formatUnits(ethQuote, 18)} HANSOME`);
 
-  // 2. UGLY -> ETH via Universal Router staticCall
+  // 2. HANSOME -> ETH via Universal Router staticCall
   console.log("");
-  console.log("2. Universal Router staticCall: UGLY -> ETH (100000 UGLY)");
-  const permitAllowance = await permit2.allowance(treasuryAddr, UGLY, ADDR.universalRouter);
-  if (permitAllowance[0] < uglyIn) {
+  console.log(`2. Universal Router staticCall: HANSOME -> ETH (${formatUnits(hansomeIn, 18)} HANSOME)`);
+  const permitAllowance = await permit2.allowance(treasuryAddr, hansomeAddress, ADDR.universalRouter);
+  if (permitAllowance[0] < hansomeIn) {
     throw new Error(
       `Treasury Permit2 allowance to Universal Router too low (${permitAllowance[0]}). ` +
-        "Approve Permit2 -> Universal Router for UGLY before running this check.",
+        "Approve Permit2 -> Universal Router for HANSOME before running this check.",
     );
   }
-  await ur.execute.staticCall(commands, [buildUglyToEthInput(uglyIn)], deadline, {
+  await ur.execute.staticCall(commands, [buildHansomeToEthInput(poolKey, hansomeAddress, hansomeIn)], deadline, {
     from: treasuryAddr,
   });
   console.log(`  staticCall:          PASS`);
-  console.log(`  quote amountOut:     ${formatEther(uglyQuote)} ETH`);
+  console.log(`  quote amountOut:     ${formatEther(hansomeQuote)} ETH`);
 
   console.log("");
   console.log("Pool is swappable.");

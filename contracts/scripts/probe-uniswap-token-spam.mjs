@@ -1,7 +1,21 @@
-const POOL_500 = "0x7b0294d1917fb2b47417582f84b57850266c43bf77bcdc80ad39da0d94045056";
-const POOL_3000 = "0x25d3614484fc23f4176097e78158f461f6bb324db9594837e83396a5f3d8e983";
-const UGLY = "0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c";
+import { AbiCoder, keccak256, ZeroAddress } from "ethers";
+
+const HANSOME = process.env.HANSOME_ALPACAS_ADDRESS?.trim() || "0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875";
+const LP_FEE = process.env.POOL_FEE ? Number(process.env.POOL_FEE) : 500;
+const TICK_SPACING = process.env.POOL_TICK_SPACING ? Number(process.env.POOL_TICK_SPACING) : 10;
 const GQL = "https://interface.gateway.uniswap.org/v1/graphql";
+
+function computePoolId({ currency0, currency1, fee, tickSpacing, hooks }) {
+  const encoded = AbiCoder.defaultAbiCoder().encode(
+    ["address", "address", "uint24", "int24", "address"],
+    [currency0, currency1, fee, tickSpacing, hooks],
+  );
+  return keccak256(encoded);
+}
+
+const POOL_ID =
+  process.env.POOL_ID?.trim() ||
+  computePoolId({ currency0: ZeroAddress, currency1: HANSOME, fee: LP_FEE, tickSpacing: TICK_SPACING, hooks: ZeroAddress });
 
 async function gql(query, variables) {
   const r = await fetch(GQL, {
@@ -19,10 +33,8 @@ const poolQuery = `query V4Pool($chain: Chain!, $poolId: String!) {
   }
 }`;
 
-for (const [label, poolId] of [["fee500", POOL_500], ["fee3000_broken", POOL_3000]]) {
-  const data = await gql(poolQuery, { chain: "ROBINHOOD", poolId });
-  console.log(label, JSON.stringify(data, null, 2));
-}
+const data = await gql(poolQuery, { chain: "ROBINHOOD", poolId: POOL_ID });
+console.log("hansomePool", JSON.stringify(data, null, 2));
 
 const token = await gql(
   `query Token($chain: Chain!, $address: String!) {
@@ -32,6 +44,6 @@ const token = await gql(
       market(currency: USD) { price { value } totalValueLocked { value } }
     }
   }`,
-  { chain: "ROBINHOOD", address: UGLY },
+  { chain: "ROBINHOOD", address: HANSOME },
 );
 console.log("token", JSON.stringify(token, null, 2));

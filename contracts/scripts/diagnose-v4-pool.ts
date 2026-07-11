@@ -1,9 +1,14 @@
 /**
- * On-chain diagnostic for UGLY/ETH Uniswap v4 pool on Robinhood Mainnet.
+ * On-chain diagnostic for the HANSOME/ETH Uniswap v4 pool on Robinhood Mainnet.
+ *
+ * All identifiers are optional env inputs — nothing about a specific pool,
+ * position, or transaction is hardcoded. Without any env vars set, this
+ * reports on the default HANSOME/ETH pool key (computed, not hardcoded).
+ *
  * Run: npx hardhat run scripts/diagnose-v4-pool.ts --network robinhood
+ * Optional env: POOL_ID, POSITION_ID, TX_HASH
  */
 import {
-  AbiCoder,
   Contract,
   Interface,
   Log,
@@ -11,23 +16,11 @@ import {
   formatEther,
   formatUnits,
   getAddress,
-  parseEther,
-  parseUnits,
 } from "ethers";
 import { ethers } from "hardhat";
-import {
-  computePoolId,
-  encodeSqrtRatioX96,
-  getSqrtPriceAtTick,
-  getTickAtSqrtPriceX96,
-  truncateTickSpacing,
-} from "./lib/v4-math";
+import { computePoolId } from "./lib/v4-math";
+import { resolveHansomeAddress, resolveLpFee, resolveTickSpacing } from "./lib/pool-config";
 
-const POOL_ID = "0x25d3614484fc23f4176097e78158f461f6bb324db9594837e83396a5f3d8e983";
-const POSITION_ID = 39500n;
-const TX_HASH = "0x52c4f107de8ea6b36ad20bd65d0d141bf0dceab24046888cc588e48ed24ea1b0";
-const UGLY = "0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c";
-const WETH = "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73";
 const UNIVERSAL_ROUTER = "0x53BF6B0684Ec7eF91e1387Da3D1a1769bC5A6F77";
 
 const ADDR = {
@@ -35,18 +28,6 @@ const ADDR = {
   positionManager: "0x58daec3116aae6D93017bAAea7749052E8a04fA7",
   stateView: "0xf3334192d15450cdd385c8b70e03f9a6bd9e673b",
 } as const;
-
-const EXPECTED = {
-  fee: 3000,
-  tickSpacing: 60,
-  hooks: ZeroAddress,
-  currency0: ZeroAddress,
-  currency1: getAddress(UGLY),
-  uglyPerEth: 359_402_000n,
-  ethAmount: parseEther("0.08"),
-  uglyAmount: parseUnits("28752160", 18),
-  tickRangeMultiplier: 750,
-};
 
 const stateViewAbi = [
   "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee)",
@@ -88,63 +69,53 @@ async function main() {
   const positionManager = new Contract(ADDR.positionManager, positionManagerAbi, provider);
   const poolManagerIface = new Interface(poolManagerAbi);
 
-  const expectedSqrt = encodeSqrtRatioX96(
-    parseUnits(EXPECTED.uglyPerEth.toString(), 18),
-    parseEther("1"),
-  );
-  const expectedTick = getTickAtSqrtPriceX96(expectedSqrt);
-  const expectedTickLower = truncateTickSpacing(
-    expectedTick - EXPECTED.tickRangeMultiplier * EXPECTED.tickSpacing,
-    EXPECTED.tickSpacing,
-  );
-  const expectedTickUpper = truncateTickSpacing(
-    expectedTick + EXPECTED.tickRangeMultiplier * EXPECTED.tickSpacing,
-    EXPECTED.tickSpacing,
-  );
+  const hansomeAddress = resolveHansomeAddress();
+  const lpFee = resolveLpFee();
+  const tickSpacing = resolveTickSpacing();
 
-  const expectedPoolKey = {
-    currency0: EXPECTED.currency0,
-    currency1: EXPECTED.currency1,
-    fee: EXPECTED.fee,
-    tickSpacing: EXPECTED.tickSpacing,
-    hooks: EXPECTED.hooks,
+  const defaultPoolKey = {
+    currency0: ZeroAddress,
+    currency1: getAddress(hansomeAddress),
+    fee: lpFee,
+    tickSpacing,
+    hooks: ZeroAddress,
   };
-  const expectedPoolId = computePoolId(expectedPoolKey);
+  const defaultPoolId = computePoolId(defaultPoolKey);
+  const poolId = process.env.POOL_ID?.trim() || defaultPoolId;
+  const positionId = process.env.POSITION_ID?.trim() ? BigInt(process.env.POSITION_ID.trim()) : undefined;
+  const txHash = process.env.TX_HASH?.trim();
 
-  console.log("=== UGLY/ETH v4 Pool Diagnostic (Robinhood 4663) ===\n");
+  console.log("=== HANSOME/ETH v4 Pool Diagnostic (Robinhood 4663) ===\n");
+  console.log(`Token:   ${hansomeAddress}`);
+  console.log(`Fee:     ${lpFee}`);
+  console.log(`Spacing: ${tickSpacing}`);
+  console.log(`PoolId:  ${poolId}${process.env.POOL_ID ? " (from env)" : " (computed from token/fee/spacing)"}`);
 
-  // --- 1 & 7: Pool initialize + sqrtPriceX96 ---
-  console.log("1 & 7. Pool initialization / sqrtPriceX96");
-  const slot0 = await stateView.getSlot0(POOL_ID);
-  console.log(`  StateView.getSlot0(${POOL_ID}):`);
+  // --- Pool initialize + sqrtPriceX96 ---
+  console.log("\n1. Pool initialization / sqrtPriceX96");
+  const slot0 = await stateView.getSlot0(poolId);
+  console.log(`  StateView.getSlot0(${poolId}):`);
   console.log(`    sqrtPriceX96: ${slot0.sqrtPriceX96.toString()}`);
   console.log(`    tick:         ${slot0.tick.toString()}`);
   console.log(`    protocolFee:  ${slot0.protocolFee.toString()}`);
   console.log(`    lpFee:        ${slot0.lpFee.toString()}`);
-  console.log(`  Expected sqrtPriceX96: ${expectedSqrt.toString()}`);
-  console.log(`  Expected tick:         ${expectedTick}`);
-  console.log(`  Pool initialized:      ${slot0.sqrtPriceX96 > 0n ? "YES" : "NO"}`);
-  console.log(`  sqrtPrice matches:     ${slot0.sqrtPriceX96 === expectedSqrt ? "YES" : "NO (on-chain differs)"}`);
+  console.log(`  Pool initialized: ${slot0.sqrtPriceX96 > 0n ? "YES" : "NO"}`);
 
-  // --- 4: PoolManager liquidity ---
-  console.log("\n4. PoolManager liquidity (StateView.getLiquidity)");
+  // --- PoolManager liquidity ---
+  console.log("\n2. PoolManager liquidity (StateView.getLiquidity)");
   let poolLiquidity = 0n;
   try {
-    poolLiquidity = await stateView.getLiquidity(POOL_ID);
+    poolLiquidity = await stateView.getLiquidity(poolId);
     console.log(`  getLiquidity: ${poolLiquidity.toString()}`);
   } catch (e) {
     console.log(`  getLiquidity call failed: ${(e as Error).message}`);
   }
 
-  // --- 5: PoolKey from PositionManager ---
-  console.log("\n5. PoolKey consistency");
-  console.log(`  Expected PoolId: ${expectedPoolId}`);
-  console.log(`  Actual PoolId:   ${POOL_ID}`);
-  console.log(`  PoolId match:    ${expectedPoolId.toLowerCase() === POOL_ID.toLowerCase() ? "YES" : "NO"}`);
-
+  // --- PoolKey from PositionManager ---
+  console.log("\n3. PoolKey consistency");
   let onChainPoolKey: Awaited<ReturnType<typeof positionManager.poolKeys>> | null = null;
   try {
-    onChainPoolKey = await positionManager.poolKeys(poolIdToBytes25(POOL_ID));
+    onChainPoolKey = await positionManager.poolKeys(poolIdToBytes25(poolId));
     console.log("  PositionManager.poolKeys(bytes25):");
     console.log(`    currency0:    ${onChainPoolKey.currency0}`);
     console.log(`    currency1:    ${onChainPoolKey.currency1}`);
@@ -155,176 +126,144 @@ async function main() {
     console.log(`  poolKeys call failed: ${(e as Error).message}`);
   }
 
-  // --- 3 & 6: Position 39500 ---
-  console.log("\n3 & 6. PositionId 39500");
+  // --- Position (only if POSITION_ID provided) ---
   let owner = "";
-  try {
-    owner = await positionManager.ownerOf(POSITION_ID);
-    console.log(`  ownerOf(39500): ${owner}`);
-  } catch (e) {
-    console.log(`  ownerOf failed: ${(e as Error).message}`);
-  }
-
   let posInfoRaw = 0n;
-  try {
-    posInfoRaw = await positionManager.positionInfo(POSITION_ID);
-    const decoded = decodePositionInfo(posInfoRaw);
-    console.log(`  positionInfo raw: ${posInfoRaw.toString()}`);
-    console.log(`  tickLower:        ${decoded.tickLower}`);
-    console.log(`  tickUpper:        ${decoded.tickUpper}`);
-    console.log(`  Expected tickLower: ${expectedTickLower}`);
-    console.log(`  Expected tickUpper: ${expectedTickUpper}`);
-    console.log(`  tickLower match:  ${decoded.tickLower === expectedTickLower ? "YES" : "NO"}`);
-    console.log(`  tickUpper match:  ${decoded.tickUpper === expectedTickUpper ? "YES" : "NO"}`);
-  } catch (e) {
-    console.log(`  positionInfo failed: ${(e as Error).message}`);
-  }
-
-  let poolAndPos: Awaited<ReturnType<typeof positionManager.getPoolAndPositionInfo>> | null = null;
-  try {
-    poolAndPos = await positionManager.getPoolAndPositionInfo(POSITION_ID);
-    const [pk, info] = poolAndPos;
-    const decoded = decodePositionInfo(info);
-    console.log("  getPoolAndPositionInfo:");
-    console.log(`    currency0:   ${pk.currency0}`);
-    console.log(`    currency1:   ${pk.currency1}`);
-    console.log(`    fee:         ${pk.fee.toString()}`);
-    console.log(`    tickSpacing: ${pk.tickSpacing.toString()}`);
-    console.log(`    hooks:       ${pk.hooks}`);
-    console.log(`    tickLower:   ${decoded.tickLower}`);
-    console.log(`    tickUpper:   ${decoded.tickUpper}`);
-  } catch (e) {
-    console.log(`  getPoolAndPositionInfo failed: ${(e as Error).message}`);
-  }
-
-  // Tick liquidity at bounds
-  if (posInfoRaw > 0n) {
-    const { tickLower, tickUpper } = decodePositionInfo(posInfoRaw);
-    console.log("\n  Tick liquidity at position bounds:");
+  if (positionId !== undefined) {
+    console.log(`\n4. PositionId ${positionId}`);
     try {
-      const lower = await stateView.getTickLiquidity(POOL_ID, tickLower);
-      const upper = await stateView.getTickLiquidity(POOL_ID, tickUpper);
-      console.log(`    tick ${tickLower}: gross=${lower.liquidityGross.toString()} net=${lower.liquidityNet.toString()}`);
-      console.log(`    tick ${tickUpper}: gross=${upper.liquidityGross.toString()} net=${upper.liquidityNet.toString()}`);
+      owner = await positionManager.ownerOf(positionId);
+      console.log(`  ownerOf(${positionId}): ${owner}`);
     } catch (e) {
-      console.log(`    getTickLiquidity failed: ${(e as Error).message}`);
+      console.log(`  ownerOf failed: ${(e as Error).message}`);
     }
-  }
 
-  // --- 2: Transaction receipt analysis ---
-  console.log("\n2. Create transaction logs");
-  const receipt = await provider.getTransactionReceipt(TX_HASH);
-  if (!receipt) {
-    console.log(`  Receipt not found for ${TX_HASH}`);
+    try {
+      posInfoRaw = await positionManager.positionInfo(positionId);
+      const decoded = decodePositionInfo(posInfoRaw);
+      console.log(`  positionInfo raw: ${posInfoRaw.toString()}`);
+      console.log(`  tickLower:        ${decoded.tickLower}`);
+      console.log(`  tickUpper:        ${decoded.tickUpper}`);
+    } catch (e) {
+      console.log(`  positionInfo failed: ${(e as Error).message}`);
+    }
+
+    try {
+      const poolAndPos = await positionManager.getPoolAndPositionInfo(positionId);
+      const [pk, info] = poolAndPos;
+      const decoded = decodePositionInfo(info);
+      console.log("  getPoolAndPositionInfo:");
+      console.log(`    currency0:   ${pk.currency0}`);
+      console.log(`    currency1:   ${pk.currency1}`);
+      console.log(`    fee:         ${pk.fee.toString()}`);
+      console.log(`    tickSpacing: ${pk.tickSpacing.toString()}`);
+      console.log(`    hooks:       ${pk.hooks}`);
+      console.log(`    tickLower:   ${decoded.tickLower}`);
+      console.log(`    tickUpper:   ${decoded.tickUpper}`);
+    } catch (e) {
+      console.log(`  getPoolAndPositionInfo failed: ${(e as Error).message}`);
+    }
+
+    if (posInfoRaw > 0n) {
+      const { tickLower, tickUpper } = decodePositionInfo(posInfoRaw);
+      console.log("\n  Tick liquidity at position bounds:");
+      try {
+        const lower = await stateView.getTickLiquidity(poolId, tickLower);
+        const upper = await stateView.getTickLiquidity(poolId, tickUpper);
+        console.log(`    tick ${tickLower}: gross=${lower.liquidityGross.toString()} net=${lower.liquidityNet.toString()}`);
+        console.log(`    tick ${tickUpper}: gross=${upper.liquidityGross.toString()} net=${upper.liquidityNet.toString()}`);
+      } catch (e) {
+        console.log(`    getTickLiquidity failed: ${(e as Error).message}`);
+      }
+    }
   } else {
-    console.log(`  status:      ${receipt.status === 1 ? "SUCCESS" : "FAILED"}`);
-    console.log(`  blockNumber: ${receipt.blockNumber}`);
-    console.log(`  gasUsed:     ${receipt.gasUsed.toString()}`);
-    console.log(`  to:          ${receipt.to}`);
+    console.log("\n4. PositionId — skipped (set POSITION_ID env var to inspect a specific position)");
+  }
 
-    let initializeFound = false;
-    let modifyLiquidityFound = false;
-    let mintNftFound = false;
+  // --- Transaction receipt analysis (only if TX_HASH provided) ---
+  let receipt: Awaited<ReturnType<typeof provider.getTransactionReceipt>> = null;
+  if (txHash) {
+    console.log("\n5. Create transaction logs");
+    receipt = await provider.getTransactionReceipt(txHash);
+    if (!receipt) {
+      console.log(`  Receipt not found for ${txHash}`);
+    } else {
+      console.log(`  status:      ${receipt.status === 1 ? "SUCCESS" : "FAILED"}`);
+      console.log(`  blockNumber: ${receipt.blockNumber}`);
+      console.log(`  gasUsed:     ${receipt.gasUsed.toString()}`);
+      console.log(`  to:          ${receipt.to}`);
 
-    for (const log of receipt.logs as Log[]) {
-      if (log.address.toLowerCase() === ADDR.poolManager.toLowerCase()) {
-        try {
-          const parsed = poolManagerIface.parseLog(log);
-          if (parsed?.name === "Initialize") {
-            initializeFound = true;
-            console.log("\n  PoolManager.Initialize event:");
-            console.log(`    id:           ${parsed.args.id}`);
-            console.log(`    currency0:    ${parsed.args.currency0}`);
-            console.log(`    currency1:    ${parsed.args.currency1}`);
-            console.log(`    fee:          ${parsed.args.fee.toString()}`);
-            console.log(`    tickSpacing:  ${parsed.args.tickSpacing.toString()}`);
-            console.log(`    hooks:        ${parsed.args.hooks}`);
-            console.log(`    sqrtPriceX96: ${parsed.args.sqrtPriceX96.toString()}`);
-            console.log(`    tick:         ${parsed.args.tick.toString()}`);
+      let initializeFound = false;
+      let modifyLiquidityFound = false;
+      let mintNftFound = false;
+
+      for (const log of receipt.logs as Log[]) {
+        if (log.address.toLowerCase() === ADDR.poolManager.toLowerCase()) {
+          try {
+            const parsed = poolManagerIface.parseLog(log);
+            if (parsed?.name === "Initialize") {
+              initializeFound = true;
+              console.log("\n  PoolManager.Initialize event:");
+              console.log(`    id:           ${parsed.args.id}`);
+              console.log(`    currency0:    ${parsed.args.currency0}`);
+              console.log(`    currency1:    ${parsed.args.currency1}`);
+              console.log(`    fee:          ${parsed.args.fee.toString()}`);
+              console.log(`    tickSpacing:  ${parsed.args.tickSpacing.toString()}`);
+              console.log(`    hooks:        ${parsed.args.hooks}`);
+              console.log(`    sqrtPriceX96: ${parsed.args.sqrtPriceX96.toString()}`);
+              console.log(`    tick:         ${parsed.args.tick.toString()}`);
+            }
+            if (parsed?.name === "ModifyLiquidity") {
+              modifyLiquidityFound = true;
+              console.log("\n  PoolManager.ModifyLiquidity event:");
+              console.log(`    id:              ${parsed.args.id}`);
+              console.log(`    sender:          ${parsed.args.sender}`);
+              console.log(`    tickLower:       ${parsed.args.tickLower.toString()}`);
+              console.log(`    tickUpper:       ${parsed.args.tickUpper.toString()}`);
+              console.log(`    liquidityDelta:  ${parsed.args.liquidityDelta.toString()}`);
+              console.log(`    salt:            ${parsed.args.salt}`);
+            }
+          } catch {
+            // not a PoolManager event we know
           }
-          if (parsed?.name === "ModifyLiquidity") {
-            modifyLiquidityFound = true;
-            console.log("\n  PoolManager.ModifyLiquidity event:");
-            console.log(`    id:              ${parsed.args.id}`);
-            console.log(`    sender:          ${parsed.args.sender}`);
-            console.log(`    tickLower:       ${parsed.args.tickLower.toString()}`);
-            console.log(`    tickUpper:       ${parsed.args.tickUpper.toString()}`);
-            console.log(`    liquidityDelta:  ${parsed.args.liquidityDelta.toString()}`);
-            console.log(`    salt:            ${parsed.args.salt}`);
+        }
+
+        if (log.address.toLowerCase() === ADDR.positionManager.toLowerCase()) {
+          const pmIface = new Interface(positionManagerAbi);
+          try {
+            const parsed = pmIface.parseLog(log);
+            if (parsed?.name === "Transfer" && parsed.args.from === ZeroAddress) {
+              mintNftFound = true;
+              console.log("\n  PositionManager NFT mint:");
+              console.log(`    tokenId: ${parsed.args.tokenId.toString()}`);
+              console.log(`    to:      ${parsed.args.to}`);
+            }
+          } catch {
+            // ignore
           }
-        } catch {
-          // not a PoolManager event we know
         }
       }
 
-      if (log.address.toLowerCase() === ADDR.positionManager.toLowerCase()) {
-        const pmIface = new Interface(positionManagerAbi);
-        try {
-          const parsed = pmIface.parseLog(log);
-          if (parsed?.name === "Transfer" && parsed.args.from === ZeroAddress) {
-            mintNftFound = true;
-            console.log("\n  PositionManager NFT mint:");
-            console.log(`    tokenId: ${parsed.args.tokenId.toString()}`);
-            console.log(`    to:      ${parsed.args.to}`);
-          }
-        } catch {
-          // ignore
-        }
-      }
+      console.log(`\n  Initialize event found:      ${initializeFound ? "YES" : "NO"}`);
+      console.log(`  ModifyLiquidity event found: ${modifyLiquidityFound ? "YES" : "NO"}`);
+      console.log(`  Position NFT mint found:     ${mintNftFound ? "YES" : "NO"}`);
     }
-
-    console.log(`\n  Initialize event found:      ${initializeFound ? "YES" : "NO"}`);
-    console.log(`  ModifyLiquidity event found: ${modifyLiquidityFound ? "YES" : "NO"}`);
-    console.log(`  Position NFT mint found:     ${mintNftFound ? "YES" : "NO"}`);
+  } else {
+    console.log("\n5. Create transaction logs — skipped (set TX_HASH env var to inspect a specific tx)");
   }
-
-  // --- 8: Alternate pool keys (WETH vs native ETH) ---
-  console.log("\n8. PoolKey variants & Router discovery");
-  const wethPoolKey = {
-    currency0: getAddress(WETH) < getAddress(UGLY) ? WETH : UGLY,
-    currency1: getAddress(WETH) < getAddress(UGLY) ? UGLY : WETH,
-    fee: 3000,
-    tickSpacing: 60,
-    hooks: ZeroAddress,
-  };
-  const wethPoolId = computePoolId({
-    currency0: wethPoolKey.currency0,
-    currency1: wethPoolKey.currency1,
-    fee: wethPoolKey.fee,
-    tickSpacing: wethPoolKey.tickSpacing,
-    hooks: wethPoolKey.hooks,
-  });
-
-  let wethSlot0 = { sqrtPriceX96: 0n };
-  try {
-    wethSlot0 = await stateView.getSlot0(wethPoolId);
-  } catch {
-    // ignore
-  }
-
-  console.log(`  Native ETH pool (currency0=0x0):`);
-  console.log(`    PoolId: ${expectedPoolId}`);
-  console.log(`    initialized: ${slot0.sqrtPriceX96 > 0n}`);
-  console.log(`    liquidity:   ${poolLiquidity.toString()}`);
-  console.log(`  WETH/UGLY pool (currency0=WETH sorted):`);
-  console.log(`    WETH:   ${WETH}`);
-  console.log(`    PoolId: ${wethPoolId}`);
-  console.log(`    initialized: ${wethSlot0.sqrtPriceX96 > 0n}`);
-  console.log(`    sqrtPriceX96: ${wethSlot0.sqrtPriceX96.toString()}`);
 
   // Check Universal Router bytecode exists
   const urCode = await provider.getCode(UNIVERSAL_ROUTER);
-  console.log(`\n  Universal Router (${UNIVERSAL_ROUTER}):`);
+  console.log(`\n6. Universal Router (${UNIVERSAL_ROUTER}):`);
   console.log(`    deployed: ${urCode !== "0x" ? "YES" : "NO"} (${(urCode.length - 2) / 2} bytes)`);
 
   // --- Summary ---
   console.log("\n=== Summary ===");
   const checks = {
     poolInitialized: slot0.sqrtPriceX96 > 0n,
-    poolIdMatches: expectedPoolId.toLowerCase() === POOL_ID.toLowerCase(),
     hasPoolLiquidity: poolLiquidity > 0n,
-    positionExists: owner !== "",
-    txSuccess: receipt?.status === 1,
+    positionExists: positionId !== undefined ? owner !== "" : undefined,
+    txSuccess: receipt ? receipt.status === 1 : undefined,
   };
   console.log(JSON.stringify(checks, null, 2));
 }

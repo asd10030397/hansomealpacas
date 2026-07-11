@@ -6,13 +6,11 @@ export const DEFAULT_RPC_URL = "https://rpc.mainnet.chain.robinhood.com";
 export const DEFAULT_EXPLORER = "https://robinhoodchain.blockscout.com";
 
 /**
- * HANSOME token contract on Robinhood Chain.
- * No contract has been deployed yet — falls back to the zero address until
- * NEXT_PUBLIC_CONTRACT is set. Swap UI treats this as "pre-launch" (see
- * lib/links.ts hasContractAddress()).
+ * HANSOME token contract on Robinhood Chain (deployed + verified mainnet
+ * address). Override via NEXT_PUBLIC_CONTRACT if needed.
  */
 export const TOKEN_ADDRESS = getAddress(
-  (process.env.NEXT_PUBLIC_CONTRACT ?? zeroAddress) as Address,
+  (process.env.NEXT_PUBLIC_CONTRACT ?? "0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875") as Address,
 );
 
 export const UNIVERSAL_ROUTER_ADDRESS = getAddress(

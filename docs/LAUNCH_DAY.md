@@ -105,10 +105,10 @@ Execute in this order immediately after mint is confirmed.
 Set in Vercel ??Settings ??Environment Variables:
 
 ```env
-NEXT_PUBLIC_WEBSITE=https://your-domain.com
-NEXT_PUBLIC_X=https://x.com/DeerloveRu
-NEXT_PUBLIC_TELEGRAM=https://t.me/DeerloveRu
-NEXT_PUBLIC_CONTRACT=
+NEXT_PUBLIC_WEBSITE=https://hansomealpacas.xyz
+NEXT_PUBLIC_X=https://x.com/HansomeAlpacas
+NEXT_PUBLIC_TELEGRAM=https://t.me/+3d5_qKK6V0cxNjM1
+NEXT_PUBLIC_CONTRACT=0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875
 NEXT_PUBLIC_BUY=
 NEXT_PUBLIC_CHART=
 ```

@@ -1,19 +1,16 @@
 /**
- * Query Position #39500 withdrawable amounts (read-only + fork simulation).
- * Run: npx hardhat run scripts/query-position-39500.ts --network robinhood
+ * Query a Uniswap v4 Position NFT's withdrawable amounts (read-only).
+ *
+ * Fully generic: works for any position id, on any pool — the pool key,
+ * token addresses, and salt are all derived on-chain from the position
+ * itself, nothing is hardcoded.
+ *
+ * Run:
+ *   npx hardhat run scripts/query-position.ts --network robinhood -- <positionId>
+ *   POSITION_ID=<id> npx hardhat run scripts/query-position.ts --network robinhood
  */
-import {
-  Contract,
-  formatEther,
-  formatUnits,
-} from "ethers";
+import { Contract, formatEther, formatUnits, toBeHex, zeroPadValue } from "ethers";
 import { ethers } from "hardhat";
-
-const POSITION_ID = 39500n;
-const POOL_ID = "0x25d3614484fc23f4176097e78158f461f6bb324db9594837e83396a5f3d8e983";
-const UGLY = "0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c";
-const TREASURY = "0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A";
-const SALT = "0x0000000000000000000000000000000000000000000000000000000000009a4c";
 
 const ADDR = {
   poolManager: "0x8366a39CC670B4001A1121B8F6A443A643e40951",
@@ -21,15 +18,24 @@ const ADDR = {
   stateView: "0xf3334192d15450cdd385c8b70e03f9a6bd9e673b",
 } as const;
 
-const ACTIONS = {
-  BURN_POSITION: 0x03,
-  TAKE_PAIR: 0x11,
-} as const;
-
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { TickMath, SqrtPriceMath } = require("@uniswap/v3-sdk");
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const JSBI = require("jsbi").default ?? require("jsbi");
+
+function resolvePositionId(): bigint {
+  const fromArgv = process.argv[process.argv.length - 1];
+  const fromEnv = process.env.POSITION_ID?.trim();
+  const raw = fromEnv || (fromArgv && /^\d+$/.test(fromArgv) ? fromArgv : undefined);
+
+  if (!raw) {
+    throw new Error(
+      "Missing position id. Pass it as POSITION_ID env var, or as a trailing CLI arg " +
+        "(npx hardhat run scripts/query-position.ts --network <net> -- <positionId>).",
+    );
+  }
+  return BigInt(raw);
+}
 
 function decodePositionInfo(info: bigint) {
   const tickUpperRaw = Number((info >> 32n) & 0xffffffn);
@@ -61,7 +67,9 @@ function amountsForLiquidity(liquidity: bigint, sqrtPriceX96: bigint, tickLower:
 }
 
 async function main() {
+  const positionId = resolvePositionId();
   const provider = ethers.provider;
+
   const stateView = new Contract(ADDR.stateView, [
     "function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee)",
     "function getLiquidity(bytes32 poolId) view returns (uint128 liquidity)",
@@ -76,12 +84,10 @@ async function main() {
     "function getPositionLiquidity(uint256 tokenId) view returns (uint128 liquidity)",
   ], provider);
 
-  const uglyToken = new Contract(UGLY, ["function balanceOf(address) view returns (uint256)"], provider);
+  console.log(`=== Position #${positionId} On-Chain Query ===\n`);
 
-  console.log("=== Position #39500 On-Chain Query ===\n");
-
-  const owner = await positionManager.ownerOf(POSITION_ID);
-  const poolAndPos = await positionManager.getPoolAndPositionInfo(POSITION_ID);
+  const owner = await positionManager.ownerOf(positionId);
+  const poolAndPos = await positionManager.getPoolAndPositionInfo(positionId);
   const poolKeyRaw = poolAndPos[0] ?? poolAndPos.poolKey;
   const posInfoRaw = poolAndPos[1] ?? poolAndPos.info;
   const poolKey = {
@@ -93,21 +99,28 @@ async function main() {
   };
   const { tickLower, tickUpper } = decodePositionInfo(posInfoRaw);
 
+  // Derived from the pool key itself — works for any pair, not just HANSOME/ETH.
+  const { computePoolId } = await import("./lib/v4-math");
+  const poolId = computePoolId(poolKey);
+  const token = poolKey.currency1;
+  // PositionManager v4 uses the tokenId itself as the salt for its minted positions.
+  const salt = zeroPadValue(toBeHex(positionId), 32);
+
   let pmLiquidity = 0n;
   try {
-    pmLiquidity = await positionManager.getPositionLiquidity(POSITION_ID);
+    pmLiquidity = await positionManager.getPositionLiquidity(positionId);
   } catch {
     // optional method
   }
 
-  const poolLiquidity = await stateView.getLiquidity(POOL_ID);
-  const slot0 = await stateView.getSlot0(POOL_ID);
+  const poolLiquidity = await stateView.getLiquidity(poolId);
+  const slot0 = await stateView.getSlot0(poolId);
   const posInPool = await stateView.getPositionInfo(
-    POOL_ID,
+    poolId,
     ADDR.positionManager,
     tickLower,
     tickUpper,
-    SALT,
+    salt,
   );
 
   const positionLiquidity = posInPool.liquidity;
@@ -118,19 +131,20 @@ async function main() {
     tickUpper,
   );
 
-  const treasuryEthBefore = await provider.getBalance(TREASURY);
-  const treasuryUglyBefore = await uglyToken.balanceOf(TREASURY);
+  const token1Contract = new Contract(token, ["function balanceOf(address) view returns (uint256)"], provider);
+  const ownerEthBefore = await provider.getBalance(owner);
+  const ownerToken1Before = await token1Contract.balanceOf(owner);
 
   console.log("Position NFT");
-  console.log(`  tokenId:           ${POSITION_ID.toString()}`);
+  console.log(`  tokenId:           ${positionId.toString()}`);
   console.log(`  owner:             ${owner}`);
-  console.log(`  treasury match:    ${owner.toLowerCase() === TREASURY.toLowerCase()}`);
 
   console.log("\nPoolKey");
-  console.log(`  currency0 (ETH):   ${poolKey.currency0}`);
-  console.log(`  currency1 (UGLY):  ${poolKey.currency1}`);
+  console.log(`  currency0:         ${poolKey.currency0}`);
+  console.log(`  currency1:         ${poolKey.currency1}`);
   console.log(`  fee:               ${poolKey.fee.toString()}`);
   console.log(`  tickSpacing:       ${poolKey.tickSpacing.toString()}`);
+  console.log(`  poolId (derived):  ${poolId}`);
 
   console.log("\nPosition range & liquidity");
   console.log(`  tickLower:         ${tickLower}`);
@@ -143,20 +157,17 @@ async function main() {
   console.log(`  pool total liquidity: ${poolLiquidity.toString()}`);
 
   console.log("\nPrincipal at current price (math from on-chain liquidity + slot0)");
-  console.log(`  withdrawable ETH:  ${formatEther(amount0)} (${amount0.toString()} wei)`);
-  console.log(`  withdrawable UGLY: ${formatUnits(amount1, 18)} (${amount1.toString()} wei)`);
+  console.log(`  withdrawable currency0: ${formatEther(amount0)} (${amount0.toString()} wei)`);
+  console.log(`  withdrawable currency1: ${formatUnits(amount1, 18)} (${amount1.toString()} wei)`);
 
   console.log("\nAccrued fees (feeGrowth fields — no separate uncollected balance API)");
   console.log(`  feeGrowthInside0LastX128: ${posInPool.feeGrowthInside0LastX128.toString()}`);
   console.log(`  feeGrowthInside1LastX128: ${posInPool.feeGrowthInside1LastX128.toString()}`);
 
-  const pmUglyBalance = await uglyToken.balanceOf(ADDR.poolManager);
-  console.log("\nPoolManager UGLY balance (chain-wide):", formatUnits(pmUglyBalance, 18));
-
-  console.log("\nTreasury balances (mainnet, before any withdrawal):");
-  console.log(`  ETH:  ${formatEther(treasuryEthBefore)}`);
-  console.log(`  UGLY: ${formatUnits(treasuryUglyBefore, 18)}`);
-  console.log("\nFor exact BURN+TAKE simulation run: npx hardhat run scripts/simulate-burn-39500.ts");
+  console.log("\nOwner balances (before any withdrawal):");
+  console.log(`  ETH:      ${formatEther(ownerEthBefore)}`);
+  console.log(`  currency1: ${formatUnits(ownerToken1Before, 18)}`);
+  console.log(`\nFor exact BURN+TAKE simulation run: POSITION_ID=${positionId} npx hardhat run scripts/simulate-burn.ts`);
 }
 
 main().catch((e) => {

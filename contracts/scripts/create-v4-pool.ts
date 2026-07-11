@@ -9,6 +9,7 @@ import {
   truncateTickSpacing,
 } from "./lib/v4-math";
 import { getTreasurySigner } from "./lib/signer";
+import { resolveHansomeAddress, resolveLpFee, resolveTickSpacing } from "./lib/pool-config";
 
 const ROBINHOOD_CHAIN_ID = 4663;
 
@@ -19,11 +20,8 @@ const UNISWAP_V4 = {
   stateView: "0xf3334192d15450cdd385c8b70e03f9a6bd9e673b",
 } as const;
 
-const DEFAULT_UGLY = "0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c";
-const DEFAULT_LP_FEE = 3000; // 0.30%
-const TICK_SPACING = 60;
-const TICK_RANGE_MULTIPLIER = 750;
-const UGLY_PER_ETH = 359_402_000n;
+/** Default one-sided tick range width, in multiples of tickSpacing either side of the target tick. */
+const DEFAULT_TICK_RANGE_MULTIPLIER = 750;
 
 const ACTIONS = {
   MINT_POSITION: 0x02,
@@ -56,52 +54,27 @@ const permit2Abi = [
 
 const stateViewAbi = ["function getSlot0(bytes32 poolId) view returns (uint160 sqrtPriceX96, int24 tick, uint24 protocolFee, uint24 lpFee)"];
 
-const EXPECTED = {
-  lpFee: 500,
-  sqrtPriceX96: 1501999639780730386804896713227225n,
-  tick: 197009,
-  ethDeposit: parseEther("0.08"),
-  uglyDeposit: parseUnits("28752160", 18),
-  uglyPerEth: UGLY_PER_ETH,
-} as const;
-
-function assertExpectedParams(
-  lpFee: number,
-  sqrtPriceX96: bigint,
-  currentTick: number,
-  ethAmount: bigint,
-  uglyAmount: bigint,
-) {
-  const expectedSqrt = encodeSqrtRatioX96(parseUnits(EXPECTED.uglyPerEth.toString(), 18), parseEther("1"));
-
-  if (lpFee !== EXPECTED.lpFee) {
-    throw new Error(`Unexpected POOL_FEE: ${lpFee} (expected ${EXPECTED.lpFee})`);
+function requireEnvAmount(name: string, parse: (raw: string) => bigint): bigint {
+  const raw = process.env[name]?.trim();
+  if (!raw) {
+    throw new Error(
+      `Missing ${name}. This script no longer assumes any pre-known deposit amounts — ` +
+        `set it explicitly in contracts/.env before creating the pool.`,
+    );
   }
-  if (sqrtPriceX96 !== EXPECTED.sqrtPriceX96 || sqrtPriceX96 !== expectedSqrt) {
-    throw new Error(`sqrtPriceX96 mismatch: got ${sqrtPriceX96}, expected ${EXPECTED.sqrtPriceX96}`);
-  }
-  if (currentTick !== EXPECTED.tick) {
-    throw new Error(`Unexpected tick: ${currentTick} (expected ${EXPECTED.tick})`);
-  }
-  if (ethAmount !== EXPECTED.ethDeposit) {
-    throw new Error(`Unexpected ETH deposit: ${formatEther(ethAmount)} (expected 0.08)`);
-  }
-  if (uglyAmount !== EXPECTED.uglyDeposit) {
-    throw new Error(`Unexpected UGLY deposit: ${formatUnits(uglyAmount, 18)} (expected 28752160)`);
-  }
-  if (uglyAmount <= 1n) {
-    throw new Error(`UGLY deposit is ${uglyAmount.toString()} wei — must not be 1 wei`);
-  }
+  return parse(raw);
 }
 
 async function verifyPostCreate(
   positionManager: Contract,
   stateView: Contract,
-  uglyToken: Contract,
+  hansomeToken: Contract,
   poolId: string,
   positionId: bigint,
   recipient: string,
   sqrtPriceX96: bigint,
+  ethAmount: bigint,
+  hansomeAmount: bigint,
   receipt: { blockNumber: number; hash: string },
 ) {
   const poolManager = UNISWAP_V4.poolManager;
@@ -130,54 +103,54 @@ async function verifyPostCreate(
 
   const ethBefore = await ethers.provider.getBalance(recipient, beforeBlock);
   const ethAfter = await ethers.provider.getBalance(recipient, afterBlock);
-  const uglyBefore = await uglyToken.balanceOf(recipient, { blockTag: beforeBlock });
-  const uglyAfter = await uglyToken.balanceOf(recipient, { blockTag: afterBlock });
+  const hansomeBefore = await hansomeToken.balanceOf(recipient, { blockTag: beforeBlock });
+  const hansomeAfter = await hansomeToken.balanceOf(recipient, { blockTag: afterBlock });
   const poolManagerEthBefore = await ethers.provider.getBalance(poolManager, beforeBlock);
   const poolManagerEthAfter = await ethers.provider.getBalance(poolManager, afterBlock);
-  const poolManagerUglyBefore = await uglyToken.balanceOf(poolManager, { blockTag: beforeBlock });
-  const poolManagerUglyAfter = await uglyToken.balanceOf(poolManager, { blockTag: afterBlock });
+  const poolManagerHansomeBefore = await hansomeToken.balanceOf(poolManager, { blockTag: beforeBlock });
+  const poolManagerHansomeAfter = await hansomeToken.balanceOf(poolManager, { blockTag: afterBlock });
 
   const treasuryEthDelta = ethBefore - ethAfter;
-  const treasuryUglyDelta = uglyBefore - uglyAfter;
+  const treasuryHansomeDelta = hansomeBefore - hansomeAfter;
   const poolManagerEthDelta = poolManagerEthAfter - poolManagerEthBefore;
-  const poolManagerUglyDelta = poolManagerUglyAfter - poolManagerUglyBefore;
+  const poolManagerHansomeDelta = poolManagerHansomeAfter - poolManagerHansomeBefore;
 
   const ethTolerance = parseEther("0.001");
-  const uglyTolerance = parseUnits("1000", 18);
+  const hansomeTolerance = parseUnits("1000", 18);
 
   console.log("");
   console.log("Post-create verification");
-  console.log(`  Pool initialized:        yes (sqrtPriceX96=${slot0.sqrtPriceX96.toString()}, tick=${slot0.tick})`);
-  console.log(`  Position NFT owner:      ${owner}`);
-  console.log(`  Position liquidity:      ${positionLiquidity.toString()}`);
-  console.log(`  PoolManager ETH delta:   +${formatEther(poolManagerEthDelta)} (${poolManagerEthDelta.toString()} wei)`);
-  console.log(`  PoolManager UGLY delta:  +${formatUnits(poolManagerUglyDelta, 18)} (${poolManagerUglyDelta.toString()} wei)`);
-  console.log(`  Treasury ETH delta:      -${formatEther(treasuryEthDelta)} (${treasuryEthDelta.toString()} wei)`);
-  console.log(`  Treasury UGLY delta:     -${formatUnits(treasuryUglyDelta, 18)} (${treasuryUglyDelta.toString()} wei)`);
+  console.log(`  Pool initialized:          yes (sqrtPriceX96=${slot0.sqrtPriceX96.toString()}, tick=${slot0.tick})`);
+  console.log(`  Position NFT owner:        ${owner}`);
+  console.log(`  Position liquidity:        ${positionLiquidity.toString()}`);
+  console.log(`  PoolManager ETH delta:     +${formatEther(poolManagerEthDelta)} (${poolManagerEthDelta.toString()} wei)`);
+  console.log(`  PoolManager HANSOME delta: +${formatUnits(poolManagerHansomeDelta, 18)} (${poolManagerHansomeDelta.toString()} wei)`);
+  console.log(`  Treasury ETH delta:        -${formatEther(treasuryEthDelta)} (${treasuryEthDelta.toString()} wei)`);
+  console.log(`  Treasury HANSOME delta:    -${formatUnits(treasuryHansomeDelta, 18)} (${treasuryHansomeDelta.toString()} wei)`);
 
-  if (poolManagerEthDelta < EXPECTED.ethDeposit - ethTolerance) {
+  if (poolManagerEthDelta < ethAmount - ethTolerance) {
     throw new Error(`PoolManager ETH deposit too low: ${formatEther(poolManagerEthDelta)}`);
   }
-  if (poolManagerUglyDelta < EXPECTED.uglyDeposit - uglyTolerance) {
-    throw new Error(`PoolManager UGLY deposit too low: ${formatUnits(poolManagerUglyDelta, 18)}`);
+  if (poolManagerHansomeDelta < hansomeAmount - hansomeTolerance) {
+    throw new Error(`PoolManager HANSOME deposit too low: ${formatUnits(poolManagerHansomeDelta, 18)}`);
   }
-  if (treasuryEthDelta < EXPECTED.ethDeposit - ethTolerance) {
+  if (treasuryEthDelta < ethAmount - ethTolerance) {
     throw new Error(`Treasury ETH spend too low: ${formatEther(treasuryEthDelta)}`);
   }
-  if (treasuryUglyDelta < EXPECTED.uglyDeposit - uglyTolerance) {
-    throw new Error(`Treasury UGLY spend too low: ${formatUnits(treasuryUglyDelta, 18)}`);
+  if (treasuryHansomeDelta < hansomeAmount - hansomeTolerance) {
+    throw new Error(`Treasury HANSOME spend too low: ${formatUnits(treasuryHansomeDelta, 18)}`);
   }
-  if (poolManagerUglyDelta <= 1n) {
-    throw new Error(`PoolManager UGLY received only ${poolManagerUglyDelta.toString()} wei — must not be 1 wei`);
+  if (poolManagerHansomeDelta <= 1n) {
+    throw new Error(`PoolManager HANSOME received only ${poolManagerHansomeDelta.toString()} wei — must not be 1 wei`);
   }
 
-  console.log("  Verification:            PASS");
+  console.log("  Verification:              PASS");
 
   return {
     poolManagerEthDelta,
-    poolManagerUglyDelta,
+    poolManagerHansomeDelta,
     treasuryEthDelta,
-    treasuryUglyDelta,
+    treasuryHansomeDelta,
     positionLiquidity,
   };
 }
@@ -238,34 +211,38 @@ async function main() {
   const signer = await getTreasurySigner(ethers.provider);
   const recipient = await signer.getAddress();
 
-  const uglyAddress = (process.env.UGLY_DEER_ADDRESS?.trim() || DEFAULT_UGLY);
-  const ethAmount = parseEther(process.env.POOL_ETH_AMOUNT ?? "0.08");
-  const uglyAmount = parseUnits(process.env.POOL_UGLY_AMOUNT ?? "28752160", 18);
-  const uglyPerEth = process.env.POOL_UGLY_PER_ETH ? BigInt(process.env.POOL_UGLY_PER_ETH) : UGLY_PER_ETH;
-  const lpFee = process.env.POOL_FEE ? Number(process.env.POOL_FEE) : DEFAULT_LP_FEE;
+  const hansomeAddress = resolveHansomeAddress();
+  const ethAmount = requireEnvAmount("POOL_ETH_AMOUNT", (raw) => parseEther(raw));
+  const hansomeAmount = requireEnvAmount("POOL_HANSOME_AMOUNT", (raw) => parseUnits(raw, 18));
+  const lpFee = resolveLpFee();
+  const tickSpacing = resolveTickSpacing();
+  const tickRangeMultiplier = process.env.POOL_TICK_RANGE_MULTIPLIER
+    ? Number(process.env.POOL_TICK_RANGE_MULTIPLIER)
+    : DEFAULT_TICK_RANGE_MULTIPLIER;
 
-  const uglyToken = new Contract(uglyAddress, erc20Abi, signer);
+  const hansomeToken = new Contract(hansomeAddress, erc20Abi, signer);
   const positionManager = new Contract(UNISWAP_V4.positionManager, positionManagerAbi, signer);
   const permit2 = new Contract(UNISWAP_V4.permit2, permit2Abi, signer);
   const stateView = new Contract(UNISWAP_V4.stateView, stateViewAbi, ethers.provider);
 
-  const [symbol, decimals, ethBalance, uglyBalance] = await Promise.all([
-    uglyToken.symbol(),
-    uglyToken.decimals(),
+  const [symbol, decimals, ethBalance, hansomeBalance] = await Promise.all([
+    hansomeToken.symbol(),
+    hansomeToken.decimals(),
     ethers.provider.getBalance(recipient),
-    uglyToken.balanceOf(recipient),
+    hansomeToken.balanceOf(recipient),
   ]);
 
-  console.log("Robinhood Chain Mainnet — Uniswap v4 ETH/UGLY pool");
+  console.log("Robinhood Chain Mainnet — Uniswap v4 ETH/HANSOME pool");
   console.log(`  Network:          ${network.name} (${chainId})`);
   console.log(`  Treasury:         ${recipient}`);
-  console.log(`  Token:            ${uglyAddress} (${symbol}, decimals=${decimals})`);
+  console.log(`  Token:            ${hansomeAddress} (${symbol}, decimals=${decimals})`);
   console.log(`  PositionManager:  ${UNISWAP_V4.positionManager}`);
   console.log(`  PoolManager:      ${UNISWAP_V4.poolManager}`);
   console.log(`  LP fee:           ${lpFee} (${lpFee / 10_000}%)`);
-  console.log(`  Target price:     1 ETH = ${uglyPerEth.toString()} UGLY`);
+  console.log(`  Tick spacing:     ${tickSpacing}`);
   console.log(`  Deposit ETH:      ${formatEther(ethAmount)}`);
-  console.log(`  Deposit UGLY:     ${formatUnits(uglyAmount, decimals)}`);
+  console.log(`  Deposit HANSOME:  ${formatUnits(hansomeAmount, decimals)}`);
+  console.log(`  Implied price:    1 ETH = ${formatUnits(hansomeAmount * 10n ** 18n / ethAmount, 18)} HANSOME`);
 
   if (ethBalance < ethAmount) {
     throw new Error(
@@ -274,18 +251,18 @@ async function main() {
     );
   }
 
-  if (uglyBalance < uglyAmount) {
+  if (hansomeBalance < hansomeAmount) {
     throw new Error(
-      `Insufficient UGLY on ${recipient}: have ${formatUnits(uglyBalance, decimals)}, need ${formatUnits(uglyAmount, decimals)}. ` +
+      `Insufficient HANSOME on ${recipient}: have ${formatUnits(hansomeBalance, decimals)}, need ${formatUnits(hansomeAmount, decimals)}. ` +
         "Set TREASURY_PRIVATE_KEY in contracts/.env to the wallet that holds LP funds.",
     );
   }
 
   const poolKey: PoolKey = {
     currency0: ZeroAddress,
-    currency1: uglyAddress,
+    currency1: hansomeAddress,
     fee: lpFee,
-    tickSpacing: TICK_SPACING,
+    tickSpacing,
     hooks: ZeroAddress,
   };
 
@@ -294,14 +271,16 @@ async function main() {
   }
 
   const poolId = computePoolId(poolKey);
-  const sqrtPriceX96 = encodeSqrtRatioX96(parseUnits(uglyPerEth.toString(), 18), parseEther("1"));
+  // Target price is derived directly from the deposit ratio requested above —
+  // no separately hardcoded "expected" price.
+  const sqrtPriceX96 = encodeSqrtRatioX96(hansomeAmount, ethAmount);
   const currentTick = getTickAtSqrtPriceX96(sqrtPriceX96);
-  const tickLower = truncateTickSpacing(currentTick - TICK_RANGE_MULTIPLIER * TICK_SPACING, TICK_SPACING);
-  const tickUpper = truncateTickSpacing(currentTick + TICK_RANGE_MULTIPLIER * TICK_SPACING, TICK_SPACING);
+  const tickLower = truncateTickSpacing(currentTick - tickRangeMultiplier * tickSpacing, tickSpacing);
+  const tickUpper = truncateTickSpacing(currentTick + tickRangeMultiplier * tickSpacing, tickSpacing);
 
   const sqrtPriceLower = getSqrtPriceAtTick(tickLower);
   const sqrtPriceUpper = getSqrtPriceAtTick(tickUpper);
-  const liquidity = getLiquidityForAmounts(sqrtPriceX96, sqrtPriceLower, sqrtPriceUpper, ethAmount, uglyAmount);
+  const liquidity = getLiquidityForAmounts(sqrtPriceX96, sqrtPriceLower, sqrtPriceUpper, ethAmount, hansomeAmount);
 
   if (liquidity === 0n) {
     throw new Error("Computed liquidity is zero — check amounts, price, and tick range");
@@ -331,8 +310,12 @@ async function main() {
     console.log(`  WARNING:          on-chain sqrtPriceX96 differs from target — pool cannot be re-initialized`);
   }
 
+  if (poolExists) {
+    throw new Error(`Pool fee ${lpFee} already initialized — aborting to avoid wrong-pool mint`);
+  }
+
   const amount0Max = ethAmount + 1n;
-  const amount1Max = uglyAmount + 1n;
+  const amount1Max = hansomeAmount + 1n;
   const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600);
   const unlockData = buildMintLiquidityParams(
     poolKey,
@@ -344,18 +327,18 @@ async function main() {
     recipient,
   );
 
-  const allowance: bigint = await uglyToken.allowance(recipient, UNISWAP_V4.permit2);
-  if (process.env.DRY_RUN !== "1" && allowance < uglyAmount) {
-    console.log("Approving UGLY → Permit2...");
-    const approveTx = await uglyToken.approve(UNISWAP_V4.permit2, MaxUint256);
+  const allowance: bigint = await hansomeToken.allowance(recipient, UNISWAP_V4.permit2);
+  if (process.env.DRY_RUN !== "1" && allowance < hansomeAmount) {
+    console.log("Approving HANSOME → Permit2...");
+    const approveTx = await hansomeToken.approve(UNISWAP_V4.permit2, MaxUint256);
     await approveTx.wait();
   }
 
-  const permitAllowance = await permit2.allowance(recipient, uglyAddress, UNISWAP_V4.positionManager);
-  if (process.env.DRY_RUN !== "1" && permitAllowance.amount < uglyAmount) {
-    console.log("Approving Permit2 → PositionManager for UGLY...");
+  const permitAllowance = await permit2.allowance(recipient, hansomeAddress, UNISWAP_V4.positionManager);
+  if (process.env.DRY_RUN !== "1" && permitAllowance.amount < hansomeAmount) {
+    console.log("Approving Permit2 → PositionManager for HANSOME...");
     const expiration = Math.floor(Date.now() / 1000) + 86_400;
-    const permitTx = await permit2.approve(uglyAddress, UNISWAP_V4.positionManager, 2n ** 160n - 1n, expiration);
+    const permitTx = await permit2.approve(hansomeAddress, UNISWAP_V4.positionManager, 2n ** 160n - 1n, expiration);
     await permitTx.wait();
   }
 
@@ -364,23 +347,12 @@ async function main() {
   const poolKeyTuple = [poolKey.currency0, poolKey.currency1, poolKey.fee, poolKey.tickSpacing, poolKey.hooks];
   const multicallData: string[] = [];
 
-  if (!poolExists) {
-    multicallData.push(positionManager.interface.encodeFunctionData("initializePool", [poolKeyTuple, sqrtPriceX96]));
-  } else {
-    console.log("Skipping initializePool — pool already initialized");
-  }
-
+  multicallData.push(positionManager.interface.encodeFunctionData("initializePool", [poolKeyTuple, sqrtPriceX96]));
   multicallData.push(
     positionManager.interface.encodeFunctionData("modifyLiquidities", [unlockData, deadline]),
   );
 
   console.log("Submitting PositionManager.multicall...");
-
-  assertExpectedParams(lpFee, sqrtPriceX96, currentTick, ethAmount, uglyAmount);
-
-  if (poolExists) {
-    throw new Error(`Pool fee ${lpFee} already initialized — aborting to avoid wrong-pool mint`);
-  }
 
   if (process.env.DRY_RUN === "1") {
     console.log("");
@@ -392,7 +364,7 @@ async function main() {
     console.log(`    sqrtPriceX96:   ${sqrtPriceX96.toString()}`);
     console.log(`    tick:           ${currentTick}`);
     console.log(`    deposit ETH:    ${formatEther(ethAmount)}`);
-    console.log(`    deposit UGLY:   ${formatUnits(uglyAmount, 18)}`);
+    console.log(`    deposit HANSOME: ${formatUnits(hansomeAmount, 18)}`);
 
     await positionManager.multicall.staticCall(multicallData, { value: amount0Max });
     console.log("  staticCall:       PASSED (initializePool + modifyLiquidities)");
@@ -409,7 +381,7 @@ async function main() {
   console.log(`  sqrtPriceX96:     ${sqrtPriceX96.toString()}`);
   console.log(`  tick:             ${currentTick}`);
   console.log(`  deposit ETH:      ${formatEther(ethAmount)}`);
-  console.log(`  deposit UGLY:     ${formatUnits(uglyAmount, 18)}`);
+  console.log(`  deposit HANSOME:  ${formatUnits(hansomeAmount, 18)}`);
 
   const tx = await positionManager.multicall(multicallData, { value: amount0Max });
   const receipt = await tx.wait();
@@ -437,29 +409,33 @@ async function main() {
   const verified = await verifyPostCreate(
     positionManager,
     stateView,
-    uglyToken,
+    hansomeToken,
     poolId,
     positionId,
     recipient,
     sqrtPriceX96,
+    ethAmount,
+    hansomeAmount,
     receipt,
   );
 
-  const gasUsed = receipt.gasUsed;
-  const gasPrice = receipt.gasPrice ?? tx.gasPrice ?? 0n;
+  // Cast explicitly: `receipt`/`tx` come from an untyped Contract call, so
+  // TS otherwise infers `any * bigint` as `number` instead of `bigint`.
+  const gasUsed = receipt.gasUsed as bigint;
+  const gasPrice = (receipt.gasPrice ?? tx.gasPrice ?? 0n) as bigint;
   const cost = gasUsed * gasPrice;
 
   console.log("");
-  console.log("UGLY/ETH v4 pool created");
+  console.log("HANSOME/ETH v4 pool created");
   console.log(`  PoolId:           ${poolId}`);
+  console.log(`  PositionId:       ${positionId.toString()} (persist this — needed for remove/simulate scripts)`);
   console.log(`  Transaction Hash: ${receipt.hash}`);
-  console.log(`  PositionId:       ${positionId.toString()}`);
   console.log(`  Block Number:     ${receipt.blockNumber}`);
   console.log(`  Gas Used:         ${gasUsed.toString()}`);
   console.log(`  Gas Price:        ${gasPrice.toString()} wei`);
   console.log(`  Cost:             ${formatEther(cost)} ETH`);
   console.log(`  ETH deposited:    ${formatEther(verified.poolManagerEthDelta)} (${verified.poolManagerEthDelta.toString()} wei)`);
-  console.log(`  UGLY deposited:   ${formatUnits(verified.poolManagerUglyDelta, 18)} (${verified.poolManagerUglyDelta.toString()} wei)`);
+  console.log(`  HANSOME deposited: ${formatUnits(verified.poolManagerHansomeDelta, 18)} (${verified.poolManagerHansomeDelta.toString()} wei)`);
   console.log(`  Explorer:         https://robinhoodchain.blockscout.com/tx/${receipt.hash}`);
 }
 

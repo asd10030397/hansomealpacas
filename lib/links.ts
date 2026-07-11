@@ -1,9 +1,10 @@
 import { PROJECT } from "@/content/project";
 
-// TODO: set once the official HANSOME ALPACAS social accounts exist.
-export const OFFICIAL_X_URL = "";
-export const OFFICIAL_X_HANDLE = "";
-export const OFFICIAL_TELEGRAM_URL = "";
+// Official HANSOME ALPACAS social accounts. Used as the fallback when
+// NEXT_PUBLIC_X / NEXT_PUBLIC_TELEGRAM aren't set via env.
+export const OFFICIAL_X_URL = "https://x.com/HansomeAlpacas";
+export const OFFICIAL_X_HANDLE = "@HansomeAlpacas";
+export const OFFICIAL_TELEGRAM_URL = "https://t.me/+3d5_qKK6V0cxNjM1";
 
 export function isValidHttpUrl(value: string): boolean {
   const trimmed = value.trim();

@@ -41,11 +41,10 @@ export const PROJECT = {
   twitterTitle: "HANSOME ALPACAS",
   themeColor: "#BFE8F6",
   website: process.env.NEXT_PUBLIC_WEBSITE ?? "https://hansomealpacas.xyz",
-  twitter: process.env.NEXT_PUBLIC_X ?? "",
-  telegram: process.env.NEXT_PUBLIC_TELEGRAM ?? "",
-  // No contract deployed yet — leave empty until launch. UI treats an
-  // invalid/empty address as "pre-launch" (see lib/links.ts hasContractAddress()).
-  contractAddress: process.env.NEXT_PUBLIC_CONTRACT ?? "",
+  twitter: process.env.NEXT_PUBLIC_X ?? "https://x.com/HansomeAlpacas",
+  telegram: process.env.NEXT_PUBLIC_TELEGRAM ?? "https://t.me/+3d5_qKK6V0cxNjM1",
+  contractAddress:
+    process.env.NEXT_PUBLIC_CONTRACT ?? "0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875",
   buyLink: process.env.NEXT_PUBLIC_BUY ?? "/swap",
   chartLink: process.env.NEXT_PUBLIC_CHART ?? "",
   explorer:

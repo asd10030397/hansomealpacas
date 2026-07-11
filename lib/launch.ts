@@ -1,7 +1,6 @@
 import { getCommunityStats, getProjectLinks } from "@/lib/links";
 
-// TODO: set once the official HANSOME ALPACAS X account exists.
-export const OFFICIAL_X_URL = "";
+export const OFFICIAL_X_URL = "https://x.com/HansomeAlpacas";
 
 export function getHeroActions() {
   const links = getProjectLinks();
