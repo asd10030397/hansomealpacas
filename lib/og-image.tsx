@@ -10,7 +10,7 @@ const TEXT = "#FAFAFA";
 const MUTED = "#B0B0B0";
 
 function coinDataUrl() {
-  const buffer = readFileSync(join(process.cwd(), "public/logo/logo-512.png"));
+  const buffer = readFileSync(join(process.cwd(), "public/logo/logo-256.png"));
   return `data:image/png;base64,${buffer.toString("base64")}`;
 }
 

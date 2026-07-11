@@ -30,7 +30,7 @@ When the token is ready for launch:
 | `name` | UGLY DEER | Display name |
 | `symbol` | UGLY DEER | Ticker |
 | `description` | Short tagline | Match site tone |
-| `image` | logo-512.png URL | Primary icon for wallets/explorers |
+| `image` | logo-256.png URL | Primary PNG for wallets/explorers |
 | `external_url` | kairu.lol | Official site |
 | `attributes` | Chain, decimals, supply | Informational only |
 | `extensions` | Social links | Update telegram when live |

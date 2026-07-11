@@ -52,8 +52,11 @@ export const SOCIAL_PREVIEW_VERSION = 3 as const;
 
 export const ASSETS = {
   logo: "/logo/coin.svg",
-  logo512: "/logo/logo-512.png",
+  /** Canonical PNG (256×256). Use for token lists, wallet_watchAsset, hosted logoURI. */
+  logoPng: "/logo/logo-256.png",
   logo256: "/logo/logo-256.png",
+  /** Upscaled from logo-256 only. Use when a platform requires 512×512 upload (PWA manifest, etc.). */
+  logo512: "/logo/logo-512.png",
   faviconIco: "/favicon.ico",
   favicon16: "/icons/favicon-16x16.png",
   favicon32: "/icons/favicon-32x32.png",

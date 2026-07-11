@@ -8,15 +8,15 @@ All paths refer to files in `public/` on the live site unless noted.
 
 | Asset | Path | Size | Format | Used for |
 | ----- | ---- | ---- | ------ | -------- |
-| Logo (primary) | `/logo/logo-512.png` | 512×512 | PNG | Uniswap token list `logoURI`, TKN, DeBank |
-| Logo (wallet PR) | `/logo/logo-256.png` | 256×256 | PNG | Trust Wallet / GitHub assets PR |
-| Logo (vector) | `/logo/logo.svg` | scalable | SVG | `properties.files`, site |
+| **Logo (canonical PNG)** | `/logo/logo-256.png` | 256×256 | PNG | Token list `logoURI`, wallet_watchAsset, hosted URLs |
+| Logo (upscale) | `/logo/logo-512.png` | 512×512 | PNG | Upscaled from logo-256; PWA manifest, platform upload when 512 required |
+| Logo (vector / UI) | `/logo/coin.svg` | scalable | SVG | Website UI, `properties.files` |
 | Favicon | `/icons/favicon.png` | 32×32 | PNG | Site tab (not token.json) |
 | Avatar | `/images/avatar.png` | — | PNG | Apple touch icon, social |
 
 **Production URLs:**
-- https://kairu.lol/logo/logo-512.png
-- https://kairu.lol/logo/logo-256.png
+- https://kairu.lol/logo/logo-256.png (primary)
+- https://kairu.lol/logo/logo-512.png (upscale-only)
 - https://kairu.lol/token-list/ugly-deer-robinhood.tokenlist.json
 
 See [launch/token-list/SUBMISSION_GUIDE.md](../token-list/SUBMISSION_GUIDE.md) for wallet/explorer submission steps.
@@ -28,6 +28,14 @@ Requirements before metadata upload:
 - No animated GIF for primary `image` field
 - Cache headers already set in `next.config.ts` for `/logo/*`
 
+Regenerate PNGs:
+
+```bash
+npm run generate:assets
+```
+
+`logo-512.png` is always upscaled from `logo-256.png` (never rasterized separately from SVG).
+
 ## Social / Open Graph (reference)
 
 | Asset | Path | Size | Notes |
@@ -36,41 +44,17 @@ Requirements before metadata upload:
 | X banner | `/images/twitter-banner.png` | — | Profile banner draft |
 | Telegram banner | `/images/telegram-banner.png` | — | If Telegram launches |
 
-## Identity illustrations (not token icon)
-
-Used on Deer Vote results only — do **not** use as SPL token image.
-
-| File | Identity |
-| ---- | -------- |
-| `/identities/kolittle.svg` | Little Deer |
-| `/identities/stag.svg` | Stag |
-| `/identities/emperor.svg` | Deer Emperor |
-
-## Optional future assets
-
-| Asset | Status | Notes |
-| ----- | ------ | ----- |
-| Transparent PNG 512 | Optional | If explorers prefer no background |
-| Dark/light variants | Not required | Single brand mark preferred |
-| On-chain metadata animation | Not planned | Static image only |
-
-## Hosting notes
-
-- Prefer **immutable** hosting for final metadata URI (IPFS CID or Arweave)
-- Using `kairu.lol` directly is acceptable for drafts; confirm long-term URL stability before mainnet
-- After any logo change, bump metadata version and re-upload JSON
-
 ## Pre-launch verification
 
 ```bash
-# Example checks (run manually before upload)
+curl -I https://kairu.lol/logo/logo-256.png
 curl -I https://kairu.lol/logo/logo-512.png
-curl -I https://kairu.lol/logo/logo.svg
+curl -I https://kairu.lol/logo/coin.svg
 ```
 
 - [ ] HTTP 200
 - [ ] Correct `Content-Type`
-- [ ] File matches approved brand export
+- [ ] logo-512 matches logo-256 (upscale only)
 
 ---
 

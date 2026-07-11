@@ -28,7 +28,7 @@ Final readiness checklist **before creating the token**.
 
 | Item | Status | Notes |
 | ---- | ------ | ----- |
-| [x] Logo | | `public/logo/logo.svg`, `logo-512.png` |
+| [x] Logo | | `public/logo/coin.svg`, `logo-256.png`, `logo-512.png` (upscale) |
 | [x] Mascot | | Hero + identity SVGs (`public/identities/`) |
 | [~] Metadata | | Draft `metadata/token.json` ??not uploaded on-chain |
 | [x] Whitepaper | | `launch/WHITEPAPER.md` (planning draft) |

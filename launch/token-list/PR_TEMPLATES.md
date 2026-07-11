@@ -33,10 +33,10 @@ Add logo and metadata for UGLY DEER ($UGLY) on Robinhood Chain (chain ID 4663).
 
 ## Asset files
 - `blockchains/robinhoodchain/assets/0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c/info.json`
-- `blockchains/robinhoodchain/assets/0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c/logo.png` (256×256)
+- `blockchains/robinhoodchain/assets/0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c/logo.png` (256?256)
 
 ## Checks
-- [x] Logo is 256×256 PNG
+- [x] Logo is 256?256 PNG
 - [x] Contract deployed on Robinhood Chain mainnet
 - [x] Website live at kairu.lol
 - [x] Explorer link verified
@@ -64,7 +64,7 @@ add: UGLY (2026-07-11)
 | Name | Ugly Deer |
 | Symbol | UGLY |
 | Decimals | 18 |
-| logoURI | https://kairu.lol/logo/logo-512.png |
+| logoURI | https://kairu.lol/logo/logo-256.png |
 
 ## Links
 - Website: https://kairu.lol

@@ -37,7 +37,7 @@ export default function TokenListPage() {
         <div className="gold-border mt-12 w-full rounded-2xl bg-white/[0.02] p-8">
           <div className="flex flex-col items-center gap-4">
             <Image
-              src={ASSETS.logo512}
+              src={ASSETS.logo}
               alt="Ugly Deer"
               width={96}
               height={96}

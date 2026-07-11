@@ -36,7 +36,7 @@ Robinhood Chain 已有其他 Token 上架先例；審核時間通常 **數天至
 | **Telegram** | *(留空)* |
 | **Discord** | *(留空)* |
 | **Explorer Link** | https://robinhoodchain.blockscout.com/token/0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c |
-| **Logo** | 上傳 [`../assets/logo-512.png`](../assets/logo-512.png) 或填 URL https://kairu.lol/logo/logo-512.png |
+| **Logo** | 上傳 [`../assets/logo-512.png`](../assets/logo-512.png) 或填 URL https://kairu.lol/logo/logo-256.png |
 | **Description** | 貼上 [`description.txt`](./description.txt) |
 | **Announcement / Proof** | 官網上線 + X 發文連結（含合約） |
 

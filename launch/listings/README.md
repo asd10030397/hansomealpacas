@@ -2,6 +2,14 @@
 
 `launch/listings/` 內含 **GeckoTerminal、DEX Screener、CoinGecko、CoinMarketCap、Trust Wallet** 五個平台的完整申請資料，可直接複製貼上或上傳提交。
 
+## Logo 規則
+
+| 資源 | 用途 |
+|------|------|
+| **logo-256.png** | 官方 PNG；logoURI、wallet_watchAsset、hosted URL |
+| **logo-512.png** | 僅由 logo-256 等比例放大；平台強制 512 上傳時使用 |
+| **coin.svg** | 網站 UI |
+
 ## 快速開始
 
 1. 閱讀 [`TOKEN_CORE.md`](./TOKEN_CORE.md) — 所有平台共用欄位
@@ -43,7 +51,7 @@ launch/listings/
 
 ```bash
 curl -I https://kairu.lol/logo/logo-256.png
-curl -I https://kairu.lol/logo/logo-512.png
+curl -I https://kairu.lol/logo/logo-256.png
 curl -I https://kairu.lol/logo/logo-256.png
 curl -I https://kairu.lol/token-list/ugly-deer-robinhood.tokenlist.json
 curl -I https://kairu.lol/swap

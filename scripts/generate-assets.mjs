@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
@@ -21,6 +21,29 @@ async function rasterizeCoin(outputPath, size) {
   const svg = readFileSync(COIN_SVG);
   await sharp(svg).resize(size, size).png().toFile(outputPath);
   console.log(`  ${outputPath} (${size}x${size})`);
+}
+
+async function upscaleLogo256(outputPath, size) {
+  const source = join(logoDir, "logo-256.png");
+  await sharp(source)
+    .resize(size, size, { kernel: sharp.kernel.lanczos3 })
+    .png()
+    .toFile(outputPath);
+  console.log(`  ${outputPath} (${size}x${size}, upscaled from logo-256.png)`);
+}
+
+async function syncListingAssets() {
+  const listingAssets = join(root, "launch/listings/assets");
+  mkdirSync(listingAssets, { recursive: true });
+  writeFileSync(
+    join(listingAssets, "logo-256.png"),
+    readFileSync(join(logoDir, "logo-256.png")),
+  );
+  writeFileSync(
+    join(listingAssets, "logo-512.png"),
+    readFileSync(join(logoDir, "logo-512.png")),
+  );
+  console.log("  Synced launch/listings/assets/logo-256.png + logo-512.png");
 }
 
 async function createFaviconIco(outputPath) {
@@ -53,8 +76,14 @@ async function main() {
 
   await syncLogoSvg();
 
-  await rasterizeCoin(join(logoDir, "logo-512.png"), 512);
-  await rasterizeCoin(join(logoDir, "logo-256.png"), 256);
+  // logo-256.png is the canonical PNG. logo-512.png is upscale-only (never from SVG).
+  const logo256 = join(logoDir, "logo-256.png");
+  if (!existsSync(logo256)) {
+    await rasterizeCoin(logo256, 256);
+  }
+  await upscaleLogo256(join(logoDir, "logo-512.png"), 512);
+  await syncListingAssets();
+
   await rasterizeCoin(join(iconsDir, "apple-touch-icon.png"), 180);
   await rasterizeCoin(join(imagesDir, "avatar.png"), 512);
 

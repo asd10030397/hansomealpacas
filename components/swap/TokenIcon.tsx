@@ -11,7 +11,7 @@ export function TokenIcon({ symbol, size = 40, className = "" }: TokenIconProps)
   if (symbol === "UGLY") {
     return (
       <Image
-        src={ASSETS.logo512}
+        src={ASSETS.logo}
         alt="UGLY"
         width={size}
         height={size}

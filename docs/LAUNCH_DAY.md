@@ -4,7 +4,7 @@ Official launch-day runbook for UGLY DEER on Solana.
 
 Use this document on launch day. Check items in order. Do not skip redeploy.
 
-Reference: `content/project.ts` Â· `.env.example` Â· `npm run release:check`
+Reference: `content/project.ts`  `.env.example`  `npm run release:check`
 
 ---
 
@@ -29,9 +29,9 @@ Complete before creating or publishing the token.
 | Website | Vercel dashboard ??confirm production deployment |
 | Domain | Vercel ??Settings ??Domains ??DNS verified |
 | SSL | Confirm `https://` loads without warnings |
-| X account | Avatar: `public/images/avatar.png` Â· Banner: `public/images/twitter-banner.png` |
+| X account | Avatar: `public/images/avatar.png`  Banner: `public/images/twitter-banner.png` |
 | Telegram | Banner: `public/images/telegram-banner.png` |
-| Logo | `public/logo/logo.svg` Â· `public/logo/logo-512.png` |
+| Logo | `public/logo/coin.svg`  `public/logo/logo-256.png`  `logo-512.png` (upscale) |
 | Wallet | Launch wallet funded with enough SOL for mint + fees |
 | SOL balance | Record balance: `__________` SOL |
 | Contract address | Leave blank until mint is confirmed |
@@ -60,7 +60,7 @@ Fill in at mint. Do not publish until all fields are confirmed.
 | **Mint authority** | |
 | **Freeze authority** | |
 | **Metadata** | |
-| **Logo** | `public/logo/logo-512.png` |
+| **Logo** | `public/logo/logo-256.png` (canonical), `logo-512.png` (upscale) |
 | **Description** | The ugliest deer on Solana. No filters. No apologies. |
 
 ### Token checklist
@@ -141,7 +141,7 @@ npm run release:check
 
 | Platform | Action |
 | -------- | ------ |
-| X bio | Add website + tagline: ?ˆåˆ°äº†æ’¸ç®¡ç??‚é?äº†ã€?|
+| X bio | Add website + tagline: ??????????|
 | X pin | Pin Tweet #1 (see Marketing) |
 | Telegram | Pin announcement (see Marketing) |
 | Telegram bio | Add contract + links |
@@ -157,7 +157,7 @@ Tone: short, dry, deadpan. Never over-explain.
 ```
 UGLY DEER
 
-?ˆåˆ°äº†æ’¸ç®¡ç??‚é?äº†ã€?
+??????????
 
 [website]
 ```
@@ -188,7 +188,7 @@ contract
 ```
 UGLY DEER
 
-?ˆåˆ°äº†æ’¸ç®¡ç??‚é?äº†ã€?
+??????????
 
 The ugliest deer on Solana. No filters. No apologies.
 
@@ -206,7 +206,7 @@ Chart: [chart link]
 ```
 UGLY DEER is live on Solana.
 
-?ˆåˆ°äº†æ’¸ç®¡ç??‚é?äº†ã€?
+??????????
 
 Website: [website]
 Contract: [contract address]
@@ -240,7 +240,7 @@ Submit after launch. Not all platforms index immediately.
 | Chain | Solana |
 | Contract | |
 | Website | |
-| Logo | `public/logo/logo-512.png` |
+| Logo | `public/logo/logo-256.png` (canonical), `logo-512.png` (upscale) |
 | Description | The ugliest deer on Solana. No filters. No apologies. |
 
 ---
@@ -304,11 +304,11 @@ Master launch-day checklist. All items must be complete before calling launch do
 When every box above is checked:
 
 ```
-?ˆåˆ°äº†æ’¸ç®¡ç??‚é?äº†ã€?
+??????????
 ```
 
 UGLY DEER does not apologize to launches either.
 
 ---
 
-Â© 2026 UGLY DEER
+ 2026 UGLY DEER
