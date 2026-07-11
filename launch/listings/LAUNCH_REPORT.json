@@ -1,0 +1,59 @@
+{
+  "sprint": "Launch Listing Sprint",
+  "date": "2026-07-11",
+  "token": {
+    "name": "Ugly Deer",
+    "symbol": "UGLY",
+    "contract": "0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c",
+    "chain": "Robinhood Chain",
+    "chainId": 4663
+  },
+  "preflight": {
+    "logo256": { "url": "https://kairu.lol/logo/logo-256.png", "status": 200 },
+    "swap": { "url": "https://kairu.lol/swap", "status": 200 },
+    "tokenList": { "url": "https://kairu.lol/token-list/ugly-deer-robinhood.tokenlist.json", "status": 200 },
+    "trustLogo": { "path": "launch/listings/trust-wallet/assets/0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c/logo.png", "size": "256x256", "matchesOfficial256": true },
+    "banner": { "path": "launch/listings/assets/banner-3x1.png", "size": "1500x500" }
+  },
+  "platforms": {
+    "trustWallet": {
+      "status": "awaiting_manual",
+      "forkUrl": "https://github.com/trustwallet/assets/fork",
+      "targetPath": "blockchains/robinhoodchain/assets/0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c/",
+      "prTitle": "Add UGLY (Ugly Deer) on Robinhood Chain",
+      "prBodyFile": "launch/listings/trust-wallet/PR_BODY.md",
+      "blocker": "GitHub CLI 未登入；asd10030397/assets fork 不存在；Windows 無法 checkout trustwallet/assets"
+    },
+    "geckoTerminal": {
+      "status": "awaiting_manual",
+      "submissionUrl": "https://www.geckoterminal.com/update-token-info",
+      "tokenIndexed": true,
+      "poolIndexed": true,
+      "imageUrl": null,
+      "poolUrl": "https://www.geckoterminal.com/robinhood/pools/0x7b0294d1917fb2b47417582f84b57850266c43bf77bcdc80ad39da0d94045056",
+      "formFieldsFile": "launch/listings/geckoterminal/form-fields.json"
+    },
+    "dexScreener": {
+      "status": "awaiting_manual",
+      "pairIndexed": false,
+      "apiResult": "pairs: null",
+      "searchUrl": "https://dexscreener.com/search?q=0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c",
+      "updateUrl": "https://marketplace.dexscreener.com/product/token-info",
+      "blocker": "Pair 尚未自動索引；需先產生鏈上 swap 交易",
+      "formFieldsFile": "launch/listings/dexscreener/form-fields.json"
+    },
+    "coinGecko": {
+      "status": "awaiting_manual",
+      "submissionUrl": "https://www.coingecko.com/en/coins/new",
+      "descriptionFile": "launch/listings/coingecko/description.txt",
+      "logoUpload": "launch/listings/assets/logo-512.png",
+      "logoUrl": "https://kairu.lol/logo/logo-256.png"
+    },
+    "coinMarketCap": {
+      "status": "awaiting_manual",
+      "submissionUrl": "https://coinmarketcap.com/request/",
+      "descriptionFile": "launch/listings/coinmarketcap/description.txt",
+      "logoUpload": "launch/listings/assets/logo-512.png"
+    }
+  }
+}

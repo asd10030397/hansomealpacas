@@ -58,8 +58,8 @@
 
 | 平台 | 提交日期 | Request ID / PR | 狀態 | 備註 |
 |------|----------|-----------------|------|------|
-| Trust Wallet | | | Pending | |
-| GeckoTerminal | | | Pending | |
-| DEX Screener | | | Pending | |
-| CoinGecko | | | Pending | |
-| CoinMarketCap | | | Pending | |
+| Trust Wallet | 2026-07-11 | *(待開 PR)* | **等待人工確認** | assets 已驗證；需 fork + PR（本機 Windows 無法 clone assets repo） |
+| GeckoTerminal | 2026-07-11 | — | **等待人工確認** | Token/Pool 已索引；`image_url` 為 null；需 OTP 表單 |
+| DEX Screener | 2026-07-11 | — | **等待人工確認** | API 尚未索引 pair；需 swap 後再 Update Token Info |
+| CoinGecko | 2026-07-11 | — | **等待人工確認** | 申請包已備；需官網登入提交 |
+| CoinMarketCap | 2026-07-11 | — | **等待人工確認** | 申請包已備；需 request 表單登入 |

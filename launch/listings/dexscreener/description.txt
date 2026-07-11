@@ -1,1 +1,6 @@
-UGLY DEER ($UGLY) is a community-driven meme token on Robinhood Chain (4663). Trade ETH/UGLY on kairu.lol via Uniswap v4. Zero tax. 1B supply. Official site lists contract, swap, and token list.
+Ugly Deer (UGLY) is a community-driven meme token deployed on Robinhood Chain.
+
+The project features a fully functional on-chain swap, live market dashboard, transparent tokenomics, and open-source launch infrastructure.
+
+Official Website:
+https://kairu.lol
