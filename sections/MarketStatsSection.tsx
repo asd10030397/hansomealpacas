@@ -20,16 +20,12 @@ function StatCard({ label, value, subvalue }: { label: string; value: string; su
 function ChangeBadge({ label, value }: { label: string; value: number | null }) {
   const isUp = value !== null && value > 0;
   const isDown = value !== null && value < 0;
-  const toneClass = isUp
-    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-200"
-    : isDown
-      ? "border-red-500/30 bg-red-500/10 text-red-200"
-      : "border-border bg-white/[0.02] text-muted";
+  const valueClass = isUp ? "text-emerald-400" : isDown ? "text-red-400" : "text-muted";
 
   return (
-    <div className={`rounded-xl border px-4 py-3 ${toneClass}`}>
-      <p className="text-[0.65rem] uppercase tracking-[0.22em] opacity-80">{label}</p>
-      <p className="mt-1 font-[family-name:var(--font-anton)] text-sm tracking-[0.12em]">
+    <div className="tokenomics-card flex min-h-[7.5rem] flex-col items-center justify-center rounded-2xl px-4 py-7 sm:min-h-[8rem] sm:px-5 sm:py-8">
+      <p className="text-xs font-medium uppercase tracking-[0.28em] text-gold/70 sm:text-sm">{label}</p>
+      <p className={`mt-4 text-sm font-medium tabular-nums sm:mt-5 sm:text-base ${valueClass}`}>
         {value === null ? (
           "—"
         ) : (
