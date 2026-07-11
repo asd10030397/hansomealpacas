@@ -40,10 +40,14 @@ export const en: Messages = {
     ticker: "$UGLY",
     items: [
       { label: "TICKER", value: "UGLY" },
-      { label: "SUPPLY", value: "1,000,000,000" },
-      { label: "NETWORK", value: "Robinhood Chain (Coming Soon)" },
+      { label: "SUPPLY", value: "1B", secondary: "1,000,000,000 UGLY" },
+      {
+        label: "NETWORK",
+        valueLines: ["Robinhood", "Chain"],
+        badge: "Launching Soon",
+      },
       { label: "TAX", value: "0%" },
-      { label: "LIQUIDITY", value: "Locked (Planned)" },
+      { label: "LIQUIDITY", value: "Locked", secondary: "Planned" },
     ],
   },
   buy: {

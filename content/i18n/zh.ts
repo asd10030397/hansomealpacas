@@ -40,10 +40,14 @@ export const zh: Messages = {
     ticker: "$UGLY",
     items: [
       { label: "代號", value: "UGLY" },
-      { label: "總供應量", value: "1,000,000,000" },
-      { label: "網路", value: "Robinhood Chain（即將推出）" },
+      { label: "總供應量", value: "1B", secondary: "1,000,000,000 UGLY" },
+      {
+        label: "網路",
+        valueLines: ["Robinhood", "Chain"],
+        badge: "即將推出",
+      },
       { label: "稅", value: "0%" },
-      { label: "流動性", value: "鎖倉（規劃中）" },
+      { label: "流動性", value: "鎖倉", secondary: "規劃中" },
     ],
   },
   buy: {

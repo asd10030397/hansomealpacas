@@ -12,6 +12,14 @@ export type FaqItem = {
   answer: string;
 };
 
+export type TokenomicsItem = {
+  label: string;
+  value?: string;
+  valueLines?: readonly string[];
+  secondary?: string;
+  badge?: string;
+};
+
 export type Messages = {
   locale: Locale;
   htmlLang: string;
@@ -50,7 +58,7 @@ export type Messages = {
     subtitle: string;
     tickerLabel: string;
     ticker: string;
-    items: readonly { label: string; value: string }[];
+    items: readonly TokenomicsItem[];
   };
   buy: {
     title: string;

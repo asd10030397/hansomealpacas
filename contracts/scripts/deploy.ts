@@ -23,10 +23,24 @@ async function main() {
 
   const factory = await ethers.getContractFactory("UglyDeer");
   const token = await factory.deploy(recipient);
+  const deployTx = token.deploymentTransaction();
+
+  if (!deployTx) {
+    throw new Error("Deployment transaction was not created");
+  }
+
   await token.waitForDeployment();
+  const receipt = await deployTx.wait();
+
+  if (!receipt) {
+    throw new Error("Deployment transaction receipt was not returned");
+  }
 
   const address = await token.getAddress();
   const maxSupply = await token.MAX_SUPPLY();
+  const gasUsed = receipt.gasUsed;
+  const gasPrice = receipt.gasPrice ?? deployTx.gasPrice ?? BigInt(0);
+  const deploymentCost = gasUsed * gasPrice;
 
   const record: DeploymentRecord = {
     network: network.name,
@@ -48,6 +62,11 @@ async function main() {
   console.log(`  Contract:  ${record.address}`);
   console.log(`  Recipient: ${record.recipient}`);
   console.log(`  Supply:    ${ethers.formatEther(maxSupply)} UGLY`);
+  console.log(`  Tx hash:   ${receipt.hash}`);
+  console.log(`  Block:     ${receipt.blockNumber}`);
+  console.log(`  Gas used:  ${gasUsed.toString()}`);
+  console.log(`  Gas price: ${gasPrice.toString()} wei`);
+  console.log(`  Cost:      ${ethers.formatEther(deploymentCost)} ETH`);
   console.log(`  Saved:     deployments/${network.name}.json`);
 }
 
