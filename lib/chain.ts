@@ -75,10 +75,15 @@ export function getExplorerTxUrl(txHash: string): string {
   return `${base}/tx/${txHash}`;
 }
 
-export function getUglyLogoAbsoluteUrl(origin?: string): string {
+export function getUglyLogo256Url(origin?: string): string {
   const base = (origin ?? process.env.NEXT_PUBLIC_WEBSITE ?? "https://kairu.lol").replace(
     /\/$/,
     "",
   );
-  return `${base}/logo/logo-512.png`;
+  return `${base}/logo/logo-256.png`;
+}
+
+/** @deprecated Prefer getUglyLogo256Url for wallet_watchAsset and token lists */
+export function getUglyLogoAbsoluteUrl(origin?: string): string {
+  return getUglyLogo256Url(origin);
 }

@@ -1,0 +1,16 @@
+UGLY DEER ($UGLY) is a meme coin on Robinhood Chain (chain ID 4663). It is a community-driven token with no intrinsic value or promised financial returns.
+
+Official website: https://kairu.lol
+Contract: 0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c
+
+Users can swap ETH and UGLY on kairu.lol/swap using Uniswap Universal Router against a live Uniswap v4 ETH/UGLY pool (0.05% fee).
+
+Token parameters:
+- Total supply: 1,000,000,000 UGLY
+- Decimals: 18
+- Tax: 0%
+- Standard: ERC-20
+
+The contract address is published on the official website and Blockscout explorer. Social: https://x.com/DeerloveRu
+
+This is a meme / community token. Not financial advice.

@@ -11,7 +11,7 @@ import {
   useReadContract,
   useSwitchChain,
   useWaitForTransactionReceipt,
-  useWatchAsset,
+  useWalletClient,
   useWriteContract,
 } from "wagmi";
 import { CopyButton } from "@/components/CopyButton";
@@ -21,7 +21,6 @@ import { useLocale } from "@/context/LocaleContext";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import {
   getExplorerAddressUrl,
-  getUglyLogoAbsoluteUrl,
   PERMIT2_ADDRESS,
   POOL_ID,
   ROBINHOOD_CHAIN_ID,
@@ -31,6 +30,7 @@ import {
   UNIVERSAL_ROUTER_ADDRESS,
   robinhoodChain,
 } from "@/lib/chain";
+import { requestWatchUglyAsset } from "@/lib/wallet/watchAsset";
 import { erc20Abi, permit2Abi, stateViewAbi, universalRouterAbi } from "@/lib/swap/abis";
 import { buildUniversalRouterCalldata } from "@/lib/swap/encoding";
 import { DEFAULT_SLIPPAGE_BPS, applySlippage, quoteFromPoolState } from "@/lib/swap/quote";
@@ -59,7 +59,8 @@ export function SwapCard() {
   const chainId = useChainId();
   const { connectors, connect, isPending: isConnecting, error: connectError } = useConnect();
   const { switchChain, isPending: isSwitching } = useSwitchChain();
-  const { watchAsset, isPending: isWatchingAsset } = useWatchAsset();
+  const { data: walletClient } = useWalletClient();
+  const [isWatchingAsset, setIsWatchingAsset] = useState(false);
 
   const [direction, setDirection] = useState<SwapDirection>("ethToUgly");
   const [amountIn, setAmountIn] = useState("");
@@ -308,17 +309,30 @@ export function SwapCard() {
 
   const handleWatchAsset = useCallback(async () => {
     resetTxState();
-    const logo = getUglyLogoAbsoluteUrl(window.location.origin);
-    await watchAsset({
-      type: "ERC20",
-      options: {
-        address: UGLY_TOKEN_ADDRESS,
-        symbol: "UGLY",
-        decimals: UGLY_DECIMALS,
-        image: logo,
-      },
-    });
-  }, [watchAsset, resetTxState]);
+
+    if (!walletClient) {
+      setTxPhase("failed");
+      setTxMessage(t.swap.watchAssetFailed);
+      console.warn("[UGLY] wallet_watchAsset skipped — wallet not connected");
+      return;
+    }
+
+    setIsWatchingAsset(true);
+    setTxPhase("loading");
+    setTxMessage(t.swap.addToWallet);
+
+    try {
+      const added = await requestWatchUglyAsset(walletClient);
+      setTxPhase(added ? "success" : "failed");
+      setTxMessage(added ? t.swap.watchAssetSuccess : t.swap.watchAssetRejected);
+    } catch (error) {
+      console.error("[UGLY] wallet_watchAsset failed:", error);
+      setTxPhase("failed");
+      setTxMessage(t.swap.watchAssetFailed);
+    } finally {
+      setIsWatchingAsset(false);
+    }
+  }, [walletClient, resetTxState, t.swap.addToWallet, t.swap.watchAssetFailed, t.swap.watchAssetRejected, t.swap.watchAssetSuccess]);
 
   const handleSwap = useCallback(() => {
     if (!parsedAmountIn || parsedAmountIn <= 0n || !amountOutMin) return;

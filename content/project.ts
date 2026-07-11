@@ -53,6 +53,7 @@ export const SOCIAL_PREVIEW_VERSION = 3 as const;
 export const ASSETS = {
   logo: "/logo/coin.svg",
   logo512: "/logo/logo-512.png",
+  logo256: "/logo/logo-256.png",
   faviconIco: "/favicon.ico",
   favicon16: "/icons/favicon-16x16.png",
   favicon32: "/icons/favicon-32x32.png",

@@ -1,0 +1,78 @@
+{
+  "token": {
+    "name": "Ugly Deer",
+    "displayName": "UGLY DEER",
+    "symbol": "UGLY",
+    "decimals": 18,
+    "standard": "ERC-20",
+    "totalSupply": "1000000000",
+    "totalSupplyFormatted": "1,000,000,000 UGLY",
+    "tax": "0%",
+    "category": "Meme",
+    "tags": ["meme", "community", "robinhood-chain"]
+  },
+  "chain": {
+    "name": "Robinhood Chain",
+    "shortName": "Robinhood",
+    "chainId": 4663,
+    "nativeCurrency": "ETH",
+    "rpcUrl": "https://rpc.mainnet.chain.robinhood.com",
+    "geckoTerminalNetworkSlug": "robinhood",
+    "dexScreenerChainSlug": "robinhood"
+  },
+  "contracts": {
+    "token": "0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c",
+    "treasury": "0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A",
+    "universalRouter": "0x53BF6B0684Ec7eF91e1387Da3D1a1769bC5A6F77",
+    "poolManager": "0x8366a39CC670B4001A1121B8F6A443A643e40951",
+    "stateView": "0xf3334192d15450cdd385c8b70e03f9a6bd9e673b"
+  },
+  "liquidity": {
+    "dex": "Uniswap v4",
+    "pair": "ETH/UGLY",
+    "feeTierBps": 500,
+    "feeTierLabel": "0.05%",
+    "poolId": "0x7b0294d1917fb2b47417582f84b57850266c43bf77bcdc80ad39da0d94045056",
+    "positionNftId": 39790,
+    "createPoolTx": "0x6393e2f662229ce14cd9b8149542218b00a4433085cae33fcc2eca507279e328",
+    "initialPrice": "1 ETH = 359,402,000 UGLY",
+    "swapUrl": "https://kairu.lol/swap"
+  },
+  "urls": {
+    "website": "https://kairu.lol",
+    "swap": "https://kairu.lol/swap",
+    "tokenList": "https://kairu.lol/token-list/ugly-deer-robinhood.tokenlist.json",
+    "tokenListPage": "https://kairu.lol/token-list",
+    "explorerToken": "https://robinhoodchain.blockscout.com/token/0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c",
+    "explorerContract": "https://robinhoodchain.blockscout.com/address/0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c",
+    "explorerTreasury": "https://robinhoodchain.blockscout.com/address/0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A"
+  },
+  "social": {
+    "twitter": "https://x.com/DeerloveRu",
+    "twitterHandle": "@DeerloveRu",
+    "telegram": null,
+    "discord": null,
+    "github": "https://github.com/asd10030397/KAIRU"
+  },
+  "logos": {
+    "hosted256": "https://kairu.lol/logo/logo-256.png",
+    "hosted512": "https://kairu.lol/logo/logo-512.png",
+    "tokenListLogoUri": "https://kairu.lol/logo/logo-256.png",
+    "hostedSvg": "https://kairu.lol/logo/coin.svg",
+    "local512": "launch/listings/assets/logo-512.png",
+    "local256": "launch/listings/assets/logo-256.png",
+    "trustWalletPr256": "launch/listings/trust-wallet/assets/0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c/logo.png"
+  },
+  "descriptions": {
+    "shortEn": "UGLY DEER ($UGLY) — community meme token on Robinhood Chain. Born ugly. Built different.",
+    "shortEn500": "UGLY DEER ($UGLY) is a community-driven meme token on Robinhood Chain (4663). Trade ETH/UGLY on kairu.lol via Uniswap v4. Zero tax. 1B supply. Official site lists contract, swap, and token list.",
+    "shortZh": "UGLY DEER（$UGLY）是 Robinhood Chain 上的社群迷因代幣。生來就醜，與眾不同。",
+    "longEn": "UGLY DEER ($UGLY) is a meme coin on Robinhood Chain. The project centers on community culture — no promised returns, no complex utility claims. Users can swap ETH and UGLY on the official website (kairu.lol/swap) through Uniswap Universal Router against the production v4 liquidity pool. Total supply: 1,000,000,000 UGLY. Decimals: 18. Tax: 0%. Contract is published on the official website and Blockscout explorer."
+  },
+  "metadata": {
+    "tokenJson": "https://kairu.lol (see launch/metadata/token.json in repo)",
+    "whitepaper": null,
+    "audit": null,
+    "launchDate": "2026-07-11"
+  }
+}

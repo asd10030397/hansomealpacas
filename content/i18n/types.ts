@@ -85,6 +85,9 @@ export type Messages = {
     approveUgly: string;
     approveRouter: string;
     addToWallet: string;
+    watchAssetSuccess: string;
+    watchAssetFailed: string;
+    watchAssetRejected: string;
     viewOnBlockscout: string;
     viewTx: string;
     network: string;

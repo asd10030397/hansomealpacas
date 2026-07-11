@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ASSETS, PROJECT } from "@/content/project";
-import { TOKEN_LIST_URL, UGLY_TOKEN_ADDRESS, getUglyLogoAbsoluteUrl, robinhoodChain } from "@/lib/chain";
+import { TOKEN_LIST_URL, UGLY_TOKEN_ADDRESS, getUglyLogo256Url, robinhoodChain } from "@/lib/chain";
 
 export const metadata = {
   title: `Token List | ${PROJECT.name}`,
@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function TokenListPage() {
   const listJsonPath = "/token-list/ugly-deer-robinhood.tokenlist.json";
-  const logoUri = getUglyLogoAbsoluteUrl();
+  const logoUri = getUglyLogo256Url();
 
   return (
     <main id="main-content" className="relative min-h-screen overflow-hidden px-6 pb-20 pt-16">

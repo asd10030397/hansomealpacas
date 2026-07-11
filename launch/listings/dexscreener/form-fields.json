@@ -1,0 +1,20 @@
+{
+  "chain": "robinhood",
+  "chainId": 4663,
+  "tokenAddress": "0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c",
+  "links": {
+    "website": "https://kairu.lol",
+    "swap": "https://kairu.lol/swap",
+    "documentation": "https://kairu.lol/token-list",
+    "twitter": "https://x.com/DeerloveRu",
+    "telegram": "",
+    "discord": "",
+    "explorer": "https://robinhoodchain.blockscout.com/token/0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c",
+    "github": "https://github.com/asd10030397/KAIRU"
+  },
+  "uploads": {
+    "tokenIcon": "../assets/logo-256.png",
+    "tokenHeader": "../assets/banner-3x1.png"
+  },
+  "descriptionFile": "description.txt"
+}
