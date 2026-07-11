@@ -18,7 +18,7 @@ export function AboutSection() {
       <Section ariaLabelledBy="about-title" className="flex flex-col items-center py-0 text-center">
         <h2
           id="about-title"
-          className="font-[family-name:var(--font-anton)] text-[clamp(2rem,6vw,3.75rem)] tracking-[0.1em] text-foreground"
+          className="font-[family-name:var(--font-anton)] text-[clamp(2.5rem,7vw,5rem)] tracking-[0.08em] text-foreground"
         >
           {t.about.title}
         </h2>

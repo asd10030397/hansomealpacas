@@ -28,7 +28,7 @@ const notoSansTC = Noto_Sans_TC({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#090909",
+  themeColor: "#070707",
   colorScheme: "dark",
   width: "device-width",
   initialScale: 1,

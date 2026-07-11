@@ -20,11 +20,30 @@ export const en: Messages = {
     shareDevice: "Share via device",
   },
   hero: {
+    eyebrow: "SOLANA MEME COIN",
     tagline: "Beauty is overrated.",
     buy: "BUY",
     chart: "CHART",
     x: "X",
     telegram: "TELEGRAM",
+    website: "WEBSITE",
+  },
+  tokenomics: {
+    eyebrow: "TOKENOMICS",
+    title: "TOKENOMICS",
+    subtitle: "Simple supply. No hidden games. Just ugly deer energy.",
+    items: [
+      { label: "TOTAL SUPPLY", value: "1B UGLY" },
+      { label: "CHAIN", value: "SOLANA" },
+      { label: "TAX", value: "0%" },
+      { label: "LIQUIDITY", value: "LOCKED" },
+    ],
+  },
+  buy: {
+    title: "BUY $UGLY",
+    subtitle: "The ugliest entry point on Solana. Launching soon.",
+    cta: "BUY $UGLY",
+    comingSoon: "COMING SOON",
   },
   about: {
     title: "WHO IS UGLY DEER?",
@@ -126,7 +145,11 @@ export const en: Messages = {
     ],
   },
   contract: {
-    title: "CONTRACT",
+    eyebrow: "CONTRACT",
+    title: "CONTRACT ADDRESS",
+    subtitle: "Verify the official CA here before you buy. Only trust this page.",
+    addressLabel: "OFFICIAL CA",
+    placeholder: "Coming Soon — contract not deployed yet",
     comingSoon: "Coming Soon",
     copied: "COPIED",
     copy: "COPY",
@@ -139,5 +162,7 @@ export const en: Messages = {
   footer: {
     tagline: "Beauty is overrated.",
     copyright: "© 2026 UGLY DEER",
+    disclaimer:
+      "UGLY DEER ($UGLY) is a meme coin with no intrinsic value or expectation of financial return. This website is for entertainment only and does not constitute financial, investment, or legal advice. Cryptocurrency is highly volatile. Do your own research. Never invest more than you can afford to lose.",
   },
 };

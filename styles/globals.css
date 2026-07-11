@@ -1,10 +1,14 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #090909;
+  --color-background: #070707;
   --color-foreground: #fafafa;
-  --color-muted: #6b6b6b;
+  --color-muted: #8a8a8a;
   --color-border: #2a2a2a;
+  --color-gold: #d4af37;
+  --color-gold-light: #f5d061;
+  --color-gold-dark: #8b6914;
+  --color-gold-muted: #c9a227;
   --font-title: var(--font-anton);
   --font-body: var(--font-noto-sans-tc);
 }
@@ -28,12 +32,12 @@ body {
 }
 
 ::selection {
-  background-color: var(--color-foreground);
+  background-color: var(--color-gold);
   color: var(--color-background);
 }
 
 :focus-visible {
-  outline: 1px solid var(--color-foreground);
+  outline: 1px solid var(--color-gold-light);
   outline-offset: 3px;
 }
 
@@ -47,4 +51,95 @@ body {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+.gold-text {
+  background: linear-gradient(
+    135deg,
+    var(--color-gold-dark) 0%,
+    var(--color-gold-light) 45%,
+    var(--color-gold) 55%,
+    var(--color-gold-dark) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gold-border {
+  border: 1px solid color-mix(in srgb, var(--color-gold) 35%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-gold) 8%, transparent),
+    0 8px 32px color-mix(in srgb, var(--color-gold) 12%, transparent);
+}
+
+.gold-glow-bg {
+  background: radial-gradient(
+    ellipse 80% 50% at 50% 0%,
+    color-mix(in srgb, var(--color-gold) 18%, transparent),
+    transparent 70%
+  );
+}
+
+@keyframes coin-spin {
+  0% {
+    transform: rotateY(0deg) rotateX(8deg);
+  }
+  100% {
+    transform: rotateY(360deg) rotateX(8deg);
+  }
+}
+
+@keyframes coin-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+@keyframes particle-drift {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+    opacity: 0.15;
+  }
+  50% {
+    transform: translateY(-28px) translateX(8px);
+    opacity: 0.55;
+  }
+}
+
+.coin-scene {
+  perspective: 1200px;
+}
+
+.coin-spin {
+  animation: coin-spin 10s linear infinite;
+  transform-style: preserve-3d;
+}
+
+.coin-float {
+  animation: coin-float 5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coin-spin,
+  .coin-float {
+    animation: none;
+  }
+}
+
+.particle {
+  animation: particle-drift var(--drift-duration, 6s) ease-in-out infinite;
+  animation-delay: var(--drift-delay, 0s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .particle {
+    animation: none;
+    opacity: 0.25;
+  }
 }

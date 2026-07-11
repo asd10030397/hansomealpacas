@@ -3,11 +3,13 @@
 import { m, useReducedMotion } from "framer-motion";
 import { ActionButton } from "@/components/ActionButton";
 import { EasterEggOverlay } from "@/components/EasterEggOverlay";
-import { Mascot } from "@/components/Mascot";
+import { FloatingParticles } from "@/components/FloatingParticles";
+import { GoldCoin } from "@/components/GoldCoin";
+import { SocialBar } from "@/components/SocialBar";
 import { PROJECT } from "@/content/project";
 import { useLocale } from "@/context/LocaleContext";
 import { useUglyDeerEasterEgg } from "@/hooks/useUglyDeerEasterEgg";
-import { getHeroActions } from "@/lib/launch";
+import { getBuySectionState, getHeroActions } from "@/lib/launch";
 import { EASE } from "@/lib/motion";
 
 export function HeroSection() {
@@ -15,26 +17,22 @@ export function HeroSection() {
   const { t } = useLocale();
   const { active, handleMascotClick, fadeMs } = useUglyDeerEasterEgg();
   const actions = getHeroActions();
+  const buy = getBuySectionState();
 
   const navItems = [
-    actions.buy.show ? (
-      <ActionButton key="buy" href={actions.buy.href} disabled={actions.buy.disabled}>
-        {t.hero.buy}
+    buy.comingSoon || buy.href ? (
+      <ActionButton
+        key="buy"
+        href={buy.href}
+        disabled={buy.comingSoon}
+        variant="gold"
+      >
+        {t.buy.cta}
       </ActionButton>
     ) : null,
     actions.chart.show ? (
       <ActionButton key="chart" href={actions.chart.href}>
         {t.hero.chart}
-      </ActionButton>
-    ) : null,
-    actions.twitter.show ? (
-      <ActionButton key="x" href={actions.twitter.href}>
-        {t.hero.x}
-      </ActionButton>
-    ) : null,
-    actions.telegram.show ? (
-      <ActionButton key="telegram" href={actions.telegram.href}>
-        {t.hero.telegram}
       </ActionButton>
     ) : null,
   ].filter(Boolean);
@@ -43,37 +41,40 @@ export function HeroSection() {
     <>
       <section
         aria-labelledby="hero-title"
-        className="flex min-h-[100dvh] flex-col items-center justify-center px-6 pb-24 pt-16 text-center"
+        className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-6 pb-20 pt-20 text-center sm:pb-28 sm:pt-24"
       >
+        <div aria-hidden="true" className="gold-glow-bg pointer-events-none absolute inset-0" />
+        <FloatingParticles />
+
         <m.div
-          initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
+          initial={{ opacity: 0, y: reduceMotion ? 0 : 32 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduceMotion ? 0 : 0.8, ease: EASE }}
-          className="flex flex-col items-center"
+          transition={{ duration: reduceMotion ? 0 : 0.9, ease: EASE }}
+          className="relative z-10 flex w-full max-w-6xl flex-col items-center"
         >
-          <Mascot
-            floating={!reduceMotion}
-            interactive
-            onClick={handleMascotClick}
-            alt={t.a11y.mascotAlt}
-            className="mb-12 h-64 w-64 sm:mb-16 sm:h-72 sm:w-72 md:mb-20 md:h-80 md:w-80"
-          />
+          <GoldCoin interactive onClick={handleMascotClick} className="mb-6 sm:mb-10" />
+
+          <p className="font-[family-name:var(--font-anton)] text-xs tracking-[0.45em] text-gold sm:text-sm">
+            {t.hero.eyebrow}
+          </p>
 
           <h1
             id="hero-title"
-            className="font-[family-name:var(--font-anton)] text-[clamp(3.5rem,12vw,9rem)] leading-none tracking-[0.06em] text-foreground"
+            className="mt-4 font-[family-name:var(--font-anton)] text-[clamp(3.75rem,14vw,10rem)] leading-[0.92] tracking-[0.04em] text-foreground sm:mt-5"
           >
             {PROJECT.name}
           </h1>
 
-          <p className="mt-5 text-base text-muted sm:mt-7 sm:text-xl md:text-2xl">
+          <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted sm:mt-8 sm:text-2xl md:text-3xl">
             {t.hero.tagline}
           </p>
+
+          <SocialBar className="mt-10 sm:mt-12" />
 
           {navItems.length > 0 && (
             <nav
               aria-label={t.a11y.primaryLinks}
-              className="mt-14 flex flex-wrap items-center justify-center gap-3 sm:mt-16 sm:gap-4"
+              className="mt-10 flex flex-wrap items-center justify-center gap-3 sm:mt-12 sm:gap-4"
             >
               {navItems}
             </nav>

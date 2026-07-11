@@ -43,10 +43,24 @@ export function getShareState() {
 }
 
 export function getFooterLinks() {
+  return getSocialLinks();
+}
+
+export function getSocialLinks() {
   const links = getProjectLinks();
 
   return {
-    twitter: links.twitter,
-    telegram: links.telegram,
+    twitter: links.twitter ?? "https://x.com/UglyDeerSol",
+    telegram: links.telegram ?? "#",
+    website: links.website ?? "https://kairu.lol",
+  };
+}
+
+export function getBuySectionState() {
+  const links = getProjectLinks();
+
+  return {
+    href: links.isBuyEnabled ? links.buy : undefined,
+    comingSoon: !links.isBuyEnabled,
   };
 }

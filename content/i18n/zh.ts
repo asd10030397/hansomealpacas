@@ -20,11 +20,30 @@ export const zh: Messages = {
     shareDevice: "分享",
   },
   hero: {
+    eyebrow: "SOLANA 迷因幣",
     tagline: "丑，也是一種美。",
     buy: "BUY",
     chart: "CHART",
     x: "X",
     telegram: "TELEGRAM",
+    website: "官網",
+  },
+  tokenomics: {
+    eyebrow: "TOKENOMICS",
+    title: "代幣經濟",
+    subtitle: "供應簡單。沒有花招。只有醜鹿能量。",
+    items: [
+      { label: "總供應量", value: "10 億 UGLY" },
+      { label: "鏈", value: "SOLANA" },
+      { label: "稅", value: "0%" },
+      { label: "流動性", value: "鎖倉" },
+    ],
+  },
+  buy: {
+    title: "購買 $UGLY",
+    subtitle: "Solana 上最醜的入場券。即將上線。",
+    cta: "BUY $UGLY",
+    comingSoon: "即將推出",
   },
   about: {
     title: "WHO IS UGLY DEER?",
@@ -116,7 +135,11 @@ export const zh: Messages = {
     ],
   },
   contract: {
-    title: "CONTRACT",
+    eyebrow: "CONTRACT",
+    title: "合約地址",
+    subtitle: "購買前請在此確認官方 CA。只信任本頁資訊。",
+    addressLabel: "官方 CA",
+    placeholder: "即將推出 — 合約尚未部署",
     comingSoon: "即將推出",
     copied: "COPIED",
     copy: "COPY",
@@ -129,5 +152,7 @@ export const zh: Messages = {
   footer: {
     tagline: "丑，也是一種美。",
     copyright: "© 2026 UGLY DEER",
+    disclaimer:
+      "UGLY DEER（$UGLY）為迷因代幣，沒有內在價值，也不保證任何財務回報。本網站僅供娛樂，不構成投資、財務或法律建議。加密貨幣波動極大，請自行研究，切勿投入無法承受損失的資金。",
   },
 };

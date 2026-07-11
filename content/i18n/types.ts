@@ -58,11 +58,25 @@ export type Messages = {
     shareDevice: string;
   };
   hero: {
+    eyebrow: string;
     tagline: string;
     buy: string;
     chart: string;
     x: string;
     telegram: string;
+    website: string;
+  };
+  tokenomics: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    items: readonly { label: string; value: string }[];
+  };
+  buy: {
+    title: string;
+    subtitle: string;
+    cta: string;
+    comingSoon: string;
   };
   about: {
     title: string;
@@ -107,7 +121,11 @@ export type Messages = {
     items: readonly DeerTrailItemCopy[];
   };
   contract: {
+    eyebrow: string;
     title: string;
+    subtitle: string;
+    addressLabel: string;
+    placeholder: string;
     comingSoon: string;
     copied: string;
     copy: string;
@@ -120,5 +138,6 @@ export type Messages = {
   footer: {
     tagline: string;
     copyright: string;
+    disclaimer: string;
   };
 };
