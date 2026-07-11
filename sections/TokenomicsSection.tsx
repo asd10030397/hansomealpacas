@@ -3,6 +3,7 @@
 import { FadeIn } from "@/components/FadeIn";
 import { Section } from "@/components/Section";
 import { useLocale } from "@/context/LocaleContext";
+import { getLiveStatusState } from "@/lib/launch";
 import type { TokenomicsItem } from "@/content/i18n/types";
 
 const labelClassName =
@@ -76,6 +77,13 @@ function TokenomicsCard({ item }: { item: TokenomicsItem }) {
 
 export function TokenomicsSection() {
   const { t } = useLocale();
+  const { isLive } = getLiveStatusState();
+
+  const items = t.tokenomics.items.map((item) =>
+    item.variant === "network" && isLive
+      ? { ...item, badge: t.liveStatus.statusLive }
+      : item,
+  );
 
   return (
     <FadeIn as="section" id="tokenomics">
@@ -101,7 +109,7 @@ export function TokenomicsSection() {
         </div>
 
         <div className="mt-14 grid w-full max-w-5xl grid-cols-1 gap-4 sm:mt-16 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-5">
-          {t.tokenomics.items.map((item) => (
+          {items.map((item) => (
             <TokenomicsCard key={item.label} item={item} />
           ))}
         </div>
