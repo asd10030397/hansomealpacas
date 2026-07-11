@@ -57,12 +57,12 @@ function TokenomicsCard({ item }: { item: TokenomicsItem }) {
           ))}
         </div>
       ) : (
-        <div className={isTicker ? "w-full px-3 sm:px-4" : "w-full"}>
+        <div className={isTicker ? "w-full px-4 sm:px-5" : "w-full"}>
           <p
-            className={`mt-8 whitespace-nowrap text-center font-medium tabular-nums leading-none tracking-[-0.02em] text-foreground sm:mt-9 ${
+            className={`mt-8 whitespace-nowrap text-center font-medium tabular-nums leading-none text-foreground sm:mt-9 ${
               isTicker
-                ? "text-[clamp(1.4rem,2.9vw,2.05rem)]"
-                : "text-[clamp(1.75rem,3.6vw,2.5rem)]"
+                ? "text-[clamp(1.2rem,2.5vw,1.8rem)] tracking-[0.08em]"
+                : "text-[clamp(1.75rem,3.6vw,2.5rem)] tracking-[-0.02em]"
             }`}
           >
             {item.value}
