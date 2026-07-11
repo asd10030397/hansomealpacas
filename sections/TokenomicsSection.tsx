@@ -11,7 +11,7 @@ const labelClassName =
 
 function NetworkTokenomicsCard({ item }: { item: TokenomicsItem }) {
   return (
-    <div className="tokenomics-card flex h-full min-h-[12rem] min-w-0 flex-col items-center justify-center rounded-2xl px-4 py-11 font-[family-name:var(--font-noto-sans-tc)] sm:min-h-[13rem] sm:px-5 sm:py-12">
+    <div className="tokenomics-card flex h-full min-h-[12rem] min-w-0 flex-col items-center justify-start rounded-2xl px-4 py-11 font-[family-name:var(--font-noto-sans-tc)] sm:min-h-[13rem] sm:px-5 sm:py-12">
       <p className={labelClassName}>{item.label}</p>
 
       <div className="mt-8 flex w-full min-w-0 flex-col items-center sm:mt-9">
@@ -43,7 +43,7 @@ function NetworkTokenomicsCard({ item }: { item: TokenomicsItem }) {
  */
 function TickerTokenomicsCard({ item }: { item: TokenomicsItem }) {
   return (
-    <div className="tokenomics-card flex h-full min-h-[12rem] flex-col items-center justify-center rounded-2xl px-5 py-11 font-[family-name:var(--font-noto-sans-tc)] sm:min-h-[13rem] sm:px-6 sm:py-12">
+    <div className="tokenomics-card flex h-full min-h-[12rem] flex-col items-center justify-start rounded-2xl px-5 py-11 font-[family-name:var(--font-noto-sans-tc)] sm:min-h-[13rem] sm:px-6 sm:py-12">
       <p className={labelClassName}>{item.label}</p>
 
       <div className="mt-8 flex w-full items-center justify-center px-5 sm:mt-9">
@@ -65,7 +65,7 @@ function TokenomicsCard({ item }: { item: TokenomicsItem }) {
   }
 
   return (
-    <div className="tokenomics-card flex h-full min-h-[12rem] flex-col items-center justify-center rounded-2xl px-5 py-11 font-[family-name:var(--font-noto-sans-tc)] sm:min-h-[13rem] sm:px-6 sm:py-12">
+    <div className="tokenomics-card flex h-full min-h-[12rem] flex-col items-center justify-start rounded-2xl px-5 py-11 font-[family-name:var(--font-noto-sans-tc)] sm:min-h-[13rem] sm:px-6 sm:py-12">
       <p className={labelClassName}>{item.label}</p>
 
       {item.valueLines ? (
