@@ -39,7 +39,7 @@ export const OFFICIAL_WALLETS: readonly OfficialWallet[] = [
     emoji: "💧",
     title: "Liquidity Wallet",
     purpose: "Official Uniswap v4 liquidity management.",
-    allocation: "Official Liquidity Position — 50,000,000 HANSOME + 0.075 ETH",
+    allocation: "Locked LP — 50,000,000 HANSOME + 0.075 ETH",
     address: "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
     explorerUrl:
       "https://robinhoodchain.blockscout.com/address/0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
@@ -54,7 +54,7 @@ export const OFFICIAL_WALLETS: readonly OfficialWallet[] = [
     title: "Treasury",
     purpose:
       "Treasury, ecosystem growth, partnerships, future liquidity, marketing and development.",
-    allocation: "950,000,000 HANSOME (95%)",
+    allocation: "900,000,000 HANSOME (90%)",
     address: "0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A",
     explorerUrl:
       "https://robinhoodchain.blockscout.com/address/0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A",
