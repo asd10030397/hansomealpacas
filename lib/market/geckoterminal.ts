@@ -13,6 +13,8 @@ type GeckoTxWindow = {
 };
 
 type GeckoPoolAttributes = {
+  base_token_price_usd?: string;
+  base_token_price_native_currency?: string;
   quote_token_price_usd?: string;
   quote_token_price_native_currency?: string;
   token_price_usd?: string;
@@ -39,6 +41,7 @@ type GeckoIncluded = {
 type GeckoPoolResource = {
   attributes: GeckoPoolAttributes;
   relationships?: {
+    base_token?: { data?: { id?: string } };
     quote_token?: { data?: { id?: string } };
   };
 };
@@ -72,13 +75,14 @@ function normalizeAddress(address: string | undefined): string {
   return (address ?? "").toLowerCase();
 }
 
-function findQuoteToken(
+function findRelatedToken(
   pool: GeckoPoolResource,
   included: GeckoIncluded[] | undefined,
+  role: "base_token" | "quote_token",
 ): GeckoTokenAttributes | null {
-  const quoteId = pool.relationships?.quote_token?.data?.id;
-  if (!quoteId || !included?.length) return null;
-  const match = included.find((item) => item.id === quoteId && item.type === "token");
+  const tokenId = pool.relationships?.[role]?.data?.id;
+  if (!tokenId || !included?.length) return null;
+  const match = included.find((item) => item.id === tokenId && item.type === "token");
   return match?.attributes ?? null;
 }
 
@@ -117,9 +121,16 @@ export async function fetchGeckoTerminalPoolStats(): Promise<GeckoMarketStats> {
     throw new Error("GeckoTerminal response missing pool attributes");
   }
 
-  const quoteToken = findQuoteToken(poolJson.data, poolJson.included);
-  if (normalizeAddress(quoteToken?.address) !== normalizeAddress(TOKEN_ADDRESS)) {
-    throw new Error("GeckoTerminal pool quote token is not HANSOME");
+  // HANSOME can be either side of the pair depending on how GeckoTerminal
+  // orders the pool (e.g. it may list HANSOME as base_token with WETH as
+  // quote_token, or vice versa) — check both instead of assuming one side.
+  const baseToken = findRelatedToken(poolJson.data, poolJson.included, "base_token");
+  const quoteToken = findRelatedToken(poolJson.data, poolJson.included, "quote_token");
+  const hansomeIsBase = normalizeAddress(baseToken?.address) === normalizeAddress(TOKEN_ADDRESS);
+  const hansomeIsQuote = normalizeAddress(quoteToken?.address) === normalizeAddress(TOKEN_ADDRESS);
+
+  if (!hansomeIsBase && !hansomeIsQuote) {
+    throw new Error("GeckoTerminal pool does not contain the HANSOME token");
   }
 
   const tokenPool = tokenPoolsJson.data.find(
@@ -127,8 +138,12 @@ export async function fetchGeckoTerminalPoolStats(): Promise<GeckoMarketStats> {
   );
   const tokenAttrs = tokenPool?.attributes;
 
-  const priceUsd = parseNum(attrs.quote_token_price_usd ?? tokenAttrs?.token_price_usd);
-  const priceEth = parseNum(attrs.quote_token_price_native_currency);
+  const priceUsd = hansomeIsBase
+    ? parseNum(attrs.base_token_price_usd ?? tokenAttrs?.token_price_usd)
+    : parseNum(attrs.quote_token_price_usd ?? tokenAttrs?.token_price_usd);
+  const priceEth = hansomeIsBase
+    ? parseNum(attrs.base_token_price_native_currency)
+    : parseNum(attrs.quote_token_price_native_currency);
 
   if (priceUsd <= 0) {
     throw new Error("GeckoTerminal returned invalid HANSOME price");

@@ -4,7 +4,8 @@ export const SNAPSHOT_INTERVAL_MS = 5 * 60 * 1000;
 export const SNAPSHOT_RETENTION_MS = 7 * 24 * 60 * 60 * 1000;
 export const MARKET_REFRESH_MS = 30 * 1000;
 
-export const TOKEN_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT ?? "";
+export const TOKEN_ADDRESS =
+  process.env.NEXT_PUBLIC_CONTRACT ?? "0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875";
 
 /**
  * HANSOME/ETH Uniswap v4 pool on Robinhood Chain via GeckoTerminal.
