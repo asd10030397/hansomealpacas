@@ -1,4 +1,9 @@
-import { GECKO_TERMINAL_POOL_API } from "@/lib/market/constants";
+import {
+  GECKO_TERMINAL_POOL_API,
+  GECKO_TERMINAL_POOL_ID,
+  GECKO_TERMINAL_UGLY_POOLS_API,
+  UGLY_TOKEN_ADDRESS,
+} from "@/lib/market/constants";
 
 type GeckoTxWindow = {
   buys: number | null;
@@ -8,19 +13,43 @@ type GeckoTxWindow = {
 };
 
 type GeckoPoolAttributes = {
-  quote_token_price_usd: string;
-  quote_token_price_native_currency: string;
-  pool_name: string;
-  price_change_percentage: Record<string, string>;
-  volume_usd: Record<string, string>;
-  reserve_in_usd: string;
-  transactions: Record<string, GeckoTxWindow>;
+  quote_token_price_usd?: string;
+  quote_token_price_native_currency?: string;
+  token_price_usd?: string;
+  pool_name?: string;
+  name?: string;
+  address?: string;
+  price_change_percentage?: Record<string, string>;
+  volume_usd?: Record<string, string>;
+  reserve_in_usd?: string;
+  transactions?: Record<string, GeckoTxWindow>;
+};
+
+type GeckoTokenAttributes = {
+  address?: string;
+  symbol?: string;
+};
+
+type GeckoIncluded = {
+  id: string;
+  type: string;
+  attributes: GeckoTokenAttributes;
+};
+
+type GeckoPoolResource = {
+  attributes: GeckoPoolAttributes;
+  relationships?: {
+    quote_token?: { data?: { id?: string } };
+  };
+};
+
+type GeckoPoolListResponse = {
+  data: GeckoPoolResource[];
 };
 
 type GeckoPoolResponse = {
-  data: {
-    attributes: GeckoPoolAttributes;
-  };
+  data: GeckoPoolResource;
+  included?: GeckoIncluded[];
 };
 
 function parseNum(value: string | undefined): number {
@@ -39,6 +68,33 @@ function parseTxWindow(raw: GeckoTxWindow | undefined): GeckoTxWindow | null {
   };
 }
 
+function normalizeAddress(address: string | undefined): string {
+  return (address ?? "").toLowerCase();
+}
+
+function findQuoteToken(
+  pool: GeckoPoolResource,
+  included: GeckoIncluded[] | undefined,
+): GeckoTokenAttributes | null {
+  const quoteId = pool.relationships?.quote_token?.data?.id;
+  if (!quoteId || !included?.length) return null;
+  const match = included.find((item) => item.id === quoteId && item.type === "token");
+  return match?.attributes ?? null;
+}
+
+async function fetchJson<T>(url: string): Promise<T> {
+  const response = await fetch(url, {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error(`GeckoTerminal HTTP ${response.status}`);
+  }
+
+  return (await response.json()) as T;
+}
+
 export type GeckoMarketStats = {
   updatedAt: number;
   poolName: string;
@@ -51,41 +107,45 @@ export type GeckoMarketStats = {
 };
 
 export async function fetchGeckoTerminalPoolStats(): Promise<GeckoMarketStats> {
-  const response = await fetch(GECKO_TERMINAL_POOL_API, {
-    headers: { Accept: "application/json" },
-    cache: "no-store",
-  });
+  const [poolJson, uglyPoolsJson] = await Promise.all([
+    fetchJson<GeckoPoolResponse>(GECKO_TERMINAL_POOL_API),
+    fetchJson<GeckoPoolListResponse>(GECKO_TERMINAL_UGLY_POOLS_API),
+  ]);
 
-  if (!response.ok) {
-    throw new Error(`GeckoTerminal HTTP ${response.status}`);
-  }
-
-  const json = (await response.json()) as GeckoPoolResponse;
-  const attrs = json.data?.attributes;
-
+  const attrs = poolJson.data?.attributes;
   if (!attrs) {
     throw new Error("GeckoTerminal response missing pool attributes");
   }
 
-  const priceUsd = parseNum(attrs.quote_token_price_usd);
+  const quoteToken = findQuoteToken(poolJson.data, poolJson.included);
+  if (normalizeAddress(quoteToken?.address) !== normalizeAddress(UGLY_TOKEN_ADDRESS)) {
+    throw new Error("GeckoTerminal pool quote token is not UGLY");
+  }
+
+  const uglyPool = uglyPoolsJson.data.find(
+    (pool) => normalizeAddress(pool.attributes.address) === normalizeAddress(GECKO_TERMINAL_POOL_ID),
+  );
+  const uglyAttrs = uglyPool?.attributes;
+
+  const priceUsd = parseNum(attrs.quote_token_price_usd ?? uglyAttrs?.token_price_usd);
   const priceEth = parseNum(attrs.quote_token_price_native_currency);
 
   if (priceUsd <= 0) {
     throw new Error("GeckoTerminal returned invalid UGLY price");
   }
 
-  const changeRaw = attrs.price_change_percentage?.h24;
+  const changeRaw = uglyAttrs?.price_change_percentage?.h24;
   const changeParsed = changeRaw !== undefined ? Number(changeRaw) : NaN;
   const change24h = Number.isFinite(changeParsed) ? changeParsed : null;
 
   return {
     updatedAt: Date.now(),
-    poolName: attrs.pool_name ?? "WETH / UGLY",
+    poolName: attrs.pool_name ?? attrs.name ?? "WETH / UGLY",
     priceUsd,
     priceEth,
     change24h,
     volume24hUsd: parseNum(attrs.volume_usd?.h24),
     liquidityUsd: parseNum(attrs.reserve_in_usd),
-    transactions24h: parseTxWindow(attrs.transactions?.h24),
+    transactions24h: parseTxWindow(uglyAttrs?.transactions?.h24 ?? attrs.transactions?.h24),
   };
 }
