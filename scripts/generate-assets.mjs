@@ -87,6 +87,9 @@ async function main() {
   await rasterizeCoin(join(iconsDir, "apple-touch-icon.png"), 180);
   await rasterizeCoin(join(imagesDir, "avatar.png"), 512);
 
+  // CoinMarketCap / listing-site token logo spec: PNG, 200x200, transparent corners.
+  await rasterizeCoin(join(publicDir, "logo.png"), 200);
+
   await createFaviconIco(join(publicDir, "favicon.ico"));
 
   console.log("  Premium social previews (1200x630)...");
