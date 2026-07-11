@@ -11,10 +11,14 @@
     "release:check": "node scripts/release-check.mjs"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.101.2",
+    "@uniswap/v3-sdk": "^3.31.0",
     "framer-motion": "^12.23.12",
     "next": "^15.5.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "viem": "^2.55.0",
+    "wagmi": "^3.7.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",

@@ -8,12 +8,18 @@ All paths refer to files in `public/` on the live site unless noted.
 
 | Asset | Path | Size | Format | Used for |
 | ----- | ---- | ---- | ------ | -------- |
-| Logo (primary) | `/logo/logo-512.png` | 512×512 | PNG | `token.json` → `image` |
+| Logo (primary) | `/logo/logo-512.png` | 512×512 | PNG | Uniswap token list `logoURI`, TKN, DeBank |
+| Logo (wallet PR) | `/logo/logo-256.png` | 256×256 | PNG | Trust Wallet / GitHub assets PR |
 | Logo (vector) | `/logo/logo.svg` | scalable | SVG | `properties.files`, site |
 | Favicon | `/icons/favicon.png` | 32×32 | PNG | Site tab (not token.json) |
 | Avatar | `/images/avatar.png` | — | PNG | Apple touch icon, social |
 
-**Production URL (primary):** https://kairu.lol/logo/logo-512.png
+**Production URLs:**
+- https://kairu.lol/logo/logo-512.png
+- https://kairu.lol/logo/logo-256.png
+- https://kairu.lol/token-list/ugly-deer-robinhood.tokenlist.json
+
+See [launch/token-list/SUBMISSION_GUIDE.md](../token-list/SUBMISSION_GUIDE.md) for wallet/explorer submission steps.
 
 Requirements before metadata upload:
 

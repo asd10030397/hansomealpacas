@@ -68,6 +68,37 @@ export type Messages = {
     launchingSoon: string;
     comingSoon: string;
   };
+  swap: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    backHome: string;
+    connectWallet: string;
+    switchNetwork: string;
+    youPay: string;
+    youReceive: string;
+    balance: string;
+    slippage: string;
+    flipDirection: string;
+    swap: string;
+    swapping: string;
+    approveUgly: string;
+    approveRouter: string;
+    addToWallet: string;
+    viewOnBlockscout: string;
+    viewTx: string;
+    network: string;
+    status: {
+      loading: string;
+      success: string;
+      failed: string;
+      confirming: string;
+      approvingToken: string;
+      approvingPermit2: string;
+      swapping: string;
+      swapComplete: string;
+    };
+  };
   about: {
     title: string;
     subtitle: string;
@@ -112,6 +143,24 @@ export type Messages = {
     liquidity: string;
     marketCap: string;
     comingSoon: string;
+  };
+  market: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    loading: string;
+    error: string;
+    spotPrice: string;
+    marketCap: string;
+    liquidity: string;
+    tvl: string;
+    priceEth: string;
+    priceUsd: string;
+    change1h: string;
+    change24h: string;
+    change7d: string;
+    liveRefresh: string;
+    historyBuilding: string;
   };
   footer: {
     tagline: string;

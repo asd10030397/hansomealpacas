@@ -1,0 +1,28 @@
+{
+  "name": "UGLY DEER Robinhood Chain",
+  "timestamp": "2026-07-11T06:00:00.000Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "logoURI": "https://kairu.lol/logo/logo-512.png",
+  "keywords": ["ugly", "ugly deer", "meme", "robinhood", "robinhood chain"],
+  "tags": {},
+  "tokens": [
+    {
+      "name": "Ugly Deer",
+      "address": "0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c",
+      "symbol": "UGLY",
+      "decimals": 18,
+      "chainId": 4663,
+      "logoURI": "https://kairu.lol/logo/logo-512.png",
+      "tags": ["meme"],
+      "extensions": {
+        "website": "https://kairu.lol",
+        "twitter": "https://x.com/DeerloveRu",
+        "description": "UGLY DEER ($UGLY) — meme coin on Robinhood Chain."
+      }
+    }
+  ]
+}

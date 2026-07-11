@@ -4,12 +4,13 @@ export const OFFICIAL_X_URL = "https://x.com/DeerloveRu";
 
 export function getHeroActions() {
   const links = getProjectLinks();
+  const swapHref = links.isContractLive ? "/swap" : links.isBuyEnabled ? links.buy : undefined;
 
   return {
     buy: {
       show: true,
-      href: links.isBuyEnabled ? links.buy : undefined,
-      disabled: !links.isBuyEnabled,
+      href: swapHref,
+      disabled: !swapHref,
     },
     chart: {
       show: Boolean(links.chart),
@@ -58,6 +59,13 @@ export function getSocialLinks() {
 
 export function getBuySectionState() {
   const links = getProjectLinks();
+
+  if (links.isContractLive) {
+    return {
+      href: "/swap",
+      comingSoon: false,
+    };
+  }
 
   return {
     href: links.isBuyEnabled ? links.buy : undefined,

@@ -54,6 +54,7 @@ async function main() {
   await syncLogoSvg();
 
   await rasterizeCoin(join(logoDir, "logo-512.png"), 512);
+  await rasterizeCoin(join(logoDir, "logo-256.png"), 256);
   await rasterizeCoin(join(iconsDir, "apple-touch-icon.png"), 180);
   await rasterizeCoin(join(imagesDir, "avatar.png"), 512);
 

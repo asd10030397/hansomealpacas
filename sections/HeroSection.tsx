@@ -9,7 +9,7 @@ import { SocialBar } from "@/components/SocialBar";
 import { PROJECT } from "@/content/project";
 import { useLocale } from "@/context/LocaleContext";
 import { useUglyDeerEasterEgg } from "@/hooks/useUglyDeerEasterEgg";
-import { getBuySectionState, getHeroActions } from "@/lib/launch";
+import { getBuySectionState, getHeroActions, getLiveStatusState } from "@/lib/launch";
 import { EASE } from "@/lib/motion";
 
 export function HeroSection() {
@@ -18,6 +18,7 @@ export function HeroSection() {
   const { active, handleMascotClick, fadeMs } = useUglyDeerEasterEgg();
   const actions = getHeroActions();
   const buy = getBuySectionState();
+  const live = getLiveStatusState();
 
   return (
     <>
@@ -58,7 +59,7 @@ export function HeroSection() {
               {t.hero.chain}
             </p>
             <p className="font-[family-name:var(--font-anton)] text-[0.6rem] tracking-[0.22em] text-muted/55 sm:text-[0.68rem]">
-              {t.hero.chainStatus}
+              {live.isLive ? t.liveStatus.statusLive : t.hero.chainStatus}
             </p>
           </div>
 

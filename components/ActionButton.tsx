@@ -1,6 +1,7 @@
 "use client";
 
 import { m } from "framer-motion";
+import Link from "next/link";
 
 type ActionButtonProps = {
   href?: string;
@@ -10,6 +11,10 @@ type ActionButtonProps = {
   variant?: "default" | "gold";
   size?: "default" | "lg";
 };
+
+function isInternalHref(href: string): boolean {
+  return href.startsWith("/") && !href.startsWith("//");
+}
 
 export function ActionButton({
   href,
@@ -52,6 +57,16 @@ export function ActionButton({
       <span aria-disabled="true" className={`${className} cursor-default opacity-70`}>
         {content}
       </span>
+    );
+  }
+
+  if (isInternalHref(href)) {
+    return (
+      <m.div whileHover={{ scale: 1.01, opacity: 0.94 }} whileTap={{ scale: 0.99 }} transition={{ duration: 0.2 }}>
+        <Link href={href} className={className}>
+          {content}
+        </Link>
+      </m.div>
     );
   }
 

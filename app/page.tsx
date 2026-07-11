@@ -1,6 +1,6 @@
 import { AboutSection } from "@/sections/AboutSection";
 import { BuySection } from "@/sections/BuySection";
-import { CommunityStatsSection } from "@/sections/CommunityStatsSection";
+import { MarketStatsSection } from "@/sections/MarketStatsSection";
 import { ContractSection } from "@/sections/ContractSection";
 import { FaqSection } from "@/sections/FaqSection";
 import { FooterSection } from "@/sections/FooterSection";
@@ -16,7 +16,7 @@ export default function Home() {
       <TokenomicsSection />
       <BuySection />
       <ContractSection />
-      <CommunityStatsSection />
+      <MarketStatsSection />
       <AboutSection />
       <FaqSection />
       <FooterSection />

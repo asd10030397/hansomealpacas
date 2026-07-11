@@ -47,3 +47,6 @@ next-env.d.ts
 /contracts/typechain-types
 /contracts/coverage
 /contracts/.env
+
+# market snapshot history (built automatically in production)
+/data/market-history.json

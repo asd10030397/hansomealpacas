@@ -28,20 +28,22 @@ export const PROJECT = {
   taglineCN: "生來就醜。與眾不同。",
   taglineEN: "Born ugly. Built different.",
   description:
-    "The internet's ugliest deer became a meme coin. Preparing for launch on Robinhood Chain.",
+    "The internet's ugliest deer became a meme coin. Live on Robinhood Chain.",
   metaTitle: "UGLY DEER | The World's Ugliest Deer",
   metaDescription:
-    "The internet's ugliest deer became a meme coin. Preparing for launch on Robinhood Chain.",
+    "The internet's ugliest deer became a meme coin. Swap $UGLY on Robinhood Chain.",
   ogTitle: "UGLY DEER",
   twitterTitle: "UGLY DEER",
   themeColor: "#0D0D0D",
-  website: process.env.NEXT_PUBLIC_WEBSITE ?? "",
+  website: process.env.NEXT_PUBLIC_WEBSITE ?? "https://kairu.lol",
   twitter: process.env.NEXT_PUBLIC_X ?? "",
   telegram: process.env.NEXT_PUBLIC_TELEGRAM ?? "",
-  contractAddress: process.env.NEXT_PUBLIC_CONTRACT ?? "",
-  buyLink: process.env.NEXT_PUBLIC_BUY ?? "",
+  contractAddress:
+    process.env.NEXT_PUBLIC_CONTRACT ?? "0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c",
+  buyLink: process.env.NEXT_PUBLIC_BUY ?? "/swap",
   chartLink: process.env.NEXT_PUBLIC_CHART ?? "",
-  explorer: process.env.NEXT_PUBLIC_EXPLORER ?? "",
+  explorer:
+    process.env.NEXT_PUBLIC_EXPLORER ?? "https://robinhoodchain.blockscout.com",
   network: process.env.NEXT_PUBLIC_NETWORK ?? "Robinhood Chain",
   copyright: "© 2026 UGLY DEER",
 } as const satisfies Project;
