@@ -29,14 +29,13 @@ export const STATE_VIEW_ADDRESS = getAddress(
 );
 
 /**
- * Uniswap v4 pool ID for HANSOME/ETH. Not created yet — placeholder zero
- * value until liquidity is deployed. Do NOT reuse the UGLY DEER pool ID.
+ * Uniswap v4 pool ID for the official HANSOME/ETH pool on Robinhood Chain.
  */
 export const POOL_ID =
-  "0x0000000000000000000000000000000000000000000000000000000000000000" as const;
+  "0x1165db4c55ea3c2c4881453937164906923c7c37a575286c1db81f19ead81a0d" as const;
 
 export const POOL_FEE = 500;
-export const POOL_TICK_SPACING = 60;
+export const POOL_TICK_SPACING = 10;
 export const TOKEN_DECIMALS = 18;
 
 export const POOL_KEY = [

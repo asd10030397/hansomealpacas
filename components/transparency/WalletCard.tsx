@@ -31,6 +31,25 @@ export function WalletCard({ wallet }: WalletCardProps) {
           </div>
         ) : null}
 
+        {wallet.poolId || wallet.positionNft ? (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {wallet.poolId ? (
+              <div>
+                <dt className="text-xs uppercase tracking-[0.22em] text-gold-light">Pool ID</dt>
+                <dd className="mt-2 break-all rounded-xl border border-wood/40 bg-wood/10 px-4 py-3 font-mono text-xs text-gold-light/90 sm:text-sm">
+                  {wallet.poolId}
+                </dd>
+              </div>
+            ) : null}
+            {wallet.positionNft ? (
+              <div>
+                <dt className="text-xs uppercase tracking-[0.22em] text-gold-light">Position NFT</dt>
+                <dd className="mt-2 font-medium tabular-nums text-foreground">{wallet.positionNft}</dd>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
         <div>
           <dt className="text-xs uppercase tracking-[0.22em] text-gold-light">Allocation</dt>
           <dd className="mt-2 font-medium tabular-nums text-foreground">{wallet.allocation}</dd>
