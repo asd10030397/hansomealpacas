@@ -42,16 +42,8 @@ export const metadata: Metadata = {
   metadataBase,
   title: PROJECT.metaTitle,
   description: PROJECT.metaDescription,
+  applicationName: PROJECT.name,
   ...(canonical ? { alternates: { canonical } } : {}),
-  icons: {
-    icon: [
-      { url: ASSETS.faviconIco, sizes: "any" },
-      { url: ASSETS.favicon16, sizes: "16x16", type: "image/png" },
-      { url: ASSETS.favicon32, sizes: "32x32", type: "image/png" },
-      { url: ASSETS.logo512, sizes: "512x512", type: "image/png" },
-    ],
-    apple: [{ url: ASSETS.apple, sizes: "180x180", type: "image/png" }],
-  },
   openGraph: {
     title: PROJECT.ogTitle,
     description: PROJECT.metaDescription,
@@ -65,7 +57,7 @@ export const metadata: Metadata = {
         url: ASSETS.og,
         width: 1200,
         height: 630,
-        alt: `${PROJECT.name} — gold coin`,
+        alt: "UGLY DEER — premium gold coin social preview",
       },
     ],
   },
@@ -73,12 +65,20 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: PROJECT.twitterTitle,
     description: PROJECT.metaDescription,
-    images: [ASSETS.twitterImage],
     site: "@DeerloveRu",
+    images: [ASSETS.twitterImage],
   },
   robots: {
     index: true,
     follow: true,
+  },
+  icons: {
+    icon: [
+      { url: ASSETS.faviconIco, sizes: "any" },
+      { url: ASSETS.favicon32, sizes: "32x32", type: "image/png" },
+      { url: ASSETS.favicon16, sizes: "16x16", type: "image/png" },
+    ],
+    apple: { url: ASSETS.apple, sizes: "180x180", type: "image/png" },
   },
   manifest: "/manifest.webmanifest",
 };

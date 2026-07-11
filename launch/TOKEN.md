@@ -19,7 +19,7 @@ Planning reference for the UGLY DEER SPL token on Solana.
 
 The ugliest deer on Solana. No filters. No apologies.
 
-UGLY DEER is a community token built on Solana. The website presents UGLY DEER as a Solana meme coin with bilingual support (Traditional Chinese / English).
+UGLY DEER is a community token preparing for launch on Robinhood Chain. The website presents UGLY DEER as a meme coin with bilingual support (Traditional Chinese / English).
 
 ## Contract
 
