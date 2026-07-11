@@ -55,7 +55,8 @@ export const metadata: Metadata = {
     description: PROJECT.description,
     siteName: PROJECT.name,
     type: "website",
-    locale: "zh_TW",
+    locale: "en_US",
+    alternateLocale: ["zh_TW"],
     ...(canonical ? { url: canonical } : {}),
     images: [
       {
@@ -85,7 +86,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-Hant" suppressHydrationWarning className={`${anton.variable} ${notoSansTC.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${anton.variable} ${notoSansTC.variable}`}>
       <body className="min-h-screen bg-background antialiased">
         <LocaleProvider>
           <LanguageToggle />

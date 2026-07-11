@@ -33,24 +33,24 @@ export function LanguageToggle() {
       >
         <button
           type="button"
-          onClick={() => setActive("zh")}
-          className={segmentClass(locale === "zh")}
-          aria-current={locale === "zh" ? "true" : undefined}
-          aria-label={t.language.zh}
-        >
-          {t.language.zh}
-        </button>
-
-        <span aria-hidden="true" className="w-px self-stretch bg-border" />
-
-        <button
-          type="button"
           onClick={() => setActive("en")}
           className={segmentClass(locale === "en")}
           aria-current={locale === "en" ? "true" : undefined}
           aria-label={t.language.en}
         >
           {t.language.en}
+        </button>
+
+        <span aria-hidden="true" className="w-px self-stretch bg-border" />
+
+        <button
+          type="button"
+          onClick={() => setActive("zh")}
+          className={segmentClass(locale === "zh")}
+          aria-current={locale === "zh" ? "true" : undefined}
+          aria-label={t.language.zh}
+        >
+          {t.language.zh}
         </button>
       </div>
     </nav>
