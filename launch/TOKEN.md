@@ -45,7 +45,7 @@ The site contract section, copy button, and action links activate automatically 
 | Channel | URL | Status |
 | ------- | --- | ------ |
 | Website | https://kairu.lol | Live |
-| X | https://x.com/UglyDeerSol | Official (@UglyDeerSol) |
+| X | https://x.com/DeerloveRu | Official (@DeerloveRu) |
 | Telegram | TBD | Env: `NEXT_PUBLIC_TELEGRAM` |
 | Chart | TBD | Env: `NEXT_PUBLIC_CHART` |
 | Buy | TBD | Env: `NEXT_PUBLIC_BUY` |

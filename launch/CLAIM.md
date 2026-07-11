@@ -12,28 +12,28 @@ How eligible participants may receive UGLY after token launch.
 - No third-party quest platforms
 - Full rules announced before launch
 
-## Pre-launch (now — before token exists)
+## Pre-launch (now ??before token exists)
 
 Participants prepare eligibility on the website:
 
-1. **Follow** the official X account [@UglyDeerSol](https://x.com/UglyDeerSol)
-2. **Share** deer identity on X (via the site’s Deer Vote result — **SHARE ON X**)
+1. **Follow** the official X account [@DeerloveRu](https://x.com/DeerloveRu)
+2. **Share** deer identity on X (via the site?�s Deer Vote result ??**SHARE ON X**)
 3. **Wait** for the official token launch
 
-The site copy states that eligible participants who complete both steps **may become eligible** for a future UGLY allocation. Wording uses *may* — not a promise.
+The site copy states that eligible participants who complete both steps **may become eligible** for a future UGLY allocation. Wording uses *may* ??not a promise.
 
 ## Post-launch (planned)
 
 After the token is live:
 
 4. **Return** to https://kairu.lol
-5. **Connect wallet** (future feature — not built yet)
+5. **Connect wallet** (future feature ??not built yet)
 6. **Submit:**
    - Wallet address
    - X username
    - Link to the shared X post
-7. **Manual review** — the UGLY DEER team verifies eligibility
-8. **Distribution** — eligible users **may receive** their UGLY allocation after verification
+7. **Manual review** ??the UGLY DEER team verifies eligibility
+8. **Distribution** ??eligible users **may receive** their UGLY allocation after verification
 
 ## Website copy (reference)
 
@@ -45,9 +45,9 @@ After the token is live:
 
 **Traditional Chinese**
 
-> 正式發幣後，請返回官網提交：錢包地址 · X 帳號 · 分享貼文連結  
-> 符合資格的鹿將由 UGLY DEER 團隊人工審核，完成後發放 UGLY。  
-> 詳細規則將於發幣前公布。
+> �???�幣後�?請�??��?網�?交�??��??��? · X 帳�? · ?�享貼�????  
+> 符�?資格?�鹿將由 UGLY DEER ?��?人工審核，�??��??�放 UGLY?? 
+> 詳細規�?將於?�幣?�公布�?
 
 ## What we are not building (for this phase)
 
@@ -61,9 +61,9 @@ After the token is live:
 
 | Step | Label | Status on site |
 | ---- | ----- | -------------- |
-| Website | Website | Done (✓) |
-| Community | Community → @UglyDeerSol | Done (✓) |
-| Deer Identity | Deer Vote | Done (✓) |
+| Website | Website | Done (?? |
+| Community | Community ??@DeerloveRu | Done (?? |
+| Deer Identity | Deer Vote | Done (?? |
 | Token Launch | Token Launch | Upcoming |
 | Wallet Connect | Wallet Connect | Upcoming |
 | Claim UGLY | Claim UGLY | Upcoming |

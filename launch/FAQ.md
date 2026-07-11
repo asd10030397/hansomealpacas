@@ -22,7 +22,7 @@ No. UGLY DEER is a meme. It is not financial advice. Do not invest money you can
 
 ### Is the token live?
 
-**Not yet.** No contract is deployed. Any token not announced on the official website and [@UglyDeerSol](https://x.com/UglyDeerSol) is not UGLY DEER.
+**Not yet.** No contract is deployed. Any token not announced on the official website and [@DeerloveRu](https://x.com/DeerloveRu) is not UGLY DEER.
 
 ### Where is the official website?
 
@@ -30,27 +30,27 @@ https://kairu.lol
 
 ### Where is the official X account?
 
-https://x.com/UglyDeerSol (@UglyDeerSol)
+https://x.com/DeerloveRu (@DeerloveRu)
 
 ---
 
 ## Website
 
-### What is “今天鹿幾發？” / “Today's Deer”?
+### What is ?��?天鹿幾發？�?/ ?�Today's Deer??
 
 An interactive section where you pick how many times the deer appears (1x, 3x, 5+) and receive a deer identity (Little Deer, Stag, Deer Emperor). You can share your result on X.
 
 ### Why does my vote result stay when I return?
 
-Your choice is saved in browser localStorage (`uglydeer:deer-vote`) so returning visitors see their previous identity. Use **重新測一次** / **Try Again** to reset.
+Your choice is saved in browser localStorage (`uglydeer:deer-vote`) so returning visitors see their previous identity. Use **?�新測�?�?* / **Try Again** to reset.
 
 ### What is the Ugly Trail?
 
-A minimalist roadmap on the site: Website → Community → Ugly Identity → Token Launch → Wallet Connect → Claim UGLY → The Herd Grows.
+A minimalist roadmap on the site: Website ??Community ??Ugly Identity ??Token Launch ??Wallet Connect ??Claim UGLY ??The Herd Grows.
 
 ### Does the site support English?
 
-Yes. Use the language toggle (中文 / EN) in the top-right corner.
+Yes. Use the language toggle (中�? / EN) in the top-right corner.
 
 ### Is there music on the site?
 
@@ -66,7 +66,7 @@ Yes. An ambient track plays when allowed by your browser. It respects reduced-mo
 
 ### What is the total supply?
 
-**1,000,000,000** (1 billion), **9 decimals** — planned, not yet minted.
+**1,000,000,000** (1 billion), **9 decimals** ??planned, not yet minted.
 
 ### When will the contract address be published?
 
@@ -84,7 +84,7 @@ On launch day via the website and official X. The site contract section will upd
 
 ### How do I become eligible for a future allocation?
 
-1. Follow [@UglyDeerSol](https://x.com/UglyDeerSol) on X  
+1. Follow [@DeerloveRu](https://x.com/DeerloveRu) on X  
 2. Share your deer identity from the website  
 3. Wait for token launch  
 4. Return to kairu.lol and submit wallet + X username + post link (when claim opens)  
@@ -112,7 +112,7 @@ Before token launch. The site currently states: *Full claim rules will be announ
 
 ### How do I avoid scams?
 
-- Only trust **kairu.lol** and **@UglyDeerSol**
+- Only trust **kairu.lol** and **@DeerloveRu**
 - Do not buy tokens from unofficial contract addresses
 - UGLY DEER team will not DM you first asking for seed phrases or payments
 - Verify contract address on the official site before interacting
@@ -135,11 +135,11 @@ No fixed public date. The Deer Trail and [CHECKLIST.md](./CHECKLIST.md) track pr
 
 ### How do I stay updated?
 
-Follow [@UglyDeerSol](https://x.com/UglyDeerSol) and watch https://kairu.lol
+Follow [@DeerloveRu](https://x.com/DeerloveRu) and watch https://kairu.lol
 
 ### Who do I contact?
 
-Official channel is X ([@UglyDeerSol](https://x.com/UglyDeerSol)). No support email is listed in this planning phase.
+Official channel is X ([@DeerloveRu](https://x.com/DeerloveRu)). No support email is listed in this planning phase.
 
 ---
 

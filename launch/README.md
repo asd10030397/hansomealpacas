@@ -39,7 +39,7 @@ Planning documents for the UGLY DEER token launch on Solana.
 | Supply | 1,000,000,000 |
 | Decimals | 9 |
 | Website | https://kairu.lol |
-| X | [@UglyDeerSol](https://x.com/UglyDeerSol) |
+| X | [@DeerloveRu](https://x.com/DeerloveRu) |
 | Contract | Not deployed |
 | Claim | Manual verification (no on-chain claim yet) |
 

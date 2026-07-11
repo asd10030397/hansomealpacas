@@ -1,6 +1,6 @@
-# UGLY DEER — What We Do Not Promise
+# UGLY DEER ??What We Do Not Promise
 
-Intentional boundaries for launch communication. If it is not listed as a **current fact** on [kairu.lol](https://kairu.lol) or [@UglyDeerSol](https://x.com/UglyDeerSol), assume it is **not promised**.
+Intentional boundaries for launch communication. If it is not listed as a **current fact** on [kairu.lol](https://kairu.lol) or [@DeerloveRu](https://x.com/DeerloveRu), assume it is **not promised**.
 
 Use this list when writing tweets, replies, and community answers.
 
@@ -8,63 +8,63 @@ Use this list when writing tweets, replies, and community answers.
 
 ## Financial
 
-- **No guaranteed profits** — Past meme performance does not predict anything
-- **No guaranteed token price** — No floor, no peg, no “will 100x”
-- **No guaranteed returns** — Staking APY, yield, or passive income are not offered
-- **No buyback promises** — Unless explicitly announced at launch with verifiable terms
-- **No “risk-free” participation** — All crypto involves loss risk
+- **No guaranteed profits** ??Past meme performance does not predict anything
+- **No guaranteed token price** ??No floor, no peg, no ?�will 100x??
+- **No guaranteed returns** ??Staking APY, yield, or passive income are not offered
+- **No buyback promises** ??Unless explicitly announced at launch with verifiable terms
+- **No ?�risk-free??participation** ??All crypto involves loss risk
 
 ---
 
 ## Listings & liquidity
 
-- **No guaranteed CEX listing** — Binance, Coinbase, etc. are not promised
-- **No guaranteed DEX liquidity depth** — Pool size and duration are TBD
-- **No guaranteed market makers** — Unless separately contracted and disclosed
+- **No guaranteed CEX listing** ??Binance, Coinbase, etc. are not promised
+- **No guaranteed DEX liquidity depth** ??Pool size and duration are TBD
+- **No guaranteed market makers** ??Unless separately contracted and disclosed
 
 ---
 
 ## Product & utility
 
-- **No guaranteed game** — No promise of a playable UGLY DEER game
-- **No guaranteed DAO or governance token** — No voting power promises
-- **No guaranteed staking program** — Not part of current plan
-- **No guaranteed merch drop** — Exploration only, not committed
-- **No guaranteed “utility” timeline** — Site copy uses *may become* and *future*
+- **No guaranteed game** ??No promise of a playable UGLY DEER game
+- **No guaranteed DAO or governance token** ??No voting power promises
+- **No guaranteed staking program** ??Not part of current plan
+- **No guaranteed merch drop** ??Exploration only, not committed
+- **No guaranteed ?�utility??timeline** ??Site copy uses *may become* and *future*
 
 ---
 
 ## Roadmap & timing
 
-- **No guaranteed roadmap dates** — Deer Trail has no fixed calendar
-- **No guaranteed launch date** — Until announced on official channels
-- **No guaranteed claim window length** — Rules TBD before launch
-- **No guaranteed feature ship dates** — Wallet connect, claim UI, etc. are milestones not deadlines
+- **No guaranteed roadmap dates** ??Deer Trail has no fixed calendar
+- **No guaranteed launch date** ??Until announced on official channels
+- **No guaranteed claim window length** ??Rules TBD before launch
+- **No guaranteed feature ship dates** ??Wallet connect, claim UI, etc. are milestones not deadlines
 
 ---
 
 ## Rewards & claims
 
-- **No guaranteed airdrop allocation** — Sharing deer identity does not guarantee tokens
-- **No guaranteed claim approval** — Manual review can reject submissions
-- **No automated “complete quest = receive X tokens”** — No Galxe / Zealy / QuestN math
-- **No guaranteed equal distribution** — Allocation methodology TBD
+- **No guaranteed airdrop allocation** ??Sharing deer identity does not guarantee tokens
+- **No guaranteed claim approval** ??Manual review can reject submissions
+- **No automated ?�complete quest = receive X tokens??* ??No Galxe / Zealy / QuestN math
+- **No guaranteed equal distribution** ??Allocation methodology TBD
 
 ---
 
 ## Social & verification
 
-- **No X OAuth “verify follow” bot** — Follow status checked manually if at all
-- **No impersonation tolerance** — Only @UglyDeerSol and kairu.lol are official
-- **No paid promotion disclosure bypass** — Influencers must disclose if paid (if ever used)
+- **No X OAuth ?�verify follow??bot** ??Follow status checked manually if at all
+- **No impersonation tolerance** ??Only @DeerloveRu and kairu.lol are official
+- **No paid promotion disclosure bypass** ??Influencers must disclose if paid (if ever used)
 
 ---
 
 ## Technical
 
-- **No smart contract audit promise** — Unless an audit is completed and published
-- **No “unhackable” or “safe” guarantees** — Standard crypto risk applies
-- **No mainnet deployment in this planning repo** — Documents here do not deploy chains
+- **No smart contract audit promise** ??Unless an audit is completed and published
+- **No ?�unhackable??or ?�safe??guarantees** ??Standard crypto risk applies
+- **No mainnet deployment in this planning repo** ??Documents here do not deploy chains
 
 ---
 
@@ -72,10 +72,10 @@ Use this list when writing tweets, replies, and community answers.
 
 | Community asks | Safe response direction |
 | -------------- | ----------------------- |
-| “Wen moon?” | UGLY DEER does not apologize. Not financial advice. |
-| “Guaranteed allocation?” | May become eligible; manual review; rules before launch. |
-| “CEX soon?” | Not promised. Watch official X only. |
-| “Is this contract real?” | Only trust CA on kairu.lol |
+| ?�Wen moon???| UGLY DEER does not apologize. Not financial advice. |
+| ?�Guaranteed allocation???| May become eligible; manual review; rules before launch. |
+| ?�CEX soon???| Not promised. Watch official X only. |
+| ?�Is this contract real???| Only trust CA on kairu.lol |
 
 ---
 

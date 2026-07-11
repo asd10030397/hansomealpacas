@@ -10,7 +10,7 @@ A short overview of what UGLY DEER is, why it exists, and how the community fits
 
 The ugliest deer on Solana. No filters. No apologies.
 
-UGLY DEER is a community token project on **Solana**. The mascot is an intentionally ugly deer — crooked antlers, wrong proportions, zero photogenicity. The website at [kairu.lol](https://kairu.lol) is the home base: bilingual (Traditional Chinese / English), minimal design, and a small set of interactive experiences (Ugly Meter, Ugly Trail, ambient sound).
+UGLY DEER is a community token project on **Solana**. The mascot is an intentionally ugly deer ??crooked antlers, wrong proportions, zero photogenicity. The website at [kairu.lol](https://kairu.lol) is the home base: bilingual (Traditional Chinese / English), minimal design, and a small set of interactive experiences (Ugly Meter, Ugly Trail, ambient sound).
 
 UGLY DEER is a **meme**. It is culture first. It is not a company pitch deck.
 
@@ -22,9 +22,9 @@ UGLY DEER grows through people, not through promises.
 
 Before and after launch, the project focuses on:
 
-- **Identity** — “今天鹿幾發？” / “Today's Deer” lets visitors discover a deer persona and share it on X
-- **Presence** — Official X ([@UglyDeerSol](https://x.com/UglyDeerSol)) is the primary social channel
-- **Participation** — Early deer who follow and share **may become eligible** for future consideration — not guaranteed rewards
+- **Identity** ???��?天鹿幾發？�?/ ?�Today's Deer??lets visitors discover a deer persona and share it on X
+- **Presence** ??Official X ([@DeerloveRu](https://x.com/DeerloveRu)) is the primary social channel
+- **Participation** ??Early deer who follow and share **may become eligible** for future consideration ??not guaranteed rewards
 
 There is no paid shill army requirement in this document. There is no promise of returns for showing up. The forest grows when deer show up on their own.
 
@@ -51,9 +51,9 @@ When the token exists, contract details will be published on the website and off
 
 UGLY DEER does **not** use automated quest platforms, X OAuth bots, or on-chain merkle claims in the current plan.
 
-**Pre-launch:** Follow @UglyDeerSol and share your deer identity on X.
+**Pre-launch:** Follow @DeerloveRu and share your deer identity on X.
 
-**After launch:** Return to kairu.lol, submit wallet address + X username + link to your shared post. The UGLY DEER team **manually verifies** eligibility. Eligible deer **may receive** an allocation — wording is *may*, not *will*.
+**After launch:** Return to kairu.lol, submit wallet address + X username + link to your shared post. The UGLY DEER team **manually verifies** eligibility. Eligible deer **may receive** an allocation ??wording is *may*, not *will*.
 
 Full claim rules will be announced before launch. See [CLAIM.md](./CLAIM.md).
 
@@ -73,7 +73,7 @@ No fixed percentages are binding in this whitepaper. Liquidity, treasury, commun
 
 **Medium term:** Manual claim for early participants who meet published rules. Contract live on site. Deer Trail milestones checked off one by one.
 
-**Long term:** UGLY DEER **may become** part of community events, identity, exclusive experiences, and future features — as described on the site. More will be revealed as the forest grows. Nothing here guarantees a game, DAO, or exchange listing.
+**Long term:** UGLY DEER **may become** part of community events, identity, exclusive experiences, and future features ??as described on the site. More will be revealed as the forest grows. Nothing here guarantees a game, DAO, or exchange listing.
 
 UGLY DEER does not apologize to roadmaps either.
 
@@ -95,7 +95,7 @@ See [DO_NOTS.md](./DO_NOTS.md) for the full list of intentional non-promises.
 | Resource | URL |
 | -------- | --- |
 | Website | https://kairu.lol |
-| X | https://x.com/UglyDeerSol |
+| X | https://x.com/DeerloveRu |
 | Launch docs | `launch/` folder in repo |
 
 ---

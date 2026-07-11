@@ -1,5 +1,8 @@
 import { PROJECT } from "@/content/project";
 
+export const OFFICIAL_X_URL = "https://x.com/DeerloveRu";
+export const OFFICIAL_X_HANDLE = "@DeerloveRu";
+
 export function isValidHttpUrl(value: string): boolean {
   const trimmed = value.trim();
   if (!trimmed) return false;
@@ -40,7 +43,7 @@ export function getProjectLinks(): ProjectLinks {
 
   return {
     website: isValidHttpUrl(PROJECT.website) ? PROJECT.website.trim() : undefined,
-    twitter: isValidHttpUrl(PROJECT.twitter) ? PROJECT.twitter.trim() : undefined,
+    twitter: isValidHttpUrl(PROJECT.twitter) ? PROJECT.twitter.trim() : OFFICIAL_X_URL,
     telegram: isValidHttpUrl(PROJECT.telegram) ? PROJECT.telegram.trim() : undefined,
     chart: isValidHttpUrl(PROJECT.chartLink) ? PROJECT.chartLink.trim() : undefined,
     buy,

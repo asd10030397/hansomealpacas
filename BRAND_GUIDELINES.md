@@ -6,7 +6,7 @@
 
 ## Brand Essence
 
-UGLY DEER is an anti-aesthetic meme brand — the visual honesty of a bad photo, the emotional vacancy of a 3am scroll, and the quiet chaos of internet culture. Everything is intentionally off. Nothing is trying to look premium.
+UGLY DEER is an anti-aesthetic meme brand ??the visual honesty of a bad photo, the emotional vacancy of a 3am scroll, and the quiet chaos of internet culture. Everything is intentionally off. Nothing is trying to look premium.
 
 ### Brand Personality
 
@@ -31,7 +31,7 @@ Instead: dark backgrounds, deadpan typography, meme-adjacent imagery treated wit
 
 ### Primary Logo
 
-The UGLY DEER mascot is the hero — intentionally asymmetric deer with crooked antlers, mismatched eyes, and tongue out.
+The UGLY DEER mascot is the hero ??intentionally asymmetric deer with crooked antlers, mismatched eyes, and tongue out.
 
 **Specifications:**
 - Wordmark: `UGLY DEER` in all caps, tracked wide
@@ -41,7 +41,7 @@ The UGLY DEER mascot is the hero — intentionally asymmetric deer with crooked 
 
 ### Logo Don'ts
 
-- Do not beautify the mascot — symmetry is the enemy
+- Do not beautify the mascot ??symmetry is the enemy
 - Do not add gradients, glows, or drop shadows to the logo
 - Do not stretch, skew, or outline the wordmark
 - Do not pair the logo with crypto iconography (coins, chains, rockets)
@@ -86,11 +86,11 @@ The UGLY DEER mascot is the hero — intentionally asymmetric deer with crooked 
 
 | Surface | ID / Label |
 |---|---|
-| Hero | `#hero` — UGLY DEER wordmark + tagline |
-| About | `#about` — origin story |
-| Ugly Meter | `#deer-vote` — identity quiz |
-| Ugly Trail | `#deer-trail` — roadmap |
-| Contract | `#contract` — CA + share |
+| Hero | `#hero` ??UGLY DEER wordmark + tagline |
+| About | `#about` ??origin story |
+| Ugly Meter | `#deer-vote` ??identity quiz |
+| Ugly Trail | `#deer-trail` ??roadmap |
+| Contract | `#contract` ??CA + share |
 | Footer | brand + social links |
 
 ---
@@ -99,6 +99,6 @@ BRAND:        UGLY DEER
 SYMBOL:       UGLY  
 CHAIN:        Solana  
 WEBSITE:      kairu.lol (current deployment)  
-X:            @UglyDeerSol  
+X:            @DeerloveRu  
 
 © 2026 UGLY DEER

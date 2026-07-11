@@ -1,4 +1,4 @@
-import { getProjectLinks } from "@/lib/links";
+import { getProjectLinks, OFFICIAL_X_URL } from "@/lib/links";
 
 export function getHeroActions() {
   const links = getProjectLinks();
@@ -50,7 +50,7 @@ export function getSocialLinks() {
   const links = getProjectLinks();
 
   return {
-    twitter: links.twitter ?? "https://x.com/UglyDeerSol",
+    twitter: links.twitter ?? OFFICIAL_X_URL,
     telegram: links.telegram ?? "#",
     website: links.website ?? "https://kairu.lol",
   };

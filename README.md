@@ -1,6 +1,8 @@
 ﻿# UGLY DEER
 
-The ugliest deer on Solana. No filters. No apologies.
+The ugliest deer in crypto. Preparing for launch on Robinhood Chain.
+
+Official X: [@DeerloveRu](https://x.com/DeerloveRu)
 
 ## Stack
 
@@ -32,7 +34,7 @@ npm run dev
 Copy `.env.example` to `.env.local` and set:
 
 - `NEXT_PUBLIC_WEBSITE`
-- `NEXT_PUBLIC_X`
+- `NEXT_PUBLIC_X` — `https://x.com/DeerloveRu`
 - `NEXT_PUBLIC_TELEGRAM`
 - `NEXT_PUBLIC_CONTRACT`
 - `NEXT_PUBLIC_BUY`
@@ -40,4 +42,4 @@ Copy `.env.example` to `.env.local` and set:
 
 ## License
 
-Private. (c) 2026 UGLY DEER
+Private. © 2026 UGLY DEER

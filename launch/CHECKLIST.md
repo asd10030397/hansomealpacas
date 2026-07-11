@@ -6,7 +6,7 @@ Master checklist for launch planning. Update status as work progresses.
 
 ---
 
-## Phase 1 — Brand
+## Phase 1 ??Brand
 
 - [x] Final mascot approved
 - [x] SVG exported (`public/logo/logo.svg`)
@@ -22,10 +22,10 @@ Master checklist for launch planning. Update status as work progresses.
 
 ---
 
-## Phase 2 — Community
+## Phase 2 ??Community
 
-- [x] Official X linked on site (@UglyDeerSol)
-- [x] Deer Trail Community row → https://x.com/UglyDeerSol
+- [x] Official X linked on site (@DeerloveRu)
+- [x] Deer Trail Community row ??https://x.com/DeerloveRu
 - [ ] Telegram ready (`NEXT_PUBLIC_TELEGRAM`)
 - [ ] First 10 tweets prepared (`launch/twitter/`)
 - [ ] Pinned tweet ready
@@ -34,7 +34,7 @@ Master checklist for launch planning. Update status as work progresses.
 
 ---
 
-## Phase 3 — Token (planning only — do not mint until ready)
+## Phase 3 ??Token (planning only ??do not mint until ready)
 
 - [ ] Tokenomics finalized (`TOKENOMICS.md`)
 - [ ] Token created on Solana
@@ -49,7 +49,7 @@ Master checklist for launch planning. Update status as work progresses.
 
 ---
 
-## Phase 4 — Launch day
+## Phase 4 ??Launch day
 
 - [ ] Publish contract address on X
 - [ ] Publish first announcement
@@ -62,7 +62,7 @@ Master checklist for launch planning. Update status as work progresses.
 
 ---
 
-## Phase 5 — Manual claim (post-launch)
+## Phase 5 ??Manual claim (post-launch)
 
 - [ ] Claim submission method live
 - [ ] Internal verification SOP in use
@@ -72,13 +72,13 @@ Master checklist for launch planning. Update status as work progresses.
 
 ---
 
-## Phase 6 — Post launch
+## Phase 6 ??Post launch
 
 - [ ] Daily presence on X
 - [ ] Memes (`launch/memes/`, `public/memes/`)
 - [ ] Reply to community when necessary
 - [ ] Update website as Deer Trail progresses
-- [ ] The Herd Grows — future experiences (TBD)
+- [ ] The Herd Grows ??future experiences (TBD)
 
 ---
 
@@ -113,7 +113,7 @@ Master checklist for launch planning. Update status as work progresses.
 
 ```env
 NEXT_PUBLIC_WEBSITE=https://kairu.lol
-NEXT_PUBLIC_X=https://x.com/UglyDeerSol
+NEXT_PUBLIC_X=https://x.com/DeerloveRu
 NEXT_PUBLIC_TELEGRAM=
 NEXT_PUBLIC_CONTRACT=
 NEXT_PUBLIC_BUY=

@@ -72,6 +72,7 @@ export const metadata: Metadata = {
     title,
     description: PROJECT.description,
     images: [ASSETS.og],
+    site: "@DeerloveRu",
   },
   robots: {
     index: true,
