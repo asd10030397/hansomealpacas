@@ -73,6 +73,29 @@ body {
     0 8px 32px color-mix(in srgb, var(--color-gold) 12%, transparent);
 }
 
+.tokenomics-card {
+  border: 1px solid color-mix(in srgb, var(--color-gold) 32%, transparent);
+  background: color-mix(in srgb, white 3.5%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-gold) 6%, transparent),
+    0 8px 32px color-mix(in srgb, var(--color-gold) 10%, transparent);
+  transition:
+    border-color 300ms ease,
+    box-shadow 300ms ease,
+    background-color 300ms ease;
+}
+
+.tokenomics-card:hover {
+  border-color: color-mix(in srgb, var(--color-gold) 52%, transparent);
+  background: color-mix(in srgb, white 4.5%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-gold) 14%, transparent),
+    0 12px 40px color-mix(in srgb, var(--color-gold) 20%, transparent),
+    0 0 56px color-mix(in srgb, var(--color-gold) 10%, transparent);
+}
+
 .gold-glow-bg {
   background: radial-gradient(
     ellipse 80% 50% at 50% 0%,
