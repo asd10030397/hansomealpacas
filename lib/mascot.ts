@@ -1,31 +1,34 @@
 /**
- * KAIRU mascot layer IDs — use for Framer Motion / Lottie animation.
+ * UGLY DEER mascot layer IDs — use for Framer Motion / Lottie animation.
  *
- * Blink:     scaleY on #kairu-eye-left, #kairu-eye-right
- * Breathe:   scale on #kairu-head
- * Tilt:      rotate on #kairu (root group)
- * Eye move:  translateX/Y on #kairu-eyes
+ * Blink:     scaleY on #ugly-deer-eye-left, #ugly-deer-eye-right
+ * Breathe:   scale on #ugly-deer-head
+ * Tilt:      rotate on #ugly-deer (root group)
+ * Eye move:  translateX/Y on #ugly-deer-eyes
  */
-export const KAIRU_LAYERS = {
-  root: "kairu",
-  antlers: "kairu-antlers",
-  antlerLeft: "kairu-antler-left",
-  antlerRight: "kairu-antler-right",
-  head: "kairu-head",
-  earLeft: "kairu-ear-left",
-  earRight: "kairu-ear-right",
-  face: "kairu-face",
-  snout: "kairu-snout",
-  eyes: "kairu-eyes",
-  eyeLeft: "kairu-eye-left",
-  eyeRight: "kairu-eye-right",
-  nose: "kairu-nose",
-  mouth: "kairu-mouth",
+export const UGLY_DEER_LAYERS = {
+  root: "ugly-deer",
+  antlers: "ugly-deer-antlers",
+  antlerLeft: "ugly-deer-antler-left",
+  antlerRight: "ugly-deer-antler-right",
+  head: "ugly-deer-head",
+  earLeft: "ugly-deer-ear-left",
+  earRight: "ugly-deer-ear-right",
+  face: "ugly-deer-face",
+  snout: "ugly-deer-snout",
+  eyes: "ugly-deer-eyes",
+  eyeLeft: "ugly-deer-eye-left",
+  eyeRight: "ugly-deer-eye-right",
+  nose: "ugly-deer-nose",
+  mouth: "ugly-deer-mouth",
+  tongue: "ugly-deer-tongue",
 } as const;
 
-export const KAIRU_COLORS = {
-  furPrimary: "#A98C74",
-  furSecondary: "#8A6D56",
-  eyes: "#222222",
-  nose: "#3B2F2F",
+export const UGLY_DEER_COLORS = {
+  furPrimary: "#8B7355",
+  furSecondary: "#6B5344",
+  eyes: "#1A1A1A",
+  nose: "#4A3728",
+  tongue: "#C46B6B",
+  wart: "#7A8B5A",
 } as const;

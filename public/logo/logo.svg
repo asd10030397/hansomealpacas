@@ -1,43 +1,44 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="KAIRU">
-  <!--
-    KAIRU — deer silhouette
-    Proportions: long face, leaf ears, slim neck, V antlers, wide-set dash eyes.
-    Original flat vector. Not traced from reference.
-  -->
-  <g id="kairu">
-    <g id="kairu-neck">
-      <path id="kairu-neck-shape" fill="#A98C74" d="M222 372 C222 430 238 468 256 468 C274 468 290 430 290 372 L290 358 C278 364 267 368 256 368 C245 368 234 364 222 358 Z" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="UGLY DEER">
+  <!-- UGLY DEER — intentionally asymmetric deer mascot -->
+  <g id="ugly-deer">
+    <g id="ugly-deer-neck">
+      <path id="ugly-deer-neck-shape" fill="#8B7355" d="M218 372 C218 430 234 468 256 468 C278 468 294 430 294 372 L294 358 C282 364 269 368 256 368 C243 368 230 364 218 358 Z" />
     </g>
 
-    <g id="kairu-head">
-      <ellipse id="kairu-face" cx="256" cy="248" rx="76" ry="132" fill="#A98C74" />
+    <g id="ugly-deer-head">
+      <ellipse id="ugly-deer-face" cx="256" cy="252" rx="82" ry="128" fill="#8B7355" transform="rotate(-4 256 252)" />
 
-      <path id="kairu-ear-left" fill="#A98C74" d="M188 152 C148 168 132 210 150 248 C168 228 182 188 188 152 Z" />
-      <path id="kairu-ear-left-inner" fill="#8A6D56" d="M182 162 C158 172 148 204 160 232 C170 214 178 184 182 162 Z" />
+      <path id="ugly-deer-ear-left" fill="#8B7355" d="M176 158 C132 178 118 224 142 262 C162 238 172 196 176 158 Z" />
+      <path id="ugly-deer-ear-left-inner" fill="#6B5344" d="M182 168 C156 182 148 218 162 246 C174 224 178 188 182 168 Z" />
 
-      <path id="kairu-ear-right" fill="#A98C74" d="M324 152 C364 168 380 210 362 248 C344 228 330 188 324 152 Z" />
-      <path id="kairu-ear-right-inner" fill="#8A6D56" d="M330 162 C354 172 364 204 352 232 C342 214 334 184 330 162 Z" />
+      <path id="ugly-deer-ear-right" fill="#8B7355" d="M342 142 C388 162 402 210 374 248 C352 222 348 178 342 142 Z" />
+      <path id="ugly-deer-ear-right-inner" fill="#6B5344" d="M334 154 C360 168 368 206 352 234 C340 212 336 176 334 154 Z" />
+
+      <circle cx="198" cy="268" r="10" fill="#7A8B5A" />
+      <circle cx="318" cy="244" r="7" fill="#7A8B5A" />
     </g>
 
-    <g id="kairu-antlers">
-      <path id="kairu-antler-left" fill="#8A6D56" d="M241 128 C228 112 220 92 216 72 C214 64 218 58 224 60 C228 62 232 76 236 90 C240 104 244 118 246 126 C245 132 241 132 241 128 Z" />
-      <path id="kairu-antler-left-fork" fill="#8A6D56" d="M230 96 C216 86 208 76 206 70 C204 64 210 62 214 66 C220 74 226 84 232 94 C233 98 231 98 230 96 Z" />
-      <path id="kairu-antler-right" fill="#8A6D56" d="M271 128 C284 112 292 92 296 72 C298 64 294 58 288 60 C284 62 280 76 276 90 C272 104 268 118 266 126 C267 132 271 132 271 128 Z" />
-      <path id="kairu-antler-right-fork" fill="#8A6D56" d="M282 96 C296 86 304 76 306 70 C308 64 302 62 298 66 C292 74 286 84 280 94 C279 98 281 98 282 96 Z" />
+    <g id="ugly-deer-antlers">
+      <path id="ugly-deer-antler-left" fill="#6B5344" d="M228 118 C210 96 198 72 192 48 C190 38 198 32 206 38 C214 44 220 68 228 92 C234 108 232 122 228 118 Z" />
+      <path id="ugly-deer-antler-left-fork" fill="#6B5344" d="M214 78 C196 66 184 52 180 44 C176 36 186 34 192 42 C200 54 208 68 216 82 C218 88 216 86 214 78 Z" />
+      <path id="ugly-deer-antler-right" fill="#6B5344" d="M292 132 C318 108 332 82 338 58 C342 48 332 42 324 48 C314 56 304 84 292 108 C286 124 288 136 292 132 Z" />
+      <path id="ugly-deer-antler-right-fork" fill="#6B5344" d="M308 88 C328 78 342 66 348 58 C354 50 344 46 336 54 C324 66 312 78 302 90 C300 96 306 92 308 88 Z" />
     </g>
 
-    <g id="kairu-snout">
-      <ellipse cx="256" cy="318" rx="40" ry="62" fill="#8A6D56" />
+    <g id="ugly-deer-snout">
+      <ellipse cx="262" cy="322" rx="46" ry="66" fill="#6B5344" transform="rotate(6 262 322)" />
     </g>
 
-    <g id="kairu-eyes">
-      <rect id="kairu-eye-left" x="190" y="210" width="56" height="14" rx="7" fill="#222222" />
-      <rect id="kairu-eye-right" x="266" y="208" width="56" height="14" rx="7" fill="#222222" />
+    <g id="ugly-deer-eyes">
+      <ellipse id="ugly-deer-eye-left" cx="196" cy="214" rx="34" ry="18" fill="#1A1A1A" />
+      <circle id="ugly-deer-eye-right" cx="302" cy="206" r="22" fill="#1A1A1A" />
+      <circle cx="206" cy="210" r="5" fill="#FAFAFA" opacity="0.35" />
     </g>
 
-    <g id="kairu-face-details">
-      <circle id="kairu-nose" cx="256" cy="312" r="8" fill="#3B2F2F" />
-      <rect id="kairu-mouth" x="244" y="346" width="24" height="2.5" rx="1.25" fill="#3B2F2F" />
+    <g id="ugly-deer-face-details">
+      <ellipse id="ugly-deer-nose" cx="268" cy="312" rx="10" ry="9" fill="#4A3728" />
+      <path id="ugly-deer-mouth" fill="#4A3728" d="M244 346 C252 354 276 354 284 346 C284 350 276 356 264 356 C252 356 244 350 244 346 Z" />
+      <path id="ugly-deer-tongue" fill="#C46B6B" d="M256 354 C248 368 244 382 248 396 C252 388 260 382 268 382 C276 382 284 388 288 396 C292 382 288 368 280 354 C272 360 264 362 256 354 Z" />
     </g>
   </g>
 </svg>

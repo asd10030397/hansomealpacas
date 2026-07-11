@@ -1,29 +1,29 @@
-# KAIRU Whitepaper
+# UGLY DEER Whitepaper
 
 **Version:** Planning draft · **Status:** Not final · **Chain:** Solana
 
-A short overview of what KAIRU is, why it exists, and how the community fits in. This is not a prospectus, investment memo, or binding offer.
+A short overview of what UGLY DEER is, why it exists, and how the community fits in. This is not a prospectus, investment memo, or binding offer.
 
 ---
 
-## 1. What is KAIRU?
+## 1. What is UGLY DEER?
 
-KAIRU is a deer that never reacts.
+The ugliest deer on Solana. No filters. No apologies.
 
-KAIRU is a community token project on **Solana**. The mascot is a calm deer — low drama, no hype speeches, no forced explanations. The website at [kairu.lol](https://kairu.lol) is the home base: bilingual (Traditional Chinese / English), minimal design, and a small set of interactive experiences (Deer Vote, Deer Trail, ambient sound).
+UGLY DEER is a community token project on **Solana**. The mascot is an intentionally ugly deer — crooked antlers, wrong proportions, zero photogenicity. The website at [kairu.lol](https://kairu.lol) is the home base: bilingual (Traditional Chinese / English), minimal design, and a small set of interactive experiences (Ugly Meter, Ugly Trail, ambient sound).
 
-KAIRU is a **meme**. It is culture first. It is not a company pitch deck.
+UGLY DEER is a **meme**. It is culture first. It is not a company pitch deck.
 
 ---
 
 ## 2. Community first
 
-KAIRU grows through people, not through promises.
+UGLY DEER grows through people, not through promises.
 
 Before and after launch, the project focuses on:
 
 - **Identity** — “今天鹿幾發？” / “Today's Deer” lets visitors discover a deer persona and share it on X
-- **Presence** — Official X ([@DeerloveRu](https://x.com/DeerloveRu)) is the primary social channel
+- **Presence** — Official X ([@UglyDeerSol](https://x.com/UglyDeerSol)) is the primary social channel
 - **Participation** — Early deer who follow and share **may become eligible** for future consideration — not guaranteed rewards
 
 There is no paid shill army requirement in this document. There is no promise of returns for showing up. The forest grows when deer show up on their own.
@@ -32,12 +32,12 @@ There is no paid shill army requirement in this document. There is no promise of
 
 ## 3. Solana
 
-KAIRU is planned as an **SPL token** on **Solana**.
+UGLY DEER is planned as an **SPL token** on **Solana**.
 
 | Parameter | Planned value |
 | --------- | ------------- |
-| Name | KAIRU |
-| Symbol | KAIRU |
+| Name | UGLY DEER |
+| Symbol | UGLY |
 | Total supply | 1,000,000,000 |
 | Decimals | 9 |
 
@@ -49,11 +49,11 @@ When the token exists, contract details will be published on the website and off
 
 ## 4. Manual claim (planned)
 
-KAIRU does **not** use automated quest platforms, X OAuth bots, or on-chain merkle claims in the current plan.
+UGLY DEER does **not** use automated quest platforms, X OAuth bots, or on-chain merkle claims in the current plan.
 
-**Pre-launch:** Follow @DeerloveRu and share your deer identity on X.
+**Pre-launch:** Follow @UglyDeerSol and share your deer identity on X.
 
-**After launch:** Return to kairu.lol, submit wallet address + X username + link to your shared post. The KAIRU team **manually verifies** eligibility. Eligible deer **may receive** an allocation — wording is *may*, not *will*.
+**After launch:** Return to kairu.lol, submit wallet address + X username + link to your shared post. The UGLY DEER team **manually verifies** eligibility. Eligible deer **may receive** an allocation — wording is *may*, not *will*.
 
 Full claim rules will be announced before launch. See [CLAIM.md](./CLAIM.md).
 
@@ -73,13 +73,13 @@ No fixed percentages are binding in this whitepaper. Liquidity, treasury, commun
 
 **Medium term:** Manual claim for early participants who meet published rules. Contract live on site. Deer Trail milestones checked off one by one.
 
-**Long term:** KAIRU **may become** part of community events, identity, exclusive experiences, and future features — as described on the site. More will be revealed as the forest grows. Nothing here guarantees a game, DAO, NFT collection, or exchange listing.
+**Long term:** UGLY DEER **may become** part of community events, identity, exclusive experiences, and future features — as described on the site. More will be revealed as the forest grows. Nothing here guarantees a game, DAO, or exchange listing.
 
-KAIRU does not react to roadmaps either.
+UGLY DEER does not apologize to roadmaps either.
 
 ---
 
-## 7. What KAIRU is not
+## 7. What UGLY DEER is not
 
 - Not financial advice
 - Not a guarantee of profit or token price
@@ -95,15 +95,15 @@ See [DO_NOTS.md](./DO_NOTS.md) for the full list of intentional non-promises.
 | Resource | URL |
 | -------- | --- |
 | Website | https://kairu.lol |
-| X | https://x.com/DeerloveRu |
+| X | https://x.com/UglyDeerSol |
 | Launch docs | `launch/` folder in repo |
 
 ---
 
 ## Disclaimer
 
-KAIRU is a meme. Participating, sharing, or holding (if applicable in the future) involves risk. Do your own research. KAIRU does not explain anything.
+UGLY DEER is a meme. Participating, sharing, or holding (if applicable in the future) involves risk. Do your own research. UGLY DEER does not explain anything.
 
 ---
 
-© 2026 KAIRU
+© 2026 UGLY DEER

@@ -1,6 +1,6 @@
-# KAIRU Launch Checklist
+# UGLY DEER Launch Checklist
 
-Official launch checklist for KAIRU.
+Official launch checklist for UGLY DEER.
 
 ---
 

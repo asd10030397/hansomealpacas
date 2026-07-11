@@ -18,7 +18,7 @@ export function Mascot({
   src = ASSETS.logo,
   floating = false,
   className = "h-64 w-64 sm:h-72 sm:w-72 md:h-80 md:w-80",
-  alt = "KAIRU mascot",
+  alt = "UGLY DEER mascot",
   interactive = false,
   onClick,
 }: MascotProps) {

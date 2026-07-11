@@ -1,4 +1,4 @@
-# KAIRU Go / No-Go
+# UGLY DEER Go / No-Go
 
 Final readiness checklist **before creating the token**.
 
@@ -16,7 +16,7 @@ Final readiness checklist **before creating the token**.
 | [x] Bilingual (zh / en) | | Language toggle, i18n content |
 | [x] Analytics | | GA4 configured; event queue fix deployed |
 | [x] Music | | Ambient track; interaction unlock |
-| [x] Community | | Deer Trail Community → @DeerloveRu |
+| [x] Community | | Deer Trail Community → @UglyDeerSol |
 | [x] Claim copy | | Follow + share + manual claim + token about on site |
 | [ ] Deer Vote tested on mobile | | |
 | [ ] Contract section ready for CA | | Env vars documented; awaiting `NEXT_PUBLIC_CONTRACT` |
@@ -43,7 +43,7 @@ Final readiness checklist **before creating the token**.
 
 | Item | Status | Notes |
 | ---- | ------ | ----- |
-| [x] X account ready | | https://x.com/DeerloveRu linked on site |
+| [x] X account ready | | https://x.com/UglyDeerSol linked on site |
 | [ ] Follower baseline recorded | | Record count at go/no-go date: ________ |
 | [ ] Deer shares observed | | Organic shares from Deer Vote — informal OK |
 | [~] Analytics healthy | | GA4 DebugView / reports reviewed |
@@ -133,4 +133,4 @@ Select **one**:
 
 ---
 
-© 2026 KAIRU
+© 2026 UGLY DEER

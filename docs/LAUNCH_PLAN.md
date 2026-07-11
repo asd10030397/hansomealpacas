@@ -1,4 +1,4 @@
-# KAIRU Launch Plan
+# UGLY DEER Launch Plan
 
 ## Before Launch
 

@@ -1,37 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="小鹿">
-  <!-- KAIRU identity: kolittle - small antlers, slim neck, tiny body -->
-  <g id="kolittle">
-    <g id="kolittle-neck">
-      <path fill="#A98C74" d="M238 368 C238 408 246 432 256 432 C266 432 274 408 274 368 L274 358 C268 362 262 364 256 364 C250 364 244 362 238 358 Z" />
-    </g>
-
-    <g id="kolittle-head">
-      <ellipse cx="256" cy="252" rx="58" ry="100" fill="#A98C74" />
-
-      <path fill="#A98C74" d="M200 168 C172 180 160 212 172 240 C184 224 194 192 200 168 Z" />
-      <path fill="#8A6D56" d="M196 176 C176 184 168 208 176 228 C184 214 190 190 196 176 Z" />
-
-      <path fill="#A98C74" d="M312 168 C340 180 352 212 340 240 C328 224 318 192 312 168 Z" />
-      <path fill="#8A6D56" d="M316 176 C336 184 344 208 336 228 C328 214 322 190 316 176 Z" />
-    </g>
-
-    <g id="kolittle-antlers">
-      <path fill="#8A6D56" d="M246 148 C240 138 236 128 234 118 C233 112 237 108 241 110 C244 112 246 122 248 132 C249 138 247 140 246 148 Z" />
-      <path fill="#8A6D56" d="M266 148 C272 138 276 128 278 118 C279 112 275 108 271 110 C268 112 266 122 264 132 C263 138 265 140 266 148 Z" />
-    </g>
-
-    <g id="kolittle-snout">
-      <ellipse cx="256" cy="308" rx="32" ry="48" fill="#8A6D56" />
-    </g>
-
-    <g id="kolittle-eyes">
-      <rect x="200" y="218" width="44" height="11" rx="5.5" fill="#222222" />
-      <rect x="268" y="216" width="44" height="11" rx="5.5" fill="#222222" />
-    </g>
-
-    <g id="kolittle-face-details">
-      <circle cx="256" cy="304" r="6" fill="#3B2F2F" />
-      <rect x="246" y="332" width="20" height="2.5" rx="1.25" fill="#3B2F2F" />
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="Mildly Ugly deer identity">
+  <!-- UGLY DEER identity: mildly ugly -->
+  <rect width="512" height="512" fill="#090909"/>
+  <g transform="translate(256 280) scale(0.85) translate(-256 -260)">
+    <path fill="#8B7355" d="M228 372 C228 430 242 468 256 468 C270 468 284 430 284 372 L284 360 C274 364 265 368 256 368 C247 368 238 364 228 360 Z" />
+    <ellipse fill="#8B7355" cx="256" cy="252" rx="70" ry="118" transform="rotate(-2 256 252)" />
+    <path fill="#8B7355" d="M188 168 C152 184 140 224 158 256 C174 236 182 200 188 168 Z" />
+    <path fill="#6B5344" d="M324 168 C360 184 372 224 354 256 C338 236 330 200 324 168 Z" />
+    <path fill="#6B5344" d="M236 128 C224 112 218 92 216 74 C214 66 220 62 226 66 C232 72 236 88 238 104 C240 118 238 130 236 128 Z" />
+    <path fill="#6B5344" d="M276 128 C288 112 294 92 296 74 C298 66 292 62 286 66 C280 72 276 88 274 104 C272 118 274 130 276 128 Z" />
+    <ellipse fill="#6B5344" cx="258" cy="318" rx="38" ry="54" />
+    <ellipse cx="210" cy="218" rx="26" ry="14" fill="#1A1A1A" />
+    <ellipse cx="298" cy="216" rx="24" ry="14" fill="#1A1A1A" />
+    <ellipse cx="260" cy="308" rx="8" ry="7" fill="#4A3728" />
+    <rect x="248" y="338" width="20" height="2.5" rx="1.25" fill="#4A3728" />
   </g>
 </svg>

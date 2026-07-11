@@ -37,7 +37,7 @@ export function DeerTrailSection() {
                     href={COMMUNITY_X_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label="Visit KAIRU on X"
+                    aria-label="Visit UGLY DEER on X"
                     className={`${rowClass} group w-full border border-transparent pr-3 transition-[color,border-color] duration-200 hover:border-border sm:pr-4`}
                   >
                     <span aria-hidden="true" className={`${checkClass} text-foreground`}>

@@ -1,6 +1,6 @@
-# KAIRU Launch
+# UGLY DEER Launch
 
-Planning documents for the KAIRU token launch on Solana.
+Planning documents for the UGLY DEER token launch on Solana.
 
 **This folder is for planning only.** It does not deploy contracts, mint tokens, or move funds.
 
@@ -34,12 +34,12 @@ Planning documents for the KAIRU token launch on Solana.
 | Field | Value |
 | ----- | ----- |
 | Chain | Solana |
-| Name | KAIRU |
-| Symbol | KAIRU |
+| Name | UGLY DEER |
+| Symbol | UGLY |
 | Supply | 1,000,000,000 |
 | Decimals | 9 |
 | Website | https://kairu.lol |
-| X | [@DeerloveRu](https://x.com/DeerloveRu) |
+| X | [@UglyDeerSol](https://x.com/UglyDeerSol) |
 | Contract | Not deployed |
 | Claim | Manual verification (no on-chain claim yet) |
 
@@ -49,8 +49,8 @@ Environment variables are documented in `.env.example`. When the contract is liv
 
 ## Disclaimer
 
-KAIRU is a meme. Not financial advice. Nothing in this folder promises returns, guaranteed rewards, or specific utility.
+UGLY DEER is a meme. Not financial advice. Nothing in this folder promises returns, guaranteed rewards, or specific utility.
 
 ---
 
-© 2026 KAIRU
+© 2026 UGLY DEER

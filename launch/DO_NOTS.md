@@ -1,6 +1,6 @@
-# KAIRU — What We Do Not Promise
+# UGLY DEER — What We Do Not Promise
 
-Intentional boundaries for launch communication. If it is not listed as a **current fact** on [kairu.lol](https://kairu.lol) or [@DeerloveRu](https://x.com/DeerloveRu), assume it is **not promised**.
+Intentional boundaries for launch communication. If it is not listed as a **current fact** on [kairu.lol](https://kairu.lol) or [@UglyDeerSol](https://x.com/UglyDeerSol), assume it is **not promised**.
 
 Use this list when writing tweets, replies, and community answers.
 
@@ -26,8 +26,7 @@ Use this list when writing tweets, replies, and community answers.
 
 ## Product & utility
 
-- **No guaranteed game** — No promise of a playable KAIRU game
-- **No guaranteed NFT collection** — No mint date, no reveal, no floor
+- **No guaranteed game** — No promise of a playable UGLY DEER game
 - **No guaranteed DAO or governance token** — No voting power promises
 - **No guaranteed staking program** — Not part of current plan
 - **No guaranteed merch drop** — Exploration only, not committed
@@ -56,7 +55,7 @@ Use this list when writing tweets, replies, and community answers.
 ## Social & verification
 
 - **No X OAuth “verify follow” bot** — Follow status checked manually if at all
-- **No impersonation tolerance** — Only @DeerloveRu and kairu.lol are official
+- **No impersonation tolerance** — Only @UglyDeerSol and kairu.lol are official
 - **No paid promotion disclosure bypass** — Influencers must disclose if paid (if ever used)
 
 ---
@@ -73,7 +72,7 @@ Use this list when writing tweets, replies, and community answers.
 
 | Community asks | Safe response direction |
 | -------------- | ----------------------- |
-| “Wen moon?” | KAIRU does not react. Not financial advice. |
+| “Wen moon?” | UGLY DEER does not apologize. Not financial advice. |
 | “Guaranteed allocation?” | May become eligible; manual review; rules before launch. |
 | “CEX soon?” | Not promised. Watch official X only. |
 | “Is this contract real?” | Only trust CA on kairu.lol |
@@ -95,4 +94,4 @@ This list is internal planning guidance. It is not legal advice.
 
 ---
 
-© 2026 KAIRU
+© 2026 UGLY DEER

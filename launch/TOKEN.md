@@ -1,6 +1,6 @@
-# KAIRU Token
+# UGLY DEER Token
 
-Planning reference for the KAIRU SPL token on Solana.
+Planning reference for the UGLY DEER SPL token on Solana.
 
 **Status:** Not created. No contract deployed. No funds spent.
 
@@ -8,8 +8,8 @@ Planning reference for the KAIRU SPL token on Solana.
 
 | Field | Value |
 | ----- | ----- |
-| Name | KAIRU |
-| Symbol | KAIRU |
+| Name | UGLY DEER |
+| Symbol | UGLY |
 | Chain | Solana |
 | Token standard | SPL Token (planned) |
 | Total supply | 1,000,000,000 |
@@ -17,9 +17,9 @@ Planning reference for the KAIRU SPL token on Solana.
 
 ## Description
 
-KAIRU is a deer that never reacts.
+The ugliest deer on Solana. No filters. No apologies.
 
-KAIRU is a community token built on Solana. The website presents KAIRU as a Solana meme coin with bilingual support (Traditional Chinese / English).
+UGLY DEER is a community token built on Solana. The website presents UGLY DEER as a Solana meme coin with bilingual support (Traditional Chinese / English).
 
 ## Contract
 
@@ -45,7 +45,7 @@ The site contract section, copy button, and action links activate automatically 
 | Channel | URL | Status |
 | ------- | --- | ------ |
 | Website | https://kairu.lol | Live |
-| X | https://x.com/DeerloveRu | Official (@DeerloveRu) |
+| X | https://x.com/UglyDeerSol | Official (@UglyDeerSol) |
 | Telegram | TBD | Env: `NEXT_PUBLIC_TELEGRAM` |
 | Chart | TBD | Env: `NEXT_PUBLIC_CHART` |
 | Buy | TBD | Env: `NEXT_PUBLIC_BUY` |
@@ -56,12 +56,11 @@ The site contract section, copy button, and action links activate automatically 
 - No wallet-connect claim UI
 - No X OAuth or automated social verification
 - No Galxe, Zealy, QuestN, or third-party quest platforms
-- No NFT, DAO, staking, or governance promises
 
 ## Disclaimer
 
-KAIRU is a meme. Not financial advice. KAIRU does not explain anything.
+UGLY DEER is a meme. Not financial advice. UGLY DEER does not explain anything.
 
 ---
 
-© 2026 KAIRU
+© 2026 UGLY DEER

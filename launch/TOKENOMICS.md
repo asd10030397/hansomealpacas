@@ -1,4 +1,4 @@
-# KAIRU Tokenomics
+# UGLY DEER Tokenomics
 
 **Status:** Placeholder. Final numbers will be confirmed before token creation.
 
@@ -8,7 +8,7 @@ This document is for internal planning only. It does not represent a binding all
 
 | Field | Planned value |
 | ----- | ------------- |
-| Total supply | 1,000,000,000 KAIRU |
+| Total supply | 1,000,000,000 UGLY |
 | Decimals | 9 |
 | Chain | Solana |
 
@@ -31,14 +31,14 @@ Percentages are illustrative placeholders until the team finalizes the model bef
 A portion of supply may be reserved for eligible participants who complete the pre-launch Deer flow (follow + share) and pass manual verification after launch. See [CLAIM.md](./CLAIM.md).
 
 - No guaranteed allocation per participant
-- Eligibility verified manually by the KAIRU team
+- Eligibility verified manually by the UGLY DEER team
 - Full claim rules announced before launch
 
 ## Future utility (non-binding)
 
 The website may reference possible future uses (community events, identity, exclusive experiences). These are exploratory only — not guaranteed token utility.
 
-We do not promise: NFT drops, DAO governance, staking rewards, or fixed APY.
+We do not promise: DAO governance, staking rewards, or fixed APY.
 
 ## Open questions (before launch)
 
@@ -55,4 +55,4 @@ Placeholder tokenomics are subject to change. Nothing here is financial advice o
 
 ---
 
-© 2026 KAIRU
+© 2026 UGLY DEER

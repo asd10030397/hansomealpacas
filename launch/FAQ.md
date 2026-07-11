@@ -1,6 +1,6 @@
-# KAIRU FAQ
+# UGLY DEER FAQ
 
-Common questions about KAIRU, the website, and the planned Solana token.
+Common questions about UGLY DEER, the website, and the planned Solana token.
 
 **Last updated:** Planning phase · **Token status:** Not deployed
 
@@ -8,21 +8,21 @@ Common questions about KAIRU, the website, and the planned Solana token.
 
 ## General
 
-### What is KAIRU?
+### What is UGLY DEER?
 
-KAIRU is a deer that never reacts. It is a community-driven meme project with a website at [kairu.lol](https://kairu.lol) and a planned token on Solana.
+The ugliest deer on Solana. No filters. No apologies. It is a community-driven meme project with a website at [kairu.lol](https://kairu.lol) and a planned token on Solana.
 
-### Is KAIRU a serious investment?
+### Is UGLY DEER a serious investment?
 
-No. KAIRU is a meme. It is not financial advice. Do not invest money you cannot afford to lose.
+No. UGLY DEER is a meme. It is not financial advice. Do not invest money you cannot afford to lose.
 
-### What chain is KAIRU on?
+### What chain is UGLY DEER on?
 
 **Solana.** The planned token uses SPL standard with 9 decimals and a total supply of 1,000,000,000.
 
 ### Is the token live?
 
-**Not yet.** No contract is deployed. Any token not announced on the official website and [@DeerloveRu](https://x.com/DeerloveRu) is not KAIRU.
+**Not yet.** No contract is deployed. Any token not announced on the official website and [@UglyDeerSol](https://x.com/UglyDeerSol) is not UGLY DEER.
 
 ### Where is the official website?
 
@@ -30,7 +30,7 @@ https://kairu.lol
 
 ### Where is the official X account?
 
-https://x.com/DeerloveRu (@DeerloveRu)
+https://x.com/UglyDeerSol (@UglyDeerSol)
 
 ---
 
@@ -42,11 +42,11 @@ An interactive section where you pick how many times the deer appears (1x, 3x, 5
 
 ### Why does my vote result stay when I return?
 
-Your choice is saved in browser localStorage (`kairu:deer-vote`) so returning visitors see their previous identity. Use **重新測一次** / **Try Again** to reset.
+Your choice is saved in browser localStorage (`uglydeer:deer-vote`) so returning visitors see their previous identity. Use **重新測一次** / **Try Again** to reset.
 
-### What is the Deer Trail?
+### What is the Ugly Trail?
 
-A minimalist roadmap on the site: Website → Community → Deer Identity → Token Launch → Wallet Connect → Claim KAIRU → The Forest Grows.
+A minimalist roadmap on the site: Website → Community → Ugly Identity → Token Launch → Wallet Connect → Claim UGLY → The Herd Grows.
 
 ### Does the site support English?
 
@@ -62,7 +62,7 @@ Yes. An ambient track plays when allowed by your browser. It respects reduced-mo
 
 ### What is the token name and symbol?
 
-**KAIRU** / **KAIRU**
+**UGLY DEER** / **UGLY DEER**
 
 ### What is the total supply?
 
@@ -76,9 +76,7 @@ On launch day via the website and official X. The site contract section will upd
 
 **No.** See [TOKENOMICS.md](./TOKENOMICS.md) for placeholder buckets. Final numbers will be announced before launch.
 
-### Will there be staking, DAO, or NFTs?
-
-**Not promised.** The site may mention possible future directions (events, identity, experiences). Nothing is guaranteed. See [DO_NOTS.md](./DO_NOTS.md).
+### **Not promised.** The site may mention possible future directions (events, identity, experiences). Nothing is guaranteed. See [DO_NOTS.md](./DO_NOTS.md).
 
 ---
 
@@ -86,11 +84,11 @@ On launch day via the website and official X. The site contract section will upd
 
 ### How do I become eligible for a future allocation?
 
-1. Follow [@DeerloveRu](https://x.com/DeerloveRu) on X  
+1. Follow [@UglyDeerSol](https://x.com/UglyDeerSol) on X  
 2. Share your deer identity from the website  
 3. Wait for token launch  
 4. Return to kairu.lol and submit wallet + X username + post link (when claim opens)  
-5. Pass manual verification by the KAIRU team  
+5. Pass manual verification by the UGLY DEER team  
 
 ### Is sharing guaranteed to get me tokens?
 
@@ -114,16 +112,16 @@ Before token launch. The site currently states: *Full claim rules will be announ
 
 ### How do I avoid scams?
 
-- Only trust **kairu.lol** and **@DeerloveRu**
+- Only trust **kairu.lol** and **@UglyDeerSol**
 - Do not buy tokens from unofficial contract addresses
-- KAIRU team will not DM you first asking for seed phrases or payments
+- UGLY DEER team will not DM you first asking for seed phrases or payments
 - Verify contract address on the official site before interacting
 
-### Does KAIRU guarantee exchange listings?
+### Does UGLY DEER guarantee exchange listings?
 
 **No.**
 
-### Does KAIRU guarantee a minimum token price?
+### Does UGLY DEER guarantee a minimum token price?
 
 **No.**
 
@@ -133,22 +131,22 @@ Before token launch. The site currently states: *Full claim rules will be announ
 
 ### When is launch?
 
-No fixed public date. The Deer Trail and [CHECKLIST.md](./CHECKLIST.md) track progress. KAIRU does not react to date hype.
+No fixed public date. The Deer Trail and [CHECKLIST.md](./CHECKLIST.md) track progress. UGLY DEER does not apologize to date hype.
 
 ### How do I stay updated?
 
-Follow [@DeerloveRu](https://x.com/DeerloveRu) and watch https://kairu.lol
+Follow [@UglyDeerSol](https://x.com/UglyDeerSol) and watch https://kairu.lol
 
 ### Who do I contact?
 
-Official channel is X ([@DeerloveRu](https://x.com/DeerloveRu)). No support email is listed in this planning phase.
+Official channel is X ([@UglyDeerSol](https://x.com/UglyDeerSol)). No support email is listed in this planning phase.
 
 ---
 
 ## Disclaimer
 
-This FAQ is for information only. Policies may change before launch. KAIRU is a meme. Not financial advice.
+This FAQ is for information only. Policies may change before launch. UGLY DEER is a meme. Not financial advice.
 
 ---
 
-© 2026 KAIRU
+© 2026 UGLY DEER

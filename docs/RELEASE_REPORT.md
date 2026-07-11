@@ -1,4 +1,4 @@
-# KAIRU Release Report
+# UGLY DEER Release Report
 
 Generated: 2026-07-09T20:11:41.179Z
 

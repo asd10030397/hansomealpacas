@@ -6,14 +6,14 @@ import { EasterEggOverlay } from "@/components/EasterEggOverlay";
 import { Mascot } from "@/components/Mascot";
 import { PROJECT } from "@/content/project";
 import { useLocale } from "@/context/LocaleContext";
-import { useKairuEasterEgg } from "@/hooks/useKairuEasterEgg";
+import { useUglyDeerEasterEgg } from "@/hooks/useUglyDeerEasterEgg";
 import { getHeroActions } from "@/lib/launch";
 import { EASE } from "@/lib/motion";
 
 export function HeroSection() {
   const reduceMotion = useReducedMotion();
   const { t } = useLocale();
-  const { active, handleMascotClick, fadeMs } = useKairuEasterEgg();
+  const { active, handleMascotClick, fadeMs } = useUglyDeerEasterEgg();
   const actions = getHeroActions();
 
   const navItems = [

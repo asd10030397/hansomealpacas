@@ -1,7 +1,7 @@
 import type { DeerTrailItemCopy } from "@/content/i18n/types";
 
-export const COMMUNITY_X_URL = "https://x.com/DeerloveRu";
-export const COMMUNITY_X_HANDLE = "@DeerloveRu";
+export const COMMUNITY_X_URL = "https://x.com/UglyDeerSol";
+export const COMMUNITY_X_HANDLE = "@UglyDeerSol";
 
 export type DeerTrailItem = DeerTrailItemCopy & {
   status: "done" | "upcoming";

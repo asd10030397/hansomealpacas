@@ -68,4 +68,4 @@ curl -I https://kairu.lol/logo/logo.svg
 
 ---
 
-© 2026 KAIRU
+© 2026 UGLY DEER

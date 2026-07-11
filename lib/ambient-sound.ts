@@ -4,7 +4,7 @@ import { AnalyticsEvents, trackEvent } from "@/lib/analytics";
 const TARGET_VOLUME = 0.12;
 const FADE_IN_MS = 2000;
 const FADE_OUT_MS = 400;
-const STORAGE_KEY = "kairu:ambient-started";
+const STORAGE_KEY = "uglydeer:ambient-started";
 
 let audio: HTMLAudioElement | null = null;
 let fadeFrame: number | null = null;

@@ -1,16 +1,16 @@
-# KAIRU Token Info
+# UGLY DEER Token Info
 
 ## Overview
 
 | Field | Value |
 | ----- | ----- |
-| Name | KAIRU |
-| Symbol | KAIRU |
+| Name | UGLY DEER |
+| Symbol | UGLY |
 | Chain | Solana |
 
 ## Description
 
-KAIRU is a deer that never reacts.
+The ugliest deer on Solana. No filters. No apologies.
 
 ## Contract
 
@@ -32,8 +32,8 @@ Configured via environment variables. See `.env.example`.
 
 ## Disclaimer
 
-KAIRU is a meme. Not financial advice. KAIRU does not explain anything.
+UGLY DEER is a meme. Not financial advice. UGLY DEER does not explain anything.
 
 ---
 
-© 2026 KAIRU
+© 2026 UGLY DEER

@@ -1,4 +1,4 @@
-# KAIRU Roadmap
+# UGLY DEER Roadmap
 
 A quiet timeline. No hype. No dates.
 
@@ -14,7 +14,7 @@ A quiet timeline. No hype. No dates.
 - [ ] X account active
 - [ ] Telegram open
 - [ ] First posts published
-- [ ] Community finds KAIRU organically
+- [ ] Community finds UGLY DEER organically
 
 ## Phase 3 — Token
 
@@ -27,8 +27,8 @@ A quiet timeline. No hype. No dates.
 - [ ] Daily presence
 - [ ] Memes
 - [ ] Merch exploration
-- [ ] Nothing changes about KAIRU
+- [ ] Nothing changes about UGLY DEER
 
 ---
 
-KAIRU does not react to roadmaps either.
+UGLY DEER does not apologize to roadmaps either.

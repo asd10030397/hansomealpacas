@@ -4,7 +4,7 @@ Press kit, one-liners, and media contact materials.
 
 ## One-liner
 
-KAIRU is a deer that never reacts.
+The ugliest deer on Solana. No filters. No apologies.
 
 ## Tagline
 
@@ -12,7 +12,7 @@ KAIRU is a deer that never reacts.
 
 ## Description
 
-KAIRU is a Solana meme character. Minimal. Deadpan. Permanent.
+UGLY DEER is a Solana meme character. Minimal. Deadpan. Permanent.
 
 ## Assets
 

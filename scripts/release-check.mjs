@@ -72,7 +72,7 @@ async function main() {
     if (!pass) failures += 1;
   };
 
-  console.log("\nKAIRU Release Check\n");
+  console.log("\nUGLY DEER Release Check\n");
 
   for (const asset of REQUIRED_ASSETS) {
     const path = join(root, asset);
@@ -122,7 +122,7 @@ async function main() {
   }
 
   const reportLines = [
-    "# KAIRU Release Report",
+    "# UGLY DEER Release Report",
     "",
     `Generated: ${new Date().toISOString()}`,
     "",

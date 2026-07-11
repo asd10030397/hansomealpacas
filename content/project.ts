@@ -15,19 +15,19 @@ export type Project = {
 };
 
 export const PROJECT = {
-  name: "KAIRU",
-  symbol: "KAIRU",
+  name: "UGLY DEER",
+  symbol: "UGLY",
   chain: "Solana",
-  taglineCN: "又到了撸管的時間了。",
-  taglineEN: "it's kairu time.",
-  description: "KAIRU is a deer that never reacts.",
+  taglineCN: "丑，也是一種美。",
+  taglineEN: "Beauty is overrated.",
+  description: "The ugliest deer on Solana. No filters. No apologies.",
   website: process.env.NEXT_PUBLIC_WEBSITE ?? "",
   twitter: process.env.NEXT_PUBLIC_X ?? "",
   telegram: process.env.NEXT_PUBLIC_TELEGRAM ?? "",
   contractAddress: process.env.NEXT_PUBLIC_CONTRACT ?? "",
   buyLink: process.env.NEXT_PUBLIC_BUY ?? "",
   chartLink: process.env.NEXT_PUBLIC_CHART ?? "",
-  copyright: "© 2026 KAIRU",
+  copyright: "© 2026 UGLY DEER",
 } as const satisfies Project;
 
 export const ASSETS = {

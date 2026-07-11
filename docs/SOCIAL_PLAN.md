@@ -1,4 +1,4 @@
-# KAIRU Social Plan
+# UGLY DEER Social Plan
 
 ## Tone
 
@@ -8,7 +8,7 @@ Never over-explain. Never hype. Never beg.
 
 ## Voice Rules
 
-- KAIRU never reacts
+- UGLY DEER stays ugly
 - Posts are observations, not announcements
 - Emoji use: 😑 only when necessary
 - Chinese tagline is sacred: 又到了撸管的時間了。
@@ -46,7 +46,7 @@ nothing changed.
 ## Pinned Tweet
 
 ```
-KAIRU
+UGLY DEER
 
 又到了撸管的時間了。
 
@@ -56,7 +56,7 @@ KAIRU
 ## Telegram Pin
 
 ```
-KAIRU is a deer that never reacts.
+The ugliest deer on Solana. No filters. No apologies.
 
 又到了撸管的時間了。
 ```
@@ -91,4 +91,4 @@ KAIRU is a deer that never reacts.
 
 ---
 
-KAIRU does not do engagement farming.
+UGLY DEER does not do engagement farming.

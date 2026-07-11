@@ -10,8 +10,8 @@ export type DeerTrailItemId =
   | "deer-identity"
   | "token-launch"
   | "wallet-connect"
-  | "claim-kairu"
-  | "forest-grows"
+  | "claim-ugly"
+  | "herd-grows"
   | "unknown";
 
 export type DeerTrailItemCopy = {

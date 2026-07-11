@@ -1,39 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="公鹿">
-  <!-- KAIRU identity: stag - thicker antlers, stronger neck, larger body -->
-  <g id="stag">
-    <g id="stag-neck">
-      <path fill="#A98C74" d="M218 372 C218 434 236 472 256 472 C276 472 294 434 294 372 L294 356 C282 362 269 366 256 366 C243 366 230 362 218 356 Z" />
-    </g>
-
-    <g id="stag-head">
-      <ellipse cx="256" cy="246" rx="76" ry="132" fill="#A98C74" />
-
-      <path fill="#A98C74" d="M188 152 C148 168 132 210 150 248 C168 228 182 188 188 152 Z" />
-      <path fill="#8A6D56" d="M182 162 C158 172 148 204 160 232 C170 214 178 184 182 162 Z" />
-
-      <path fill="#A98C74" d="M324 152 C364 168 380 210 362 248 C344 228 330 188 324 152 Z" />
-      <path fill="#8A6D56" d="M330 162 C354 172 364 204 352 232 C342 214 334 184 330 162 Z" />
-    </g>
-
-    <g id="stag-antlers">
-      <path fill="#8A6D56" d="M239 124 C224 106 214 84 210 62 C208 54 213 48 220 50 C225 52 230 68 234 84 C238 100 242 116 244 124 C243 130 239 130 239 124 Z" />
-      <path fill="#8A6D56" d="M226 88 C210 76 200 64 198 56 C196 50 202 48 207 52 C214 60 220 72 228 84 C229 88 227 88 226 88 Z" />
-      <path fill="#8A6D56" d="M273 124 C288 106 298 84 302 62 C304 54 299 48 292 50 C287 52 282 68 278 84 C274 100 270 116 268 124 C269 130 273 130 273 124 Z" />
-      <path fill="#8A6D56" d="M286 88 C302 76 312 64 314 56 C316 50 310 48 305 52 C298 60 292 72 284 84 C283 88 285 88 286 88 Z" />
-    </g>
-
-    <g id="stag-snout">
-      <ellipse cx="256" cy="318" rx="42" ry="64" fill="#8A6D56" />
-    </g>
-
-    <g id="stag-eyes">
-      <rect x="190" y="210" width="56" height="14" rx="7" fill="#222222" />
-      <rect x="266" y="208" width="56" height="14" rx="7" fill="#222222" />
-    </g>
-
-    <g id="stag-face-details">
-      <circle cx="256" cy="312" r="8" fill="#3B2F2F" />
-      <rect x="244" y="346" width="24" height="2.5" rx="1.25" fill="#3B2F2F" />
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="Certified Ugly deer identity">
+  <!-- UGLY DEER identity: certified ugly -->
+  <rect width="512" height="512" fill="#090909"/>
+  <g transform="translate(256 280) scale(0.9) translate(-256 -260)">
+    <path fill="#8B7355" d="M218 372 C218 430 234 468 256 468 C278 468 294 430 294 372 L294 358 C282 364 269 368 256 368 C243 368 230 364 218 358 Z" />
+    <ellipse fill="#8B7355" cx="256" cy="252" rx="80" ry="126" transform="rotate(-5 256 252)" />
+    <path fill="#8B7355" d="M176 158 C132 178 118 224 142 262 C162 238 172 196 176 158 Z" />
+    <path fill="#6B5344" d="M334 154 C360 168 368 206 352 234 C340 212 336 176 334 154 Z" />
+    <path fill="#6B5344" d="M228 118 C210 96 198 72 192 48 C190 38 198 32 206 38 C214 44 220 68 228 92 C234 108 232 122 228 118 Z" />
+    <path fill="#6B5344" d="M292 132 C318 108 332 82 338 58 C342 48 332 42 324 48 C314 56 304 84 292 108 C286 124 288 136 292 132 Z" />
+    <circle cx="198" cy="268" r="10" fill="#7A8B5A" />
+    <ellipse fill="#6B5344" cx="262" cy="322" rx="44" ry="62" transform="rotate(6 262 322)" />
+    <ellipse cx="196" cy="214" rx="34" ry="18" fill="#1A1A1A" />
+    <circle cx="302" cy="206" r="22" fill="#1A1A1A" />
+    <ellipse cx="268" cy="312" rx="10" ry="9" fill="#4A3728" />
+    <path fill="#4A3728" d="M244 346 C252 354 276 354 284 346 C284 350 276 356 264 356 C252 356 244 350 244 346 Z" />
+    <path fill="#C46B6B" d="M258 354 C252 366 250 378 254 388 C258 382 266 378 272 378 C278 378 286 382 290 388 C294 378 292 366 286 354 C280 360 266 360 258 354 Z" />
   </g>
 </svg>

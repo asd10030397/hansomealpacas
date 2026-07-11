@@ -1,6 +1,6 @@
 # Token Metadata
 
-Planning folder for KAIRU token metadata **before** any on-chain deployment.
+Planning folder for UGLY DEER token metadata **before** any on-chain deployment.
 
 **Status:** Draft structure only. Nothing in this folder has been uploaded to Arweave, IPFS, or Solana.
 
@@ -27,8 +27,8 @@ When the token is ready for launch:
 
 | Field | Current value | Notes |
 | ----- | ------------- | ----- |
-| `name` | KAIRU | Display name |
-| `symbol` | KAIRU | Ticker |
+| `name` | UGLY DEER | Display name |
+| `symbol` | UGLY DEER | Ticker |
 | `description` | Short tagline | Match site tone |
 | `image` | logo-512.png URL | Primary icon for wallets/explorers |
 | `external_url` | kairu.lol | Official site |
@@ -45,4 +45,4 @@ When the token is ready for launch:
 
 ---
 
-© 2026 KAIRU
+© 2026 UGLY DEER

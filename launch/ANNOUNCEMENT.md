@@ -1,4 +1,4 @@
-# KAIRU Launch Announcements
+# UGLY DEER Launch Announcements
 
 Draft copy for launch day. **Do not publish until token is actually deployed and verified.**
 
@@ -10,18 +10,18 @@ Replace `TBA` placeholders with live contract, chart, and buy links before posti
 
 ### English
 
-**KAIRU is live on Solana.**
+**UGLY DEER is live on Solana.**
 
 The deer has entered the forest.
 
-- **Token:** KAIRU  
+- **Token:** UGLY DEER  
 - **Chain:** Solana  
 - **Supply:** 1,000,000,000 · 9 decimals  
 - **Contract:** TBA  
 - **Website:** https://kairu.lol  
-- **X:** @DeerloveRu  
+- **X:** @UglyDeerSol  
 
-KAIRU is a community token. Not financial advice.
+UGLY DEER is a community token. Not financial advice.
 
 Early deer who followed and shared their identity may be eligible for the manual claim — full rules on the site.
 
@@ -31,18 +31,18 @@ The story has only just begun.
 
 ### 繁體中文
 
-**KAIRU 已在 Solana 上線。**
+**UGLY DEER 已在 Solana 上線。**
 
 鹿，進入了這片森林。
 
-- **代幣：** KAIRU  
+- **代幣：** UGLY DEER  
 - **鏈：** Solana  
 - **總量：** 1,000,000,000 · 9 decimals  
 - **合約：** TBA  
 - **官網：** https://kairu.lol  
-- **X：** @DeerloveRu  
+- **X：** @UglyDeerSol  
 
-KAIRU 是社群代幣。不構成投資建議。
+UGLY DEER 是社群代幣。不構成投資建議。
 
 早期完成追蹤與分享鹿籍的 deer，可能符合人工審核領取資格 — 詳見官網。
 
@@ -55,31 +55,31 @@ The story has only just begun.
 ### English (single post)
 
 ```
-🦌 KAIRU is live on Solana.
+🦌 UGLY DEER is live on Solana.
 
 Contract: TBA
 Website: https://kairu.lol
 
 Community token. Not financial advice.
 
-We are all KAIRU.
+We are all ugly deer.
 
-@DeerloveRu
+@UglyDeerSol
 ```
 
 ### 繁體中文 (single post)
 
 ```
-🦌 KAIRU 已在 Solana 上線。
+🦌 UGLY DEER 已在 Solana 上線。
 
 合約：TBA
 官網：https://kairu.lol
 
 社群代幣。不構成投資建議。
 
-我們都是 KAIRU。
+我們都是醜鹿。
 
-@DeerloveRu
+@UglyDeerSol
 ```
 
 ---
@@ -89,7 +89,7 @@ We are all KAIRU.
 **Tweet 1**
 
 ```
-🦌 KAIRU is live on Solana.
+🦌 UGLY DEER is live on Solana.
 
 Contract: TBA
 Chart: TBA
@@ -101,7 +101,7 @@ The deer that never reacts.
 **Tweet 2**
 
 ```
-What is KAIRU?
+What is UGLY DEER?
 
 · Community token on Solana
 · 1,000,000,000 supply · 9 decimals
@@ -115,7 +115,7 @@ Meme. Not financial advice.
 ```
 Early deer:
 
-If you followed @DeerloveRu and shared your identity — claim details coming on kairu.lol.
+If you followed @UglyDeerSol and shared your identity — claim details coming on kairu.lol.
 
 Manual verification. No guaranteed allocation.
 
@@ -128,9 +128,9 @@ Full rules on site.
 Only trust:
 
 ✓ https://kairu.lol
-✓ @DeerloveRu
+✓ @UglyDeerSol
 
-Contract on website only. KAIRU does not DM first.
+Contract on website only. UGLY DEER does not DM first.
 ```
 
 ---
@@ -140,7 +140,7 @@ Contract on website only. KAIRU does not DM first.
 **推文 1**
 
 ```
-🦌 KAIRU 已在 Solana 上線。
+🦌 UGLY DEER 已在 Solana 上線。
 
 合約：TBA
 圖表：TBA
@@ -152,7 +152,7 @@ Contract on website only. KAIRU does not DM first.
 **推文 2**
 
 ```
-KAIRU 是什麼？
+UGLY DEER 是什麼？
 
 · Solana 社群代幣
 · 總量 10 億 · 9 decimals
@@ -166,7 +166,7 @@ KAIRU 是什麼？
 ```
 早期 deer：
 
-若已追蹤 @DeerloveRu 並分享鹿籍 — 領取細節將於 kairu.lol 公布。
+若已追蹤 @UglyDeerSol 並分享鹿籍 — 領取細節將於 kairu.lol 公布。
 
 人工審核。不保證分配。
 
@@ -179,9 +179,9 @@ KAIRU 是什麼？
 請只信任：
 
 ✓ https://kairu.lol
-✓ @DeerloveRu
+✓ @UglyDeerSol
 
-合約以官網為準。KAIRU 不會主動私訊你。
+合約以官網為準。UGLY DEER 不會主動私訊你。
 ```
 
 ---
@@ -189,10 +189,10 @@ KAIRU 是什麼？
 ## Pin suggestion (English)
 
 ```
-🦌 Official KAIRU links
+🦌 Official UGLY DEER links
 
 Website → https://kairu.lol
-X → @DeerloveRu
+X → @UglyDeerSol
 Contract → see website
 
 Meme. Not financial advice.
@@ -211,4 +211,4 @@ Meme. Not financial advice.
 
 ---
 
-© 2026 KAIRU
+© 2026 UGLY DEER

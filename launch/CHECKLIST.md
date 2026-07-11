@@ -1,4 +1,4 @@
-# KAIRU Launch Checklist
+# UGLY DEER Launch Checklist
 
 Master checklist for launch planning. Update status as work progresses.
 
@@ -24,13 +24,13 @@ Master checklist for launch planning. Update status as work progresses.
 
 ## Phase 2 — Community
 
-- [x] Official X linked on site (@DeerloveRu)
-- [x] Deer Trail Community row → https://x.com/DeerloveRu
+- [x] Official X linked on site (@UglyDeerSol)
+- [x] Deer Trail Community row → https://x.com/UglyDeerSol
 - [ ] Telegram ready (`NEXT_PUBLIC_TELEGRAM`)
 - [ ] First 10 tweets prepared (`launch/twitter/`)
 - [ ] Pinned tweet ready
 - [ ] Announcement image ready
-- [ ] Community finds KAIRU organically
+- [ ] Community finds UGLY DEER organically
 
 ---
 
@@ -38,7 +38,7 @@ Master checklist for launch planning. Update status as work progresses.
 
 - [ ] Tokenomics finalized (`TOKENOMICS.md`)
 - [ ] Token created on Solana
-- [ ] Symbol verified (KAIRU)
+- [ ] Symbol verified (UGLY)
 - [ ] Supply: 1,000,000,000 · Decimals: 9
 - [ ] Contract address saved
 - [ ] Mint / freeze authority plan documented
@@ -78,7 +78,7 @@ Master checklist for launch planning. Update status as work progresses.
 - [ ] Memes (`launch/memes/`, `public/memes/`)
 - [ ] Reply to community when necessary
 - [ ] Update website as Deer Trail progresses
-- [ ] The Forest Grows — future experiences (TBD)
+- [ ] The Herd Grows — future experiences (TBD)
 
 ---
 
@@ -91,8 +91,8 @@ Master checklist for launch planning. Update status as work progresses.
 | Deer Identity | COMPLETE |
 | Token Launch | NOT STARTED |
 | Wallet Connect | NOT STARTED |
-| Claim KAIRU | NOT STARTED |
-| The Forest Grows | NOT STARTED |
+| Claim UGLY | NOT STARTED |
+| The Herd Grows | NOT STARTED |
 
 ---
 
@@ -113,7 +113,7 @@ Master checklist for launch planning. Update status as work progresses.
 
 ```env
 NEXT_PUBLIC_WEBSITE=https://kairu.lol
-NEXT_PUBLIC_X=https://x.com/DeerloveRu
+NEXT_PUBLIC_X=https://x.com/UglyDeerSol
 NEXT_PUBLIC_TELEGRAM=
 NEXT_PUBLIC_CONTRACT=
 NEXT_PUBLIC_BUY=
@@ -125,4 +125,4 @@ See `.env.example` for the full list.
 
 ---
 
-© 2026 KAIRU
+© 2026 UGLY DEER

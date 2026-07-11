@@ -1,6 +1,6 @@
-# KAIRU Launch Day Operations
+# UGLY DEER Launch Day Operations
 
-Official launch-day runbook for KAIRU on Solana.
+Official launch-day runbook for UGLY DEER on Solana.
 
 Use this document on launch day. Check items in order. Do not skip redeploy.
 
@@ -52,8 +52,8 @@ Fill in at mint. Do not publish until all fields are confirmed.
 
 | Field | Value |
 | ----- | ----- |
-| **Name** | KAIRU |
-| **Ticker** | KAIRU |
+| **Name** | UGLY DEER |
+| **Ticker** | UGLY |
 | **Chain** | Solana |
 | **Decimals** | |
 | **Supply** | |
@@ -61,7 +61,7 @@ Fill in at mint. Do not publish until all fields are confirmed.
 | **Freeze authority** | |
 | **Metadata** | |
 | **Logo** | `public/logo/logo-512.png` |
-| **Description** | KAIRU is a deer that never reacts. |
+| **Description** | The ugliest deer on Solana. No filters. No apologies. |
 
 ### Token checklist
 
@@ -106,8 +106,8 @@ Set in Vercel → Settings → Environment Variables:
 
 ```env
 NEXT_PUBLIC_WEBSITE=https://your-domain.com
-NEXT_PUBLIC_X=https://x.com/kairu
-NEXT_PUBLIC_TELEGRAM=https://t.me/kairu
+NEXT_PUBLIC_X=https://x.com/UglyDeerSol
+NEXT_PUBLIC_TELEGRAM=https://t.me/UglyDeerSol
 NEXT_PUBLIC_CONTRACT=
 NEXT_PUBLIC_BUY=
 NEXT_PUBLIC_CHART=
@@ -155,7 +155,7 @@ Tone: short, dry, deadpan. Never over-explain.
 ### Tweet #1 — Launch
 
 ```
-KAIRU
+UGLY DEER
 
 又到了撸管的時間了。
 
@@ -186,11 +186,11 @@ contract
 ### Telegram announcement
 
 ```
-KAIRU
+UGLY DEER
 
 又到了撸管的時間了。
 
-KAIRU is a deer that never reacts.
+The ugliest deer on Solana. No filters. No apologies.
 
 Website: [website]
 Contract: [contract address]
@@ -204,7 +204,7 @@ Chart: [chart link]
 ### Discord announcement
 
 ```
-KAIRU is live on Solana.
+UGLY DEER is live on Solana.
 
 又到了撸管的時間了。
 
@@ -235,13 +235,13 @@ Submit after launch. Not all platforms index immediately.
 
 | Field | Value |
 | ----- | ----- |
-| Name | KAIRU |
-| Symbol | KAIRU |
+| Name | UGLY DEER |
+| Symbol | UGLY |
 | Chain | Solana |
 | Contract | |
 | Website | |
 | Logo | `public/logo/logo-512.png` |
-| Description | KAIRU is a deer that never reacts. |
+| Description | The ugliest deer on Solana. No filters. No apologies. |
 
 ---
 
@@ -307,8 +307,8 @@ When every box above is checked:
 又到了撸管的時間了。
 ```
 
-KAIRU does not react to launches either.
+UGLY DEER does not apologize to launches either.
 
 ---
 
-© 2026 KAIRU
+© 2026 UGLY DEER

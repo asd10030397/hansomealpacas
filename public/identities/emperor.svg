@@ -1,50 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="鹿天帝">
-  <!-- KAIRU identity: emperor - largest antlers, crown, subtle cape -->
-  <g id="emperor">
-    <g id="emperor-cape">
-      <path fill="#8A6D56" d="M168 340 C148 388 140 432 146 472 L366 472 C372 432 364 388 344 340 C318 368 194 368 168 340 Z" />
-    </g>
-
-    <g id="emperor-neck">
-      <path fill="#A98C74" d="M220 372 C220 434 238 468 256 468 C274 468 292 434 292 372 L292 358 C280 364 268 368 256 368 C244 368 232 364 220 358 Z" />
-    </g>
-
-    <g id="emperor-head">
-      <ellipse cx="256" cy="248" rx="76" ry="132" fill="#A98C74" />
-
-      <path fill="#A98C74" d="M188 152 C148 168 132 210 150 248 C168 228 182 188 188 152 Z" />
-      <path fill="#8A6D56" d="M182 162 C158 172 148 204 160 232 C170 214 178 184 182 162 Z" />
-
-      <path fill="#A98C74" d="M324 152 C364 168 380 210 362 248 C344 228 330 188 324 152 Z" />
-      <path fill="#8A6D56" d="M330 162 C354 172 364 204 352 232 C342 214 334 184 330 162 Z" />
-    </g>
-
-    <g id="emperor-antlers">
-      <path fill="#8A6D56" d="M236 118 C218 96 208 68 204 42 C202 32 208 26 216 28 C222 30 228 50 234 72 C240 94 244 110 246 118 C245 124 236 124 236 118 Z" />
-      <path fill="#8A6D56" d="M222 78 C206 60 196 44 192 32 C190 26 196 24 202 28 C210 36 216 52 224 68 C226 74 224 76 222 78 Z" />
-      <path fill="#8A6D56" d="M214 108 C200 98 192 86 190 78 C188 72 194 70 198 74 C204 82 210 94 216 104 C217 108 215 108 214 108 Z" />
-      <path fill="#8A6D56" d="M276 118 C294 96 304 68 308 42 C310 32 304 26 296 28 C290 30 284 50 278 72 C272 94 268 110 266 118 C267 124 276 124 276 118 Z" />
-      <path fill="#8A6D56" d="M290 78 C306 60 316 44 320 32 C322 26 316 24 310 28 C302 36 296 52 288 68 C286 74 288 76 290 78 Z" />
-      <path fill="#8A6D56" d="M298 108 C312 98 320 86 322 78 C324 72 318 70 314 74 C308 82 302 94 296 104 C295 108 297 108 298 108 Z" />
-    </g>
-
-    <g id="emperor-crown">
-      <path fill="#8A6D56" d="M228 56 L256 28 L284 56 L276 62 L256 42 L236 62 Z" />
-      <rect x="232" y="62" width="48" height="6" rx="1" fill="#8A6D56" />
-    </g>
-
-    <g id="emperor-snout">
-      <ellipse cx="256" cy="318" rx="40" ry="62" fill="#8A6D56" />
-    </g>
-
-    <g id="emperor-eyes">
-      <rect x="190" y="210" width="56" height="14" rx="7" fill="#222222" />
-      <rect x="266" y="208" width="56" height="14" rx="7" fill="#222222" />
-    </g>
-
-    <g id="emperor-face-details">
-      <circle cx="256" cy="312" r="8" fill="#3B2F2F" />
-      <rect x="244" y="346" width="24" height="2.5" rx="1.25" fill="#3B2F2F" />
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="Supreme Ugly deer identity">
+  <!-- UGLY DEER identity: supreme ugly -->
+  <rect width="512" height="512" fill="#090909"/>
+  <g transform="translate(256 276) scale(0.95) translate(-256 -260)">
+    <path fill="#8B7355" d="M218 372 C218 430 234 468 256 468 C278 468 294 430 294 372 L294 358 C282 364 269 368 256 368 C243 368 230 364 218 358 Z" />
+    <ellipse fill="#8B7355" cx="256" cy="252" rx="86" ry="132" transform="rotate(-6 256 252)" />
+    <path fill="#8B7355" d="M176 158 C132 178 118 224 142 262 C162 238 172 196 176 158 Z" />
+    <path fill="#6B5344" d="M182 168 C156 182 148 218 162 246 C174 224 178 188 182 168 Z" />
+    <path fill="#8B7355" d="M342 142 C388 162 402 210 374 248 C352 222 348 178 342 142 Z" />
+    <path fill="#6B5344" d="M334 154 C360 168 368 206 352 234 C340 212 336 176 334 154 Z" />
+    <circle cx="198" cy="268" r="12" fill="#7A8B5A" />
+    <circle cx="318" cy="244" r="9" fill="#7A8B5A" />
+    <circle cx="284" cy="286" r="6" fill="#7A8B5A" />
+    <path fill="#6B5344" d="M228 118 C210 96 198 72 192 48 C190 38 198 32 206 38 C214 44 220 68 228 92 C234 108 232 122 228 118 Z" />
+    <path fill="#6B5344" d="M214 78 C196 66 184 52 180 44 C176 36 186 34 192 42 C200 54 208 68 216 82 C218 88 216 86 214 78 Z" />
+    <path fill="#6B5344" d="M292 132 C318 108 332 82 338 58 C342 48 332 42 324 48 C314 56 304 84 292 108 C286 124 288 136 292 132 Z" />
+    <path fill="#6B5344" d="M308 88 C328 78 342 66 348 58 C354 50 344 46 336 54 C324 66 312 78 302 90 C300 96 306 92 308 88 Z" />
+    <ellipse fill="#6B5344" cx="262" cy="322" rx="48" ry="68" transform="rotate(8 262 322)" />
+    <ellipse cx="192" cy="214" rx="36" ry="20" fill="#1A1A1A" />
+    <circle cx="308" cy="204" r="24" fill="#1A1A1A" />
+    <ellipse cx="268" cy="312" rx="11" ry="10" fill="#4A3728" />
+    <path fill="#4A3728" d="M242 346 C252 356 278 356 288 346 C288 352 278 358 264 358 C250 358 242 352 242 346 Z" />
+    <path fill="#C46B6B" d="M256 354 C246 372 242 388 246 404 C252 394 262 388 272 388 C282 388 292 394 298 404 C302 388 298 372 288 354 C278 362 266 362 256 354 Z" />
+    <path fill="#FAFAFA" d="M196 118 L204 98 L212 118 Z" opacity="0.85"/>
+    <path fill="#FAFAFA" d="M312 108 L320 86 L328 108 Z" opacity="0.85"/>
   </g>
 </svg>
