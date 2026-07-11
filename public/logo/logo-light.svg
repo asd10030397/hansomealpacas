@@ -1,29 +1,48 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="UGLY DEER light mode">
-  <rect width="512" height="512" fill="#FAFAFA"/>
-  <g id="ugly-deer" transform="translate(0 0)">
-    <g id="ugly-deer-neck">
-      <path fill="#8B7355" d="M218 372 C218 430 234 468 256 468 C278 468 294 430 294 372 L294 358 C282 364 269 368 256 368 C243 368 230 364 218 358 Z" />
-    </g>
-    <g id="ugly-deer-head">
-      <ellipse fill="#8B7355" cx="256" cy="252" rx="82" ry="128" transform="rotate(-4 256 252)" />
-      <path fill="#8B7355" d="M176 158 C132 178 118 224 142 262 C162 238 172 196 176 158 Z" />
-      <path fill="#6B5344" d="M182 168 C156 182 148 218 162 246 C174 224 178 188 182 168 Z" />
-      <path fill="#8B7355" d="M342 142 C388 162 402 210 374 248 C352 222 348 178 342 142 Z" />
-      <path fill="#6B5344" d="M334 154 C360 168 368 206 352 234 C340 212 336 176 334 154 Z" />
-      <circle cx="198" cy="268" r="10" fill="#7A8B5A" />
-      <circle cx="318" cy="244" r="7" fill="#7A8B5A" />
-    </g>
-    <g id="ugly-deer-antlers">
-      <path fill="#6B5344" d="M228 118 C210 96 198 72 192 48 C190 38 198 32 206 38 C214 44 220 68 228 92 C234 108 232 122 228 118 Z" />
-      <path fill="#6B5344" d="M214 78 C196 66 184 52 180 44 C176 36 186 34 192 42 C200 54 208 68 216 82 C218 88 216 86 214 78 Z" />
-      <path fill="#6B5344" d="M292 132 C318 108 332 82 338 58 C342 48 332 42 324 48 C314 56 304 84 292 108 C286 124 288 136 292 132 Z" />
-      <path fill="#6B5344" d="M308 88 C328 78 342 66 348 58 C354 50 344 46 336 54 C324 66 312 78 302 90 C300 96 306 92 308 88 Z" />
-    </g>
-    <ellipse fill="#6B5344" cx="262" cy="322" rx="46" ry="66" transform="rotate(6 262 322)" />
-    <ellipse cx="196" cy="214" rx="34" ry="18" fill="#1A1A1A" />
-    <circle cx="302" cy="206" r="22" fill="#1A1A1A" />
-    <ellipse cx="268" cy="312" rx="10" ry="9" fill="#4A3728" />
-    <path fill="#4A3728" d="M244 346 C252 354 276 354 284 346 C284 350 276 356 264 356 C252 356 244 350 244 346 Z" />
-    <path fill="#C46B6B" d="M256 354 C248 368 244 382 248 396 C252 388 260 382 268 382 C276 382 284 388 288 396 C292 382 288 368 280 354 C272 360 264 362 256 354 Z" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="UGLY DEER gold coin">
+  <defs>
+    <radialGradient id="goldFace" cx="38%" cy="32%" r="68%">
+      <stop offset="0%" stop-color="#FFF4C2"/>
+      <stop offset="28%" stop-color="#F0D060"/>
+      <stop offset="58%" stop-color="#D4AF37"/>
+      <stop offset="82%" stop-color="#8B6914"/>
+      <stop offset="100%" stop-color="#4A3200"/>
+    </radialGradient>
+    <radialGradient id="goldRim" cx="50%" cy="50%" r="50%">
+      <stop offset="88%" stop-color="#C9A227"/>
+      <stop offset="94%" stop-color="#F5D061"/>
+      <stop offset="100%" stop-color="#6B4F0A"/>
+    </radialGradient>
+    <linearGradient id="embossHi" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF8D6"/>
+      <stop offset="100%" stop-color="#C9A227"/>
+    </linearGradient>
+    <linearGradient id="embossLo" x1="100%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#3D2800"/>
+      <stop offset="100%" stop-color="#7A5200"/>
+    </linearGradient>
+  </defs>
+  <circle cx="256" cy="256" r="248" fill="url(#goldRim)"/>
+  <circle cx="256" cy="256" r="228" fill="url(#goldFace)"/>
+  <circle cx="256" cy="256" r="220" fill="none" stroke="#FFF8D0" stroke-opacity="0.25" stroke-width="3"/>
+  <circle cx="256" cy="256" r="196" fill="none" stroke="#5C4010" stroke-opacity="0.35" stroke-width="2"/>
+  <g transform="translate(256 270) scale(0.92) translate(-256 -250)">
+    <ellipse cx="256" cy="248" rx="78" ry="118" fill="url(#embossHi)" transform="rotate(-4 256 248)"/>
+    <path fill="url(#embossHi)" d="M178 158 C138 174 124 218 148 254 C166 234 174 196 178 158 Z"/>
+    <path fill="url(#embossHi)" d="M334 148 C378 166 392 210 366 248 C348 226 342 182 334 148 Z"/>
+    <path fill="url(#embossLo)" d="M228 118 C210 96 198 72 192 48 C190 38 198 32 206 38 C214 44 220 68 228 92 C234 108 232 122 228 118 Z"/>
+    <path fill="url(#embossLo)" d="M214 78 C196 66 184 52 180 44 C176 36 186 34 192 42 C200 54 208 68 216 82 C218 88 216 86 214 78 Z"/>
+    <path fill="url(#embossLo)" d="M292 132 C318 108 332 82 338 58 C342 48 332 42 324 48 C314 56 304 84 292 108 C286 124 288 136 292 132 Z"/>
+    <path fill="url(#embossLo)" d="M308 88 C328 78 342 66 348 58 C354 50 344 46 336 54 C324 66 312 78 302 90 C300 96 306 92 308 88 Z"/>
+    <circle cx="198" cy="264" r="10" fill="#6B5A20" opacity="0.75"/>
+    <circle cx="318" cy="242" r="7" fill="#6B5A20" opacity="0.75"/>
+    <ellipse cx="262" cy="318" rx="42" ry="58" fill="url(#embossLo)" transform="rotate(6 262 318)"/>
+    <ellipse cx="196" cy="212" rx="32" ry="17" fill="#1A1208"/>
+    <circle cx="302" cy="204" r="20" fill="#1A1208"/>
+    <circle cx="206" cy="208" r="4" fill="#FFF8D0" opacity="0.4"/>
+    <ellipse cx="268" cy="308" rx="9" ry="8" fill="#2A1808"/>
+    <path fill="#2A1808" d="M244 342 C252 350 276 350 284 342 C284 346 276 352 264 352 C252 352 244 346 244 342 Z"/>
+    <path fill="#9B4040" d="M256 350 C248 364 244 378 248 392 C252 384 260 378 268 378 C276 378 284 384 288 392 C292 378 288 364 280 350 C272 356 264 358 256 350 Z"/>
   </g>
+  <text x="256" y="92" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="34" font-weight="900" fill="#4A3200" opacity="0.85" letter-spacing="6">UGLY</text>
+  <text x="256" y="448" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="24" font-weight="900" fill="#4A3200" opacity="0.75" letter-spacing="5">DEER</text>
 </svg>

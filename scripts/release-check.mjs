@@ -15,11 +15,15 @@ const ENV_KEYS = [
 ];
 
 const REQUIRED_ASSETS = [
-  "public/logo/logo.svg",
+  "public/favicon.ico",
+  "public/logo/coin.svg",
   "public/logo/logo-512.png",
-  "public/icons/favicon.png",
+  "public/icons/favicon-16x16.png",
+  "public/icons/favicon-32x32.png",
+  "public/icons/apple-touch-icon.png",
+  "public/images/opengraph-image.png",
+  "public/images/twitter-image.png",
   "public/images/avatar.png",
-  "public/images/og.png",
 ];
 
 function loadEnvFile() {

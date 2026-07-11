@@ -86,18 +86,19 @@ The UGLY DEER mascot is the hero ??intentionally asymmetric deer with crooked an
 
 | Surface | ID / Label |
 |---|---|
-| Hero | `#hero` ??UGLY DEER wordmark + tagline |
-| About | `#about` ??origin story |
-| Ugly Meter | `#deer-vote` ??identity quiz |
-| Ugly Trail | `#deer-trail` ??roadmap |
-| Contract | `#contract` ??CA + share |
+| Hero | `#hero` — UGLY DEER wordmark + gold coin |
+| About | `#about` — origin story |
+| Tokenomics | `#tokenomics` — supply and network |
+| Buy | `#buy` — purchase CTA |
+| Contract | `#contract` — official CA |
+| FAQ | `#faq` — common questions |
 | Footer | brand + social links |
 
 ---
 
 BRAND:        UGLY DEER  
 SYMBOL:       UGLY  
-CHAIN:        Solana  
+CHAIN:        Robinhood Chain  
 WEBSITE:      kairu.lol (current deployment)  
 X:            @DeerloveRu  
 

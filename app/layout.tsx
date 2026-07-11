@@ -28,50 +28,52 @@ const notoSansTC = Noto_Sans_TC({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#070707",
+  themeColor: PROJECT.themeColor,
   colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
 };
 
 const website = isValidHttpUrl(PROJECT.website) ? PROJECT.website.trim() : undefined;
-const title = `${PROJECT.name} | $${PROJECT.symbol} Meme Coin`;
 const canonical = website?.replace(/\/$/, "");
+const metadataBase = website ? new URL(website) : new URL("https://kairu.lol");
 
 export const metadata: Metadata = {
-  title,
-  description: PROJECT.description,
-  ...(website ? { metadataBase: new URL(website) } : {}),
+  metadataBase,
+  title: PROJECT.metaTitle,
+  description: PROJECT.metaDescription,
   ...(canonical ? { alternates: { canonical } } : {}),
   icons: {
     icon: [
-      { url: ASSETS.favicon, sizes: "32x32", type: "image/png" },
+      { url: ASSETS.faviconIco, sizes: "any" },
+      { url: ASSETS.favicon16, sizes: "16x16", type: "image/png" },
+      { url: ASSETS.favicon32, sizes: "32x32", type: "image/png" },
       { url: ASSETS.logo512, sizes: "512x512", type: "image/png" },
     ],
-    apple: ASSETS.avatar,
+    apple: [{ url: ASSETS.apple, sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
-    title,
-    description: PROJECT.description,
+    title: PROJECT.ogTitle,
+    description: PROJECT.metaDescription,
     siteName: PROJECT.name,
     type: "website",
     locale: "en_US",
     alternateLocale: ["zh_TW"],
-    ...(canonical ? { url: canonical } : {}),
+    url: canonical ?? metadataBase.origin,
     images: [
       {
         url: ASSETS.og,
         width: 1200,
         height: 630,
-        alt: `${PROJECT.name} mascot`,
+        alt: `${PROJECT.name} — gold coin`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title,
-    description: PROJECT.description,
-    images: [ASSETS.og],
+    title: PROJECT.twitterTitle,
+    description: PROJECT.metaDescription,
+    images: [ASSETS.twitterImage],
     site: "@DeerloveRu",
   },
   robots: {

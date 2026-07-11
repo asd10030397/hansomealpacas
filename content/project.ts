@@ -5,6 +5,11 @@ export type Project = {
   readonly taglineCN: string;
   readonly taglineEN: string;
   readonly description: string;
+  readonly metaTitle: string;
+  readonly metaDescription: string;
+  readonly ogTitle: string;
+  readonly twitterTitle: string;
+  readonly themeColor: string;
   readonly website: string;
   readonly twitter: string;
   readonly telegram: string;
@@ -20,7 +25,14 @@ export const PROJECT = {
   chain: "Robinhood Chain",
   taglineCN: "生來就醜。與眾不同。",
   taglineEN: "Born ugly. Built different.",
-  description: "$UGLY — the ugliest deer in crypto. Preparing for launch on Robinhood Chain.",
+  description:
+    "The internet's ugliest deer became a meme coin. Preparing for launch on Robinhood Chain.",
+  metaTitle: "UGLY DEER | The World's Ugliest Deer",
+  metaDescription:
+    "The internet's ugliest deer became a meme coin. Preparing for launch on Robinhood Chain.",
+  ogTitle: "UGLY DEER",
+  twitterTitle: "UGLY DEER",
+  themeColor: "#0D0D0D",
   website: process.env.NEXT_PUBLIC_WEBSITE ?? "",
   twitter: process.env.NEXT_PUBLIC_X ?? "",
   telegram: process.env.NEXT_PUBLIC_TELEGRAM ?? "",
@@ -31,11 +43,16 @@ export const PROJECT = {
 } as const satisfies Project;
 
 export const ASSETS = {
-  logo: "/logo/logo.svg",
+  logo: "/logo/coin.svg",
   logo512: "/logo/logo-512.png",
-  favicon: "/icons/favicon.png",
+  faviconIco: "/favicon.ico",
+  favicon16: "/icons/favicon-16x16.png",
+  favicon32: "/icons/favicon-32x32.png",
+  favicon: "/icons/favicon-32x32.png",
+  apple: "/icons/apple-touch-icon.png",
   avatar: "/images/avatar.png",
-  og: "/images/og.png",
+  og: "/images/opengraph-image.png",
+  twitterImage: "/images/twitter-image.png",
   twitterBanner: "/images/twitter-banner.png",
   telegramBanner: "/images/telegram-banner.png",
   ambient: "/audio/ambient.wav",
