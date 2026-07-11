@@ -198,8 +198,18 @@ export const en: Messages = {
     stayUgly: "Stay Ugly. 🦌",
     builtOn: "Built on Robinhood Chain",
     explorer: "Explorer",
+    transparency: "Transparency",
     copyright: "© 2026 UGLY DEER",
     disclaimer:
       "$UGLY is a meme coin with no intrinsic value or promised returns. This site is entertainment only. Crypto is volatile. DYOR. Only ape what you can lose.",
+  },
+  transparency: {
+    purpose: "Purpose",
+    liquidityPosition: "Liquidity Position",
+    allocation: "Allocation",
+    address: "Address",
+    copyAddress: "Copy Address",
+    copied: "Copied",
+    viewBlockscout: "View on Blockscout",
   },
 };

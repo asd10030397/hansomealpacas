@@ -31,6 +31,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     },
     {
+      url: `${base}/transparency`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
       url: `${base}/token-list/ugly-deer-robinhood.tokenlist.json`,
       lastModified: new Date(),
       changeFrequency: "monthly",

@@ -171,7 +171,17 @@ export type Messages = {
     stayUgly: string;
     builtOn: string;
     explorer: string;
+    transparency: string;
     copyright: string;
     disclaimer: string;
+  };
+  transparency: {
+    purpose: string;
+    liquidityPosition: string;
+    allocation: string;
+    address: string;
+    copyAddress: string;
+    copied: string;
+    viewBlockscout: string;
   };
 };

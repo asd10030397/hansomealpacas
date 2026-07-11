@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FadeIn } from "@/components/FadeIn";
 import { SocialBar } from "@/components/SocialBar";
 import { PROJECT } from "@/content/project";
@@ -18,6 +19,17 @@ function FooterLink({ href, label }: { href?: string; label: string }) {
     >
       {label}
     </a>
+  );
+}
+
+function FooterInternalLink({ href, label }: { href: string; label: string }) {
+  return (
+    <Link
+      href={href}
+      className="text-sm tracking-[0.12em] text-muted transition-colors duration-200 hover:text-gold-light sm:text-base"
+    >
+      {label}
+    </Link>
   );
 }
 
@@ -47,6 +59,7 @@ export function FooterSection() {
           <FooterLink href={twitter} label={t.hero.x} />
           <FooterLink href={telegram} label={t.hero.telegram} />
           <FooterLink href={website} label={t.hero.website} />
+          <FooterInternalLink href="/transparency" label={t.footer.transparency} />
           <FooterLink href={explorer} label={t.footer.explorer} />
         </nav>
 

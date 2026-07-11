@@ -193,8 +193,18 @@ export const zh: Messages = {
     stayUgly: "保持醜。🦌",
     builtOn: "Built on Robinhood Chain",
     explorer: "區塊瀏覽器",
+    transparency: "Transparency",
     copyright: "© 2026 UGLY DEER",
     disclaimer:
       "$UGLY 為迷因代幣，沒有內在價值，也不保證任何回報。本網站僅供娛樂，不構成投資建議。加密貨幣波動劇烈，請自行研究，只投入可承受損失的資金。",
+  },
+  transparency: {
+    purpose: "用途",
+    liquidityPosition: "流動性部位",
+    allocation: "分配比例",
+    address: "地址",
+    copyAddress: "複製地址",
+    copied: "已複製",
+    viewBlockscout: "在 Blockscout 查看",
   },
 };
