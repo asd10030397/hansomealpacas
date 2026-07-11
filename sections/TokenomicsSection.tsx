@@ -34,12 +34,35 @@ function NetworkTokenomicsCard({ item }: { item: TokenomicsItem }) {
   );
 }
 
+/**
+ * Ticker gets its own layout: unlike the numeric/short values in the other
+ * cards, "HANSOME" is a long wordmark-style string. It's rendered as a
+ * pixel-badge chip with a guaranteed >=20px fixed safe area on each side
+ * (not a font-size trick) plus wide letter-spacing, so it reads like a
+ * brand mark rather than a cramped stat.
+ */
+function TickerTokenomicsCard({ item }: { item: TokenomicsItem }) {
+  return (
+    <div className="tokenomics-card flex h-full min-h-[12rem] flex-col items-center justify-center rounded-2xl px-5 py-11 font-[family-name:var(--font-noto-sans-tc)] sm:min-h-[13rem] sm:px-6 sm:py-12">
+      <p className={labelClassName}>{item.label}</p>
+
+      <div className="mt-8 flex w-full items-center justify-center px-5 sm:mt-9">
+        <p className="max-w-full overflow-hidden truncate whitespace-nowrap text-center text-[0.85rem] font-semibold uppercase leading-none tracking-[0.16em] text-gold-light">
+          {item.value}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function TokenomicsCard({ item }: { item: TokenomicsItem }) {
   if (item.variant === "network") {
     return <NetworkTokenomicsCard item={item} />;
   }
 
-  const isTicker = item.variant === "ticker";
+  if (item.variant === "ticker") {
+    return <TickerTokenomicsCard item={item} />;
+  }
 
   return (
     <div className="tokenomics-card flex h-full min-h-[12rem] flex-col items-center justify-center rounded-2xl px-5 py-11 font-[family-name:var(--font-noto-sans-tc)] sm:min-h-[13rem] sm:px-6 sm:py-12">
@@ -57,17 +80,9 @@ function TokenomicsCard({ item }: { item: TokenomicsItem }) {
           ))}
         </div>
       ) : (
-        <div className={isTicker ? "w-full px-[15%]" : "w-full"}>
-          <p
-            className={`mt-8 whitespace-nowrap text-center font-medium tabular-nums leading-none text-foreground sm:mt-9 ${
-              isTicker
-                ? "text-[1.15rem] tracking-[0.12em] sm:text-[1.3rem] lg:text-[1.5rem] xl:text-[1.3rem]"
-                : "text-[clamp(1.75rem,3.6vw,2.5rem)] tracking-[-0.02em]"
-            }`}
-          >
-            {item.value}
-          </p>
-        </div>
+        <p className="mt-8 whitespace-nowrap text-[clamp(1.75rem,3.6vw,2.5rem)] font-medium tabular-nums leading-none tracking-[-0.02em] text-foreground sm:mt-9">
+          {item.value}
+        </p>
       )}
 
       {item.secondary ? (
