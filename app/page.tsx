@@ -1,8 +1,7 @@
 import { AboutSection } from "@/sections/AboutSection";
 import { BuySection } from "@/sections/BuySection";
 import { ContractSection } from "@/sections/ContractSection";
-import { DeerTrailSection } from "@/sections/DeerTrailSection";
-import { DeerVoteSection } from "@/sections/DeerVoteSection";
+import { FaqSection } from "@/sections/FaqSection";
 import { FooterSection } from "@/sections/FooterSection";
 import { HeroSection } from "@/sections/HeroSection";
 import { TokenomicsSection } from "@/sections/TokenomicsSection";
@@ -15,8 +14,7 @@ export default function Home() {
       <BuySection />
       <ContractSection />
       <AboutSection />
-      <DeerVoteSection />
-      <DeerTrailSection />
+      <FaqSection />
       <FooterSection />
     </main>
   );

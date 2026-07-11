@@ -3,14 +3,12 @@
 import { CopyButton } from "@/components/CopyButton";
 import { FadeIn } from "@/components/FadeIn";
 import { Section } from "@/components/Section";
-import { ShareCard } from "@/components/ShareCard";
 import { useLocale } from "@/context/LocaleContext";
-import { getContractState, getShareState } from "@/lib/launch";
+import { getContractState } from "@/lib/launch";
 
 export function ContractSection() {
   const { t } = useLocale();
   const contract = getContractState();
-  const share = getShareState();
 
   return (
     <FadeIn as="section" id="contract">
@@ -32,10 +30,10 @@ export function ContractSection() {
           </p>
 
           <div className="mt-6 flex flex-col items-center gap-8">
-            <div className="w-full overflow-hidden rounded-xl border border-border bg-background/80 px-4 py-5 sm:px-6">
+            <div className="w-full overflow-hidden rounded-xl border border-border bg-background/80 px-4 py-6 sm:px-6">
               <p
-                className={`break-all font-mono text-sm tracking-wide sm:text-base ${
-                  contract.address ? "text-foreground" : "text-muted"
+                className={`font-[family-name:var(--font-anton)] text-lg tracking-[0.2em] sm:text-xl ${
+                  contract.address ? "font-mono text-sm tracking-wide text-foreground" : "text-gold-light"
                 }`}
                 aria-live="polite"
               >
@@ -44,7 +42,6 @@ export function ContractSection() {
             </div>
 
             <CopyButton value={contract.address} variant="gold" />
-            <ShareCard websiteUrl={share.websiteUrl} contractAddress={share.contractAddress} />
           </div>
         </div>
       </Section>

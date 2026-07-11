@@ -35,7 +35,7 @@ export const viewport: Viewport = {
 };
 
 const website = isValidHttpUrl(PROJECT.website) ? PROJECT.website.trim() : undefined;
-const title = `${PROJECT.name} | ${PROJECT.chain} Meme Coin`;
+const title = `${PROJECT.name} | $${PROJECT.symbol} Meme Coin`;
 const canonical = website?.replace(/\/$/, "");
 
 export const metadata: Metadata = {

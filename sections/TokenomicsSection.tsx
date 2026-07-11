@@ -21,7 +21,7 @@ export function TokenomicsSection() {
         </h2>
         <p className="mt-6 max-w-2xl text-base text-muted sm:text-xl">{t.tokenomics.subtitle}</p>
 
-        <div className="mt-14 grid w-full max-w-4xl grid-cols-1 gap-4 sm:mt-16 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
+        <div className="mt-14 grid w-full max-w-5xl grid-cols-1 gap-4 sm:mt-16 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {t.tokenomics.items.map((item) => (
             <div
               key={item.label}

@@ -17,10 +17,10 @@ export type Project = {
 export const PROJECT = {
   name: "UGLY DEER",
   symbol: "UGLY",
-  chain: "Solana",
-  taglineCN: "丑，也是一種美。",
+  chain: "Robinhood Chain",
+  taglineCN: "生來就醜。與眾不同。",
   taglineEN: "Born ugly. Built different.",
-  description: "The ugliest deer on Solana. $UGLY — born ugly, built different.",
+  description: "$UGLY — the ugliest deer in crypto. Preparing for launch on Robinhood Chain.",
   website: process.env.NEXT_PUBLIC_WEBSITE ?? "",
   twitter: process.env.NEXT_PUBLIC_X ?? "",
   telegram: process.env.NEXT_PUBLIC_TELEGRAM ?? "",

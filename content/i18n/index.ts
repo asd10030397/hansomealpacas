@@ -46,9 +46,4 @@ export function isLocale(value: string | null): value is Locale {
   return value === "zh" || value === "en";
 }
 
-export const DEER_VOTE_STORAGE_KEY = "uglydeer:deer-vote";
-export const DEER_VOTE_REVEAL_MS = 1250;
-export const DEER_VOTE_SHARE_URL =
-  (process.env.NEXT_PUBLIC_WEBSITE ?? "https://kairu.lol").replace(/\/$/, "");
-export const DEER_VOTE_SHARE_HANDLE = "@UglyDeerSol";
-export type { Locale, Messages, DeerVoteChoice } from "@/content/i18n/types";
+export type { Locale, Messages } from "@/content/i18n/types";

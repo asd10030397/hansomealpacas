@@ -2,40 +2,14 @@ export type Locale = "zh" | "en";
 
 export type GapAfter = "lg" | "md" | "none";
 
-export type DeerVoteChoice = "one" | "three" | "five-plus";
-
-export type DeerTrailItemId =
-  | "website"
-  | "community"
-  | "deer-identity"
-  | "token-launch"
-  | "wallet-connect"
-  | "claim-ugly"
-  | "herd-grows"
-  | "unknown";
-
-export type DeerTrailItemCopy = {
-  id: DeerTrailItemId;
-  label: string;
-};
-
 export type AboutBlock = {
   lines: readonly string[];
   gapAfter: GapAfter;
 };
 
-export type DeerVoteOptionCopy = {
-  id: DeerVoteChoice;
-  display: string;
-};
-
-export type DeerVoteResultCopy = {
-  heading: string;
-  title: string;
-  identity: string;
-  flavor: string;
-  shareLine: string;
-  illustration: string;
+export type FaqItem = {
+  question: string;
+  answer: string;
 };
 
 export type Messages = {
@@ -50,8 +24,7 @@ export type Messages = {
     skipToContent: string;
     primaryLinks: string;
     socialLinks: string;
-    mascotAlt: string;
-    deerVoteGroup: string;
+    coinAlt: string;
     copyContract: string;
     copiedContract: string;
     copyWebsite: string;
@@ -83,42 +56,10 @@ export type Messages = {
     subtitle: string;
     blocks: readonly AboutBlock[];
   };
-  deerVote: {
+  faq: {
+    eyebrow: string;
     title: string;
-    reset: string;
-    futureNote: {
-      lead: string;
-      emphasis: string;
-    };
-    shareRewardNotice: {
-      followPrefix: string;
-      followSuffix: string;
-      shareLine: string;
-      eligibilityLines: readonly string[];
-    };
-    claimProcessNote: {
-      lead: string;
-      submitLead: string;
-      submitItems: readonly string[];
-      verificationLines: readonly string[];
-      footer: string;
-    };
-    tokenAbout: {
-      solanaLabel: string;
-      intro: string;
-      beforeItems: readonly string[];
-      utilityItems: readonly string[];
-      afterItems: readonly string[];
-      footer: string;
-    };
-    shareTagline: string;
-    options: readonly DeerVoteOptionCopy[];
-    results: Record<DeerVoteChoice, DeerVoteResultCopy>;
-  };
-  deerTrail: {
-    title: string;
-    caption: string;
-    items: readonly DeerTrailItemCopy[];
+    items: readonly FaqItem[];
   };
   contract: {
     eyebrow: string;
