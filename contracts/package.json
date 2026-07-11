@@ -11,6 +11,7 @@
     "deploy:robinhood": "hardhat run scripts/deploy.ts --network robinhood",
     "create-v4-pool:robinhood": "hardhat run scripts/create-v4-pool.ts --network robinhood",
     "remove-v4-liquidity:robinhood": "hardhat run scripts/remove-v4-liquidity.ts --network robinhood",
+    "add-v4-liquidity:robinhood": "hardhat run scripts/add-v4-liquidity.ts --network robinhood",
     "query-position:robinhood": "hardhat run scripts/query-position.ts --network robinhood",
     "simulate-burn:robinhood": "hardhat run scripts/simulate-burn.ts --network robinhood",
     "verify:robinhood-testnet": "hardhat run scripts/verify.ts --network robinhoodTestnet",

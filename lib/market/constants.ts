@@ -20,6 +20,14 @@ export const GECKO_TERMINAL_POOL_API = `https://api.geckoterminal.com/api/v2/net
 
 export const GECKO_TERMINAL_TOKEN_POOLS_API = `https://api.geckoterminal.com/api/v2/networks/robinhood/tokens/${TOKEN_ADDRESS}/pools`;
 
+/**
+ * Short server-side TTL for the last successful GeckoTerminal response.
+ * Within this window, /api/market is served straight from the in-memory
+ * cache instead of re-hitting GeckoTerminal — this is the main lever for
+ * staying under GeckoTerminal's rate limit under concurrent traffic.
+ */
+export const MARKET_CACHE_TTL_MS = 25 * 1000;
+
 export const CHANGE_WINDOWS = {
   h1: 60 * 60 * 1000,
   h24: 24 * 60 * 60 * 1000,

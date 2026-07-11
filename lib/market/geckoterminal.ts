@@ -2,6 +2,7 @@ import {
   GECKO_TERMINAL_POOL_API,
   GECKO_TERMINAL_POOL_ID,
   GECKO_TERMINAL_TOKEN_POOLS_API,
+  MARKET_CACHE_TTL_MS,
   TOKEN_ADDRESS,
 } from "@/lib/market/constants";
 
@@ -86,17 +87,103 @@ function findRelatedToken(
   return match?.attributes ?? null;
 }
 
-async function fetchJson<T>(url: string): Promise<T> {
-  const response = await fetch(url, {
-    headers: { Accept: "application/json" },
-    cache: "no-store",
-  });
+const FETCH_TIMEOUT_MS = 8_000;
+const MAX_FETCH_ATTEMPTS = 3;
+const BASE_RETRY_DELAY_MS = 400;
+const MAX_RETRY_DELAY_MS = 5_000;
 
-  if (!response.ok) {
-    throw new Error(`GeckoTerminal HTTP ${response.status}`);
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** 429 (rate limit) and 5xx are transient — worth retrying. Other 4xx (bad url/pool) are not. */
+function isRetryableStatus(status: number): boolean {
+  return status === 429 || status >= 500;
+}
+
+function retryDelayMs(attempt: number, response: Response | null): number {
+  if (response?.status === 429) {
+    const retryAfterHeader = response.headers.get("retry-after");
+    const retryAfterMs = retryAfterHeader ? Number(retryAfterHeader) * 1000 : NaN;
+    if (Number.isFinite(retryAfterMs) && retryAfterMs > 0) {
+      return Math.min(retryAfterMs, MAX_RETRY_DELAY_MS);
+    }
+  }
+  const exponential = BASE_RETRY_DELAY_MS * 2 ** attempt;
+  const jitter = Math.random() * BASE_RETRY_DELAY_MS;
+  return Math.min(exponential + jitter, MAX_RETRY_DELAY_MS);
+}
+
+type FetchAttempt<T> =
+  | { ok: true; data: T }
+  | { ok: false; retryable: boolean; error: Error; response: Response | null };
+
+async function attemptFetchJson<T>(url: string): Promise<FetchAttempt<T>> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(url, {
+      headers: { Accept: "application/json" },
+      cache: "no-store",
+      signal: controller.signal,
+    });
+
+    if (response.ok) {
+      return { ok: true, data: (await response.json()) as T };
+    }
+
+    return {
+      ok: false,
+      retryable: isRetryableStatus(response.status),
+      error: new Error(`GeckoTerminal HTTP ${response.status}`),
+      response,
+    };
+  } catch (error) {
+    const isAbort = error instanceof Error && error.name === "AbortError";
+    return {
+      ok: false,
+      retryable: true, // network errors / timeouts are always worth a retry
+      error: isAbort
+        ? new Error("GeckoTerminal request timed out")
+        : error instanceof Error
+          ? error
+          : new Error("GeckoTerminal request failed"),
+      response: null,
+    };
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+/**
+ * fetch with a hard timeout plus retry/backoff for transient failures
+ * (429 rate limiting, 5xx, network errors, timeouts). Non-retryable 4xx
+ * fail immediately — retrying those would never succeed.
+ */
+async function fetchJson<T>(url: string): Promise<T> {
+  let lastError = new Error("GeckoTerminal request failed");
+
+  for (let attempt = 0; attempt < MAX_FETCH_ATTEMPTS; attempt++) {
+    const result = await attemptFetchJson<T>(url);
+    if (result.ok) {
+      return result.data;
+    }
+
+    lastError = result.error;
+    const isLastAttempt = attempt === MAX_FETCH_ATTEMPTS - 1;
+    if (!result.retryable || isLastAttempt) {
+      throw lastError;
+    }
+
+    const delay = retryDelayMs(attempt, result.response);
+    console.warn(
+      `[market] GeckoTerminal fetch failed (${result.error.message}), retrying ${attempt + 2}/${MAX_FETCH_ATTEMPTS} in ${delay}ms — ${url}`,
+    );
+    await sleep(delay);
   }
 
-  return (await response.json()) as T;
+  throw lastError;
 }
 
 export type GeckoMarketStats = {
@@ -110,7 +197,10 @@ export type GeckoMarketStats = {
   transactions24h: GeckoTxWindow | null;
 };
 
-export async function fetchGeckoTerminalPoolStats(): Promise<GeckoMarketStats> {
+let cachedStats: GeckoMarketStats | null = null;
+let cachedAt = 0;
+
+async function fetchFreshGeckoTerminalPoolStats(): Promise<GeckoMarketStats> {
   const [poolJson, tokenPoolsJson] = await Promise.all([
     fetchJson<GeckoPoolResponse>(GECKO_TERMINAL_POOL_API),
     fetchJson<GeckoPoolListResponse>(GECKO_TERMINAL_TOKEN_POOLS_API),
@@ -163,4 +253,38 @@ export async function fetchGeckoTerminalPoolStats(): Promise<GeckoMarketStats> {
     liquidityUsd: parseNum(attrs.reserve_in_usd),
     transactions24h: parseTxWindow(tokenAttrs?.transactions?.h24 ?? attrs.transactions?.h24),
   };
+}
+
+/**
+ * Cached, resilient entry point used by /api/market:
+ *  - Serves the in-memory cache directly while it's still within TTL,
+ *    so concurrent/rapid page loads share one GeckoTerminal call instead
+ *    of each triggering their own (the main lever against 429s).
+ *  - On a cache miss, fetches fresh data (with retry/backoff above).
+ *  - If the fresh fetch fails (e.g. still rate-limited after retries) but
+ *    we have any previously successful result, serve that stale result
+ *    instead of failing the request — only throws if nothing has ever
+ *    succeeded yet (e.g. right after a cold deploy).
+ */
+export async function fetchGeckoTerminalPoolStats(): Promise<GeckoMarketStats> {
+  const now = Date.now();
+  if (cachedStats && now - cachedAt < MARKET_CACHE_TTL_MS) {
+    return cachedStats;
+  }
+
+  try {
+    const fresh = await fetchFreshGeckoTerminalPoolStats();
+    cachedStats = fresh;
+    cachedAt = now;
+    return fresh;
+  } catch (error) {
+    if (cachedStats) {
+      const message = error instanceof Error ? error.message : "unknown error";
+      console.warn(
+        `[market] GeckoTerminal refresh failed (${message}) — serving last known-good data from ${new Date(cachedAt).toISOString()}`,
+      );
+      return cachedStats;
+    }
+    throw error;
+  }
 }
