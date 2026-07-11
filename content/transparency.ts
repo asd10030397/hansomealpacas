@@ -26,12 +26,12 @@ export const OFFICIAL_WALLETS: readonly OfficialWallet[] = [
     emoji: "💧",
     title: "Liquidity Wallet",
     purpose: "Official Uniswap v4 liquidity management.",
-    allocation: "≈ 2.88%",
+    allocation: "≈2.88%",
     address: "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
     explorerUrl:
       "https://robinhoodchain.blockscout.com/address/0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
     liquidityDetail: "ETH / UGLY · Fee: 0.05%",
-    note: "This wallet manages the official liquidity position. UGLY tokens are deposited into the Uniswap v4 pool, so the wallet balance may appear as zero.",
+    note: "This wallet manages the official Uniswap v4 liquidity position. The wallet itself may show zero UGLY because tokens are deposited into the pool.",
   },
   {
     id: "treasury",
@@ -39,7 +39,7 @@ export const OFFICIAL_WALLETS: readonly OfficialWallet[] = [
     title: "Treasury",
     purpose:
       "Treasury, ecosystem growth, partnerships, future liquidity, marketing and development.",
-    allocation: "≈ 72.12%",
+    allocation: "≈72.12%",
     address: "0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A",
     explorerUrl:
       "https://robinhoodchain.blockscout.com/address/0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A",
@@ -49,7 +49,7 @@ export const OFFICIAL_WALLETS: readonly OfficialWallet[] = [
     emoji: "🦌",
     title: "Founder Wallet",
     purpose: "Founder allocation.",
-    allocation: "25.00%",
+    allocation: "25%",
     address: "0x2006CF012842e757f1f79938cD646e8a19d5c389",
     explorerUrl:
       "https://robinhoodchain.blockscout.com/address/0x2006CF012842e757f1f79938cD646e8a19d5c389",
@@ -59,6 +59,6 @@ export const OFFICIAL_WALLETS: readonly OfficialWallet[] = [
 export const TOKEN_ALLOCATION = {
   liquidity: "2.88%",
   treasury: "72.12%",
-  founder: "25.00%",
+  founder: "25%",
   totalSupply: "1,000,000,000 UGLY",
 } as const;
