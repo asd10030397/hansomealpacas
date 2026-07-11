@@ -22,7 +22,7 @@ async function main() {
     throw new Error("TOKEN_RECIPIENT must be set to a non-zero address");
   }
 
-  const factory = await ethers.getContractFactory("UglyDeer", deployer);
+  const factory = await ethers.getContractFactory("HansomeAlpacas", deployer);
   const token = await factory.deploy(recipient);
   const deployTx = token.deploymentTransaction();
 
@@ -46,7 +46,7 @@ async function main() {
   const record: DeploymentRecord = {
     network: network.name,
     chainId: Number((await ethers.provider.getNetwork()).chainId),
-    contract: "UglyDeer",
+    contract: "HansomeAlpacas",
     address,
     recipient,
     maxSupply: maxSupply.toString(),
@@ -58,11 +58,11 @@ async function main() {
   mkdirSync(deploymentsDir, { recursive: true });
   writeFileSync(join(deploymentsDir, `${network.name}.json`), JSON.stringify(record, null, 2));
 
-  console.log("UGLY DEER deployed");
+  console.log("HANSOME ALPACAS deployed");
   console.log(`  Network:   ${record.network} (${record.chainId})`);
   console.log(`  Contract:  ${record.address}`);
   console.log(`  Recipient: ${record.recipient}`);
-  console.log(`  Supply:    ${ethers.formatEther(maxSupply)} UGLY`);
+  console.log(`  Supply:    ${ethers.formatEther(maxSupply)} HANSOME`);
   console.log(`  Tx hash:   ${receipt.hash}`);
   console.log(`  Block:     ${receipt.blockNumber}`);
   console.log(`  Gas used:  ${gasUsed.toString()}`);

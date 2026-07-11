@@ -16,7 +16,7 @@ async function main() {
     recipient: string;
   };
 
-  const token = await ethers.getContractAt("UglyDeer", record.address);
+  const token = await ethers.getContractAt("HansomeAlpacas", record.address);
 
   const [name, symbol, decimals, totalSupply, recipientBalance] = await Promise.all([
     token.name(),
@@ -30,13 +30,13 @@ async function main() {
   console.log(`  name():                    ${name}`);
   console.log(`  symbol():                  ${symbol}`);
   console.log(`  decimals():                ${decimals}`);
-  console.log(`  totalSupply():             ${ethers.formatEther(totalSupply)} UGLY`);
-  console.log(`  balanceOf(TOKEN_RECIPIENT): ${ethers.formatEther(recipientBalance)} UGLY`);
+  console.log(`  totalSupply():             ${ethers.formatEther(totalSupply)} HANSOME`);
+  console.log(`  balanceOf(TOKEN_RECIPIENT): ${ethers.formatEther(recipientBalance)} HANSOME`);
   console.log(`  Recipient:                 ${record.recipient}`);
 
   const checks = [
-    name === "Ugly Deer",
-    symbol === "UGLY",
+    name === "Hansome Alpacas",
+    symbol === "HANSOME",
     Number(decimals) === 18,
     totalSupply === EXPECTED_SUPPLY,
     recipientBalance === EXPECTED_SUPPLY,

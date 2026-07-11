@@ -12,7 +12,7 @@ async function main() {
   await getDeployerSigner(hre.ethers.provider);
 
   const deploymentPath = join(__dirname, "..", "deployments", `${hre.network.name}.json`);
-  let address = process.env.UGLY_DEER_ADDRESS?.trim();
+  let address = process.env.HANSOME_ALPACAS_ADDRESS?.trim();
   let recipient = process.env.TOKEN_RECIPIENT?.trim();
 
   if (existsSync(deploymentPath)) {
@@ -23,7 +23,7 @@ async function main() {
 
   if (!address) {
     throw new Error(
-      `Missing contract address. Set UGLY_DEER_ADDRESS or deploy first (deployments/${hre.network.name}.json).`,
+      `Missing contract address. Set HANSOME_ALPACAS_ADDRESS or deploy first (deployments/${hre.network.name}.json).`,
     );
   }
 
@@ -31,7 +31,7 @@ async function main() {
     throw new Error("Missing TOKEN_RECIPIENT for constructor verification.");
   }
 
-  console.log(`Verifying UglyDeer at ${address} on ${hre.network.name}...`);
+  console.log(`Verifying HansomeAlpacas at ${address} on ${hre.network.name}...`);
 
   await hre.run("verify:verify", {
     address,

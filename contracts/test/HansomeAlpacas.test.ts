@@ -1,24 +1,24 @@
 import { FunctionFragment } from "ethers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { UglyDeer } from "../typechain-types";
+import { HansomeAlpacas } from "../typechain-types";
 
 const MAX_SUPPLY = 1_000_000_000n * 10n ** 18n;
 
-describe("UglyDeer", () => {
+describe("HansomeAlpacas", () => {
   async function deploy(recipient: string) {
-    const factory = await ethers.getContractFactory("UglyDeer");
+    const factory = await ethers.getContractFactory("HansomeAlpacas");
     const token = await factory.deploy(recipient);
     await token.waitForDeployment();
-    return token as UglyDeer;
+    return token as HansomeAlpacas;
   }
 
   it("sets standard ERC-20 metadata", async () => {
     const [owner] = await ethers.getSigners();
     const token = await deploy(owner.address);
 
-    expect(await token.name()).to.equal("Ugly Deer");
-    expect(await token.symbol()).to.equal("UGLY");
+    expect(await token.name()).to.equal("Hansome Alpacas");
+    expect(await token.symbol()).to.equal("HANSOME");
     expect(await token.decimals()).to.equal(18);
   });
 
@@ -33,8 +33,10 @@ describe("UglyDeer", () => {
   });
 
   it("rejects a zero-address recipient", async () => {
-    const factory = await ethers.getContractFactory("UglyDeer");
-    await expect(factory.deploy(ethers.ZeroAddress)).to.be.revertedWith("UglyDeer: zero recipient");
+    const factory = await ethers.getContractFactory("HansomeAlpacas");
+    await expect(factory.deploy(ethers.ZeroAddress)).to.be.revertedWith(
+      "HansomeAlpacas: zero recipient",
+    );
   });
 
   it("supports standard transfers without fees", async () => {

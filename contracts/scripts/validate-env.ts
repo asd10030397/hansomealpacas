@@ -57,7 +57,7 @@ function validateRecipient(raw: string | undefined): string {
 
   if (normalized === PLACEHOLDER_RECIPIENT) {
     fail(
-      "TOKEN_RECIPIENT is the zero address. Use the wallet that should receive all 1,000,000,000 UGLY.",
+      "TOKEN_RECIPIENT is the zero address. Use the wallet that should receive all 1,000,000,000 HANSOME.",
     );
   }
 

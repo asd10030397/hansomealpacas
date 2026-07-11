@@ -1,8 +1,8 @@
 {
-  "name": "ugly-deer-token",
+  "name": "hansome-alpacas-token",
   "version": "1.0.0",
   "private": true,
-  "description": "UGLY DEER ($UGLY) fixed-supply ERC-20 for Robinhood Chain",
+  "description": "HANSOME ALPACAS ($HANSOME) fixed-supply ERC-20 for Robinhood Chain",
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",

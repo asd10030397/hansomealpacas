@@ -11,11 +11,57 @@ export type OfficialWallet = {
 };
 
 /**
- * No contract or wallets have been deployed for HANSOME ALPACAS yet.
- * Fill this in with real addresses once the token is deployed and
- * liquidity is live — keep the same shape so WalletCard renders unchanged.
+ * Same 4 wallets used for UGLY DEER — no new wallets are created for the
+ * HANSOME ALPACAS relaunch. Only the copy/token symbol changes; addresses
+ * and roles (Deployment / Liquidity / Treasury / Founder) are reused as-is.
+ * Allocation percentages are intentionally left as "TBD" until the HANSOME
+ * distribution plan is finalized.
  */
-export const OFFICIAL_WALLETS: readonly OfficialWallet[] = [] as const;
+export const OFFICIAL_WALLETS: readonly OfficialWallet[] = [
+  {
+    id: "deployment",
+    emoji: "🚀",
+    title: "Deployment Wallet",
+    purpose: "Contract deployment and technical operations.",
+    allocation: "TBD",
+    address: "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+    explorerUrl:
+      "https://robinhoodchain.blockscout.com/address/0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+  },
+  {
+    id: "liquidity",
+    emoji: "💧",
+    title: "Liquidity Wallet",
+    purpose: "Official Uniswap v4 liquidity management.",
+    allocation: "TBD",
+    address: "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
+    explorerUrl:
+      "https://robinhoodchain.blockscout.com/address/0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
+    liquidityDetail: "ETH / HANSOME · Fee: TBD",
+    note: "This wallet manages the official Uniswap v4 liquidity position. The wallet itself may show zero HANSOME because tokens are deposited into the pool.",
+  },
+  {
+    id: "treasury",
+    emoji: "🏛",
+    title: "Treasury",
+    purpose:
+      "Treasury, ecosystem growth, partnerships, future liquidity, marketing and development.",
+    allocation: "TBD",
+    address: "0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A",
+    explorerUrl:
+      "https://robinhoodchain.blockscout.com/address/0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A",
+  },
+  {
+    id: "founder",
+    emoji: "🦙",
+    title: "Founder Wallet",
+    purpose: "Founder allocation.",
+    allocation: "TBD",
+    address: "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+    explorerUrl:
+      "https://robinhoodchain.blockscout.com/address/0x2006CF012842e757f1f79938cD646e8a19d5c389",
+  },
+] as const;
 
 export const TOKEN_ALLOCATION = {
   liquidity: "TBD",

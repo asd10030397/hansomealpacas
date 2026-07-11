@@ -1,11 +1,11 @@
-# UGLY DEER Token ($UGLY)
+# HANSOME ALPACAS Token ($HANSOME)
 
-Production-ready fixed-supply ERC-20 for **Ugly Deer** on **Robinhood Chain**.
+Production-ready fixed-supply ERC-20 for **Hansome Alpacas** on **Robinhood Chain**.
 
 | Property | Value |
 | -------- | ----- |
-| Name | Ugly Deer |
-| Symbol | UGLY |
+| Name | Hansome Alpacas |
+| Symbol | HANSOME |
 | Decimals | 18 |
 | Max supply | 1,000,000,000 |
 | Standard | OpenZeppelin ERC-20 |
@@ -47,6 +47,23 @@ RH_TESTNET_RPC_URL=https://rpc.testnet.chain.robinhood.com
 
 Never commit real private keys.
 
+## Wallet architecture (reused from UGLY DEER — do not create new wallets)
+
+HANSOME ALPACAS reuses the exact same 4-wallet setup as UGLY DEER. No new
+wallets, mnemonics, or private keys are generated for this relaunch — only
+the token contract and its Uniswap v4 pool are new.
+
+| Role | Env var | Used by |
+| ---- | ------- | ------- |
+| Deployment Wallet | `DEPLOYER_PRIVATE_KEY` | `deploy.ts` — deploys `HansomeAlpacas.sol` and signs contract verification |
+| Treasury Wallet | `TREASURY_PRIVATE_KEY` | `create-v4-pool.ts`, `remove-v4-liquidity.ts` — holds treasury funds and manages the Uniswap v4 liquidity position |
+| Liquidity Wallet | *(no separate key in this repo)* | Liquidity position lives at the address tracked on the [transparency page](../content/transparency.ts); pool scripts operate through the Treasury signer above |
+| Founder Wallet | `TOKEN_RECIPIENT` (address only, no private key needed here) | Receives its share of the minted supply at deploy time |
+
+If deploy/pool scripts need changes later, extend the existing signer
+helpers in `scripts/lib/signer.ts` — do not introduce new private-key env
+vars or additional wallets.
+
 ## Commands
 
 ```bash
@@ -77,7 +94,7 @@ Testnet ETH faucet: https://faucet.testnet.chain.robinhood.com
 ## Deploy
 
 1. Fund the deployer wallet with ETH on the target network.
-2. Set `TOKEN_RECIPIENT` to the address that should receive all 1B UGLY.
+2. Set `TOKEN_RECIPIENT` to the address that should receive all 1B HANSOME.
 3. Deploy to testnet first:
 
 ```bash
@@ -102,7 +119,7 @@ npm run verify:robinhood
 If needed, pass the deployed address explicitly:
 
 ```env
-UGLY_DEER_ADDRESS=0x...
+HANSOME_ALPACAS_ADDRESS=0x...
 TOKEN_RECIPIENT=0x...
 ```
 
@@ -110,7 +127,7 @@ Then run the matching `verify:*` script.
 
 ## Security notes
 
-- Review the single source file: `contracts/UglyDeer.sol`
+- Review the single source file: `contracts/HansomeAlpacas.sol`
 - Use a hardware wallet or secure key management for mainnet deployment
 - Confirm `TOKEN_RECIPIENT` before broadcasting
 - There is no recovery mechanism — supply allocation is permanent at deploy time
