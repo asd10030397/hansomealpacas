@@ -36,14 +36,15 @@ export function BuySection() {
             <p className="mt-5 max-w-xl text-base text-muted sm:text-xl">{t.buy.subtitle}</p>
 
             <div className="mt-10 flex flex-col items-center gap-4">
-              <ActionButton href={buy.href} disabled={buy.comingSoon} variant="gold" size="lg">
+              <ActionButton
+                href={buy.href}
+                disabled={buy.comingSoon}
+                variant="gold"
+                size="lg"
+                sublabel={buy.comingSoon ? t.buy.comingSoon : undefined}
+              >
                 {t.buy.cta}
               </ActionButton>
-              {buy.comingSoon && (
-                <span className="rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 font-[family-name:var(--font-anton)] text-xs tracking-[0.25em] text-gold-light">
-                  {t.buy.comingSoon}
-                </span>
-              )}
             </div>
           </m.div>
         </div>

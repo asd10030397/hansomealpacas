@@ -31,8 +31,13 @@ export type Messages = {
     shareDevice: string;
   };
   hero: {
-    eyebrow: string;
+    memeBadge: string;
     tagline: string;
+    tickerLabel: string;
+    ticker: string;
+    chain: string;
+    chainStatus: string;
+    followX: string;
     buy: string;
     chart: string;
     x: string;
@@ -43,6 +48,8 @@ export type Messages = {
     eyebrow: string;
     title: string;
     subtitle: string;
+    tickerLabel: string;
+    ticker: string;
     items: readonly { label: string; value: string }[];
   };
   buy: {
@@ -78,6 +85,9 @@ export type Messages = {
   };
   footer: {
     tagline: string;
+    memeLovers: string;
+    notFinancialAdvice: string;
+    stayUgly: string;
     copyright: string;
     disclaimer: string;
   };

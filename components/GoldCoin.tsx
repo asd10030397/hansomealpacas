@@ -41,7 +41,7 @@ function CoinFace({
         ...transformStyle,
         background: `radial-gradient(circle at ${highlight}, #fff6cc 0%, #f0d060 16%, #d4af37 42%, #a67c00 68%, #6b4f0a 100%)`,
         boxShadow:
-          "inset 0 10px 28px rgba(255,255,255,0.42), inset 0 -16px 32px rgba(0,0,0,0.5), 0 0 80px rgba(212,175,55,0.4)",
+          "inset 0 10px 28px rgba(255,255,255,0.42), inset 0 -16px 32px rgba(0,0,0,0.5), 0 0 64px rgba(212,175,55,0.32)",
       }}
     >
       <div
@@ -69,11 +69,11 @@ export function GoldCoin({ interactive = false, onClick, className = "" }: GoldC
 
   const coin = (
     <div
-      className={`coin-scene mx-auto h-[min(78vw,30rem)] w-[min(78vw,30rem)] sm:h-[min(62vw,34rem)] sm:w-[min(62vw,34rem)] md:h-[32rem] md:w-[32rem] ${className}`}
+      className={`coin-scene mx-auto h-[min(84vw,34rem)] w-[min(84vw,34rem)] sm:h-[min(68vw,36rem)] sm:w-[min(68vw,36rem)] md:h-[36rem] md:w-[36rem] ${className}`}
     >
       <div className={`relative h-full w-full ${reduceMotion ? "" : "coin-float"}`}>
         <div
-          className={`absolute inset-[4%] ${reduceMotion ? "" : "coin-spin-slow"}`}
+          className="absolute inset-[4%]"
           style={{ transformStyle: "preserve-3d" }}
         >
           <CoinFace>
@@ -132,9 +132,9 @@ export function GoldCoin({ interactive = false, onClick, className = "" }: GoldC
     <m.button
       type="button"
       onClick={onClick}
-      initial={{ opacity: 0, scale: reduceMotion ? 1 : 0.92 }}
+      initial={{ opacity: 0, scale: reduceMotion ? 1 : 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: reduceMotion ? 0 : 1, ease: EASE }}
+      transition={{ duration: reduceMotion ? 0 : 0.85, ease: EASE }}
       className="cursor-pointer border-0 bg-transparent p-0"
       aria-label={`${PROJECT.symbol} coin`}
     >

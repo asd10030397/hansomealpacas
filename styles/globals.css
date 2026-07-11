@@ -105,7 +105,7 @@ body {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-14px);
+    transform: translateY(-8px);
   }
 }
 
@@ -113,11 +113,11 @@ body {
   0%,
   100% {
     transform: translateY(0) translateX(0);
-    opacity: 0.15;
+    opacity: 0.1;
   }
   50% {
-    transform: translateY(-28px) translateX(8px);
-    opacity: 0.55;
+    transform: translateY(-14px) translateX(4px);
+    opacity: 0.35;
   }
 }
 
@@ -136,7 +136,8 @@ body {
 }
 
 .coin-float {
-  animation: coin-float 5s ease-in-out infinite;
+  animation: coin-float 8s ease-in-out infinite;
+  will-change: transform;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -156,5 +157,89 @@ body {
   .particle {
     animation: none;
     opacity: 0.25;
+  }
+}
+
+.meme-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--color-gold) 55%, transparent);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-gold) 16%, transparent),
+    color-mix(in srgb, var(--color-gold) 6%, transparent)
+  );
+  padding: 0.55rem 1.35rem;
+  font-family: var(--font-title), sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.34em;
+  color: var(--color-gold-light);
+  box-shadow:
+    0 0 24px color-mix(in srgb, var(--color-gold) 18%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #ffffff 12%, transparent);
+  transform: rotate(-1deg);
+}
+
+.meme-badge-spark {
+  font-size: 0.55rem;
+  color: var(--color-gold);
+  opacity: 0.75;
+}
+
+.meme-badge-spark.left {
+  transform: rotate(-12deg);
+}
+
+.meme-badge-spark.right {
+  transform: rotate(12deg);
+}
+
+.meme-lead {
+  border-left: 2px solid color-mix(in srgb, var(--color-gold) 45%, transparent);
+  padding-left: 1rem;
+  text-align: left;
+}
+
+.hero-ticker {
+  font-family: var(--font-title), sans-serif;
+  letter-spacing: 0.06em;
+}
+
+.hero-ticker-label {
+  font-size: clamp(0.85rem, 2.5vw, 1rem);
+  color: var(--color-muted);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.hero-ticker-value {
+  font-size: clamp(2.25rem, 8vw, 4.5rem);
+  line-height: 1;
+  background: linear-gradient(
+    135deg,
+    var(--color-gold-light) 0%,
+    var(--color-gold) 45%,
+    var(--color-gold-dark) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 24px color-mix(in srgb, var(--color-gold) 28%, transparent));
+}
+
+.meme-faq-highlight {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-gold) 10%, transparent),
+    color-mix(in srgb, var(--color-gold) 3%, transparent)
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meme-badge {
+    transform: none;
   }
 }

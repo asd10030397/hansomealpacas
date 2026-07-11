@@ -3,7 +3,7 @@
 import { useReducedMotion } from "framer-motion";
 import { useMemo } from "react";
 
-const PARTICLE_COUNT = 28;
+const PARTICLE_COUNT = 12;
 
 function createParticles(count: number) {
   return Array.from({ length: count }, (_, index) => ({
@@ -13,7 +13,7 @@ function createParticles(count: number) {
     size: 2 + (index % 4),
     duration: 5 + (index % 6),
     delay: (index % 8) * 0.4,
-    opacity: 0.2 + (index % 5) * 0.08,
+    opacity: 0.12 + (index % 4) * 0.05,
   }));
 }
 

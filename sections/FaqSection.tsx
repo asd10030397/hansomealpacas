@@ -21,8 +21,13 @@ export function FaqSection() {
         </h2>
 
         <dl className="mt-14 w-full max-w-3xl space-y-4 text-left sm:mt-16">
-          {t.faq.items.map((item) => (
-            <div key={item.question} className="gold-border rounded-2xl bg-white/[0.02] px-6 py-6 sm:px-8 sm:py-7">
+          {t.faq.items.map((item, index) => (
+            <div
+              key={item.question}
+              className={`gold-border rounded-2xl bg-white/[0.02] px-6 py-6 sm:px-8 sm:py-7 ${
+                index === 0 ? "meme-faq-highlight" : ""
+              }`}
+            >
               <dt className="font-[family-name:var(--font-anton)] text-base tracking-[0.06em] text-foreground sm:text-lg">
                 {item.question}
               </dt>

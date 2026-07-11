@@ -19,8 +19,13 @@ export const zh: Messages = {
     shareDevice: "分享",
   },
   hero: {
-    eyebrow: "ROBINHOOD CHAIN 生態",
-    tagline: "生來就醜。與眾不同。",
+    memeBadge: "MEME COIN",
+    tagline: "網路上最醜的迷因幣。",
+    tickerLabel: "代號",
+    ticker: "$UGLY",
+    chain: "Robinhood Chain",
+    chainStatus: "（即將上線）",
+    followX: "追蹤 X",
     buy: "BUY",
     chart: "CHART",
     x: "X",
@@ -30,7 +35,9 @@ export const zh: Messages = {
   tokenomics: {
     eyebrow: "TOKENOMICS",
     title: "代幣經濟",
-    subtitle: "簡單。乾淨。沒有花招。",
+    subtitle: "迷因幣數學。零稅。零裝。",
+    tickerLabel: "代號",
+    ticker: "$UGLY",
     items: [
       { label: "代號", value: "UGLY" },
       { label: "總供應量", value: "1,000,000,000" },
@@ -42,13 +49,14 @@ export const zh: Messages = {
   buy: {
     title: "BUY $UGLY",
     subtitle: "正在為 Robinhood Chain 上線做準備。",
-    cta: "BUY $UGLY",
-    comingSoon: "即將推出",
+    cta: "Buy $UGLY",
+    comingSoon: "（即將推出）",
   },
   about: {
     title: "WTF IS UGLY DEER?",
-    subtitle: "認識這隻在審美上徹底失敗的鹿。",
+    subtitle: "UGLY DEER 是一個社群驅動的迷因幣。",
     blocks: [
+      { lines: ["認識這隻在審美上徹底失敗的鹿。"], gapAfter: "lg" },
       { lines: ["每個生態都有一個帥吉祥物。"], gapAfter: "lg" },
       { lines: ["我們選了醜的那個。"], gapAfter: "lg" },
       { lines: ["鹿角歪。", "臉不對。", "完全沒有魅力。"], gapAfter: "lg" },
@@ -60,6 +68,10 @@ export const zh: Messages = {
     eyebrow: "FAQ",
     title: "常見問題",
     items: [
+      {
+        question: "UGLY 是迷因幣嗎？",
+        answer: "是，100%。UGLY DEER 是社群迷因幣——文化第一、氛圍第二、免責聲明永遠在。",
+      },
       {
         question: "$UGLY 是什麼？",
         answer: "迷因幣。一隻醜鹿。一個代號。就這樣。",
@@ -99,6 +111,9 @@ export const zh: Messages = {
   },
   footer: {
     tagline: "生來就醜。與眾不同。",
+    memeLovers: "為迷因愛好者而生。",
+    notFinancialAdvice: "不構成投資建議。",
+    stayUgly: "保持醜。🦌",
     copyright: "© 2026 UGLY DEER",
     disclaimer:
       "$UGLY 為迷因代幣，沒有內在價值，也不保證任何回報。本網站僅供娛樂，不構成投資建議。加密貨幣波動劇烈，請自行研究，只投入可承受損失的資金。",

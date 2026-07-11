@@ -21,6 +21,14 @@ export function FooterSection() {
 
         <p className="mt-4 text-base text-muted sm:text-lg">{t.footer.tagline}</p>
 
+        <div className="mt-8 space-y-1.5 text-sm text-muted/85 sm:text-base">
+          <p>{t.footer.memeLovers}</p>
+          <p>{t.footer.notFinancialAdvice}</p>
+          <p className="font-[family-name:var(--font-anton)] tracking-[0.12em] text-gold/90">
+            {t.footer.stayUgly}
+          </p>
+        </div>
+
         <SocialBar className="mt-10" size="sm" />
 
         <p className="mt-14 max-w-3xl text-[0.6875rem] leading-relaxed tracking-wide text-muted/70 sm:text-xs">

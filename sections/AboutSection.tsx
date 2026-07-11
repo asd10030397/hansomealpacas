@@ -23,7 +23,7 @@ export function AboutSection() {
           {t.about.title}
         </h2>
 
-        <p className="mt-8 font-[family-name:var(--font-noto-sans-tc)] text-lg text-muted sm:mt-10 sm:text-xl">
+        <p className="meme-lead mt-8 max-w-2xl font-[family-name:var(--font-noto-sans-tc)] text-lg text-foreground sm:mt-10 sm:text-xl">
           {t.about.subtitle}
         </p>
 

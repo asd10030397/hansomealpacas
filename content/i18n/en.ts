@@ -19,8 +19,13 @@ export const en: Messages = {
     shareDevice: "Share via device",
   },
   hero: {
-    eyebrow: "ROBINHOOD CHAIN ECOSYSTEM",
-    tagline: "Born ugly. Built different.",
+    memeBadge: "MEME COIN",
+    tagline: "The internet's ugliest meme coin.",
+    tickerLabel: "Ticker",
+    ticker: "$UGLY",
+    chain: "Robinhood Chain",
+    chainStatus: "(Launching Soon)",
+    followX: "Follow on X",
     buy: "BUY",
     chart: "CHART",
     x: "X",
@@ -30,7 +35,9 @@ export const en: Messages = {
   tokenomics: {
     eyebrow: "TOKENOMICS",
     title: "TOKENOMICS",
-    subtitle: "Simple. Clean. No games.",
+    subtitle: "Pure meme coin math. Zero tax. Zero pretension.",
+    tickerLabel: "Ticker",
+    ticker: "$UGLY",
     items: [
       { label: "TICKER", value: "UGLY" },
       { label: "SUPPLY", value: "1,000,000,000" },
@@ -42,13 +49,14 @@ export const en: Messages = {
   buy: {
     title: "BUY $UGLY",
     subtitle: "Preparing for launch on Robinhood Chain.",
-    cta: "BUY $UGLY",
-    comingSoon: "COMING SOON",
+    cta: "Buy $UGLY",
+    comingSoon: "(Coming Soon)",
   },
   about: {
     title: "WTF IS UGLY DEER?",
-    subtitle: "The deer that lost the genetic lottery.",
+    subtitle: "UGLY DEER is a community-driven meme coin.",
     blocks: [
+      { lines: ["The deer that lost the genetic lottery."], gapAfter: "lg" },
       { lines: ["Every ecosystem has a pretty mascot."], gapAfter: "lg" },
       { lines: ["We picked the ugly one."], gapAfter: "lg" },
       {
@@ -63,6 +71,11 @@ export const en: Messages = {
     eyebrow: "FAQ",
     title: "FAQ",
     items: [
+      {
+        question: "Is UGLY a meme coin?",
+        answer:
+          "Yes. 100%. UGLY DEER is a community meme coin — culture first, vibes second, finance disclaimers always.",
+      },
       {
         question: "What is $UGLY?",
         answer: "A meme coin. One ugly deer. One ticker. That's it.",
@@ -102,8 +115,11 @@ export const en: Messages = {
   },
   footer: {
     tagline: "Born ugly. Built different.",
+    memeLovers: "Made for meme lovers.",
+    notFinancialAdvice: "Not financial advice.",
+    stayUgly: "Stay Ugly. 🦌",
     copyright: "© 2026 UGLY DEER",
     disclaimer:
-      "$UGLY is a meme coin with no intrinsic value or promised returns. This site is entertainment only — not financial advice. Crypto is volatile. DYOR. Only ape what you can lose.",
+      "$UGLY is a meme coin with no intrinsic value or promised returns. This site is entertainment only. Crypto is volatile. DYOR. Only ape what you can lose.",
   },
 };
