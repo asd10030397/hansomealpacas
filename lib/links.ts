@@ -2,6 +2,7 @@ import { PROJECT } from "@/content/project";
 
 export const OFFICIAL_X_URL = "https://x.com/DeerloveRu";
 export const OFFICIAL_X_HANDLE = "@DeerloveRu";
+export const OFFICIAL_TELEGRAM_URL = "https://t.me/+7t_v5imi7CJkODc1";
 
 export function isValidHttpUrl(value: string): boolean {
   const trimmed = value.trim();
@@ -61,7 +62,7 @@ export function getProjectLinks(): ProjectLinks {
   return {
     website: isValidHttpUrl(PROJECT.website) ? PROJECT.website.trim() : undefined,
     twitter: isValidHttpUrl(PROJECT.twitter) ? PROJECT.twitter.trim() : OFFICIAL_X_URL,
-    telegram: isValidHttpUrl(PROJECT.telegram) ? PROJECT.telegram.trim() : undefined,
+    telegram: isValidHttpUrl(PROJECT.telegram) ? PROJECT.telegram.trim() : OFFICIAL_TELEGRAM_URL,
     chart: isValidHttpUrl(PROJECT.chartLink) ? PROJECT.chartLink.trim() : undefined,
     buy,
     contractAddress,

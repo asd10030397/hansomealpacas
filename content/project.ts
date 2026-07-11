@@ -37,7 +37,7 @@ export const PROJECT = {
   themeColor: "#0D0D0D",
   website: process.env.NEXT_PUBLIC_WEBSITE ?? "https://kairu.lol",
   twitter: process.env.NEXT_PUBLIC_X ?? "",
-  telegram: process.env.NEXT_PUBLIC_TELEGRAM ?? "",
+  telegram: process.env.NEXT_PUBLIC_TELEGRAM ?? "https://t.me/+7t_v5imi7CJkODc1",
   contractAddress:
     process.env.NEXT_PUBLIC_CONTRACT ?? "0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c",
   buyLink: process.env.NEXT_PUBLIC_BUY ?? "/swap",
