@@ -3,7 +3,7 @@ import type { Locale, Messages } from "@/content/i18n/types";
 import { zh } from "@/content/i18n/zh";
 
 export const DEFAULT_LOCALE: Locale = "en";
-export const LOCALE_STORAGE_KEY = "uglydeer:locale";
+export const LOCALE_STORAGE_KEY = "hansomealpacas:locale";
 
 export const messages: Record<Locale, Messages> = {
   en,

@@ -5,9 +5,9 @@ import { OFFICIAL_WALLETS, TOKEN_ALLOCATION } from "@/content/transparency";
 import { PROJECT } from "@/content/project";
 
 export const metadata = {
-  title: "Official Wallets | UGLY",
+  title: "Official Wallets | HANSOME ALPACAS",
   description:
-    "Official UGLY wallets, treasury allocation, founder wallet, and liquidity wallet.",
+    "Official HANSOME wallets, treasury allocation, founder wallet, and liquidity wallet.",
 };
 
 export default function TransparencyPage() {
@@ -24,7 +24,7 @@ export default function TransparencyPage() {
             ← HOME
           </Link>
 
-          <p className="font-[family-name:var(--font-anton)] text-xs tracking-[0.4em] text-gold sm:text-sm">
+          <p className="font-[family-name:var(--font-anton)] text-xs tracking-[0.4em] text-gold-light sm:text-sm">
             TRANSPARENCY
           </p>
           <h1 className="mt-4 font-[family-name:var(--font-anton)] text-[clamp(2rem,7vw,4rem)] tracking-[0.08em] text-foreground">
@@ -38,9 +38,16 @@ export default function TransparencyPage() {
           </p>
 
           <div className="mt-14 grid w-full grid-cols-1 gap-6">
-            {OFFICIAL_WALLETS.map((wallet) => (
-              <WalletCard key={wallet.id} wallet={wallet} />
-            ))}
+            {OFFICIAL_WALLETS.length > 0 ? (
+              OFFICIAL_WALLETS.map((wallet) => <WalletCard key={wallet.id} wallet={wallet} />)
+            ) : (
+              <div className="gold-border rounded-2xl px-6 py-10 text-center text-muted sm:px-10">
+                <p>No contract has been deployed yet.</p>
+                <p className="mt-2">
+                  Official wallets will be published here once HANSOME ALPACAS is live.
+                </p>
+              </div>
+            )}
           </div>
 
           <section aria-labelledby="allocation-title" className="mt-16 w-full text-left">
@@ -51,22 +58,22 @@ export default function TransparencyPage() {
               TOKEN ALLOCATION
             </h2>
 
-            <div className="gold-border mt-8 rounded-2xl bg-white/[0.02] p-6 sm:p-8">
+            <div className="gold-border mt-8 rounded-2xl p-6 sm:p-8">
               <dl className="grid grid-cols-1 gap-5 sm:grid-cols-3">
                 <div className="tokenomics-card rounded-xl px-4 py-5 text-center">
-                  <dt className="text-xs uppercase tracking-[0.22em] text-gold/70">Liquidity</dt>
+                  <dt className="text-xs uppercase tracking-[0.22em] text-gold-light">Liquidity</dt>
                   <dd className="mt-2 font-[family-name:var(--font-anton)] text-2xl tracking-[0.08em] text-gold-light">
                     {TOKEN_ALLOCATION.liquidity}
                   </dd>
                 </div>
                 <div className="tokenomics-card rounded-xl px-4 py-5 text-center">
-                  <dt className="text-xs uppercase tracking-[0.22em] text-gold/70">Treasury</dt>
+                  <dt className="text-xs uppercase tracking-[0.22em] text-gold-light">Treasury</dt>
                   <dd className="mt-2 font-[family-name:var(--font-anton)] text-2xl tracking-[0.08em] text-gold-light">
                     {TOKEN_ALLOCATION.treasury}
                   </dd>
                 </div>
                 <div className="tokenomics-card rounded-xl px-4 py-5 text-center">
-                  <dt className="text-xs uppercase tracking-[0.22em] text-gold/70">Founder</dt>
+                  <dt className="text-xs uppercase tracking-[0.22em] text-gold-light">Founder</dt>
                   <dd className="mt-2 font-[family-name:var(--font-anton)] text-2xl tracking-[0.08em] text-gold-light">
                     {TOKEN_ALLOCATION.founder}
                   </dd>
@@ -74,7 +81,7 @@ export default function TransparencyPage() {
               </dl>
 
               <div className="mt-6 border-t border-border/60 pt-6 text-center">
-                <p className="text-xs uppercase tracking-[0.22em] text-gold/70">Total Supply</p>
+                <p className="text-xs uppercase tracking-[0.22em] text-gold-light">Total Supply</p>
                 <p className="mt-2 font-[family-name:var(--font-anton)] text-xl tracking-[0.08em] text-foreground sm:text-2xl">
                   {TOKEN_ALLOCATION.totalSupply}
                 </p>
@@ -84,7 +91,7 @@ export default function TransparencyPage() {
 
           <section
             aria-labelledby="notice-title"
-            className="gold-border mt-12 w-full rounded-2xl bg-white/[0.02] p-6 text-left sm:p-8"
+            className="gold-border mt-12 w-full rounded-2xl p-6 text-left sm:p-8"
           >
             <h2
               id="notice-title"

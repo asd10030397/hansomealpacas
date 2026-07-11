@@ -38,11 +38,8 @@ export function FooterSection() {
   const { twitter, telegram, website, explorer } = getSocialLinks();
 
   return (
-    <footer className="relative border-t border-border/80 px-6 pb-16 pt-24 sm:pb-20 sm:pt-32">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent"
-      />
+    <footer className="relative px-6 pb-16 pt-16 sm:pb-20 sm:pt-20">
+      <div aria-hidden="true" className="grass-divider" />
       <FadeIn className="mx-auto flex max-w-5xl flex-col items-center text-center">
         <p className="font-[family-name:var(--font-anton)] text-3xl tracking-[0.08em] text-foreground sm:text-4xl">
           {PROJECT.name}
@@ -50,7 +47,7 @@ export function FooterSection() {
 
         <p className="mt-4 text-base text-muted sm:text-lg">{t.footer.tagline}</p>
 
-        <p className="mt-6 text-sm tracking-[0.14em] text-gold/75 sm:text-base">{t.footer.builtOn}</p>
+        <p className="mt-6 text-sm tracking-[0.14em] text-gold-light sm:text-base">{t.footer.builtOn}</p>
 
         <nav
           aria-label={t.a11y.socialLinks}
@@ -66,8 +63,8 @@ export function FooterSection() {
         <div className="mt-8 space-y-1.5 text-sm text-muted/85 sm:text-base">
           <p>{t.footer.memeLovers}</p>
           <p>{t.footer.notFinancialAdvice}</p>
-          <p className="font-[family-name:var(--font-anton)] tracking-[0.12em] text-gold/90">
-            {t.footer.stayUgly}
+          <p className="font-[family-name:var(--font-anton)] tracking-[0.12em] text-gold-light">
+            {t.footer.stayHansome}
           </p>
         </div>
 

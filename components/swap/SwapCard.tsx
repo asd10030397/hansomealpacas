@@ -17,6 +17,7 @@ import {
 import { CopyButton } from "@/components/CopyButton";
 import { TokenIcon } from "@/components/swap/TokenIcon";
 import { TxStatusBanner, type TxPhase } from "@/components/swap/TxStatusBanner";
+import { PROJECT } from "@/content/project";
 import { useLocale } from "@/context/LocaleContext";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import {
@@ -25,17 +26,17 @@ import {
   POOL_ID,
   ROBINHOOD_CHAIN_ID,
   STATE_VIEW_ADDRESS,
-  UGLY_DECIMALS,
-  UGLY_TOKEN_ADDRESS,
+  TOKEN_DECIMALS,
+  TOKEN_ADDRESS,
   UNIVERSAL_ROUTER_ADDRESS,
   robinhoodChain,
 } from "@/lib/chain";
-import { requestWatchUglyAsset } from "@/lib/wallet/watchAsset";
+import { requestWatchTokenAsset } from "@/lib/wallet/watchAsset";
 import { erc20Abi, permit2Abi, stateViewAbi, universalRouterAbi } from "@/lib/swap/abis";
 import { buildUniversalRouterCalldata } from "@/lib/swap/encoding";
 import { DEFAULT_SLIPPAGE_BPS, applySlippage, quoteFromPoolState } from "@/lib/swap/quote";
 
-type SwapDirection = "ethToUgly" | "uglyToEth";
+type SwapDirection = "ethToToken" | "tokenToEth";
 
 type SwapPhase = "idle" | "approvingToken" | "approvingPermit2" | "swapping";
 
@@ -62,7 +63,7 @@ export function SwapCard() {
   const { data: walletClient } = useWalletClient();
   const [isWatchingAsset, setIsWatchingAsset] = useState(false);
 
-  const [direction, setDirection] = useState<SwapDirection>("ethToUgly");
+  const [direction, setDirection] = useState<SwapDirection>("ethToToken");
   const [amountIn, setAmountIn] = useState("");
   const [swapPhase, setSwapPhase] = useState<SwapPhase>("idle");
   const [txPhase, setTxPhase] = useState<TxPhase>("idle");
@@ -77,7 +78,7 @@ export function SwapCard() {
   const isWrongChain = isConnected && chainId !== ROBINHOOD_CHAIN_ID;
 
   const parsedAmountIn = useMemo(
-    () => parseAmountInput(debouncedAmount, direction === "ethToUgly" ? 18 : UGLY_DECIMALS),
+    () => parseAmountInput(debouncedAmount, direction === "ethToToken" ? 18 : TOKEN_DECIMALS),
     [debouncedAmount, direction],
   );
 
@@ -103,8 +104,8 @@ export function SwapCard() {
     query: { enabled: Boolean(address) },
   });
 
-  const { data: uglyBalance, refetch: refetchUglyBalance } = useReadContract({
-    address: UGLY_TOKEN_ADDRESS,
+  const { data: tokenBalance, refetch: refetchTokenBalance } = useReadContract({
+    address: TOKEN_ADDRESS,
     abi: erc20Abi,
     functionName: "balanceOf",
     args: address ? [address] : undefined,
@@ -113,21 +114,21 @@ export function SwapCard() {
   });
 
   const { data: tokenAllowance, refetch: refetchTokenAllowance } = useReadContract({
-    address: UGLY_TOKEN_ADDRESS,
+    address: TOKEN_ADDRESS,
     abi: erc20Abi,
     functionName: "allowance",
     args: address ? [address, PERMIT2_ADDRESS] : undefined,
     chainId: ROBINHOOD_CHAIN_ID,
-    query: { enabled: Boolean(address) && direction === "uglyToEth" },
+    query: { enabled: Boolean(address) && direction === "tokenToEth" },
   });
 
   const { data: permit2Allowance, refetch: refetchPermit2Allowance } = useReadContract({
     address: PERMIT2_ADDRESS,
     abi: permit2Abi,
     functionName: "allowance",
-    args: address ? [address, UGLY_TOKEN_ADDRESS, UNIVERSAL_ROUTER_ADDRESS] : undefined,
+    args: address ? [address, TOKEN_ADDRESS, UNIVERSAL_ROUTER_ADDRESS] : undefined,
     chainId: ROBINHOOD_CHAIN_ID,
-    query: { enabled: Boolean(address) && direction === "uglyToEth" },
+    query: { enabled: Boolean(address) && direction === "tokenToEth" },
   });
 
   const quoteOut = useMemo(() => {
@@ -137,7 +138,7 @@ export function SwapCard() {
     return quoteFromPoolState(
       sqrtPriceX96,
       poolLiquidity,
-      direction === "ethToUgly",
+      direction === "ethToToken",
       parsedAmountIn,
     );
   }, [parsedAmountIn, slot0, poolLiquidity, direction]);
@@ -149,19 +150,19 @@ export function SwapCard() {
 
   const formattedQuote = useMemo(() => {
     if (!quoteOut) return "—";
-    return direction === "ethToUgly"
-      ? formatUnits(quoteOut, UGLY_DECIMALS)
+    return direction === "ethToToken"
+      ? formatUnits(quoteOut, TOKEN_DECIMALS)
       : formatEther(quoteOut);
   }, [quoteOut, direction]);
 
   const needsTokenApproval =
-    direction === "uglyToEth" &&
+    direction === "tokenToEth" &&
     parsedAmountIn !== null &&
     parsedAmountIn > 0n &&
     (tokenAllowance ?? 0n) < parsedAmountIn;
 
   const needsPermit2Approval =
-    direction === "uglyToEth" &&
+    direction === "tokenToEth" &&
     parsedAmountIn !== null &&
     parsedAmountIn > 0n &&
     (permit2Allowance?.[0] ?? 0n) < parsedAmountIn;
@@ -215,7 +216,7 @@ export function SwapCard() {
           address: PERMIT2_ADDRESS,
           abi: permit2Abi,
           functionName: "approve",
-          args: [UGLY_TOKEN_ADDRESS, UNIVERSAL_ROUTER_ADDRESS, maxUint160, Number(expiration)],
+          args: [TOKEN_ADDRESS, UNIVERSAL_ROUTER_ADDRESS, maxUint160, Number(expiration)],
           chainId: ROBINHOOD_CHAIN_ID,
         });
         return;
@@ -254,7 +255,7 @@ export function SwapCard() {
         setSwapPhase("idle");
         setTxPhase("success");
         setTxMessage(t.swap.status.swapComplete);
-        await Promise.all([refetchEthBalance(), refetchUglyBalance()]);
+        await Promise.all([refetchEthBalance(), refetchTokenBalance()]);
         setAmountIn("");
       }
     })();
@@ -269,7 +270,7 @@ export function SwapCard() {
     refetchTokenAllowance,
     refetchPermit2Allowance,
     refetchEthBalance,
-    refetchUglyBalance,
+    refetchTokenBalance,
     t.swap.status.approvingPermit2,
     t.swap.status.swapping,
     t.swap.status.swapComplete,
@@ -303,7 +304,7 @@ export function SwapCard() {
 
   const handleFlip = useCallback(() => {
     resetTxState();
-    setDirection((prev) => (prev === "ethToUgly" ? "uglyToEth" : "ethToUgly"));
+    setDirection((prev) => (prev === "ethToToken" ? "tokenToEth" : "ethToToken"));
     setAmountIn("");
   }, [resetTxState]);
 
@@ -313,7 +314,7 @@ export function SwapCard() {
     if (!walletClient) {
       setTxPhase("failed");
       setTxMessage(t.swap.watchAssetFailed);
-      console.warn("[UGLY] wallet_watchAsset skipped — wallet not connected");
+      console.warn(`[${PROJECT.symbol}] wallet_watchAsset skipped — wallet not connected`);
       return;
     }
 
@@ -322,11 +323,11 @@ export function SwapCard() {
     setTxMessage(t.swap.addToWallet);
 
     try {
-      const added = await requestWatchUglyAsset(walletClient);
+      const added = await requestWatchTokenAsset(walletClient);
       setTxPhase(added ? "success" : "failed");
       setTxMessage(added ? t.swap.watchAssetSuccess : t.swap.watchAssetRejected);
     } catch (error) {
-      console.error("[UGLY] wallet_watchAsset failed:", error);
+      console.error(`[${PROJECT.symbol}] wallet_watchAsset failed:`, error);
       setTxPhase("failed");
       setTxMessage(t.swap.watchAssetFailed);
     } finally {
@@ -338,13 +339,13 @@ export function SwapCard() {
     if (!parsedAmountIn || parsedAmountIn <= 0n || !amountOutMin) return;
     resetTxState();
 
-    if (direction === "uglyToEth" && needsTokenApproval) {
+    if (direction === "tokenToEth" && needsTokenApproval) {
       setPendingAction("tokenApprove");
       setSwapPhase("approvingToken");
       setTxPhase("loading");
       setTxMessage(t.swap.status.approvingToken);
       writeContract({
-        address: UGLY_TOKEN_ADDRESS,
+        address: TOKEN_ADDRESS,
         abi: erc20Abi,
         functionName: "approve",
         args: [PERMIT2_ADDRESS, maxUint256],
@@ -353,7 +354,7 @@ export function SwapCard() {
       return;
     }
 
-    if (direction === "uglyToEth" && needsPermit2Approval) {
+    if (direction === "tokenToEth" && needsPermit2Approval) {
       setPendingAction("permit2Approve");
       setSwapPhase("approvingPermit2");
       setTxPhase("loading");
@@ -363,7 +364,7 @@ export function SwapCard() {
         address: PERMIT2_ADDRESS,
         abi: permit2Abi,
         functionName: "approve",
-        args: [UGLY_TOKEN_ADDRESS, UNIVERSAL_ROUTER_ADDRESS, maxUint160, Number(expiration)],
+        args: [TOKEN_ADDRESS, UNIVERSAL_ROUTER_ADDRESS, maxUint160, Number(expiration)],
         chainId: ROBINHOOD_CHAIN_ID,
       });
       return;
@@ -411,16 +412,16 @@ export function SwapCard() {
     swapPhase !== "idle" ||
     isWatchingAsset;
 
-  const inputSymbol = direction === "ethToUgly" ? "ETH" : "UGLY";
-  const outputSymbol = direction === "ethToUgly" ? "UGLY" : "ETH";
+  const inputSymbol = direction === "ethToToken" ? "ETH" : PROJECT.symbol;
+  const outputSymbol = direction === "ethToToken" ? PROJECT.symbol : "ETH";
 
   const balanceLabel =
-    direction === "ethToUgly"
+    direction === "ethToToken"
       ? ethBalance
         ? `${formatEther(ethBalance.value)} ETH`
         : "—"
-      : uglyBalance !== undefined
-        ? `${formatUnits(uglyBalance, UGLY_DECIMALS)} UGLY`
+      : tokenBalance !== undefined
+        ? `${formatUnits(tokenBalance, TOKEN_DECIMALS)} ${PROJECT.symbol}`
         : "—";
 
   const primaryLabel = !isConnected
@@ -428,14 +429,14 @@ export function SwapCard() {
     : isWrongChain
       ? t.swap.switchNetwork
       : swapPhase === "approvingToken"
-        ? t.swap.approveUgly
+        ? t.swap.approveToken
         : swapPhase === "approvingPermit2"
           ? t.swap.approveRouter
           : swapPhase === "swapping"
             ? t.swap.swapping
-            : direction === "uglyToEth" && needsTokenApproval
-              ? t.swap.approveUgly
-              : direction === "uglyToEth" && needsPermit2Approval
+            : direction === "tokenToEth" && needsTokenApproval
+              ? t.swap.approveToken
+              : direction === "tokenToEth" && needsPermit2Approval
                 ? t.swap.approveRouter
                 : t.swap.swap;
 
@@ -454,13 +455,13 @@ export function SwapCard() {
       ? handleSwitchChain
       : handleSwap;
 
-  const explorerUrl = getExplorerAddressUrl(UGLY_TOKEN_ADDRESS);
+  const explorerUrl = getExplorerAddressUrl(TOKEN_ADDRESS);
 
   return (
-    <div className="gold-border w-full max-w-lg rounded-3xl bg-white/[0.02] p-6 sm:p-8">
+    <div className="gold-border w-full max-w-lg rounded-3xl p-6 sm:p-8">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="font-[family-name:var(--font-anton)] text-xs tracking-[0.35em] text-gold">
+          <p className="font-[family-name:var(--font-anton)] text-xs tracking-[0.35em] text-gold-light">
             {t.swap.eyebrow}
           </p>
           <h1 className="mt-2 font-[family-name:var(--font-anton)] text-2xl tracking-[0.12em] text-foreground sm:text-3xl">
@@ -500,7 +501,7 @@ export function SwapCard() {
               }}
               className="min-w-0 flex-1 bg-transparent text-right font-[family-name:var(--font-anton)] text-2xl tracking-wide text-foreground outline-none placeholder:text-muted/40"
             />
-            <span className="font-[family-name:var(--font-anton)] text-sm tracking-[0.15em] text-gold">
+            <span className="font-[family-name:var(--font-anton)] text-sm tracking-[0.15em] text-gold-light">
               {inputSymbol}
             </span>
           </div>
@@ -510,9 +511,8 @@ export function SwapCard() {
           <m.button
             type="button"
             onClick={handleFlip}
-            whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
-            className="rounded-full border border-gold/35 bg-gold/5 px-4 py-2 font-[family-name:var(--font-anton)] text-xs tracking-[0.2em] text-gold-light transition-colors hover:border-gold/55"
+            className="pixel-btn rounded-full border-wood bg-gold/20 px-4 py-2 font-[family-name:var(--font-anton)] text-xs tracking-[0.2em] text-gold-light"
             aria-label={t.swap.flipDirection}
           >
             ↕
@@ -526,7 +526,7 @@ export function SwapCard() {
             <p className="min-w-0 flex-1 text-right font-[family-name:var(--font-anton)] text-2xl tracking-wide text-foreground">
               {formattedQuote}
             </p>
-            <span className="font-[family-name:var(--font-anton)] text-sm tracking-[0.15em] text-gold">
+            <span className="font-[family-name:var(--font-anton)] text-sm tracking-[0.15em] text-gold-light">
               {outputSymbol}
             </span>
           </div>
@@ -541,10 +541,10 @@ export function SwapCard() {
         onClick={handlePrimary}
         disabled={isConnected && !isWrongChain && !canSubmit}
         whileHover={canSubmit || !isConnected || isWrongChain ? { opacity: 0.92 } : undefined}
-        className={`mt-6 w-full border px-6 py-4 font-[family-name:var(--font-anton)] text-sm tracking-[0.2em] transition-all ${
+        className={`mt-6 w-full border px-6 py-4 font-[family-name:var(--font-anton)] text-sm tracking-[0.2em] ${
           canSubmit || !isConnected || isWrongChain
-            ? "cursor-pointer border-gold/40 bg-gradient-to-b from-gold/20 to-gold/5 text-gold-light hover:border-gold/60"
-            : "cursor-default border-border text-muted opacity-70"
+            ? "pixel-btn cursor-pointer border-wood bg-gradient-to-b from-gold-pale to-gold text-wood-dark"
+            : "cursor-default border-border bg-surface text-muted opacity-70"
         }`}
       >
         {primaryLabel}
@@ -554,22 +554,22 @@ export function SwapCard() {
 
       <div className="mt-8 border-t border-border/80 pt-6">
         <div className="flex items-center gap-3">
-          <TokenIcon symbol="UGLY" size={48} />
+          <TokenIcon symbol={PROJECT.symbol} size={48} />
           <div>
             <p className="font-[family-name:var(--font-anton)] text-sm tracking-[0.15em] text-foreground">
-              UGLY DEER
+              {PROJECT.name}
             </p>
-            <p className="font-mono text-xs text-muted">{shortenAddress(UGLY_TOKEN_ADDRESS)}</p>
+            <p className="font-mono text-xs text-muted">{shortenAddress(TOKEN_ADDRESS)}</p>
           </div>
         </div>
 
         <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-          <CopyButton value={UGLY_TOKEN_ADDRESS} variant="gold" showAddress={false} />
+          <CopyButton value={TOKEN_ADDRESS} variant="gold" showAddress={false} />
           <a
             href={explorerUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center border border-gold/35 bg-gold/5 px-8 py-3.5 font-[family-name:var(--font-anton)] text-sm tracking-[0.18em] text-gold-light transition-all duration-200 hover:border-gold/55"
+            className="pixel-btn inline-flex items-center justify-center border-wood bg-gold/20 px-8 py-3.5 font-[family-name:var(--font-anton)] text-sm tracking-[0.18em] text-gold-light"
           >
             {t.swap.viewOnBlockscout}
           </a>
@@ -577,8 +577,7 @@ export function SwapCard() {
             type="button"
             onClick={() => void handleWatchAsset()}
             disabled={isWatchingAsset}
-            whileHover={{ opacity: 0.9 }}
-            className="inline-flex items-center justify-center border border-border px-8 py-3.5 font-[family-name:var(--font-anton)] text-sm tracking-[0.18em] text-foreground transition-all duration-200 hover:border-gold/35"
+            className="pixel-btn inline-flex items-center justify-center border-wood bg-surface px-8 py-3.5 font-[family-name:var(--font-anton)] text-sm tracking-[0.18em] text-foreground"
           >
             {t.swap.addToWallet}
           </m.button>

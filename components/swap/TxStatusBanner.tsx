@@ -19,10 +19,10 @@ export function TxStatusBanner({ phase, message, txHash }: TxStatusBannerProps) 
 
   const toneClass =
     phase === "loading"
-      ? "border-gold/35 bg-gold/5 text-gold-light"
+      ? "border-wood bg-gold/15 text-gold-light"
       : phase === "success"
-        ? "border-emerald-500/35 bg-emerald-500/10 text-emerald-200"
-        : "border-red-500/35 bg-red-500/10 text-red-200";
+        ? "border-emerald-600 bg-emerald-500/15 text-emerald-800"
+        : "border-red-600 bg-red-500/15 text-red-800";
 
   const label =
     phase === "loading"

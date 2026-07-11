@@ -1,14 +1,31 @@
 @import "tailwindcss";
 
+/**
+ * HANSOME ALPACAS — "Pixel Alpaca Paradise" theme.
+ *
+ * Token names kept as `--color-gold*` on purpose (many components already
+ * reference `bg-gold`, `text-gold-light`, etc.) but the values now point at
+ * a warm sun/honey accent instead of metallic gold — repointing the token
+ * recolors every consumer without touching each component file.
+ */
 @theme inline {
-  --color-background: #0d0d0d;
-  --color-foreground: #fafafa;
-  --color-muted: #8a8a8a;
-  --color-border: #2a2a2a;
-  --color-gold: #d4af37;
-  --color-gold-light: #f5d061;
-  --color-gold-dark: #8b6914;
-  --color-gold-muted: #c9a227;
+  --color-background: #bfe8f6;
+  --color-surface: #fff8e7;
+  --color-foreground: #3b2a18;
+  --color-muted: #6b5a44;
+  --color-border: #8b5a2b;
+  --color-gold: #f2b33d;
+  /* Despite the name, this is the DARK/readable amber used for accent text on our light pasture bg (was pale gold on a dark theme). */
+  --color-gold-light: #96591a;
+  --color-gold-dark: #8b5a2b;
+  --color-gold-muted: #c98f3b;
+  --color-gold-pale: #ffe7a6;
+  --color-sky: #bfe8f6;
+  --color-sky-light: #e7f7fd;
+  --color-grass: #6fbf57;
+  --color-grass-dark: #3f8c3f;
+  --color-wood: #8b5a2b;
+  --color-wood-dark: #5c3a1b;
   --font-title: var(--font-anton);
   --font-body: var(--font-noto-sans-tc);
 }
@@ -24,7 +41,7 @@ html {
 }
 
 body {
-  background-color: var(--color-background);
+  background-color: var(--color-sky);
   color: var(--color-foreground);
   font-family: var(--font-body), sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -33,11 +50,11 @@ body {
 
 ::selection {
   background-color: var(--color-gold);
-  color: var(--color-background);
+  color: var(--color-wood-dark);
 }
 
 :focus-visible {
-  outline: 1px solid var(--color-gold-light);
+  outline: 2px solid var(--color-wood-dark);
   outline-offset: 3px;
 }
 
@@ -66,65 +83,96 @@ body {
   color: transparent;
 }
 
+/* Chunky pixel-game panel border — flat fill, hard offset shadow, no blur. */
 .gold-border {
-  border: 1px solid color-mix(in srgb, var(--color-gold) 35%, transparent);
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--color-gold) 8%, transparent),
-    0 8px 32px color-mix(in srgb, var(--color-gold) 12%, transparent);
+  border: 3px solid var(--color-wood);
+  background-color: var(--color-surface);
+  box-shadow: 5px 5px 0 0 color-mix(in srgb, var(--color-wood-dark) 55%, transparent);
 }
 
 .tokenomics-card {
-  border: 1px solid color-mix(in srgb, var(--color-gold) 32%, transparent);
-  background: color-mix(in srgb, white 3.5%, transparent);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--color-gold) 6%, transparent),
-    0 8px 32px color-mix(in srgb, var(--color-gold) 10%, transparent);
+  border: 3px solid var(--color-wood);
+  background-color: var(--color-surface);
+  box-shadow: 4px 4px 0 0 color-mix(in srgb, var(--color-wood-dark) 45%, transparent);
   transition:
-    border-color 300ms ease,
-    box-shadow 300ms ease,
-    background-color 300ms ease;
+    transform 150ms ease,
+    box-shadow 150ms ease,
+    border-color 150ms ease;
 }
 
 .tokenomics-card:hover {
-  border-color: color-mix(in srgb, var(--color-gold) 52%, transparent);
-  background: color-mix(in srgb, white 4.5%, transparent);
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--color-gold) 14%, transparent),
-    0 12px 40px color-mix(in srgb, var(--color-gold) 20%, transparent),
-    0 0 56px color-mix(in srgb, var(--color-gold) 10%, transparent);
+  border-color: var(--color-gold);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 color-mix(in srgb, var(--color-wood-dark) 55%, transparent);
 }
 
 .live-status-card {
-  border: 1px solid color-mix(in srgb, var(--color-gold) 28%, transparent);
-  background: color-mix(in srgb, white 3%, transparent);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--color-gold) 5%, transparent),
-    0 12px 40px color-mix(in srgb, black 40%, transparent);
+  border: 3px solid var(--color-grass-dark);
+  background-color: var(--color-surface);
+  box-shadow: 4px 4px 0 0 color-mix(in srgb, var(--color-grass-dark) 40%, transparent);
 }
 
 .live-status-dot {
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 9999px;
-  background: color-mix(in srgb, var(--color-gold) 70%, transparent);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--color-gold) 45%, transparent);
+  background: var(--color-gold);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-wood-dark) 25%, transparent);
 }
 
 .live-status-dot--live {
-  background: #4ade80;
-  box-shadow: 0 0 12px color-mix(in srgb, #4ade80 55%, transparent);
+  background: var(--color-grass-dark);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-grass-dark) 35%, transparent);
 }
 
+/* Warm sunlight glow, used behind the hero art + subpages that don't have a full scene illustration. */
 .gold-glow-bg {
   background: radial-gradient(
     ellipse 80% 50% at 50% 0%,
-    color-mix(in srgb, var(--color-gold) 18%, transparent),
+    color-mix(in srgb, var(--color-gold-pale) 70%, transparent),
     transparent 70%
   );
+}
+
+/* Chunky pixel/NES-style button bevel — layer this class alongside a component's own fill/color + radius classes. */
+.pixel-btn {
+  border-width: 3px;
+  box-shadow: 0 4px 0 0 color-mix(in srgb, var(--color-wood-dark) 70%, transparent);
+  transition:
+    transform 100ms ease,
+    box-shadow 100ms ease;
+}
+
+.pixel-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 0 color-mix(in srgb, var(--color-wood-dark) 70%, transparent);
+}
+
+.pixel-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 0 color-mix(in srgb, var(--color-wood-dark) 70%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pixel-btn:hover,
+  .pixel-btn:active {
+    transform: none;
+  }
+}
+
+/* Repeating pixel grass-and-flowers strip, used as a section divider. */
+.grass-divider {
+  height: 14px;
+  background-image:
+    linear-gradient(180deg, var(--color-grass) 0%, var(--color-grass) 55%, var(--color-grass-dark) 55%, var(--color-grass-dark) 100%),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 22px,
+      color-mix(in srgb, var(--color-grass-dark) 70%, transparent) 22px,
+      color-mix(in srgb, var(--color-grass-dark) 70%, transparent) 26px
+    );
+  box-shadow: 0 3px 0 0 color-mix(in srgb, var(--color-wood-dark) 30%, transparent);
 }
 
 @keyframes coin-spin-slow {
@@ -159,11 +207,11 @@ body {
   0%,
   100% {
     transform: translateY(0) translateX(0);
-    opacity: 0.1;
+    opacity: 0.25;
   }
   50% {
     transform: translateY(-14px) translateX(4px);
-    opacity: 0.35;
+    opacity: 0.55;
   }
 }
 
@@ -202,7 +250,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .particle {
     animation: none;
-    opacity: 0.25;
+    opacity: 0.35;
   }
 }
 
@@ -212,27 +260,21 @@ body {
   align-items: center;
   gap: 0.65rem;
   border-radius: 9999px;
-  border: 1px solid color-mix(in srgb, var(--color-gold) 55%, transparent);
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--color-gold) 16%, transparent),
-    color-mix(in srgb, var(--color-gold) 6%, transparent)
-  );
+  border: 2px solid var(--color-wood);
+  background: linear-gradient(180deg, var(--color-gold-pale) 0%, var(--color-gold) 100%);
   padding: 0.55rem 1.35rem;
   font-family: var(--font-title), sans-serif;
   font-size: 0.72rem;
   letter-spacing: 0.34em;
-  color: var(--color-gold-light);
-  box-shadow:
-    0 0 24px color-mix(in srgb, var(--color-gold) 18%, transparent),
-    inset 0 1px 0 color-mix(in srgb, #ffffff 12%, transparent);
+  color: var(--color-wood-dark);
+  box-shadow: 3px 3px 0 0 color-mix(in srgb, var(--color-wood-dark) 55%, transparent);
   transform: rotate(-1deg);
 }
 
 .meme-badge-spark {
   font-size: 0.55rem;
-  color: var(--color-gold);
-  opacity: 0.75;
+  color: var(--color-wood-dark);
+  opacity: 0.8;
 }
 
 .meme-badge-spark.left {
@@ -244,7 +286,7 @@ body {
 }
 
 .meme-lead {
-  border-left: 2px solid color-mix(in srgb, var(--color-gold) 45%, transparent);
+  border-left: 4px solid var(--color-grass-dark);
   padding-left: 1rem;
   text-align: left;
 }
@@ -256,7 +298,7 @@ body {
 
 .hero-ticker-label {
   font-size: clamp(0.85rem, 2.5vw, 1rem);
-  color: var(--color-muted);
+  color: var(--color-wood-dark);
   letter-spacing: 0.28em;
   text-transform: uppercase;
 }
@@ -264,23 +306,18 @@ body {
 .hero-ticker-value {
   font-size: clamp(2.25rem, 8vw, 4.5rem);
   line-height: 1;
-  background: linear-gradient(
-    135deg,
-    var(--color-gold-light) 0%,
-    var(--color-gold) 45%,
-    var(--color-gold-dark) 100%
-  );
+  background: linear-gradient(135deg, var(--color-gold-pale) 0%, var(--color-gold) 45%, var(--color-wood) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  filter: drop-shadow(0 0 24px color-mix(in srgb, var(--color-gold) 28%, transparent));
+  filter: drop-shadow(3px 3px 0 color-mix(in srgb, var(--color-wood-dark) 60%, transparent));
 }
 
 .meme-faq-highlight {
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--color-gold) 10%, transparent),
-    color-mix(in srgb, var(--color-gold) 3%, transparent)
+    color-mix(in srgb, var(--color-gold-pale) 65%, transparent),
+    color-mix(in srgb, var(--color-gold) 30%, transparent)
   );
 }
 

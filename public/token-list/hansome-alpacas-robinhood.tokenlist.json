@@ -1,0 +1,14 @@
+{
+  "name": "HANSOME ALPACAS Robinhood Chain",
+  "timestamp": "2026-07-11T12:00:00.000Z",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "patch": 0
+  },
+  "logoURI": "https://hansomealpacas.xyz/logo/logo-256.png",
+  "keywords": ["hansome", "hansome alpacas", "alpaca", "meme", "robinhood", "robinhood chain"],
+  "tags": {},
+  "tokens": [],
+  "_comment": "No contract deployed yet. Add the HANSOME token entry here once it is live on Robinhood Chain — see lib/chain.ts TOKEN_ADDRESS."
+}

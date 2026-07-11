@@ -18,7 +18,7 @@ export function SocialIcon({
   const isDisabled = href === "#" || !href;
   const base =
     variant === "gold"
-      ? "inline-flex items-center justify-center rounded-full border border-gold/25 bg-gold/5 text-gold transition-all duration-200 hover:border-gold/50 hover:bg-gold/10 hover:text-gold-light hover:shadow-[0_0_24px_rgba(212,175,55,0.2)]"
+      ? "pixel-btn inline-flex items-center justify-center rounded-full border-wood bg-gold/25 text-wood-dark hover:bg-gold/40"
       : "inline-flex items-center justify-center text-muted transition-opacity hover:text-foreground hover:opacity-100";
 
   if (isDisabled) {

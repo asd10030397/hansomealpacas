@@ -83,9 +83,9 @@ function typographySvg(width, height) {
       <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.55"/>
     </filter>
   </defs>
-  <text x="${cx}" y="${titleY}" text-anchor="middle" font-family="Impact, Haettenschweiler, Arial Black, sans-serif" font-size="58" font-weight="900" fill="url(#titleFill)" letter-spacing="10" filter="url(#titleGlow)">UGLY DEER</text>
+  <text x="${cx}" y="${titleY}" text-anchor="middle" font-family="Impact, Haettenschweiler, Arial Black, sans-serif" font-size="50" font-weight="900" fill="url(#titleFill)" letter-spacing="8" filter="url(#titleGlow)">HANSOME ALPACAS</text>
   <line x1="${cx - 88}" y1="${ruleY}" x2="${cx + 88}" y2="${ruleY}" stroke="#D4AF37" stroke-width="1.5" stroke-opacity="0.45"/>
-  <text x="${cx}" y="${subtitleY}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="27" fill="#B8B8B8" letter-spacing="1.5">The World's Ugliest Deer.</text>
+  <text x="${cx}" y="${subtitleY}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="27" fill="#B8B8B8" letter-spacing="1.5">Too handsome to be useful.</text>
   <text x="${cx}" y="${taglineY}" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#D4AF37" letter-spacing="0.8">Preparing for launch on Robinhood Chain.</text>
 </svg>`);
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { PROJECT } from "@/content/project";
 import { fetchGeckoTerminalPoolStats } from "@/lib/market/geckoterminal";
 import type { MarketStatsResponse } from "@/lib/market/types";
 
@@ -27,7 +28,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("[UGLY] /api/market failed:", error);
+    console.error(`[${PROJECT.symbol}] /api/market failed:`, error);
     const message = error instanceof Error ? error.message : "Failed to load market stats";
     return NextResponse.json({ error: message }, { status: 500 });
   }

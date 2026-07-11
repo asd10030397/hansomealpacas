@@ -7,7 +7,7 @@ import { getLiveStatusState } from "@/lib/launch";
 import type { TokenomicsItem } from "@/content/i18n/types";
 
 const labelClassName =
-  "text-xs font-medium uppercase tracking-[0.28em] text-gold/70 sm:text-sm sm:tracking-[0.32em]";
+  "text-xs font-medium uppercase tracking-[0.28em] text-gold-light sm:text-sm sm:tracking-[0.32em]";
 
 function NetworkTokenomicsCard({ item }: { item: TokenomicsItem }) {
   return (
@@ -26,7 +26,7 @@ function NetworkTokenomicsCard({ item }: { item: TokenomicsItem }) {
       </div>
 
       {item.badge ? (
-        <span className="mt-8 inline-flex h-[36px] shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-gold/75 px-5 text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-background/90 sm:mt-9 sm:px-6">
+        <span className="mt-8 inline-flex h-[36px] shrink-0 items-center justify-center whitespace-nowrap rounded-full border-2 border-wood bg-gold px-5 text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-wood-dark sm:mt-9 sm:px-6">
           {item.badge}
         </span>
       ) : null}
@@ -55,7 +55,7 @@ function TokenomicsCard({ item }: { item: TokenomicsItem }) {
           ))}
         </div>
       ) : (
-        <p className="mt-8 whitespace-nowrap text-[clamp(2.625rem,5vw,3.5rem)] font-medium tabular-nums leading-none tracking-[-0.03em] text-foreground sm:mt-9">
+        <p className="mt-8 whitespace-nowrap text-[clamp(1.75rem,3.6vw,2.5rem)] font-medium tabular-nums leading-none tracking-[-0.02em] text-foreground sm:mt-9">
           {item.value}
         </p>
       )}
@@ -67,7 +67,7 @@ function TokenomicsCard({ item }: { item: TokenomicsItem }) {
       ) : null}
 
       {item.badge ? (
-        <span className="mt-5 rounded-full bg-gold/75 px-2.5 py-0.5 text-[0.625rem] font-medium uppercase tracking-[0.14em] text-background/90 sm:mt-6 sm:px-3 sm:text-[0.6875rem]">
+        <span className="mt-5 rounded-full border-2 border-wood bg-gold px-2.5 py-0.5 text-[0.625rem] font-medium uppercase tracking-[0.14em] text-wood-dark sm:mt-6 sm:px-3 sm:text-[0.6875rem]">
           {item.badge}
         </span>
       ) : null}
@@ -88,7 +88,7 @@ export function TokenomicsSection() {
   return (
     <FadeIn as="section" id="tokenomics">
       <Section ariaLabelledBy="tokenomics-title" className="flex flex-col items-center py-0 text-center">
-        <p className="font-[family-name:var(--font-anton)] text-xs tracking-[0.4em] text-gold sm:text-sm">
+        <p className="font-[family-name:var(--font-anton)] text-xs tracking-[0.4em] text-gold-light sm:text-sm">
           {t.tokenomics.eyebrow}
         </p>
         <h2
@@ -100,7 +100,7 @@ export function TokenomicsSection() {
         <p className="mt-6 max-w-2xl text-base text-muted sm:text-xl">{t.tokenomics.subtitle}</p>
 
         <div className="mt-8 flex flex-col items-center gap-1 sm:mt-10">
-          <p className="font-[family-name:var(--font-anton)] text-[0.65rem] tracking-[0.32em] text-gold/70 sm:text-xs">
+          <p className="font-[family-name:var(--font-anton)] text-[0.65rem] tracking-[0.32em] text-gold-light sm:text-xs">
             {t.tokenomics.tickerLabel}
           </p>
           <p className="font-[family-name:var(--font-anton)] text-4xl tracking-[0.08em] text-gold-light sm:text-5xl">

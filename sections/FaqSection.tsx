@@ -10,7 +10,7 @@ export function FaqSection() {
   return (
     <FadeIn as="section" id="faq">
       <Section ariaLabelledBy="faq-title" className="flex flex-col items-center py-0 text-center">
-        <p className="font-[family-name:var(--font-anton)] text-xs tracking-[0.4em] text-gold sm:text-sm">
+        <p className="font-[family-name:var(--font-anton)] text-xs tracking-[0.4em] text-gold-light sm:text-sm">
           {t.faq.eyebrow}
         </p>
         <h2
@@ -24,7 +24,7 @@ export function FaqSection() {
           {t.faq.items.map((item, index) => (
             <div
               key={item.question}
-              className={`gold-border rounded-2xl bg-white/[0.02] px-6 py-6 sm:px-8 sm:py-7 ${
+              className={`gold-border rounded-2xl px-6 py-6 sm:px-8 sm:py-7 ${
                 index === 0 ? "meme-faq-highlight" : ""
               }`}
             >

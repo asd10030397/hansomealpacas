@@ -9,7 +9,7 @@ export function Sparkline({ points, className = "" }: SparklineProps) {
   if (points.length < 2) {
     return (
       <div
-        className={`flex h-16 items-center justify-center rounded-xl border border-border/60 bg-white/[0.02] text-xs text-muted ${className}`}
+        className={`flex h-16 items-center justify-center rounded-xl border border-wood/40 bg-wood/5 text-xs text-muted ${className}`}
         aria-hidden="true"
       >
         —

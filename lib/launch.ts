@@ -1,6 +1,7 @@
 import { getCommunityStats, getProjectLinks } from "@/lib/links";
 
-export const OFFICIAL_X_URL = "https://x.com/DeerloveRu";
+// TODO: set once the official HANSOME ALPACAS X account exists.
+export const OFFICIAL_X_URL = "";
 
 export function getHeroActions() {
   const links = getProjectLinks();
@@ -52,7 +53,7 @@ export function getSocialLinks() {
   return {
     twitter: links.twitter ?? OFFICIAL_X_URL,
     telegram: links.telegram,
-    website: links.website ?? "https://kairu.lol",
+    website: links.website ?? "https://hansomealpacas.xyz",
     explorer: links.explorer,
   };
 }

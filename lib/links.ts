@@ -1,8 +1,9 @@
 import { PROJECT } from "@/content/project";
 
-export const OFFICIAL_X_URL = "https://x.com/DeerloveRu";
-export const OFFICIAL_X_HANDLE = "@DeerloveRu";
-export const OFFICIAL_TELEGRAM_URL = "https://t.me/+7t_v5imi7CJkODc1";
+// TODO: set once the official HANSOME ALPACAS social accounts exist.
+export const OFFICIAL_X_URL = "";
+export const OFFICIAL_X_HANDLE = "";
+export const OFFICIAL_TELEGRAM_URL = "";
 
 export function isValidHttpUrl(value: string): boolean {
   const trimmed = value.trim();

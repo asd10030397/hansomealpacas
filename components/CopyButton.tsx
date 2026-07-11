@@ -30,18 +30,18 @@ export function CopyButton({ value, variant = "default", showAddress = true }: C
 
   const variantClass =
     variant === "gold"
-      ? "border-gold/35 bg-gold/5 text-gold-light hover:border-gold/55"
-      : "border-border text-foreground";
+      ? "border-wood bg-gold/20 text-wood-dark"
+      : "border-wood bg-surface text-foreground";
 
   return (
     <m.button
       type="button"
       onClick={handleCopy}
       disabled={isDisabled}
-      whileHover={isDisabled ? undefined : { opacity: 0.85 }}
+      whileHover={isDisabled ? undefined : { opacity: 0.9 }}
       transition={{ duration: 0.2 }}
       className={`inline-flex items-center justify-center gap-3 border px-10 py-3.5 font-[family-name:var(--font-anton)] text-sm tracking-[0.2em] ${
-        isDisabled ? "cursor-default text-muted" : `cursor-pointer ${variantClass}`
+        isDisabled ? "cursor-default border-border bg-surface text-muted" : `pixel-btn cursor-pointer ${variantClass}`
       }`}
       aria-label={
         isDisabled ? t.contract.comingSoon : copied ? t.a11y.copiedContract : t.a11y.copyContract

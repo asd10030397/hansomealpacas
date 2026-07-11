@@ -10,55 +10,16 @@ export type OfficialWallet = {
   readonly liquidityDetail?: string;
 };
 
-export const OFFICIAL_WALLETS: readonly OfficialWallet[] = [
-  {
-    id: "deployment",
-    emoji: "🚀",
-    title: "Deployment Wallet",
-    purpose: "Contract deployment and technical operations.",
-    allocation: "0%",
-    address: "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
-    explorerUrl:
-      "https://robinhoodchain.blockscout.com/address/0xfEff679d14f7D1a2F343095680430e4c96dE691F",
-  },
-  {
-    id: "liquidity",
-    emoji: "💧",
-    title: "Liquidity Wallet",
-    purpose: "Official Uniswap v4 liquidity management.",
-    allocation: "≈2.88%",
-    address: "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
-    explorerUrl:
-      "https://robinhoodchain.blockscout.com/address/0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
-    liquidityDetail: "ETH / UGLY · Fee: 0.05%",
-    note: "This wallet manages the official Uniswap v4 liquidity position. The wallet itself may show zero UGLY because tokens are deposited into the pool.",
-  },
-  {
-    id: "treasury",
-    emoji: "🏛",
-    title: "Treasury",
-    purpose:
-      "Treasury, ecosystem growth, partnerships, future liquidity, marketing and development.",
-    allocation: "≈72.12%",
-    address: "0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A",
-    explorerUrl:
-      "https://robinhoodchain.blockscout.com/address/0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A",
-  },
-  {
-    id: "founder",
-    emoji: "🦌",
-    title: "Founder Wallet",
-    purpose: "Founder allocation.",
-    allocation: "25%",
-    address: "0x2006CF012842e757f1f79938cD646e8a19d5c389",
-    explorerUrl:
-      "https://robinhoodchain.blockscout.com/address/0x2006CF012842e757f1f79938cD646e8a19d5c389",
-  },
-] as const;
+/**
+ * No contract or wallets have been deployed for HANSOME ALPACAS yet.
+ * Fill this in with real addresses once the token is deployed and
+ * liquidity is live — keep the same shape so WalletCard renders unchanged.
+ */
+export const OFFICIAL_WALLETS: readonly OfficialWallet[] = [] as const;
 
 export const TOKEN_ALLOCATION = {
-  liquidity: "2.88%",
-  treasury: "72.12%",
-  founder: "25%",
-  totalSupply: "1,000,000,000 UGLY",
+  liquidity: "TBD",
+  treasury: "TBD",
+  founder: "TBD",
+  totalSupply: "1,000,000,000 HANSOME",
 } as const;

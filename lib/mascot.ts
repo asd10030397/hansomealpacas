@@ -1,34 +1,35 @@
 /**
- * UGLY DEER mascot layer IDs — use for Framer Motion / Lottie animation.
+ * HANSOME ALPACAS mascot layer IDs — use for Framer Motion / Lottie animation.
  *
- * Blink:     scaleY on #ugly-deer-eye-left, #ugly-deer-eye-right
- * Breathe:   scale on #ugly-deer-head
- * Tilt:      rotate on #ugly-deer (root group)
- * Eye move:  translateX/Y on #ugly-deer-eyes
+ * Blink:     scaleY on #hansome-alpaca-eye-left, #hansome-alpaca-eye-right
+ * Breathe:   scale on #hansome-alpaca-head
+ * Tilt:      rotate on #hansome-alpaca (root group)
+ * Eye move:  translateX/Y on #hansome-alpaca-eyes
+ *
+ * Not yet wired to a Lottie/SVG asset — placeholder IDs until the final
+ * alpaca mascot artwork is delivered and layered.
  */
-export const UGLY_DEER_LAYERS = {
-  root: "ugly-deer",
-  antlers: "ugly-deer-antlers",
-  antlerLeft: "ugly-deer-antler-left",
-  antlerRight: "ugly-deer-antler-right",
-  head: "ugly-deer-head",
-  earLeft: "ugly-deer-ear-left",
-  earRight: "ugly-deer-ear-right",
-  face: "ugly-deer-face",
-  snout: "ugly-deer-snout",
-  eyes: "ugly-deer-eyes",
-  eyeLeft: "ugly-deer-eye-left",
-  eyeRight: "ugly-deer-eye-right",
-  nose: "ugly-deer-nose",
-  mouth: "ugly-deer-mouth",
-  tongue: "ugly-deer-tongue",
+export const ALPACA_LAYERS = {
+  root: "hansome-alpaca",
+  ears: "hansome-alpaca-ears",
+  earLeft: "hansome-alpaca-ear-left",
+  earRight: "hansome-alpaca-ear-right",
+  head: "hansome-alpaca-head",
+  face: "hansome-alpaca-face",
+  snout: "hansome-alpaca-snout",
+  eyes: "hansome-alpaca-eyes",
+  eyeLeft: "hansome-alpaca-eye-left",
+  eyeRight: "hansome-alpaca-eye-right",
+  nose: "hansome-alpaca-nose",
+  mouth: "hansome-alpaca-mouth",
+  neck: "hansome-alpaca-neck",
 } as const;
 
-export const UGLY_DEER_COLORS = {
-  furPrimary: "#8B7355",
-  furSecondary: "#6B5344",
+export const ALPACA_COLORS = {
+  furPrimary: "#E8D9BE",
+  furSecondary: "#C9B590",
   eyes: "#1A1A1A",
   nose: "#4A3728",
-  tongue: "#C46B6B",
-  wart: "#7A8B5A",
+  blush: "#D89A9A",
+  accent: "#D4AF37",
 } as const;

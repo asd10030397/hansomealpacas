@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { useConnection, useWalletClient } from "wagmi";
-import { UGLY_WALLET_LOGO_URL, buildWalletWatchAssetRequest, requestWatchUglyAsset } from "@/lib/wallet/watchAsset";
+import { PROJECT } from "@/content/project";
+import { TOKEN_WALLET_LOGO_URL, buildWalletWatchAssetRequest, requestWatchTokenAsset } from "@/lib/wallet/watchAsset";
 
 export default function WatchAssetTestPage() {
   const { isConnected } = useConnection();
@@ -19,15 +20,15 @@ export default function WatchAssetTestPage() {
     }
 
     try {
-      const added = await requestWatchUglyAsset(walletClient);
+      const added = await requestWatchTokenAsset(walletClient);
       setLog(
         added
-          ? "Success — UGLY added. Open MetaMask token list and confirm logo loads from logo-256.png."
+          ? `Success — ${PROJECT.symbol} added. Open MetaMask token list and confirm logo loads from logo-256.png.`
           : "Request completed but user declined or token already exists.",
       );
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      console.error("[UGLY] watch-test failed:", error);
+      console.error(`[${PROJECT.symbol}] watch-test failed:`, error);
       setLog(`Failed: ${message}`);
     }
   }, [walletClient]);
@@ -43,10 +44,10 @@ export default function WatchAssetTestPage() {
       </h1>
       <p className="mt-4 text-sm text-muted">
         Dev helper for MetaMask EIP-747. Uses <code className="text-gold-light">wallet_watchAsset</code>{" "}
-        with {UGLY_WALLET_LOGO_URL}.
+        with {TOKEN_WALLET_LOGO_URL}.
       </p>
 
-      <pre className="mt-6 overflow-x-auto rounded-xl border border-border bg-white/[0.03] p-4 text-xs text-muted">
+      <pre className="mt-6 overflow-x-auto rounded-xl border-2 border-wood/40 bg-wood/10 p-4 text-xs text-muted">
         {JSON.stringify(payload, null, 2)}
       </pre>
 
@@ -54,7 +55,7 @@ export default function WatchAssetTestPage() {
         type="button"
         onClick={() => void runTest()}
         disabled={!isConnected || !walletClient}
-        className="mt-6 w-full border border-gold/40 bg-gold/10 px-6 py-3 font-[family-name:var(--font-anton)] text-sm tracking-[0.15em] text-gold-light disabled:opacity-50"
+        className="pixel-btn mt-6 w-full border-wood bg-gold/20 px-6 py-3 font-[family-name:var(--font-anton)] text-sm tracking-[0.15em] text-gold-light disabled:opacity-50"
       >
         {isConnected ? "Run wallet_watchAsset" : "Connect wallet on /swap first"}
       </button>

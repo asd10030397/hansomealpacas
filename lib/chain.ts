@@ -5,9 +5,14 @@ export const ROBINHOOD_CHAIN_ID = 4663;
 export const DEFAULT_RPC_URL = "https://rpc.mainnet.chain.robinhood.com";
 export const DEFAULT_EXPLORER = "https://robinhoodchain.blockscout.com";
 
-export const UGLY_TOKEN_ADDRESS = getAddress(
-  (process.env.NEXT_PUBLIC_CONTRACT ??
-    "0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c") as Address,
+/**
+ * HANSOME token contract on Robinhood Chain.
+ * No contract has been deployed yet — falls back to the zero address until
+ * NEXT_PUBLIC_CONTRACT is set. Swap UI treats this as "pre-launch" (see
+ * lib/links.ts hasContractAddress()).
+ */
+export const TOKEN_ADDRESS = getAddress(
+  (process.env.NEXT_PUBLIC_CONTRACT ?? zeroAddress) as Address,
 );
 
 export const UNIVERSAL_ROUTER_ADDRESS = getAddress(
@@ -25,16 +30,20 @@ export const STATE_VIEW_ADDRESS = getAddress(
     "0xf3334192d15450cdd385c8b70e03f9a6bd9e673b") as Address,
 );
 
+/**
+ * Uniswap v4 pool ID for HANSOME/ETH. Not created yet — placeholder zero
+ * value until liquidity is deployed. Do NOT reuse the UGLY DEER pool ID.
+ */
 export const POOL_ID =
-  "0x7b0294d1917fb2b47417582f84b57850266c43bf77bcdc80ad39da0d94045056" as const;
+  "0x0000000000000000000000000000000000000000000000000000000000000000" as const;
 
 export const POOL_FEE = 500;
 export const POOL_TICK_SPACING = 60;
-export const UGLY_DECIMALS = 18;
+export const TOKEN_DECIMALS = 18;
 
 export const POOL_KEY = [
   zeroAddress,
-  UGLY_TOKEN_ADDRESS,
+  TOKEN_ADDRESS,
   POOL_FEE,
   POOL_TICK_SPACING,
   zeroAddress,
@@ -42,7 +51,7 @@ export const POOL_KEY = [
 
 export const TOKEN_LIST_URL =
   process.env.NEXT_PUBLIC_TOKEN_LIST ??
-  "https://kairu.lol/token-list/ugly-deer-robinhood.tokenlist.json";
+  "https://hansomealpacas.xyz/token-list/hansome-alpacas-robinhood.tokenlist.json";
 
 export const robinhoodChain = defineChain({
   id: ROBINHOOD_CHAIN_ID,
@@ -75,15 +84,12 @@ export function getExplorerTxUrl(txHash: string): string {
   return `${base}/tx/${txHash}`;
 }
 
-export function getUglyLogo256Url(origin?: string): string {
-  const base = (origin ?? process.env.NEXT_PUBLIC_WEBSITE ?? "https://kairu.lol").replace(
-    /\/$/,
-    "",
-  );
+export function getTokenLogo256Url(origin?: string): string {
+  const base = (
+    origin ??
+    process.env.NEXT_PUBLIC_WEBSITE ??
+    "https://hansomealpacas.xyz"
+  ).replace(/\/$/, "");
   return `${base}/logo/logo-256.png`;
 }
 
-/** @deprecated Prefer getUglyLogo256Url for wallet_watchAsset and token lists */
-export function getUglyLogoAbsoluteUrl(origin?: string): string {
-  return getUglyLogo256Url(origin);
-}

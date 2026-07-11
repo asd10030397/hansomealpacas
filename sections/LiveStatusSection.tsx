@@ -42,7 +42,7 @@ export function LiveStatusSection() {
           />
           <h2
             id="live-status-title"
-            className="font-[family-name:var(--font-anton)] text-xs tracking-[0.32em] text-gold/75 sm:text-sm sm:tracking-[0.36em]"
+            className="font-[family-name:var(--font-anton)] text-xs tracking-[0.32em] text-gold-light sm:text-sm sm:tracking-[0.36em]"
           >
             {t.liveStatus.title}
           </h2>
@@ -52,7 +52,7 @@ export function LiveStatusSection() {
           {rows.map((row) => (
             <div
               key={row.label}
-              className="flex items-center justify-between gap-4 border-b border-white/[0.04] pb-3 last:border-b-0 sm:last:border-b sm:[&:nth-last-child(-n+2)]:border-b-0"
+              className="flex items-center justify-between gap-4 border-b border-wood/20 pb-3 last:border-b-0 sm:last:border-b sm:[&:nth-last-child(-n+2)]:border-b-0"
             >
               <dt className="text-xs uppercase tracking-[0.18em] text-muted sm:text-sm">{row.label}</dt>
               <dd

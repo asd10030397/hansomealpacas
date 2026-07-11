@@ -21,37 +21,45 @@ export type Project = {
   readonly copyright: string;
 };
 
+/**
+ * Single source of truth for brand identity. Everything else (metadata,
+ * i18n copy, components, token config) should read from PROJECT / ASSETS
+ * instead of hardcoding brand strings.
+ */
 export const PROJECT = {
-  name: "UGLY DEER",
-  symbol: "UGLY",
+  name: "HANSOME ALPACAS",
+  symbol: "HANSOME",
   chain: "Robinhood Chain",
-  taglineCN: "生來就醜。與眾不同。",
-  taglineEN: "Born ugly. Built different.",
+  taglineCN: "天生贏家臉，一輩子沒屁用。",
+  taglineEN: "Too handsome to be useful.",
   description:
-    "The internet's ugliest deer became a meme coin. Live on Robinhood Chain.",
-  metaTitle: "UGLY DEER | The World's Ugliest Deer",
+    "The alpaca that won the genetic lottery. Pure meme, zero utility, live on Robinhood Chain.",
+  metaTitle: "HANSOME ALPACAS | Too Handsome To Be Useful",
   metaDescription:
-    "The internet's ugliest deer became a meme coin. Swap $UGLY on Robinhood Chain.",
-  ogTitle: "UGLY DEER",
-  twitterTitle: "UGLY DEER",
-  themeColor: "#0D0D0D",
-  website: process.env.NEXT_PUBLIC_WEBSITE ?? "https://kairu.lol",
+    "The alpaca that won the genetic lottery. Swap $HANSOME on Robinhood Chain.",
+  ogTitle: "HANSOME ALPACAS",
+  twitterTitle: "HANSOME ALPACAS",
+  themeColor: "#BFE8F6",
+  website: process.env.NEXT_PUBLIC_WEBSITE ?? "https://hansomealpacas.xyz",
   twitter: process.env.NEXT_PUBLIC_X ?? "",
-  telegram: process.env.NEXT_PUBLIC_TELEGRAM ?? "https://t.me/+7t_v5imi7CJkODc1",
-  contractAddress:
-    process.env.NEXT_PUBLIC_CONTRACT ?? "0xbeE686CF9b2A4771c3eb6C000a23939DFFe1c00c",
+  telegram: process.env.NEXT_PUBLIC_TELEGRAM ?? "",
+  // No contract deployed yet — leave empty until launch. UI treats an
+  // invalid/empty address as "pre-launch" (see lib/links.ts hasContractAddress()).
+  contractAddress: process.env.NEXT_PUBLIC_CONTRACT ?? "",
   buyLink: process.env.NEXT_PUBLIC_BUY ?? "/swap",
   chartLink: process.env.NEXT_PUBLIC_CHART ?? "",
   explorer:
     process.env.NEXT_PUBLIC_EXPLORER ?? "https://robinhoodchain.blockscout.com",
   network: process.env.NEXT_PUBLIC_NETWORK ?? "Robinhood Chain",
-  copyright: "© 2026 UGLY DEER",
+  copyright: "© 2026 HANSOME ALPACAS",
 } as const satisfies Project;
 
 export const SOCIAL_PREVIEW_VERSION = 3 as const;
 
 export const ASSETS = {
   logo: "/logo/coin.svg",
+  /** Official mascot artwork with the flat background keyed to transparency. Use on non-black surfaces (e.g. the 3D hero coin face). */
+  mascotCutout: "/logo/mascot-cutout.png",
   /** Canonical PNG (256×256). Use for token lists, wallet_watchAsset, hosted logoURI. */
   logoPng: "/logo/logo-256.png",
   logo256: "/logo/logo-256.png",

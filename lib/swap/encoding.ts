@@ -3,7 +3,7 @@ import {
   encodePacked,
   zeroAddress,
 } from "viem";
-import { POOL_KEY, UGLY_TOKEN_ADDRESS } from "@/lib/chain";
+import { POOL_KEY, TOKEN_ADDRESS } from "@/lib/chain";
 
 const poolKeyAbi = {
   type: "tuple",
@@ -21,7 +21,7 @@ function toPoolKeyStruct() {
   return { currency0, currency1, fee, tickSpacing, hooks };
 }
 
-export function buildEthToUglyInput(amountIn: bigint, amountOutMin = 0n): `0x${string}` {
+export function buildEthToTokenInput(amountIn: bigint, amountOutMin = 0n): `0x${string}` {
   const actions = encodePacked(["uint8", "uint8", "uint8"], [0x06, 0x0c, 0x0f]);
   const params = [
     encodeAbiParameters(
@@ -34,7 +34,7 @@ export function buildEthToUglyInput(amountIn: bigint, amountOutMin = 0n): `0x${s
     ),
     encodeAbiParameters(
       [{ type: "address" }, { type: "uint256" }],
-      [UGLY_TOKEN_ADDRESS, amountOutMin],
+      [TOKEN_ADDRESS, amountOutMin],
     ),
   ];
 
@@ -44,7 +44,7 @@ export function buildEthToUglyInput(amountIn: bigint, amountOutMin = 0n): `0x${s
   );
 }
 
-export function buildUglyToEthInput(amountIn: bigint, amountOutMin = 0n): `0x${string}` {
+export function buildTokenToEthInput(amountIn: bigint, amountOutMin = 0n): `0x${string}` {
   const actions = encodePacked(["uint8", "uint8", "uint8"], [0x06, 0x0b, 0x0f]);
   const params = [
     encodeAbiParameters(
@@ -53,7 +53,7 @@ export function buildUglyToEthInput(amountIn: bigint, amountOutMin = 0n): `0x${s
     ),
     encodeAbiParameters(
       [{ type: "address" }, { type: "uint256" }, { type: "bool" }],
-      [UGLY_TOKEN_ADDRESS, amountIn, true],
+      [TOKEN_ADDRESS, amountIn, true],
     ),
     encodeAbiParameters(
       [{ type: "address" }, { type: "uint256" }],
@@ -68,21 +68,21 @@ export function buildUglyToEthInput(amountIn: bigint, amountOutMin = 0n): `0x${s
 }
 
 export function buildUniversalRouterCalldata(
-  direction: "ethToUgly" | "uglyToEth",
+  direction: "ethToToken" | "tokenToEth",
   amountIn: bigint,
   amountOutMin: bigint,
   deadline: bigint,
 ) {
   const commands = encodePacked(["uint8"], [0x10]) as `0x${string}`;
   const input =
-    direction === "ethToUgly"
-      ? buildEthToUglyInput(amountIn, amountOutMin)
-      : buildUglyToEthInput(amountIn, amountOutMin);
+    direction === "ethToToken"
+      ? buildEthToTokenInput(amountIn, amountOutMin)
+      : buildTokenToEthInput(amountIn, amountOutMin);
 
   return {
     commands,
     inputs: [input] as readonly `0x${string}`[],
     deadline,
-    value: direction === "ethToUgly" ? amountIn : 0n,
+    value: direction === "ethToToken" ? amountIn : 0n,
   };
 }

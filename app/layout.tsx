@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Anton, Noto_Sans_TC } from "next/font/google";
+import { Noto_Sans_TC, Press_Start_2P } from "next/font/google";
 import { AmbientSound } from "@/components/AmbientSound";
 import { Analytics } from "@/components/Analytics";
 import { AnalyticsPageView } from "@/components/AnalyticsPageView";
@@ -8,10 +8,13 @@ import { MotionProvider } from "@/components/MotionProvider";
 import { SkipLink } from "@/components/SkipLink";
 import { LocaleProvider } from "@/context/LocaleContext";
 import { ASSETS, PROJECT } from "@/content/project";
-import { isValidHttpUrl } from "@/lib/links";
+import { isValidHttpUrl, OFFICIAL_X_HANDLE } from "@/lib/links";
 import "@/styles/globals.css";
 
-const anton = Anton({
+// Pixel display font for headings/badges/buttons. Kept the `--font-anton`
+// variable name so every existing `var(--font-anton)` reference across the
+// app picks up the new retro-game typeface without touching each file.
+const anton = Press_Start_2P({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-anton",
@@ -29,14 +32,14 @@ const notoSansTC = Noto_Sans_TC({
 
 export const viewport: Viewport = {
   themeColor: PROJECT.themeColor,
-  colorScheme: "dark",
+  colorScheme: "light",
   width: "device-width",
   initialScale: 1,
 };
 
 const website = isValidHttpUrl(PROJECT.website) ? PROJECT.website.trim() : undefined;
 const canonical = website?.replace(/\/$/, "");
-const metadataBase = website ? new URL(website) : new URL("https://kairu.lol");
+const metadataBase = website ? new URL(website) : new URL("https://hansomealpacas.xyz");
 
 export const metadata: Metadata = {
   metadataBase,
@@ -57,7 +60,7 @@ export const metadata: Metadata = {
         url: ASSETS.og,
         width: 1200,
         height: 630,
-        alt: "UGLY DEER — premium gold coin social preview",
+        alt: "HANSOME ALPACAS — premium gold coin social preview",
       },
     ],
   },
@@ -65,7 +68,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: PROJECT.twitterTitle,
     description: PROJECT.metaDescription,
-    site: "@DeerloveRu",
+    ...(OFFICIAL_X_HANDLE ? { site: OFFICIAL_X_HANDLE } : {}),
     images: [ASSETS.twitterImage],
   },
   robots: {

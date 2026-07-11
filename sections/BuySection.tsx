@@ -14,10 +14,10 @@ export function BuySection() {
   return (
     <FadeIn as="section" id="buy">
       <Section ariaLabelledBy="buy-title" className="flex flex-col items-center py-0 text-center">
-        <div className="gold-border relative w-full max-w-4xl overflow-hidden rounded-3xl bg-gradient-to-b from-gold/10 via-gold/5 to-transparent px-6 py-14 sm:px-10 sm:py-16">
+        <div className="gold-border relative w-full max-w-4xl overflow-hidden rounded-3xl px-6 py-14 sm:px-10 sm:py-16">
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(212,175,55,0.18),transparent_55%)]"
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(242,179,61,0.22),transparent_55%)]"
           />
 
           <m.div
@@ -41,6 +41,7 @@ export function BuySection() {
                 disabled={buy.comingSoon}
                 variant="gold"
                 size="lg"
+                sublabel={buy.comingSoon ? undefined : t.buy.ctaSublabel}
               >
                 {buy.comingSoon ? t.buy.launchingSoon : t.buy.cta}
               </ActionButton>

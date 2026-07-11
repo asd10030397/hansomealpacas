@@ -76,7 +76,7 @@ async function main() {
     if (!pass) failures += 1;
   };
 
-  console.log("\nUGLY DEER Release Check\n");
+  console.log("\nHANSOME ALPACAS Release Check\n");
 
   for (const asset of REQUIRED_ASSETS) {
     const path = join(root, asset);
@@ -126,7 +126,7 @@ async function main() {
   }
 
   const reportLines = [
-    "# UGLY DEER Release Report",
+    "# HANSOME ALPACAS Release Report",
     "",
     `Generated: ${new Date().toISOString()}`,
     "",

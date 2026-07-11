@@ -1,6 +1,3 @@
-"use client";
-
-import { m } from "framer-motion";
 import Link from "next/link";
 
 type ActionButtonProps = {
@@ -31,10 +28,10 @@ export function ActionButton({
 
   const variantClass =
     variant === "gold"
-      ? "border-gold/40 bg-gradient-to-b from-gold/20 to-gold/5 text-gold-light shadow-[0_0_32px_rgba(212,175,55,0.15)] hover:border-gold/60 hover:shadow-[0_0_40px_rgba(212,175,55,0.25)]"
-      : "border-border text-foreground";
+      ? "border-wood bg-gradient-to-b from-gold-pale to-gold text-wood-dark"
+      : "border-wood bg-surface text-foreground";
 
-  const className = `inline-flex flex-col items-center justify-center gap-1 border font-[family-name:var(--font-anton)] transition-all duration-200 ${sizeClass} ${variantClass}`;
+  const className = `pixel-btn inline-flex flex-col items-center justify-center gap-1 border font-[family-name:var(--font-anton)] ${sizeClass} ${variantClass}`;
   const labelClass =
     size === "lg"
       ? "text-sm tracking-[0.18em] sm:text-base"
@@ -62,25 +59,15 @@ export function ActionButton({
 
   if (isInternalHref(href)) {
     return (
-      <m.div whileHover={{ scale: 1.01, opacity: 0.94 }} whileTap={{ scale: 0.99 }} transition={{ duration: 0.2 }}>
-        <Link href={href} className={className}>
-          {content}
-        </Link>
-      </m.div>
+      <Link href={href} className={className}>
+        {content}
+      </Link>
     );
   }
 
   return (
-    <m.a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      whileHover={{ scale: 1.01, opacity: 0.94 }}
-      whileTap={{ scale: 0.99 }}
-      transition={{ duration: 0.2 }}
-      className={className}
-    >
+    <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
       {content}
-    </m.a>
+    </a>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { PROJECT } from "@/content/project";
 import { MARKET_REFRESH_MS } from "@/lib/market/constants";
 import type { MarketStatsResponse } from "@/lib/market/types";
 
@@ -20,7 +21,7 @@ export function useMarketStats() {
       setData(json);
       setHasError(false);
     } catch (err) {
-      console.error("[UGLY] market stats fetch failed:", err);
+      console.error(`[${PROJECT.symbol}] market stats fetch failed:`, err);
       setHasError(true);
     } finally {
       setIsLoading(false);

@@ -7,9 +7,6 @@ export type AnalyticsConfig =
 
 export const AnalyticsEvents = {
   PAGE_VIEW: "page_view",
-  DEER_VOTE_STARTED: "deer_vote_started",
-  DEER_VOTE_COMPLETED: "deer_vote_completed",
-  DEER_IDENTITY_SELECTED: "deer_identity_selected",
   SHARE_X_CLICKED: "share_x_clicked",
   LANGUAGE_CHANGED: "language_changed",
   AMBIENT_STARTED: "ambient_started",

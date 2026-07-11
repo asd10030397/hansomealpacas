@@ -15,7 +15,7 @@ export function ContractSection() {
   return (
     <FadeIn as="section" id="contract">
       <Section ariaLabelledBy="contract-title" className="flex flex-col items-center py-0 text-center">
-        <p className="font-[family-name:var(--font-anton)] text-xs tracking-[0.4em] text-gold sm:text-sm">
+        <p className="font-[family-name:var(--font-anton)] text-xs tracking-[0.4em] text-gold-light sm:text-sm">
           {t.contract.eyebrow}
         </p>
         <h2
@@ -26,13 +26,13 @@ export function ContractSection() {
         </h2>
         <p className="mt-6 max-w-2xl text-base text-muted sm:text-xl">{t.contract.subtitle}</p>
 
-        <div className="gold-border mt-14 w-full max-w-3xl rounded-2xl bg-white/[0.02] px-6 py-10 sm:mt-16 sm:px-10 sm:py-12">
-          <p className="font-[family-name:var(--font-anton)] text-xs tracking-[0.28em] text-gold">
+        <div className="gold-border mt-14 w-full max-w-3xl rounded-2xl px-6 py-10 sm:mt-16 sm:px-10 sm:py-12">
+          <p className="font-[family-name:var(--font-anton)] text-xs tracking-[0.28em] text-gold-light">
             {t.contract.addressLabel}
           </p>
 
           <div className="mt-6 flex flex-col items-center gap-6">
-            <div className="w-full overflow-hidden rounded-xl border border-border bg-background/80 px-4 py-6 sm:px-6">
+            <div className="w-full overflow-hidden rounded-xl border-2 border-wood/50 bg-wood/10 px-4 py-6 sm:px-6">
               <p
                 className={`font-[family-name:var(--font-noto-sans-tc)] text-base sm:text-lg ${
                   contract.isLive
@@ -55,14 +55,14 @@ export function ContractSection() {
                     href={contract.explorerUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center border border-gold/35 bg-gold/5 px-8 py-3.5 font-[family-name:var(--font-anton)] text-sm tracking-[0.18em] text-gold-light transition-all duration-200 hover:border-gold/55"
+                    className="pixel-btn inline-flex items-center justify-center border-wood bg-gold/20 px-8 py-3.5 font-[family-name:var(--font-anton)] text-sm tracking-[0.18em] text-gold-light"
                   >
                     {t.contract.viewExplorer}
                   </a>
                 ) : null}
                 <Link
                   href="/transparency"
-                  className="inline-flex items-center justify-center border border-gold/35 bg-gold/5 px-8 py-3.5 font-[family-name:var(--font-anton)] text-sm tracking-[0.18em] text-gold-light transition-all duration-200 hover:border-gold/55"
+                  className="pixel-btn inline-flex items-center justify-center border-wood bg-gold/20 px-8 py-3.5 font-[family-name:var(--font-anton)] text-sm tracking-[0.18em] text-gold-light"
                 >
                   {t.contract.viewOfficialWallets}
                 </Link>

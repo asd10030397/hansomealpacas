@@ -7,9 +7,9 @@ type WalletCardProps = {
 
 export function WalletCard({ wallet }: WalletCardProps) {
   return (
-    <article className="gold-border rounded-2xl border border-gold/20 bg-white/[0.03] p-6 text-left shadow-[0_0_40px_rgba(212,175,55,0.06)] sm:p-8">
+    <article className="gold-border rounded-2xl p-6 text-left sm:p-8">
       <header className="border-b border-border/50 pb-5">
-        <p className="text-xs uppercase tracking-[0.28em] text-gold/80">Official Wallet</p>
+        <p className="text-xs uppercase tracking-[0.28em] text-gold-light">Official Wallet</p>
         <h2 className="mt-2 font-[family-name:var(--font-anton)] text-2xl tracking-[0.08em] text-gold-light sm:text-3xl">
           <span aria-hidden="true" className="mr-2">
             {wallet.emoji}
@@ -20,25 +20,25 @@ export function WalletCard({ wallet }: WalletCardProps) {
 
       <dl className="mt-6 space-y-5 text-sm sm:text-base">
         <div>
-          <dt className="text-xs uppercase tracking-[0.22em] text-gold/70">Purpose</dt>
+          <dt className="text-xs uppercase tracking-[0.22em] text-gold-light">Purpose</dt>
           <dd className="mt-2 leading-relaxed text-foreground/90">{wallet.purpose}</dd>
         </div>
 
         {wallet.liquidityDetail ? (
           <div>
-            <dt className="text-xs uppercase tracking-[0.22em] text-gold/70">Liquidity Position</dt>
+            <dt className="text-xs uppercase tracking-[0.22em] text-gold-light">Liquidity Position</dt>
             <dd className="mt-2 text-foreground/90">{wallet.liquidityDetail}</dd>
           </div>
         ) : null}
 
         <div>
-          <dt className="text-xs uppercase tracking-[0.22em] text-gold/70">Allocation</dt>
+          <dt className="text-xs uppercase tracking-[0.22em] text-gold-light">Allocation</dt>
           <dd className="mt-2 font-medium tabular-nums text-foreground">{wallet.allocation}</dd>
         </div>
 
         <div>
-          <dt className="text-xs uppercase tracking-[0.22em] text-gold/70">Address</dt>
-          <dd className="mt-2 break-all rounded-xl border border-border/60 bg-black/20 px-4 py-3 font-mono text-xs text-gold-light/90 sm:text-sm">
+          <dt className="text-xs uppercase tracking-[0.22em] text-gold-light">Address</dt>
+          <dd className="mt-2 break-all rounded-xl border border-wood/40 bg-wood/10 px-4 py-3 font-mono text-xs text-gold-light/90 sm:text-sm">
             {wallet.address}
           </dd>
         </div>

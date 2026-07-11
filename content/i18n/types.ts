@@ -65,6 +65,7 @@ export type Messages = {
     title: string;
     subtitle: string;
     cta: string;
+    ctaSublabel: string;
     launchingSoon: string;
     comingSoon: string;
   };
@@ -82,7 +83,7 @@ export type Messages = {
     flipDirection: string;
     swap: string;
     swapping: string;
-    approveUgly: string;
+    approveToken: string;
     approveRouter: string;
     addToWallet: string;
     watchAssetSuccess: string;
@@ -154,7 +155,7 @@ export type Messages = {
     subtitle: string;
     loading: string;
     unavailable: string;
-    uglyPrice: string;
+    tokenPrice: string;
     liquidity: string;
     change24h: string;
     volume24h: string;
@@ -167,7 +168,7 @@ export type Messages = {
     tagline: string;
     memeLovers: string;
     notFinancialAdvice: string;
-    stayUgly: string;
+    stayHansome: string;
     builtOn: string;
     explorer: string;
     transparency: string;

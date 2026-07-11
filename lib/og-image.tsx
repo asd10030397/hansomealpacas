@@ -4,10 +4,10 @@ import { ImageResponse } from "next/og";
 
 export const OG_SIZE = { width: 1200, height: 630 } as const;
 
-const BG = "#0D0D0D";
-const GOLD = "#D4AF37";
-const TEXT = "#FAFAFA";
-const MUTED = "#B0B0B0";
+const BG = "#BFE8F6";
+const GOLD = "#96591A";
+const TEXT = "#3B2A18";
+const MUTED = "#6B5A44";
 
 function coinDataUrl() {
   const buffer = readFileSync(join(process.cwd(), "public/logo/logo-256.png"));
@@ -58,7 +58,7 @@ export function createOgImageResponse() {
                 height: coinSize * 1.55,
                 borderRadius: "50%",
                 background:
-                  "radial-gradient(circle, rgba(212,175,55,0.32) 0%, rgba(212,175,55,0.14) 38%, rgba(212,175,55,0.04) 58%, transparent 72%)",
+                  "radial-gradient(circle, rgba(242,179,61,0.35) 0%, rgba(242,179,61,0.16) 38%, rgba(242,179,61,0.05) 58%, transparent 72%)",
               }}
             />
             <img src={coin} width={coinSize} height={coinSize} alt="" />
@@ -74,14 +74,14 @@ export function createOgImageResponse() {
           >
             <div
               style={{
-                fontSize: 72,
+                fontSize: 58,
                 fontWeight: 900,
-                letterSpacing: "0.08em",
+                letterSpacing: "0.06em",
                 color: TEXT,
                 lineHeight: 1,
               }}
             >
-              UGLY DEER
+              HANSOME ALPACAS
             </div>
             <div
               style={{
@@ -92,7 +92,7 @@ export function createOgImageResponse() {
                 letterSpacing: "0.02em",
               }}
             >
-              The World&apos;s Ugliest Deer.
+              Too handsome to be useful.
             </div>
             <div
               style={{

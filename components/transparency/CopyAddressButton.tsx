@@ -29,7 +29,7 @@ export function CopyAddressButton({
     <button
       type="button"
       onClick={() => void handleCopy()}
-      className="inline-flex items-center justify-center border border-gold/35 bg-gold/5 px-6 py-3 font-[family-name:var(--font-anton)] text-xs tracking-[0.16em] text-gold-light transition-all hover:border-gold/55 sm:text-sm"
+      className="pixel-btn inline-flex items-center justify-center border-wood bg-gold/20 px-6 py-3 font-[family-name:var(--font-anton)] text-xs tracking-[0.16em] text-gold-light sm:text-sm"
     >
       {copied ? copiedLabel : label}
     </button>

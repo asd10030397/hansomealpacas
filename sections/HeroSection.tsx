@@ -8,14 +8,14 @@ import { GoldCoin } from "@/components/GoldCoin";
 import { SocialBar } from "@/components/SocialBar";
 import { PROJECT } from "@/content/project";
 import { useLocale } from "@/context/LocaleContext";
-import { useUglyDeerEasterEgg } from "@/hooks/useUglyDeerEasterEgg";
+import { useMascotEasterEgg } from "@/hooks/useMascotEasterEgg";
 import { getHeroActions, getLiveStatusState } from "@/lib/launch";
 import { EASE } from "@/lib/motion";
 
 export function HeroSection() {
   const reduceMotion = useReducedMotion();
   const { t } = useLocale();
-  const { active, handleMascotClick, fadeMs } = useUglyDeerEasterEgg();
+  const { active, handleMascotClick, fadeMs } = useMascotEasterEgg();
   const actions = getHeroActions();
   const live = getLiveStatusState();
 
@@ -25,7 +25,30 @@ export function HeroSection() {
         aria-labelledby="hero-title"
         className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-6 pb-20 pt-16 text-center sm:pb-28 sm:pt-20"
       >
+        <img
+          src="/pixel/pasture-hero-bg.png"
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+          style={{
+            maskImage: "linear-gradient(to bottom, black 72%, transparent 100%)",
+            WebkitMaskImage: "linear-gradient(to bottom, black 72%, transparent 100%)",
+          }}
+        />
         <div aria-hidden="true" className="gold-glow-bg pointer-events-none absolute inset-0" />
+        <img
+          src="/pixel/alpaca-sunglasses.png"
+          alt=""
+          aria-hidden="true"
+          className="coin-float pointer-events-none absolute bottom-6 left-2 hidden w-20 sm:block sm:w-28 md:left-8 md:w-32"
+        />
+        <img
+          src="/pixel/alpaca-goofy.png"
+          alt=""
+          aria-hidden="true"
+          className="coin-float pointer-events-none absolute bottom-8 right-2 hidden w-20 sm:block sm:w-24 md:right-8 md:w-28"
+          style={{ animationDelay: "1.5s" }}
+        />
         <FloatingParticles />
 
         <m.div
@@ -48,16 +71,16 @@ export function HeroSection() {
 
           <h1
             id="hero-title"
-            className="mt-5 font-[family-name:var(--font-anton)] text-[clamp(3.5rem,13vw,9rem)] leading-[0.92] tracking-[0.04em] text-foreground sm:mt-6"
+            className="mt-5 font-[family-name:var(--font-anton)] text-[clamp(1.75rem,7.5vw,4.25rem)] leading-[1.35] tracking-normal text-foreground drop-shadow-[3px_3px_0_rgba(255,255,255,0.6)] sm:mt-6"
           >
             {PROJECT.name}
           </h1>
 
           <div className="mt-3 space-y-0.5 sm:mt-4">
-            <p className="font-[family-name:var(--font-anton)] text-[0.65rem] tracking-[0.32em] text-muted/80 sm:text-xs">
+            <p className="font-[family-name:var(--font-anton)] text-[0.65rem] tracking-[0.32em] text-wood-dark drop-shadow-[1px_1px_0_rgba(255,255,255,0.7)] sm:text-xs">
               {t.hero.chain}
             </p>
-            <p className="font-[family-name:var(--font-anton)] text-[0.6rem] tracking-[0.22em] text-muted/55 sm:text-[0.68rem]">
+            <p className="font-[family-name:var(--font-anton)] text-[0.6rem] tracking-[0.22em] text-wood-dark/80 drop-shadow-[1px_1px_0_rgba(255,255,255,0.7)] sm:text-[0.68rem]">
               {live.isLive ? t.liveStatus.statusLive : t.hero.chainStatus}
             </p>
           </div>
@@ -67,7 +90,7 @@ export function HeroSection() {
             <span className="hero-ticker-value">{t.hero.ticker}</span>
           </p>
 
-          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted sm:mt-6 sm:text-xl md:text-2xl">
+          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-wood-dark drop-shadow-[1px_1px_0_rgba(255,255,255,0.6)] sm:mt-6 sm:text-xl md:text-2xl">
             {t.hero.tagline}
           </p>
 

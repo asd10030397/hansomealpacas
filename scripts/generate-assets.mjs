@@ -72,7 +72,7 @@ async function main() {
   mkdirSync(imagesDir, { recursive: true });
   mkdirSync(iconsDir, { recursive: true });
 
-  console.log("Generating UGLY DEER brand assets...\n");
+  console.log("Generating HANSOME ALPACAS brand assets...\n");
 
   await syncLogoSvg();
 

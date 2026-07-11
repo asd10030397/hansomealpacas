@@ -10,7 +10,7 @@ import type { MarketStatsResponse } from "@/lib/market/types";
 function StatCard({ label, value, subvalue }: { label: string; value: string; subvalue?: string }) {
   return (
     <div className="tokenomics-card flex min-h-[7.5rem] flex-col items-center justify-center rounded-2xl px-4 py-7 sm:min-h-[8rem] sm:px-5 sm:py-8">
-      <p className="text-xs font-medium uppercase tracking-[0.28em] text-gold/70 sm:text-sm">{label}</p>
+      <p className="text-xs font-medium uppercase tracking-[0.28em] text-gold-light sm:text-sm">{label}</p>
       <p className="mt-4 text-xl font-medium tabular-nums text-foreground sm:mt-5 sm:text-2xl">{value}</p>
       {subvalue ? <p className="mt-1 text-xs tabular-nums text-muted">{subvalue}</p> : null}
     </div>
@@ -20,11 +20,11 @@ function StatCard({ label, value, subvalue }: { label: string; value: string; su
 function ChangeBadge({ label, value }: { label: string; value: number | null }) {
   const isUp = value !== null && value > 0;
   const isDown = value !== null && value < 0;
-  const valueClass = isUp ? "text-emerald-400" : isDown ? "text-red-400" : "text-muted";
+  const valueClass = isUp ? "text-emerald-700" : isDown ? "text-red-700" : "text-muted";
 
   return (
     <div className="tokenomics-card flex min-h-[7.5rem] flex-col items-center justify-center rounded-2xl px-4 py-7 sm:min-h-[8rem] sm:px-5 sm:py-8">
-      <p className="text-xs font-medium uppercase tracking-[0.28em] text-gold/70 sm:text-sm">{label}</p>
+      <p className="text-xs font-medium uppercase tracking-[0.28em] text-gold-light sm:text-sm">{label}</p>
       <p className={`mt-4 text-sm font-medium tabular-nums sm:mt-5 sm:text-base ${valueClass}`}>
         {value === null ? (
           "—"
@@ -58,7 +58,7 @@ function MarketStatsDashboard({ data }: { data: MarketStatsResponse }) {
     <div className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="text-left">
-          <p className="text-xs uppercase tracking-[0.24em] text-muted">{t.market.uglyPrice}</p>
+          <p className="text-xs uppercase tracking-[0.24em] text-muted">{t.market.tokenPrice}</p>
           <p className="mt-2 font-[family-name:var(--font-anton)] text-[clamp(1.75rem,5vw,2.75rem)] tracking-[0.08em] text-gold-light">
             {formatUsd(data.priceUsd)}
           </p>
@@ -94,7 +94,7 @@ export function MarketStatsSection() {
   return (
     <FadeIn as="section" id="market">
       <Section ariaLabelledBy="market-title" className="flex flex-col items-center py-0 text-center">
-        <p className="font-[family-name:var(--font-anton)] text-xs tracking-[0.4em] text-gold sm:text-sm">
+        <p className="font-[family-name:var(--font-anton)] text-xs tracking-[0.4em] text-gold-light sm:text-sm">
           {t.market.eyebrow}
         </p>
         <h2
@@ -105,7 +105,7 @@ export function MarketStatsSection() {
         </h2>
         <p className="mt-6 max-w-2xl text-base text-muted sm:text-xl">{t.market.subtitle}</p>
 
-        <div className="gold-border mt-14 w-full max-w-5xl rounded-3xl bg-white/[0.02] p-6 sm:mt-16 sm:p-8">
+        <div className="gold-border mt-14 w-full max-w-5xl rounded-3xl p-6 sm:mt-16 sm:p-8">
           {isLoading && !data ? (
             <p className="py-10 text-sm text-muted">{t.market.loading}</p>
           ) : hasError && !data ? (

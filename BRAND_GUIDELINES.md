@@ -1,29 +1,36 @@
-# UGLY DEER Brand Guidelines
+# HANSOME ALPACAS Brand Guidelines
 
-> *We look wrong on purpose. We feel nothing about it.*
+> *The alpaca that won the genetic lottery. Too handsome to be useful.*
 
 ---
 
 ## Brand Essence
 
-UGLY DEER is an anti-aesthetic meme brand ??the visual honesty of a bad photo, the emotional vacancy of a 3am scroll, and the quiet chaos of internet culture. Everything is intentionally off. Nothing is trying to look premium.
+HANSOME ALPACAS is a meme-first, community-driven token built around one
+joke: an alpaca with a flawless face and zero marketable skills. No utility
+promises. No roadmap theatrics. Just an extremely good-looking llama cousin
+and a community that thinks that's funny enough.
 
 ### Brand Personality
 
 | Trait | What it means | What it is NOT |
 |---|---|---|
-| **Ugly** | Asymmetric layouts, crooked mascots, wrong proportions | Polished, symmetrical, influencer-ready |
-| **Dead inside** | Flat affect, understated copy, no fake enthusiasm | Hype, exclamation marks, "we're so excited" |
-| **Funny** | Dry, observational, slightly unhinged | Slapstick, try-hard memes, corporate humor |
-| **Honest** | Incomplete sentences, implied lore, no filters | Crypto buzzwords, explainer overload |
+| **Hansome** | Symmetrical, glossy, "main character" energy | Ugly-core, anti-aesthetic, deliberately broken |
+| **Useless** | Confident about having no utility | Apologetic, over-explaining, roadmap-heavy |
+| **Meme-first** | Internet culture, dry humor, self-aware | Corporate crypto marketing, hype-speak |
+| **Community-driven** | The joke belongs to holders, not a roadmap | Centralized "team promises" |
 
 ### The Golden Rule
 
-**Never look like Web3 corporate design.**
+**Never promise utility.** HANSOME ALPACAS is not building an ecosystem. It
+is not "more than a meme." It is a meme, proudly, forever.
 
-Avoid: purple-blue gradients, hexagonal grids, rocket ships, diamond hands, "WAGMI" energy, glassmorphism cards, neon glow borders, futuristic HUD overlays, tokenomics charts as hero imagery.
+Avoid: roadmap phases, "utility coming soon," futuristic HUD overlays,
+tokenomics as a value proposition, exclamation-mark hype copy.
 
-Instead: dark backgrounds, deadpan typography, meme-adjacent imagery treated with editorial seriousness, and copy that sounds like it was written by someone who has seen too much.
+Instead: deadpan confidence, gold-coin/premium visual treatment applied
+ironically to an animal with no achievements, and copy that reads like a
+group chat, not a whitepaper.
 
 ---
 
@@ -31,20 +38,23 @@ Instead: dark backgrounds, deadpan typography, meme-adjacent imagery treated wit
 
 ### Primary Logo
 
-The UGLY DEER mascot is the hero ??intentionally asymmetric deer with crooked antlers, mismatched eyes, and tongue out.
+The HANSOME ALPACAS mascot is a gold coin with an embossed alpaca face —
+big eyes, soft blush, smug little smile. Current artwork in
+`public/logo/coin.svg` is a **placeholder** pending final mascot art (see
+`components/CoinAlpacaFace.tsx`).
 
 **Specifications:**
-- Wordmark: `UGLY DEER` in all caps, tracked wide
+- Wordmark: `HANSOME ALPACAS` in all caps, tracked wide
 - Preferred weight: Medium to Semibold
 - Preferred typeface: Anton (headlines), Noto Sans TC (body)
 - Color: `#FAFAFA` on dark backgrounds
 
 ### Logo Don'ts
 
-- Do not beautify the mascot ??symmetry is the enemy
-- Do not add gradients, glows, or drop shadows to the logo
+- Do not make the mascot ugly, crooked, or asymmetric — that's the previous
+  brand (UGLY DEER), not this one
+- Do not add rockets, diamond hands, or generic Web3 iconography
 - Do not stretch, skew, or outline the wordmark
-- Do not pair the logo with crypto iconography (coins, chains, rockets)
 
 ---
 
@@ -56,10 +66,10 @@ The UGLY DEER mascot is the hero ??intentionally asymmetric deer with crooked an
 | Foreground | `#FAFAFA` | Headlines, primary text |
 | Muted | `#6B6B6B` | Secondary text |
 | Border | `#2A2A2A` | Dividers, outlines |
-| Fur primary | `#8B7355` | Mascot body |
-| Fur secondary | `#6B5344` | Mascot shadows |
-| Tongue | `#C46B6B` | Accent detail |
-| Wart | `#7A8B5A` | Ugly detail accent |
+| Gold | `#D4AF37` | Accent, coin, CTAs |
+| Fur primary | `#E8D9BE` | Mascot fur |
+| Fur secondary | `#C9B590` | Mascot shadows |
+| Blush | `#D89A9A` | "Hansome" cheek accent |
 
 ---
 
@@ -73,12 +83,13 @@ The UGLY DEER mascot is the hero ??intentionally asymmetric deer with crooked an
 
 ## Voice & Tone
 
-- Short sentences. No exclamation marks.
-- State things. Don't ask the audience what they think.
-- Embrace ugliness as identity, not as self-deprecation.
-- Bilingual: Traditional Chinese default, English secondary.
+- Short sentences. Confident, not defensive.
+- State the joke once. Don't explain it.
+- No fake urgency, no "don't miss out," no financial promises.
+- Bilingual: English default, Traditional Chinese secondary (see
+  `content/i18n/`).
 
-**Approved hashtag:** `#uglydeer`
+**Suggested hashtag:** `#hansomealpacas`
 
 ---
 
@@ -86,7 +97,7 @@ The UGLY DEER mascot is the hero ??intentionally asymmetric deer with crooked an
 
 | Surface | ID / Label |
 |---|---|
-| Hero | `#hero` — UGLY DEER wordmark + gold coin |
+| Hero | `#hero` — HANSOME ALPACAS wordmark + gold coin |
 | About | `#about` — origin story |
 | Tokenomics | `#tokenomics` — supply and network |
 | Buy | `#buy` — purchase CTA |
@@ -96,10 +107,11 @@ The UGLY DEER mascot is the hero ??intentionally asymmetric deer with crooked an
 
 ---
 
-BRAND:        UGLY DEER  
-SYMBOL:       UGLY  
-CHAIN:        Robinhood Chain  
-WEBSITE:      kairu.lol (current deployment)  
-X:            @DeerloveRu  
+BRAND:        HANSOME ALPACAS
+SYMBOL:       HANSOME
+CHAIN:        Robinhood Chain
+WEBSITE:      hansomealpacas.xyz
+SUPPLY:       1,000,000,000
+TAX:          0%
 
-© 2026 UGLY DEER
+© 2026 HANSOME ALPACAS

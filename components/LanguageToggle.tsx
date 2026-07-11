@@ -8,10 +8,10 @@ const segmentBase =
 
 function segmentClass(active: boolean) {
   if (active) {
-    return `${segmentBase} border border-foreground bg-foreground/[0.08] text-foreground`;
+    return `${segmentBase} border border-wood bg-gold/30 text-wood-dark`;
   }
 
-  return `${segmentBase} border border-transparent bg-transparent text-muted hover:border-border hover:opacity-80`;
+  return `${segmentBase} border border-transparent bg-transparent text-muted hover:opacity-80`;
 }
 
 export function LanguageToggle() {
@@ -29,7 +29,7 @@ export function LanguageToggle() {
       <div
         role="group"
         aria-label={t.language.toggleLabel}
-        className="inline-flex items-stretch border border-border"
+        className="pixel-btn inline-flex items-stretch border-wood bg-surface"
       >
         <button
           type="button"

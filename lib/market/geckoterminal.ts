@@ -1,8 +1,8 @@
 import {
   GECKO_TERMINAL_POOL_API,
   GECKO_TERMINAL_POOL_ID,
-  GECKO_TERMINAL_UGLY_POOLS_API,
-  UGLY_TOKEN_ADDRESS,
+  GECKO_TERMINAL_TOKEN_POOLS_API,
+  TOKEN_ADDRESS,
 } from "@/lib/market/constants";
 
 type GeckoTxWindow = {
@@ -107,9 +107,9 @@ export type GeckoMarketStats = {
 };
 
 export async function fetchGeckoTerminalPoolStats(): Promise<GeckoMarketStats> {
-  const [poolJson, uglyPoolsJson] = await Promise.all([
+  const [poolJson, tokenPoolsJson] = await Promise.all([
     fetchJson<GeckoPoolResponse>(GECKO_TERMINAL_POOL_API),
-    fetchJson<GeckoPoolListResponse>(GECKO_TERMINAL_UGLY_POOLS_API),
+    fetchJson<GeckoPoolListResponse>(GECKO_TERMINAL_TOKEN_POOLS_API),
   ]);
 
   const attrs = poolJson.data?.attributes;
@@ -118,34 +118,34 @@ export async function fetchGeckoTerminalPoolStats(): Promise<GeckoMarketStats> {
   }
 
   const quoteToken = findQuoteToken(poolJson.data, poolJson.included);
-  if (normalizeAddress(quoteToken?.address) !== normalizeAddress(UGLY_TOKEN_ADDRESS)) {
-    throw new Error("GeckoTerminal pool quote token is not UGLY");
+  if (normalizeAddress(quoteToken?.address) !== normalizeAddress(TOKEN_ADDRESS)) {
+    throw new Error("GeckoTerminal pool quote token is not HANSOME");
   }
 
-  const uglyPool = uglyPoolsJson.data.find(
+  const tokenPool = tokenPoolsJson.data.find(
     (pool) => normalizeAddress(pool.attributes.address) === normalizeAddress(GECKO_TERMINAL_POOL_ID),
   );
-  const uglyAttrs = uglyPool?.attributes;
+  const tokenAttrs = tokenPool?.attributes;
 
-  const priceUsd = parseNum(attrs.quote_token_price_usd ?? uglyAttrs?.token_price_usd);
+  const priceUsd = parseNum(attrs.quote_token_price_usd ?? tokenAttrs?.token_price_usd);
   const priceEth = parseNum(attrs.quote_token_price_native_currency);
 
   if (priceUsd <= 0) {
-    throw new Error("GeckoTerminal returned invalid UGLY price");
+    throw new Error("GeckoTerminal returned invalid HANSOME price");
   }
 
-  const changeRaw = uglyAttrs?.price_change_percentage?.h24;
+  const changeRaw = tokenAttrs?.price_change_percentage?.h24;
   const changeParsed = changeRaw !== undefined ? Number(changeRaw) : NaN;
   const change24h = Number.isFinite(changeParsed) ? changeParsed : null;
 
   return {
     updatedAt: Date.now(),
-    poolName: attrs.pool_name ?? attrs.name ?? "WETH / UGLY",
+    poolName: attrs.pool_name ?? attrs.name ?? "WETH / HANSOME",
     priceUsd,
     priceEth,
     change24h,
     volume24hUsd: parseNum(attrs.volume_usd?.h24),
     liquidityUsd: parseNum(attrs.reserve_in_usd),
-    transactions24h: parseTxWindow(uglyAttrs?.transactions?.h24 ?? attrs.transactions?.h24),
+    transactions24h: parseTxWindow(tokenAttrs?.transactions?.h24 ?? attrs.transactions?.h24),
   };
 }

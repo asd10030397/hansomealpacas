@@ -6,7 +6,7 @@ const CLICKS_REQUIRED = 10;
 const HOLD_MS = 1000;
 const FADE_MS = 500;
 
-export function useUglyDeerEasterEgg() {
+export function useMascotEasterEgg() {
   const [active, setActive] = useState(false);
   const clicksRef = useRef(0);
   const timerRef = useRef<number | null>(null);
