@@ -47,29 +47,29 @@ export function ContractSection() {
               </p>
             </div>
 
-            {contract.isLive && contract.address ? (
-              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-                <CopyButton value={contract.address} variant="gold" showAddress={false} />
-                {contract.explorerUrl ? (
-                  <a
-                    href={contract.explorerUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="pixel-btn inline-flex items-center justify-center border-wood bg-gold/20 px-8 py-3.5 font-[family-name:var(--font-anton)] text-sm tracking-[0.18em] text-gold-light"
-                  >
-                    {t.contract.viewExplorer}
-                  </a>
-                ) : null}
-                <Link
-                  href="/transparency"
-                  className="pixel-btn inline-flex items-center justify-center border-wood bg-gold/20 px-8 py-3.5 font-[family-name:var(--font-anton)] text-sm tracking-[0.18em] text-gold-light"
-                >
-                  {t.contract.viewOfficialWallets}
-                </Link>
-              </div>
-            ) : (
-              <CopyButton value={null} variant="gold" />
-            )}
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+              {contract.isLive && contract.address ? (
+                <>
+                  <CopyButton value={contract.address} variant="gold" showAddress={false} />
+                  {contract.explorerUrl ? (
+                    <a
+                      href={contract.explorerUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="pixel-btn inline-flex items-center justify-center border-wood bg-gold/20 px-8 py-3.5 font-[family-name:var(--font-anton)] text-sm tracking-[0.18em] text-gold-light"
+                    >
+                      {t.contract.viewExplorer}
+                    </a>
+                  ) : null}
+                </>
+              ) : null}
+              <Link
+                href="/transparency"
+                className="pixel-btn inline-flex items-center justify-center border-wood bg-gold/20 px-8 py-3.5 font-[family-name:var(--font-anton)] text-sm tracking-[0.18em] text-gold-light"
+              >
+                {t.contract.viewOfficialWallets}
+              </Link>
+            </div>
           </div>
         </div>
       </Section>
