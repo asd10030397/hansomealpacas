@@ -45,6 +45,7 @@ export const zh: Messages = {
         label: "網路",
         valueLines: ["Robinhood", "Chain"],
         badge: "即將推出",
+        variant: "network",
       },
       { label: "稅", value: "0%" },
       { label: "流動性", value: "鎖倉", secondary: "規劃中" },

@@ -5,12 +5,42 @@ import { Section } from "@/components/Section";
 import { useLocale } from "@/context/LocaleContext";
 import type { TokenomicsItem } from "@/content/i18n/types";
 
+const labelClassName =
+  "text-xs font-medium uppercase tracking-[0.28em] text-gold/70 sm:text-sm sm:tracking-[0.32em]";
+
+function NetworkTokenomicsCard({ item }: { item: TokenomicsItem }) {
+  return (
+    <div className="tokenomics-card flex h-full min-h-[12rem] min-w-0 flex-col items-center justify-center rounded-2xl px-4 py-11 font-[family-name:var(--font-noto-sans-tc)] sm:min-h-[13rem] sm:px-5 sm:py-12">
+      <p className={labelClassName}>{item.label}</p>
+
+      <div className="mt-8 flex w-full min-w-0 flex-col items-center sm:mt-9">
+        {item.valueLines?.map((line) => (
+          <p
+            key={line}
+            className="w-full whitespace-nowrap text-center text-xl font-medium leading-[1.1] tracking-[-0.01em] text-foreground md:text-2xl lg:text-3xl xl:text-2xl"
+          >
+            {line}
+          </p>
+        ))}
+      </div>
+
+      {item.badge ? (
+        <span className="mt-8 inline-flex h-[36px] shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-gold/75 px-5 text-[0.6875rem] font-medium uppercase tracking-[0.12em] text-background/90 sm:mt-9 sm:px-6">
+          {item.badge}
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
 function TokenomicsCard({ item }: { item: TokenomicsItem }) {
+  if (item.variant === "network") {
+    return <NetworkTokenomicsCard item={item} />;
+  }
+
   return (
     <div className="tokenomics-card flex h-full min-h-[12rem] flex-col items-center justify-center rounded-2xl px-5 py-11 font-[family-name:var(--font-noto-sans-tc)] sm:min-h-[13rem] sm:px-6 sm:py-12">
-      <p className="text-xs font-medium uppercase tracking-[0.28em] text-gold/70 sm:text-sm sm:tracking-[0.32em]">
-        {item.label}
-      </p>
+      <p className={labelClassName}>{item.label}</p>
 
       {item.valueLines ? (
         <div className="mt-8 flex w-full flex-col items-center gap-1 sm:mt-9">

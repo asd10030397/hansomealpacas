@@ -45,6 +45,7 @@ export const en: Messages = {
         label: "NETWORK",
         valueLines: ["Robinhood", "Chain"],
         badge: "Launching Soon",
+        variant: "network",
       },
       { label: "TAX", value: "0%" },
       { label: "LIQUIDITY", value: "Locked", secondary: "Planned" },
