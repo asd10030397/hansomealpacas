@@ -9,7 +9,7 @@ import { SocialBar } from "@/components/SocialBar";
 import { PROJECT } from "@/content/project";
 import { useLocale } from "@/context/LocaleContext";
 import { useUglyDeerEasterEgg } from "@/hooks/useUglyDeerEasterEgg";
-import { getBuySectionState, getHeroActions, getLiveStatusState } from "@/lib/launch";
+import { getHeroActions, getLiveStatusState } from "@/lib/launch";
 import { EASE } from "@/lib/motion";
 
 export function HeroSection() {
@@ -17,7 +17,6 @@ export function HeroSection() {
   const { t } = useLocale();
   const { active, handleMascotClick, fadeMs } = useUglyDeerEasterEgg();
   const actions = getHeroActions();
-  const buy = getBuySectionState();
   const live = getLiveStatusState();
 
   return (
@@ -74,16 +73,8 @@ export function HeroSection() {
 
           <nav
             aria-label={t.a11y.primaryLinks}
-            className="mt-10 flex flex-wrap items-center justify-center gap-3 sm:mt-12 sm:gap-4"
+            className="mt-10 flex flex-wrap items-center justify-center sm:mt-12"
           >
-            <ActionButton
-              href={buy.href}
-              disabled={buy.comingSoon}
-              variant="gold"
-              size="lg"
-            >
-              {buy.comingSoon ? t.buy.launchingSoon : t.buy.cta}
-            </ActionButton>
             <ActionButton href={actions.twitter.href} size="lg">
               {t.hero.followX}
             </ActionButton>

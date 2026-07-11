@@ -173,8 +173,7 @@ export const zh: Messages = {
     eyebrow: "MARKET",
     title: "MARKET STATS",
     subtitle: "Robinhood Chain 上 UGLY/ETH Uniswap v4 池的即時數據。",
-    loading: "正在載入市場數據…",
-    error: "目前無法載入市場數據。",
+    loading: "正在載入鏈上市場數據…",
     spotPrice: "現價",
     marketCap: "市值",
     liquidity: "流動性",
@@ -185,8 +184,7 @@ export const zh: Messages = {
     change24h: "24H",
     change7d: "7D",
     liveRefresh: "每 30 秒自動更新",
-    historyBuilding:
-      "價格歷史建立中 — 每 5 分鐘記錄一次快照。24H 與 7D 變動會隨數據累積而顯示。",
+    historyBuilding: "市場歷史建立中。\n即時統計數據即將顯示。",
   },
   footer: {
     tagline: "生來就醜。與眾不同。",

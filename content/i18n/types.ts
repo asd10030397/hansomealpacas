@@ -152,7 +152,6 @@ export type Messages = {
     title: string;
     subtitle: string;
     loading: string;
-    error: string;
     spotPrice: string;
     marketCap: string;
     liquidity: string;

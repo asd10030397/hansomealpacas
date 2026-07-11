@@ -177,8 +177,7 @@ export const en: Messages = {
     eyebrow: "MARKET",
     title: "MARKET STATS",
     subtitle: "Live data from the UGLY/ETH Uniswap v4 pool on Robinhood Chain.",
-    loading: "Loading market data…",
-    error: "Unable to load market stats right now.",
+    loading: "Loading on-chain market data...",
     spotPrice: "Spot Price",
     marketCap: "Market Cap",
     liquidity: "Liquidity",
@@ -190,7 +189,7 @@ export const en: Messages = {
     change7d: "7D",
     liveRefresh: "Auto-refreshes every 30s",
     historyBuilding:
-      "Price history is building — snapshots are recorded every 5 minutes. 24H and 7D changes appear as data accumulates.",
+      "Market history is building.\nLive statistics will appear shortly.",
   },
   footer: {
     tagline: "Born ugly. Built different.",
