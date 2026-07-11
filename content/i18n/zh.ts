@@ -127,7 +127,7 @@ export const zh: Messages = {
       },
       {
         question: "有空投嗎？",
-        answer: "沒有。沒有領取表。沒有錢包提交。目前都沒有。",
+        answer: "有些好玩的事正在醞釀中……敬請期待未來的社群活動。",
       },
       {
         question: "在哪條鏈？",
@@ -135,7 +135,7 @@ export const zh: Messages = {
       },
       {
         question: "HANSOME 有任何功能嗎？",
-        answer: "沒有。牠就只是很帥。這就是全部的實用性。",
+        answer: "現在？就只是很帥。未來的功能與驚喜活動——敬請期待。",
       },
     ],
   },

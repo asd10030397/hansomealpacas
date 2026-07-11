@@ -24,14 +24,16 @@ export function FaqSection() {
           {t.faq.items.map((item, index) => (
             <div
               key={item.question}
-              className={`gold-border rounded-2xl px-6 py-6 sm:px-8 sm:py-7 ${
+              className={`gold-border rounded-2xl px-6 py-7 sm:px-9 sm:py-8 lg:px-12 ${
                 index === 0 ? "meme-faq-highlight" : ""
               }`}
             >
-              <dt className="font-[family-name:var(--font-anton)] text-base tracking-[0.06em] text-foreground sm:text-lg">
+              <dt className="font-[family-name:var(--font-anton)] text-[0.85rem] tracking-[0.06em] text-foreground sm:text-[0.95rem]">
                 {item.question}
               </dt>
-              <dd className="mt-3 text-sm leading-relaxed text-muted sm:text-base">{item.answer}</dd>
+              <dd className="mt-4 text-[0.78rem] leading-relaxed text-muted sm:mt-5 sm:text-[0.88rem]">
+                {item.answer}
+              </dd>
             </div>
           ))}
         </dl>

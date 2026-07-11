@@ -132,7 +132,7 @@ export const en: Messages = {
       },
       {
         question: "Is there an airdrop?",
-        answer: "No. No claim forms. No wallet submissions. Not yet.",
+        answer: "Something fun is coming... Stay tuned for future community events.",
       },
       {
         question: "What chain?",
@@ -140,7 +140,7 @@ export const en: Messages = {
       },
       {
         question: "Does HANSOME do anything?",
-        answer: "No. It's just extremely handsome. That's the whole utility.",
+        answer: "Right now? Just being extremely handsome. Future utilities and special events — coming soon.",
       },
     ],
   },
