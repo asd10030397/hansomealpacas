@@ -1,6 +1,7 @@
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import hre from "hardhat";
+import { getDeployerSigner } from "./lib/signer";
 
 type DeploymentRecord = {
   address: string;
@@ -8,6 +9,8 @@ type DeploymentRecord = {
 };
 
 async function main() {
+  await getDeployerSigner(hre.ethers.provider);
+
   const deploymentPath = join(__dirname, "..", "deployments", `${hre.network.name}.json`);
   let address = process.env.UGLY_DEER_ADDRESS?.trim();
   let recipient = process.env.TOKEN_RECIPIENT?.trim();

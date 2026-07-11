@@ -1,6 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { ethers, network } from "hardhat";
+import { getDeployerSigner } from "./lib/signer";
 
 type DeploymentRecord = {
   network: string;
@@ -14,14 +15,14 @@ type DeploymentRecord = {
 };
 
 async function main() {
-  const [deployer] = await ethers.getSigners();
+  const deployer = await getDeployerSigner(ethers.provider);
   const recipient = process.env.TOKEN_RECIPIENT ?? deployer.address;
 
   if (recipient === ethers.ZeroAddress) {
     throw new Error("TOKEN_RECIPIENT must be set to a non-zero address");
   }
 
-  const factory = await ethers.getContractFactory("UglyDeer");
+  const factory = await ethers.getContractFactory("UglyDeer", deployer);
   const token = await factory.deploy(recipient);
   const deployTx = token.deploymentTransaction();
 

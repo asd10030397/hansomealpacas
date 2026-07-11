@@ -1,3 +1,4 @@
+import { FunctionFragment } from "ethers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { UglyDeer } from "../typechain-types";
@@ -67,7 +68,7 @@ describe("UglyDeer", () => {
     ];
 
     const externalFunctions = token.interface.fragments
-      .filter((fragment) => fragment.type === "function")
+      .filter((fragment): fragment is FunctionFragment => fragment.type === "function")
       .map((fragment) => fragment.name);
 
     for (const fn of forbidden) {

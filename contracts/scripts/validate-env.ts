@@ -12,32 +12,34 @@ function fail(message: string): never {
   process.exit(1);
 }
 
-function validatePrivateKey(raw: string | undefined): string {
-  if (!raw?.trim()) {
-    fail("PRIVATE_KEY is missing. Set it in contracts/.env (never commit this file).");
+function validatePrivateKey(
+  raw: string | undefined,
+  label: string,
+  allowFallback?: string | undefined,
+): string {
+  const value = raw?.trim() || allowFallback?.trim();
+
+  if (!value) {
+    fail(`${label} is missing. Set it in contracts/.env (never commit this file).`);
   }
 
-  const key = raw.trim();
-
-  if (!key.startsWith("0x")) {
-    fail("PRIVATE_KEY must start with 0x.");
+  if (!value.startsWith("0x")) {
+    fail(`${label} must start with 0x.`);
   }
 
-  if (key.length !== 66) {
-    fail("PRIVATE_KEY must be 66 characters (0x + 64 hex digits).");
+  if (value.length !== 66) {
+    fail(`${label} must be 66 characters (0x + 64 hex digits).`);
   }
 
-  if (!/^0x[0-9a-fA-F]{64}$/.test(key)) {
-    fail("PRIVATE_KEY must contain only hexadecimal characters after 0x.");
+  if (!/^0x[0-9a-fA-F]{64}$/.test(value)) {
+    fail(`${label} must contain only hexadecimal characters after 0x.`);
   }
 
-  if (key.toLowerCase() === PLACEHOLDER_KEY) {
-    fail(
-      "PRIVATE_KEY is still the placeholder from .env.example. Replace it with your testnet deployer wallet key.",
-    );
+  if (value.toLowerCase() === PLACEHOLDER_KEY) {
+    fail(`${label} is still the placeholder from .env.example. Replace it with a real wallet key.`);
   }
 
-  return key;
+  return value;
 }
 
 function validateRecipient(raw: string | undefined): string {
@@ -63,15 +65,30 @@ function validateRecipient(raw: string | undefined): string {
 }
 
 async function main() {
-  const privateKey = validatePrivateKey(process.env.PRIVATE_KEY);
+  const legacyKey = process.env.PRIVATE_KEY?.trim() || undefined;
+
+  const deployerKey = validatePrivateKey(
+    process.env.DEPLOYER_PRIVATE_KEY,
+    "DEPLOYER_PRIVATE_KEY",
+    legacyKey,
+  );
+  const treasuryKey = validatePrivateKey(
+    process.env.TREASURY_PRIVATE_KEY,
+    "TREASURY_PRIVATE_KEY",
+    legacyKey,
+  );
+
   const recipient = validateRecipient(process.env.TOKEN_RECIPIENT);
 
-  const wallet = new Wallet(privateKey);
+  const deployer = new Wallet(deployerKey);
+  const treasury = new Wallet(treasuryKey);
 
   console.log("Environment validation passed");
-  console.log(`  Deployer address:  ${wallet.address}`);
+  console.log(`  Deployer address:  ${deployer.address}`);
+  console.log(`  Treasury address:  ${treasury.address}`);
   console.log(`  Token recipient:   ${recipient}`);
-  console.log("  PRIVATE_KEY:       [set, not logged]");
+  console.log("  DEPLOYER_PRIVATE_KEY: [set, not logged]");
+  console.log("  TREASURY_PRIVATE_KEY: [set, not logged]");
 }
 
 main().catch((error) => {
