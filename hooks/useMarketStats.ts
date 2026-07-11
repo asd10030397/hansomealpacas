@@ -7,6 +7,7 @@ import type { MarketStatsResponse } from "@/lib/market/types";
 export function useMarketStats() {
   const [data, setData] = useState<MarketStatsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   const fetchStats = useCallback(async () => {
     try {
@@ -17,8 +18,10 @@ export function useMarketStats() {
       }
       const json = (await response.json()) as MarketStatsResponse;
       setData(json);
+      setHasError(false);
     } catch (err) {
       console.error("[UGLY] market stats fetch failed:", err);
+      setHasError(true);
     } finally {
       setIsLoading(false);
     }
@@ -32,5 +35,5 @@ export function useMarketStats() {
     return () => window.clearInterval(timer);
   }, [fetchStats]);
 
-  return { data, isLoading, refresh: fetchStats };
+  return { data, isLoading, hasError, refresh: fetchStats };
 }

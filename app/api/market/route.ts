@@ -1,12 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchEthUsd } from "@/lib/market/eth-usd";
-import {
-  buildSparkline,
-  computeAllChanges,
-  getHistoryStatus,
-} from "@/lib/market/history";
-import { buildMarketMetrics, readPoolMarketData } from "@/lib/market/pool";
-import { maybeRecordSnapshot } from "@/lib/market/snapshots";
+import { fetchGeckoTerminalPoolStats } from "@/lib/market/geckoterminal";
 import type { MarketStatsResponse } from "@/lib/market/types";
 
 export const runtime = "nodejs";
@@ -14,36 +7,18 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const now = Date.now();
-    const [pool, ethUsd] = await Promise.all([readPoolMarketData(), fetchEthUsd()]);
-    const metrics = buildMarketMetrics(pool, ethUsd);
-
-    const snapshot = {
-      ts: now,
-      priceEth: metrics.priceEth,
-      priceUsd: metrics.priceUsd,
-      tvlUsd: metrics.tvlUsd,
-      marketCapUsd: metrics.marketCapUsd,
-    };
-
-    const { history, nextSnapshotInMs } = await maybeRecordSnapshot(snapshot);
-    const changes = computeAllChanges(history.snapshots, metrics.priceUsd, now);
+    const stats = await fetchGeckoTerminalPoolStats();
 
     const response: MarketStatsResponse = {
-      updatedAt: now,
-      priceEth: metrics.priceEth,
-      priceUsd: metrics.priceUsd,
-      uglyPerEth: metrics.uglyPerEth,
-      marketCapUsd: metrics.marketCapUsd,
-      tvlUsd: metrics.tvlUsd,
-      ethUsd,
-      liquidity: metrics.liquidity,
-      tick: metrics.tick,
-      changes,
-      sparkline: buildSparkline(history.snapshots),
-      historyStatus: getHistoryStatus(history.snapshots, now),
-      snapshotCount: history.snapshots.length,
-      nextSnapshotInMs,
+      source: "geckoterminal",
+      updatedAt: stats.updatedAt,
+      poolName: stats.poolName,
+      priceUsd: stats.priceUsd,
+      priceEth: stats.priceEth,
+      change24h: stats.change24h,
+      volume24hUsd: stats.volume24hUsd,
+      liquidityUsd: stats.liquidityUsd,
+      transactions24h: stats.transactions24h,
     };
 
     return NextResponse.json(response, {

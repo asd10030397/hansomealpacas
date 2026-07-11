@@ -1,3 +1,4 @@
+/** @deprecated Legacy on-chain snapshot types (history/snapshots modules). */
 export type MarketSnapshot = {
   ts: number;
   priceEth: number;
@@ -6,30 +7,30 @@ export type MarketSnapshot = {
   marketCapUsd: number;
 };
 
+/** @deprecated */
 export type MarketHistoryFile = {
   version: 1;
   snapshots: MarketSnapshot[];
 };
 
+/** @deprecated */
 export type PriceChangeKey = "h1" | "h24" | "d7";
+
+export type MarketTransactions24h = {
+  buys: number | null;
+  sells: number | null;
+  buyers: number | null;
+  sellers: number | null;
+};
 
 export type MarketStatsResponse = {
   updatedAt: number;
-  priceEth: number;
+  source: "geckoterminal";
+  poolName: string;
   priceUsd: number;
-  uglyPerEth: number;
-  marketCapUsd: number;
-  tvlUsd: number;
-  ethUsd: number;
-  liquidity: {
-    eth: number;
-    ugly: number;
-    raw: string;
-  };
-  tick: number;
-  changes: Record<PriceChangeKey, number | null>;
-  sparkline: { ts: number; priceUsd: number }[];
-  historyStatus: "ready" | "building";
-  snapshotCount: number;
-  nextSnapshotInMs: number;
+  priceEth: number;
+  change24h: number | null;
+  volume24hUsd: number;
+  liquidityUsd: number;
+  transactions24h: MarketTransactions24h | null;
 };

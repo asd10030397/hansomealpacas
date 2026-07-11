@@ -1,12 +1,11 @@
 "use client";
 
 import { FadeIn } from "@/components/FadeIn";
-import { Sparkline } from "@/components/market/Sparkline";
 import { Section } from "@/components/Section";
 import { useLocale } from "@/context/LocaleContext";
 import { useMarketStats } from "@/hooks/useMarketStats";
-import { formatCompact, formatEth, formatPercentChange, formatUsd } from "@/lib/market/format";
-import type { MarketStatsResponse, PriceChangeKey } from "@/lib/market/types";
+import { formatPercentChange, formatUsd } from "@/lib/market/format";
+import type { MarketStatsResponse } from "@/lib/market/types";
 
 function StatCard({ label, value, subvalue }: { label: string; value: string; subvalue?: string }) {
   return (
@@ -36,7 +35,7 @@ function ChangeBadge({ label, value }: { label: string; value: number | null }) 
         ) : (
           <>
             <span aria-hidden="true">{isUp ? "🟢 " : isDown ? "🔴 " : ""}</span>
-            {isUp ? "Up" : isDown ? "Down" : "Flat"} {formatPercentChange(value)}
+            {formatPercentChange(value)}
           </>
         )}
       </p>
@@ -44,29 +43,37 @@ function ChangeBadge({ label, value }: { label: string; value: number | null }) 
   );
 }
 
-function MarketStatsDashboard({
-  data,
-  changeLabels,
-  historyBuilding,
-}: {
-  data: MarketStatsResponse;
-  changeLabels: Record<PriceChangeKey, string>;
-  historyBuilding?: string;
-}) {
+function formatTransactions(data: MarketStatsResponse, t: { market: { txBuys: string; txSells: string } }) {
+  const tx = data.transactions24h;
+  if (!tx) return "—";
+
+  const buys = tx.buys ?? 0;
+  const sells = tx.sells ?? 0;
+
+  if (buys === 0 && sells === 0) return "0";
+
+  return `${buys} ${t.market.txBuys} / ${sells} ${t.market.txSells}`;
+}
+
+function MarketStatsDashboard({ data }: { data: MarketStatsResponse }) {
   const { t } = useLocale();
 
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="text-left">
-          <p className="text-xs uppercase tracking-[0.24em] text-muted">{t.market.spotPrice}</p>
+          <p className="text-xs uppercase tracking-[0.24em] text-muted">{t.market.uglyPrice}</p>
           <p className="mt-2 font-[family-name:var(--font-anton)] text-[clamp(1.75rem,5vw,2.75rem)] tracking-[0.08em] text-gold-light">
             {formatUsd(data.priceUsd)}
           </p>
-          <p className="mt-1 text-sm tabular-nums text-muted">{formatEth(data.priceEth)}</p>
+          <p className="mt-1 text-sm tabular-nums text-muted">
+            {data.priceEth > 0 ? `${data.priceEth.toFixed(10)} ETH` : "—"}
+          </p>
         </div>
         <p className="text-left text-xs text-muted sm:text-right">
           {t.market.liveRefresh}
+          <br />
+          <span className="text-foreground/80">{data.poolName}</span>
           <br />
           <span className="tabular-nums text-foreground/80">
             {new Date(data.updatedAt).toLocaleTimeString()}
@@ -74,45 +81,19 @@ function MarketStatsDashboard({
         </p>
       </div>
 
-      <Sparkline points={data.sparkline} />
-
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label={t.market.marketCap} value={formatUsd(data.marketCapUsd)} />
-        <StatCard
-          label={t.market.liquidity}
-          value={`${formatCompact(data.liquidity.eth)} ETH`}
-          subvalue={`${formatCompact(data.liquidity.ugly)} UGLY`}
-        />
-        <StatCard label={t.market.tvl} value={formatUsd(data.tvlUsd)} />
-        <StatCard
-          label={t.market.priceEth}
-          value={formatEth(data.priceEth)}
-          subvalue={`1 ETH = ${formatCompact(data.uglyPerEth)} UGLY`}
-        />
+        <ChangeBadge label={t.market.change24h} value={data.change24h} />
+        <StatCard label={t.market.volume24h} value={formatUsd(data.volume24hUsd)} />
+        <StatCard label={t.market.liquidity} value={formatUsd(data.liquidityUsd)} />
+        <StatCard label={t.market.transactions24h} value={formatTransactions(data, t)} />
       </div>
-
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        {(Object.keys(changeLabels) as PriceChangeKey[]).map((key) => (
-          <ChangeBadge key={key} label={changeLabels[key]} value={data.changes[key]} />
-        ))}
-      </div>
-
-      {historyBuilding ? (
-        <p className="whitespace-pre-line text-sm leading-relaxed text-muted">{historyBuilding}</p>
-      ) : null}
     </div>
   );
 }
 
 export function MarketStatsSection() {
   const { t } = useLocale();
-  const { data } = useMarketStats();
-
-  const changeLabels: Record<PriceChangeKey, string> = {
-    h1: t.market.change1h,
-    h24: t.market.change24h,
-    d7: t.market.change7d,
-  };
+  const { data, isLoading, hasError } = useMarketStats();
 
   return (
     <FadeIn as="section" id="market">
@@ -129,15 +110,13 @@ export function MarketStatsSection() {
         <p className="mt-6 max-w-2xl text-base text-muted sm:text-xl">{t.market.subtitle}</p>
 
         <div className="gold-border mt-14 w-full max-w-5xl rounded-3xl bg-white/[0.02] p-6 sm:mt-16 sm:p-8">
-          {!data ? (
+          {isLoading && !data ? (
             <p className="py-10 text-sm text-muted">{t.market.loading}</p>
-          ) : (
-            <MarketStatsDashboard
-              data={data}
-              changeLabels={changeLabels}
-              historyBuilding={data.historyStatus === "building" ? t.market.historyBuilding : undefined}
-            />
-          )}
+          ) : hasError && !data ? (
+            <p className="py-10 text-sm text-muted">{t.market.unavailable}</p>
+          ) : data ? (
+            <MarketStatsDashboard data={data} />
+          ) : null}
         </div>
       </Section>
     </FadeIn>

@@ -153,17 +153,15 @@ export type Messages = {
     title: string;
     subtitle: string;
     loading: string;
-    spotPrice: string;
-    marketCap: string;
+    unavailable: string;
+    uglyPrice: string;
     liquidity: string;
-    tvl: string;
-    priceEth: string;
-    priceUsd: string;
-    change1h: string;
     change24h: string;
-    change7d: string;
+    volume24h: string;
+    transactions24h: string;
+    txBuys: string;
+    txSells: string;
     liveRefresh: string;
-    historyBuilding: string;
   };
   footer: {
     tagline: string;
