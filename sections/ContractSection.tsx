@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { CopyButton } from "@/components/CopyButton";
 import { FadeIn } from "@/components/FadeIn";
 import { Section } from "@/components/Section";
@@ -59,6 +60,12 @@ export function ContractSection() {
                     {t.contract.viewExplorer}
                   </a>
                 ) : null}
+                <Link
+                  href="/transparency"
+                  className="inline-flex items-center justify-center border border-gold/35 bg-gold/5 px-8 py-3.5 font-[family-name:var(--font-anton)] text-sm tracking-[0.18em] text-gold-light transition-all duration-200 hover:border-gold/55"
+                >
+                  {t.contract.viewOfficialWallets}
+                </Link>
               </div>
             ) : (
               <CopyButton value={null} variant="gold" />

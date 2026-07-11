@@ -122,7 +122,7 @@ export const en: Messages = {
       },
       {
         question: "When is launch?",
-        answer: "Coming soon on Robinhood Chain. No date hype. Watch this page.",
+        answer: "Live on Robinhood Chain. Swap at kairu.lol/swap.",
       },
       {
         question: "Where do I buy?",
@@ -134,20 +134,21 @@ export const en: Messages = {
       },
       {
         question: "What chain?",
-        answer: "Robinhood Chain. Building for the ecosystem. Launch pending.",
+        answer: "Robinhood Chain. Live.",
       },
     ],
   },
   contract: {
     eyebrow: "CONTRACT",
     title: "CONTRACT ADDRESS",
-    subtitle: "The contract address will be published after deployment.",
+    subtitle: "Official Contract Address",
     addressLabel: "OFFICIAL CA",
     placeholder: "Contract will be published at launch.",
     comingSoon: "COMING SOON",
     copied: "COPIED",
     copy: "COPY",
     viewExplorer: "View on Explorer",
+    viewOfficialWallets: "View Official Wallets",
     shareOnX: "SHARE ON X",
     copyUrl: "COPY URL",
     copyCa: "COPY CA",

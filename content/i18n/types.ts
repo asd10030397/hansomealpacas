@@ -122,6 +122,7 @@ export type Messages = {
     copied: string;
     copy: string;
     viewExplorer: string;
+    viewOfficialWallets: string;
     shareOnX: string;
     copyUrl: string;
     copyCa: string;

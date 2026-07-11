@@ -118,7 +118,7 @@ export const zh: Messages = {
       },
       {
         question: "什麼時候上線？",
-        answer: "即將在 Robinhood Chain 推出。不炒日期。關注本頁。",
+        answer: "已在 Robinhood Chain 上線。前往 kairu.lol/swap 兌換。",
       },
       {
         question: "在哪裡購買？",
@@ -130,20 +130,21 @@ export const zh: Messages = {
       },
       {
         question: "在哪條鏈？",
-        answer: "Robinhood Chain。為生態而建。上線待定。",
+        answer: "Robinhood Chain。已上線。",
       },
     ],
   },
   contract: {
     eyebrow: "CONTRACT",
     title: "合約地址",
-    subtitle: "合約地址將於部署後公布。",
+    subtitle: "官方合約地址",
     addressLabel: "官方 CA",
     placeholder: "合約將於上線時公布。",
     comingSoon: "即將推出",
     copied: "COPIED",
     copy: "COPY",
     viewExplorer: "在區塊瀏覽器查看",
+    viewOfficialWallets: "View Official Wallets",
     shareOnX: "SHARE ON X",
     copyUrl: "COPY URL",
     copyCa: "COPY CA",
