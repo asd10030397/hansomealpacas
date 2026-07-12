@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "generate:assets": "node scripts/generate-assets.mjs",
+    "generate:litepaper-pdf": "node scripts/generate-litepaper-pdf.mjs",
     "release:check": "node scripts/release-check.mjs"
   },
   "dependencies": {
@@ -28,6 +29,7 @@
     "@types/react-dom": "^19.1.7",
     "eslint": "^9.32.0",
     "eslint-config-next": "^15.5.0",
+    "playwright": "^1.61.1",
     "sharp": "^0.34.5",
     "tailwindcss": "^4.1.11",
     "typescript": "^5.9.2"

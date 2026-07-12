@@ -326,3 +326,47 @@ body {
     transform: none;
   }
 }
+
+/**
+ * Print stylesheet for /litepaper only, scoped under `.litepaper-print`
+ * (set in app/litepaper/layout.tsx). Flattens the dark UI theme to a plain
+ * light document for printing / PDF export: white background, black text,
+ * no interactive chrome (nav, toggles, download button), no page-split
+ * artifacts inside cards.
+ */
+@media print {
+  /* Fixed floating chrome (e.g. the language toggle) makes no sense on paper on any page. */
+  .no-print {
+    display: none !important;
+  }
+
+  .litepaper-print {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .litepaper-print * {
+    color: #111111 !important;
+    background-color: transparent !important;
+    border-color: #cccccc !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  .litepaper-print h1,
+  .litepaper-print h2,
+  .litepaper-print h3 {
+    color: #000000 !important;
+  }
+
+  .litepaper-print .litepaper-layout {
+    display: block !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .litepaper-print section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}

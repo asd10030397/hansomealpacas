@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useLocale } from "@/context/LocaleContext";
 import type { Locale } from "@/content/i18n/types";
 
@@ -16,15 +17,30 @@ function segmentClass(active: boolean) {
 
 export function LanguageToggle() {
   const { locale, setLocale, t } = useLocale();
+  const [printMode, setPrintMode] = useState(false);
+
+  // CSS alone (`display: none`) can still leave a text-layer artifact for
+  // fixed-position elements in Chromium's print-to-PDF pipeline — actually
+  // unmounting during print avoids that entirely.
+  useEffect(() => {
+    const query = window.matchMedia("print");
+    const handleChange = () => setPrintMode(query.matches);
+    handleChange();
+    query.addEventListener("change", handleChange);
+    return () => query.removeEventListener("change", handleChange);
+  }, []);
 
   const setActive = (next: Locale) => {
     if (next !== locale) setLocale(next);
   };
 
+  if (printMode) return null;
+
   return (
     <nav
       aria-label={t.language.toggleLabel}
-      className="fixed right-6 top-6 z-40 sm:right-8 sm:top-8"
+      data-language-toggle="true"
+      className="no-print fixed right-6 top-6 z-40 sm:right-8 sm:top-8"
     >
       <div
         role="group"
