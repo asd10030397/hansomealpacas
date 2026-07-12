@@ -51,3 +51,4 @@ next-env.d.ts
 
 # market snapshot history (built automatically in production)
 /data/market-history.json
+.env*

@@ -221,7 +221,7 @@ export const en: Messages = {
     meta: {
       title: "Litepaper | HANSOME ALPACAS",
       description:
-        "The HANSOME ALPACAS litepaper: founder letter, tokenomics, treasury policy, liquidity policy, revenue strategy, roadmap, and FAQ — grounded in what's actually true today.",
+        "The HANSOME ALPACAS litepaper: founder letter, vision, tokenomics, treasury policy, liquidity policy, revenue strategy, roadmap, and FAQ — what's true today, and honestly, where we're hoping to take this handsome alpaca next.",
     },
     nav: {
       onThisPage: "On this page",
@@ -248,7 +248,7 @@ export const en: Messages = {
       eyebrow: "LITEPAPER",
       title: "HANSOME ALPACAS",
       subtitle:
-        "A public record of what this project is, what it isn't, and how it intends to grow — without promises it can't keep.",
+        "A public record of what this project is, what it isn't, and where we're hoping to take it — without promises we can't keep.",
       meta: [
         { label: "Network", value: "Robinhood Chain" },
         { label: "Total Supply", value: "1,000,000,000 HANSOME" },
@@ -264,9 +264,10 @@ export const en: Messages = {
     founderLetter: {
       heading: "Founder Letter",
       paragraphs: [
-        "We didn't start HANSOME ALPACAS because we had a product. We started it because \"an alpaca that won the genetic lottery and has absolutely nothing to show for it\" made us laugh, and we figured it might make other people laugh too. That's still the whole premise. We're not going to dress it up as more than that.",
-        "What we can promise is narrower, and more boring, than most launches: a fixed supply that cannot be minted again, a contract that cannot be changed by us or anyone else, and a public paper trail for every wallet that touches this token. Not because we're extraordinarily virtuous, but because removing our own ability to break those promises later seemed like the only way to make them actually mean something.",
-        "This document is the closest thing we have to a plan. It says what's real today, what we intend to do next, and what's still just a direction we're pointing in. Where we don't know something yet, we've tried to say so instead of filling the gap with confidence we don't have. If HANSOME is still around in a year, we'd rather it be because a real community decided it was worth sticking around for — not because we oversold it at the start.",
+        "We didn't start HANSOME ALPACAS because we had a product. We started it because \"an alpaca that won the genetic lottery and has absolutely nothing to show for it\" made us laugh, and we figured it might make other people laugh too. That part hasn't changed. The token is the joke — but it was always meant to be the beginning of something, not the whole thing.",
+        "Here's the honest version of the plan: HANSOME starts as a meme coin. If enough people actually stick around because they think a stupidly handsome alpaca is funny, we want to grow this into a real brand — original content, community events, meme contests, merch, maybe partnerships somewhere down the line. Nothing on that list exists yet. We're telling you because it's true, not because we're ready to ship any of it tomorrow.",
+        "What we can promise today is narrower than that, and a lot more boring: a fixed supply that can never be minted again, a contract that can't be changed by us or anyone else, and a public paper trail for every wallet that touches this token. We can't promise you a hoodie. We can promise you a contract we can't cheat with, and that any real promise we do make will show up in this document, dated — not just floated in a group chat and forgotten.",
+        "This document is the closest thing we have to a plan. It says what's real today, what we're actually hoping to build if this community keeps growing, and where the line between those two things sits. Where we don't know something yet, we've tried to say so instead of filling the gap with confidence we don't have. If HANSOME is still around in a year, we'd rather it be because a real community decided the alpaca — and whatever we managed to build around it — was worth sticking around for, not because we oversold it at the start.",
         "Thanks for reading this far. That already puts you ahead of most people who ape into a meme coin.",
       ],
       signature: "— The HANSOME ALPACAS team",
@@ -274,22 +275,24 @@ export const en: Messages = {
     introduction: {
       heading: "Introduction",
       paragraphs: [
-        "HANSOME ALPACAS is a meme coin on Robinhood Chain, trading against ETH through a Uniswap v4 concentrated-liquidity pool. It has no product to sell you, no utility to promise, and no roadmap dressed up as a business plan.",
-        "What it does have is a fixed, non-mintable supply, an immutable contract with no owner privileges, and a public record of every wallet that touches the token. This document exists to state plainly what is true today, what is aspirational, and where the line between the two sits — so that trust in this project is built on record, not narrative.",
+        "HANSOME ALPACAS started as a meme coin — one extremely handsome alpaca, one ticker, zero marketable skills — trading on Robinhood Chain against ETH through a Uniswap v4 concentrated-liquidity pool. There's no product behind it today, and we're not going to pretend otherwise.",
+        "But the token was never meant to be the whole story. If the community around HANSOME keeps growing, the plan is to grow the brand right along with it: original content, community-run events, meme contests, merch (apparel, plushies, stickers — the usual suspects), and partnerships if the right ones show up. None of that exists yet. This document says so plainly, instead of dressing up a wishlist as a roadmap.",
+        "What does exist today: a fixed, non-mintable supply, an immutable contract with no owner privileges, and a public record of every wallet that touches the token. This document exists to state plainly what is true today, what is aspirational, and where the line between the two sits — so that trust in this project is built on record, not narrative.",
       ],
       whatIsHansome: {
         heading: "What is HANSOME?",
         paragraphs: [
           "HANSOME ALPACAS (ticker: HANSOME) is a fixed-supply, zero-tax ERC-20 token deployed on Robinhood Chain. Its only stated identity is the joke it was built on: an alpaca that is extremely handsome and, by design, extremely useless.",
-          "There is no staking product, no game, no yield mechanism, and no claim of future utility baked into the token contract. If any of that changes, it will be a separate, clearly-labeled addition — never retrofitted into this document as if it were always the plan.",
+          "There is no staking product, no game, no yield mechanism, and no claim of future utility baked into the token contract — and there won't be, without a clear, separate announcement. That's a statement about the contract, not about our ambitions for the brand. For where we'd actually like this to go, see Vision below.",
         ],
       },
     },
     vision: {
       heading: "Vision",
       paragraphs: [
-        "Most meme coins are built to spike and fade. This one is built to still exist in a form worth caring about after the first hype cycle ends — even if that means growing slower and with less noise.",
-        "The goal is not a specific price, market cap, or exchange listing. The goal is a small, real community around a genuinely funny mascot, a treasury that is managed conservatively and transparently, and a liquidity policy that doesn't require anyone to trust a promise instead of a receipt.",
+        "Most meme coins are built to spike and fade. We'd rather build the version that's still here — and still growing — after the first hype cycle burns out, even if that means moving slower and yelling less about it.",
+        "Here's the honest version of where we want this to go: HANSOME starts as a meme coin, but the token is the beginning, not the destination. If a real community forms around this ridiculous, handsome alpaca, the plan is to turn that into an actual brand — original content, community-driven events, meme contests, merch, and partnerships if the right ones come along. Not a metaverse. Not a \"utility token\" with a whitepaper full of buzzwords. Just an alpaca worth following, in Web3 and outside of it.",
+        "None of that requires a specific price, market cap, or exchange listing to happen — it requires people who actually want to be here. So the order of operations is: a small, real community first; a treasury that's managed conservatively and transparently second; and a brand built on top of both, once there's actually something worth building on.",
       ],
     },
     philosophy: {
@@ -298,6 +301,10 @@ export const en: Messages = {
         {
           title: "Community First",
           body: "There was no presale and no private allocation sold to outside investors. The people who hold HANSOME today got it the same way anyone else could — by buying it on the open market.",
+        },
+        {
+          title: "The Token Is the Start",
+          body: "HANSOME launched as a meme coin, and today, that's still all it is — we're not claiming otherwise. But it's not where we're hoping to stop. If the community keeps growing, the intention is to build a real alpaca brand on top of it: content, events, merch, partnerships. That's a stated direction, not a promise with a delivery date.",
         },
         {
           title: "0% Tax",
@@ -425,35 +432,35 @@ export const en: Messages = {
     revenue: {
       heading: "Revenue Strategy",
       intro:
-        "HANSOME has 0% transaction tax by design, so it does not generate revenue the way older \"tax token\" meme coins did. Any future funding for liquidity or the project has to come from elsewhere. These are the sources currently active or under consideration — nothing here is guaranteed.",
+        "HANSOME has 0% transaction tax by design, so it doesn't generate revenue the way older \"tax token\" meme coins did. Any future funding for liquidity, or for actually building the brand we talk about in Vision, has to come from somewhere real — not from printing more HANSOME. Here's what's actually running today, and what we'd like to get running if things keep growing. Nothing below is guaranteed.",
       streams: [
         {
           id: "lp-fees",
           title: "LP Fees",
           statusKey: "active",
           status: "Active",
-          body: "The 0.05% Uniswap v4 pool fee is the one revenue source already running today, scaling automatically with trading volume.",
+          body: "The 0.05% Uniswap v4 pool fee is the one revenue source already running today, scaling automatically with trading volume. It's small, it's real, and it's the only thing on this list we didn't have to wait on.",
         },
         {
           id: "merchandise",
           title: "Merchandise",
           statusKey: "exploratory",
           status: "Exploratory",
-          body: "Alpaca-branded merchandise is a natural fit for the brand, but nothing has been produced or sold yet. TODO once/if this moves forward.",
+          body: "Apparel, plushies, stickers — merch is a pretty natural fit for a mascot this handsome, and it's part of the actual long-term plan, not just a placeholder line. Nothing has been designed, produced, or sold yet. We'd rather do it right once there's a community big enough to actually want it than rush out a hoodie nobody asked for.",
         },
         {
           id: "partnerships",
           title: "Partnerships",
           statusKey: "exploratory",
           status: "Exploratory",
-          body: "No partnerships, sponsorships, or cross-promotions currently exist. TODO — any future partnership will be announced when and if it's actually signed.",
+          body: "No partnerships, sponsorships, or cross-promotions exist right now. If the right one comes along — something that actually fits the brand instead of just paying for a shoutout — we'll take it seriously and announce it once it's real. Nothing here yet.",
         },
         {
           id: "ecosystem-products",
           title: "Future Ecosystem Products",
           statusKey: "exploratory",
           status: "Exploratory",
-          body: "No additional products (games, tools, staking, etc.) are currently planned or in development. This category is left open intentionally rather than filled with speculative feature ideas.",
+          body: "No additional products (tools, collabs, drops, etc.) are currently planned or in development. As the brand side of this grows — content, community events, meme contests — some of that may eventually turn into something monetizable. It hasn't yet, and this category stays intentionally open rather than filled with speculative feature ideas.",
         },
       ],
     },
@@ -487,13 +494,21 @@ export const en: Messages = {
         },
         {
           phase: "Phase 3",
-          title: "Sustain",
+          title: "Sustain & Grow the Brand",
           statusKey: "future",
           status: "Future",
           items: [
             { label: "Evaluate real, disclosed revenue sources (see Revenue Strategy) as they materialize", done: false },
             { label: "Formalize a rules-based, milestone-tied liquidity top-up schedule", done: false },
             { label: "Explore giving the community a real voice in treasury/liquidity decisions", done: false },
+            {
+              label: "Start turning the brand into something beyond a chart — content, community events, meme contests — if the community is actually here for it",
+              done: false,
+            },
+            {
+              label: "Explore merch (apparel, plushies, stickers) and partnerships once there's a real community to build them for",
+              done: false,
+            },
             {
               label: "No fixed dates, no promised exchange listings, no price targets — this phase is a direction, not a contract",
               done: false,
@@ -506,28 +521,41 @@ export const en: Messages = {
       heading: "Community",
       paragraphs: [
         "Hype is a spike. Community is a floor. A hype cycle can bring a lot of attention very quickly and take all of it away just as fast, leaving nothing behind. A community — even a small one — is what's still around to care the day after the chart stops moving.",
-        "This project would rather have a hundred people who actually find the mascot funny and stick around than ten thousand people who forget the ticker by next week. Every policy in this document — the treasury discipline, the liquidity approach, the refusal to promise utility that doesn't exist — is really in service of that one goal: giving a real community something worth being part of.",
+        "This project would rather have a hundred people who actually find the mascot funny and stick around than ten thousand people who forget the ticker by next week. Every policy in this document — the treasury discipline, the liquidity approach, being straight about what's real versus what's just a direction — is really in service of one goal: giving a real community, and eventually a real brand built with that community, something worth being part of.",
       ],
     },
     longTermVision: {
       heading: "Long-Term Vision",
       intro:
-        "There is no guarantee this works. But the intended shape of a self-sustaining HANSOME looks like a loop, not a straight line — each stage feeding the next:",
+        "There is no guarantee this works. But the shape we're hoping HANSOME grows into looks like a loop, not a straight line — starting from a meme coin, and, if it goes well, ending up somewhere much bigger than one. Each stage feeds the next:",
       lifecycle: [
-        { label: "Community", body: "People who actually engage, not just spectate." },
-        { label: "Brand", body: "A recognizable mascot and identity people want to share." },
-        { label: "Products", body: "Real things the brand can support — merchandise, collaborations, tools (see Revenue Strategy)." },
-        { label: "Revenue", body: "Actual income from those products and from LP fees — not speculation." },
+        { label: "Community", body: "People who actually engage because they think the alpaca's funny — not just spectators watching a chart." },
+        { label: "Brand", body: "A recognizable alpaca identity people actually want to share — memes, content, an aesthetic worth being part of." },
+        {
+          label: "Products",
+          body: "Real things the brand can support once there's an audience for them — merch (apparel, plushies, stickers), community events, meme contests, maybe collaborations (see Revenue Strategy).",
+        },
+        { label: "Revenue", body: "Actual income from those products, sponsorships, and from LP fees — not speculation." },
         { label: "Treasury", body: "That revenue accumulates transparently, publicly, on-chain." },
         { label: "Liquidity", body: "Treasury funds reinforce and diversify liquidity on a deliberate schedule." },
       ],
       loopLabel: "The Loop",
       closing:
-        "Today, HANSOME is at the very start of this loop — mostly \"Community\" and \"Brand,\" with almost nothing yet in \"Products\" or \"Revenue.\" This document is meant to be revisited and honestly updated as that changes, not rewritten to pretend it was always further along.",
+        "Today, HANSOME is at the very start of this loop — mostly \"Community\" and a little bit of \"Brand,\" with nothing yet in \"Products\" or \"Revenue.\" That's not a failure to hide, it's just an honest snapshot of a project that's still mostly a really handsome alpaca and the people who think that's funny. This document gets revisited and updated as that changes — including admitting it if it doesn't.",
     },
     faq: {
       heading: "FAQ",
       items: [
+        {
+          question: "What does HANSOME actually do today?",
+          answer:
+            "Honestly? It's an extremely handsome alpaca with a fixed supply and an immutable contract. That's it, today. Anything beyond that — content, events, merch, partnerships — is covered in Vision and Long-Term Vision above as direction, not as something live right now.",
+        },
+        {
+          question: "Will there be merch, community events, or partnerships?",
+          answer:
+            "Nothing is live yet. But that's genuinely the plan if the community keeps growing — think original content, community-run events, meme contests, and eventually merch (apparel, plushies, stickers) and partnerships if the right ones show up. No dates, no guarantees. It happens if you all make it worth building.",
+        },
         {
           question: "Why 0% tax?",
           answer:
@@ -554,6 +582,14 @@ export const en: Messages = {
       heading: "Changelog",
       intro: "A record of this document's own revisions — not the whole project's history, just this litepaper.",
       entries: [
+        {
+          version: "v1.2",
+          date: "July 2026",
+          changes: [
+            "Realigned the Founder Letter, Introduction, Vision, Core Philosophy, Revenue Strategy, Roadmap, Community, and Long-Term Vision sections with the project's actual direction: HANSOME starts as a meme coin, but the token is meant to be the beginning of a real alpaca brand — content, community events, meme contests, merch, and partnerships if the community keeps growing — not the end of the story.",
+            "Added a \"The Token Is the Start\" pillar to Core Philosophy and new FAQ entries covering merch, community events, partnerships, and what HANSOME actually does today.",
+          ],
+        },
         {
           version: "v1.1",
           date: "July 2026",
