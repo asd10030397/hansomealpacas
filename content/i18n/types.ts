@@ -240,7 +240,7 @@ export type Messages = {
     ticker: string;
     chain: string;
     chainStatus: string;
-    followX: string;
+    readLitepaper: string;
     buy: string;
     chart: string;
     x: string;

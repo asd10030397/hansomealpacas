@@ -25,7 +25,7 @@ export const zh: Messages = {
     ticker: "$HANSOME",
     chain: "Robinhood Chain",
     chainStatus: "（未上線）",
-    followX: "追蹤 X",
+    readLitepaper: "📖 閱讀白皮書",
     buy: "BUY",
     chart: "CHART",
     x: "X",

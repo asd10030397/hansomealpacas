@@ -9,14 +9,13 @@ import { SocialBar } from "@/components/SocialBar";
 import { PROJECT } from "@/content/project";
 import { useLocale } from "@/context/LocaleContext";
 import { useMascotEasterEgg } from "@/hooks/useMascotEasterEgg";
-import { getHeroActions, getLiveStatusState } from "@/lib/launch";
+import { getLiveStatusState } from "@/lib/launch";
 import { EASE } from "@/lib/motion";
 
 export function HeroSection() {
   const reduceMotion = useReducedMotion();
   const { t } = useLocale();
   const { active, handleMascotClick, fadeMs } = useMascotEasterEgg();
-  const actions = getHeroActions();
   const live = getLiveStatusState();
 
   return (
@@ -98,8 +97,8 @@ export function HeroSection() {
             aria-label={t.a11y.primaryLinks}
             className="mt-10 flex flex-wrap items-center justify-center sm:mt-12"
           >
-            <ActionButton href={actions.twitter.href} size="lg">
-              {t.hero.followX}
+            <ActionButton href="/litepaper" size="lg">
+              {t.hero.readLitepaper}
             </ActionButton>
           </nav>
 

@@ -25,7 +25,7 @@ export const en: Messages = {
     ticker: "$HANSOME",
     chain: "Robinhood Chain",
     chainStatus: "(Pre-Launch)",
-    followX: "Follow on X",
+    readLitepaper: "📖 Read Litepaper",
     buy: "BUY",
     chart: "CHART",
     x: "X",
