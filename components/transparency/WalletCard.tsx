@@ -1,11 +1,29 @@
 import type { OfficialWallet } from "@/content/transparency";
 import { CopyAddressButton } from "@/components/transparency/CopyAddressButton";
+import { formatTokenAmount } from "@/lib/market/format";
 
 type WalletCardProps = {
   wallet: OfficialWallet;
+  /** Live on-chain HANSOME balance (decimal string from balanceOf), if loaded. */
+  liveBalance?: string;
+  isLoadingLiveBalance?: boolean;
+  hasLiveBalanceError?: boolean;
 };
 
-export function WalletCard({ wallet }: WalletCardProps) {
+export function WalletCard({
+  wallet,
+  liveBalance,
+  isLoadingLiveBalance,
+  hasLiveBalanceError,
+}: WalletCardProps) {
+  const liveBalanceLabel = liveBalance
+    ? `${formatTokenAmount(Number(liveBalance))} HANSOME`
+    : isLoadingLiveBalance
+      ? "Loading…"
+      : hasLiveBalanceError
+        ? "Unavailable — view on Blockscout"
+        : "—";
+
   return (
     <article className="gold-border rounded-2xl p-6 text-left sm:p-8">
       <header className="border-b border-border/50 pb-5">
@@ -51,8 +69,13 @@ export function WalletCard({ wallet }: WalletCardProps) {
         ) : null}
 
         <div>
-          <dt className="text-xs uppercase tracking-[0.22em] text-gold-light">Allocation</dt>
+          <dt className="text-xs uppercase tracking-[0.22em] text-gold-light">Initial Allocation (at Launch)</dt>
           <dd className="mt-2 font-medium tabular-nums text-foreground">{wallet.allocation}</dd>
+        </div>
+
+        <div>
+          <dt className="text-xs uppercase tracking-[0.22em] text-gold-light">Current Balance (Live)</dt>
+          <dd className="mt-2 font-medium tabular-nums text-foreground">{liveBalanceLabel}</dd>
         </div>
 
         <div>

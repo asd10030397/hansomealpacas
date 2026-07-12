@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { WalletCard } from "@/components/transparency/WalletCard";
+import { OfficialWalletsGrid } from "@/components/transparency/OfficialWalletsGrid";
 import { FooterSection } from "@/sections/FooterSection";
 import { OFFICIAL_WALLETS, TOKEN_ALLOCATION } from "@/content/transparency";
 import { PROJECT } from "@/content/project";
@@ -36,27 +36,34 @@ export default function TransparencyPage() {
           <p className="mx-auto mt-3 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
             All official wallets are public and can be verified on-chain.
           </p>
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-muted">
+            Every wallet card below shows the wallet&apos;s initial allocation at launch and its
+            current on-chain HANSOME balance, read live from the contract. This page — not the
+            Litepaper — is the source of truth for current numbers.
+          </p>
 
-          <div className="mt-14 grid w-full grid-cols-1 gap-6">
-            {OFFICIAL_WALLETS.length > 0 ? (
-              OFFICIAL_WALLETS.map((wallet) => <WalletCard key={wallet.id} wallet={wallet} />)
-            ) : (
-              <div className="gold-border rounded-2xl px-6 py-10 text-center text-muted sm:px-10">
-                <p>No contract has been deployed yet.</p>
-                <p className="mt-2">
-                  Official wallets will be published here once HANSOME ALPACAS is live.
-                </p>
-              </div>
-            )}
-          </div>
+          {OFFICIAL_WALLETS.length > 0 ? (
+            <OfficialWalletsGrid wallets={OFFICIAL_WALLETS} />
+          ) : (
+            <div className="gold-border mt-14 w-full rounded-2xl px-6 py-10 text-center text-muted sm:px-10">
+              <p>No contract has been deployed yet.</p>
+              <p className="mt-2">
+                Official wallets will be published here once HANSOME ALPACAS is live.
+              </p>
+            </div>
+          )}
 
           <section aria-labelledby="allocation-title" className="mt-16 w-full text-left">
             <h2
               id="allocation-title"
               className="text-center font-[family-name:var(--font-anton)] text-[clamp(1.5rem,5vw,2.5rem)] tracking-[0.08em] text-foreground"
             >
-              TOKEN ALLOCATION
+              INITIAL TOKEN ALLOCATION
             </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-center text-sm leading-relaxed text-muted">
+              This is how the supply was split at launch — not each wallet&apos;s current balance.
+              See the wallet cards above for live balances.
+            </p>
 
             <div className="gold-border mt-8 rounded-2xl p-6 sm:p-8">
               <dl className="grid grid-cols-1 gap-5 sm:grid-cols-3">
@@ -104,6 +111,14 @@ export default function TransparencyPage() {
               <p>
                 Transfers between official wallets are internal operational transfers and do not
                 represent market sales.
+              </p>
+              <p>
+                The Treasury&apos;s 90% figure describes its initial allocation at launch, not a
+                fixed or permanent balance. Per the Liquidity Policy in the Litepaper, Treasury
+                tokens are deployed into the official Uniswap v4 liquidity position over time. A
+                decreasing Treasury balance usually means tokens moved into that liquidity
+                position, not that they were sold — the Liquidity Wallet&apos;s position (visible
+                above) is where they end up.
               </p>
             </div>
           </section>

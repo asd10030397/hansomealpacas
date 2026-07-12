@@ -23,6 +23,12 @@ export function formatCompact(value: number, suffix = ""): string {
   return `${value.toFixed(2)}${suffix}`;
 }
 
+export function formatTokenAmount(value: number, symbol = ""): string {
+  if (!Number.isFinite(value)) return "—";
+  const rounded = Math.round(value).toLocaleString("en-US");
+  return symbol ? `${rounded} ${symbol}` : rounded;
+}
+
 export function formatPercentChange(value: number | null): string {
   if (value === null || !Number.isFinite(value)) return "—";
   const sign = value > 0 ? "+" : "";

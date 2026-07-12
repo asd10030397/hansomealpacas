@@ -338,19 +338,19 @@ export const en: Messages = {
         body: "The supply was fixed at deployment and cannot change. There is no mint function in the contract — not for the team, not for an owner, not for anyone.",
       },
       distribution: {
-        heading: "Distribution",
-        body: "The stated allocation across the project's three token-holding wallets is:",
+        heading: "Initial Distribution (At Launch)",
+        body: "This is how the supply was split across the project's three token-holding wallets on day one — not how much each wallet holds today:",
         rows: [
-          { label: "Liquidity", value: "50,000,000 HANSOME (5%)", note: "Deployed into the official Uniswap v4 pool." },
+          { label: "Liquidity", value: "50,000,000 HANSOME (5%)", note: "Deployed into the official Uniswap v4 pool at launch." },
           {
             label: "Treasury",
             value: "900,000,000 HANSOME (90%)",
-            note: "Held for liquidity support, ecosystem growth, and future initiatives — see Treasury Policy.",
+            note: "Its starting balance, not its current one — see the note below and Treasury Policy for what's happened since.",
           },
           { label: "Founder", value: "50,000,000 HANSOME (5%)", note: "Founder allocation." },
         ],
         footnote:
-          "These are the stated allocation targets. Live, current on-chain balances for every wallet are published at /transparency and can change over time as Treasury tokens are deployed into liquidity per the policy below.",
+          "These percentages describe the initial split at launch, not a live snapshot. Current balances move over time — most notably the Treasury's, which decreases as tokens are deployed into official liquidity under the Treasury and Liquidity policies below. A lower Treasury balance almost always means tokens were converted into a public, verifiable liquidity position, not that they were sold. For what every wallet actually holds right now, go to /transparency — that page, not this document, is the live source of truth.",
       },
       whyFixedSupply: {
         heading: "Why fixed supply?",
@@ -360,13 +360,13 @@ export const en: Messages = {
     treasury: {
       heading: "Treasury Policy",
       intro:
-        "The Treasury wallet currently holds the largest single allocation of HANSOME. It is a single, publicly-visible wallet — it is not yet split into named sub-funds with fixed percentages for each purpose.",
+        "The Treasury wallet started with the largest single allocation of HANSOME — 90% of supply at launch. Its balance today is lower than that, and keeps changing over time, mainly because deploying tokens into official liquidity is itself a Treasury action (see below). This section describes policy — what the Treasury is for and how it's used. For what it actually holds right now, that's always /transparency, never this document. It's a single, publicly-visible wallet — not yet split into named sub-funds with fixed percentages for each purpose.",
       lines: [
         {
           label: "Liquidity",
           value: "Primary current use",
           detail:
-            "Most Treasury deployment to date has gone toward funding and reinforcing the official Uniswap v4 liquidity position.",
+            "Most Treasury deployment to date has gone toward funding and reinforcing the official Uniswap v4 liquidity position. This is the main reason the Treasury's current balance is lower than its initial 90% allocation — those tokens weren't sold, they were converted into a public, verifiable liquidity position (see the Liquidity Wallet on /transparency and the Liquidity Policy below).",
         },
         {
           label: "Community",
@@ -389,20 +389,20 @@ export const en: Messages = {
       ],
       transparencyHeading: "Transparency",
       transparencyBody:
-        "Every wallet referenced above is public. Addresses, current balances, and the Uniswap v4 pool/position details are kept live at /transparency — that page, not this document, is the source of truth for current numbers.",
+        "Every wallet referenced above is public. Addresses and Uniswap v4 pool/position details are listed below; current balances are read live from the contract at /transparency. That page, not this document, is the source of truth for what each wallet holds today — the figures below are each wallet's initial allocation at launch, not a live number.",
       wallets: [
-        { title: "Deployment Wallet", purpose: "Contract deployment and technical operations.", allocation: "0%" },
+        { title: "Deployment Wallet", purpose: "Contract deployment and technical operations.", allocation: "Initial allocation: 0%" },
         {
           title: "Liquidity Wallet",
           purpose: "Official Uniswap v4 liquidity management.",
-          allocation: "Locked LP — 50,000,000 HANSOME + 0.075 ETH",
+          allocation: "Initial LP deposit: 50,000,000 HANSOME + 0.075 ETH",
         },
         {
           title: "Treasury",
           purpose: "Treasury, ecosystem growth, partnerships, future liquidity, marketing and development.",
-          allocation: "900,000,000 HANSOME (90%)",
+          allocation: "Initial allocation: 900,000,000 HANSOME (90%) — current balance is lower; see /transparency",
         },
-        { title: "Founder Wallet", purpose: "Founder allocation.", allocation: "50,000,000 HANSOME (5%)" },
+        { title: "Founder Wallet", purpose: "Founder allocation.", allocation: "Initial allocation: 50,000,000 HANSOME (5%)" },
       ],
       viewWallets: "View live wallet addresses & balances →",
     },
@@ -557,6 +557,11 @@ export const en: Messages = {
             "Nothing is live yet. But that's genuinely the plan if the community keeps growing — think original content, community-run events, meme contests, and eventually merch (apparel, plushies, stickers) and partnerships if the right ones show up. No dates, no guarantees. It happens if you all make it worth building.",
         },
         {
+          question: "Why is the Treasury balance lower than the stated 90%?",
+          answer:
+            "Because 90% describes the initial allocation at launch, not a fixed balance. Deploying Treasury tokens into the official Uniswap v4 liquidity position is a normal, disclosed part of the Liquidity Policy — not a sale. So the Treasury's balance is expected to trend down over time as more of it becomes liquidity instead of sitting untouched in that wallet. The live number, right now, is always at /transparency — this document only describes the policy behind why it moves.",
+        },
+        {
           question: "Why 0% tax?",
           answer:
             "A transaction tax is a standing mechanism that redirects part of every trade somewhere — usually to a wallet the team controls. Removing it entirely means every trade settles exactly as quoted, with nothing skimmed, and removes an entire category of trust question before it can even come up.",
@@ -582,6 +587,16 @@ export const en: Messages = {
       heading: "Changelog",
       intro: "A record of this document's own revisions — not the whole project's history, just this litepaper.",
       entries: [
+        {
+          version: "v1.3",
+          date: "July 2026",
+          changes: [
+            "Clarified Tokenomics and Treasury Policy: the 90% Treasury figure is the initial allocation at launch, not a live balance. Added explicit language that Treasury tokens are expected to move into official liquidity over time, and that a decreasing Treasury balance means tokens were converted into a public liquidity position, not sold.",
+            "Removed hardcoded current-balance language from the Litepaper; every wallet section now points to /transparency as the live source of truth instead of stating a number here.",
+            "Added a FAQ entry: \"Why is the Treasury balance lower than the stated 90%?\"",
+            "/transparency itself now reads each official wallet's current HANSOME balance live from the contract, shown alongside its initial allocation.",
+          ],
+        },
         {
           version: "v1.2",
           date: "July 2026",
