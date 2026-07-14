@@ -54,7 +54,7 @@ machine-readable source of truth).
 | **Transparency / official wallets** | https://hansomealpacas.xyz/transparency |
 | **Token list (EIP-3770 style)** | https://hansomealpacas.xyz/token-list/hansome-alpacas-robinhood.tokenlist.json |
 | **X (Twitter)** | https://x.com/HansomeAlpacas |
-| **Telegram** | https://t.me/+3d5_qKK6V0cxNjM1 |
+| **Telegram** | https://telegram.me/hamsomealpacaspremium |
 | **Discord** | Not set up |
 | **GitHub** | Not public |
 | **Whitepaper** | None (meme coin, no utility promises) |
@@ -113,7 +113,7 @@ Website: https://hansomealpacas.xyz
 Swap: https://hansomealpacas.xyz/swap
 Explorer: https://robinhoodchain.blockscout.com/address/0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875
 X: https://x.com/HansomeAlpacas
-Telegram: https://t.me/+3d5_qKK6V0cxNjM1
+Telegram: https://telegram.me/hamsomealpacaspremium
 Logo: https://hansomealpacas.xyz/logo/logo-256.png
 ```
 

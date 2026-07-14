@@ -5,7 +5,7 @@ Preparing for launch on Robinhood Chain.
 
 Official Website: [hansomealpacas.xyz](https://hansomealpacas.xyz)
 Official X: [@HansomeAlpacas](https://x.com/HansomeAlpacas)
-Official Telegram: [t.me/+3d5_qKK6V0cxNjM1](https://t.me/+3d5_qKK6V0cxNjM1)
+Official Telegram: [telegram.me/hamsomealpacaspremium](https://telegram.me/hamsomealpacaspremium)
 Contract: `0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875` (Robinhood Chain)
 
 > This repo was forked from a previous meme coin project (UGLY DEER, now
@@ -46,7 +46,7 @@ works correctly even without a `.env.local`:
 
 - `NEXT_PUBLIC_WEBSITE` — `https://hansomealpacas.xyz`
 - `NEXT_PUBLIC_X` — `https://x.com/HansomeAlpacas`
-- `NEXT_PUBLIC_TELEGRAM` — `https://t.me/+3d5_qKK6V0cxNjM1`
+- `NEXT_PUBLIC_TELEGRAM` — `https://telegram.me/hamsomealpacaspremium`
 - `NEXT_PUBLIC_CONTRACT` — `0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875`
 - `NEXT_PUBLIC_BUY`
 - `NEXT_PUBLIC_CHART` — not set yet (no Uniswap v4 pool / chart exists)
