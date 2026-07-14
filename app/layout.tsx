@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans_TC, Press_Start_2P } from "next/font/google";
+import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import { AmbientSound } from "@/components/AmbientSound";
 import { Analytics } from "@/components/Analytics";
 import { AnalyticsPageView } from "@/components/AnalyticsPageView";
@@ -102,6 +103,7 @@ export default function RootLayout({
         </LocaleProvider>
         <AmbientSound />
         <Analytics />
+        <VercelAnalytics />
       </body>
     </html>
   );
