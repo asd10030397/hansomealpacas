@@ -4,7 +4,7 @@ import { PROJECT } from "@/content/project";
 // NEXT_PUBLIC_X / NEXT_PUBLIC_TELEGRAM aren't set via env.
 export const OFFICIAL_X_URL = "https://x.com/HansomeAlpacas";
 export const OFFICIAL_X_HANDLE = "@HansomeAlpacas";
-export const OFFICIAL_TELEGRAM_URL = "https://telegram.me/hamsomealpacaspremium";
+export const OFFICIAL_TELEGRAM_URL = "https://t.me/HandsomeAlpacasCommunity";
 
 export function isValidHttpUrl(value: string): boolean {
   const trimmed = value.trim();

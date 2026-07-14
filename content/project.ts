@@ -42,7 +42,7 @@ export const PROJECT = {
   themeColor: "#BFE8F6",
   website: process.env.NEXT_PUBLIC_WEBSITE ?? "https://hansomealpacas.xyz",
   twitter: process.env.NEXT_PUBLIC_X ?? "https://x.com/HansomeAlpacas",
-  telegram: process.env.NEXT_PUBLIC_TELEGRAM ?? "https://telegram.me/hamsomealpacaspremium",
+  telegram: process.env.NEXT_PUBLIC_TELEGRAM ?? "https://t.me/HandsomeAlpacasCommunity",
   contractAddress:
     process.env.NEXT_PUBLIC_CONTRACT ?? "0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875",
   buyLink: process.env.NEXT_PUBLIC_BUY ?? "/swap",
