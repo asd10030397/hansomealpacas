@@ -26,21 +26,21 @@ export const LITEPAPER_SECTION_ORDER: readonly string[] = [
 export type TokenomicsSliceKey = "treasury" | "liquidity" | "founder";
 
 export const TOKENOMICS_SLICES: readonly { key: TokenomicsSliceKey; percent: number; color: string }[] = [
-  { key: "treasury", percent: 90, color: "#ffffff" },
-  { key: "liquidity", percent: 5, color: "#7dd3fc" },
-  { key: "founder", percent: 5, color: "#525252" },
+  { key: "treasury", percent: 90, color: "#f2b33d" },
+  { key: "liquidity", percent: 5, color: "#6fbf57" },
+  { key: "founder", percent: 5, color: "#ffe7a6" },
 ] as const;
 
 export const ROADMAP_STATUS_STYLES: Record<string, string> = {
-  completed: "border-emerald-400/30 bg-emerald-400/10 text-emerald-300",
-  inProgress: "border-sky-400/30 bg-sky-400/10 text-sky-300",
-  future: "border-white/15 bg-white/5 text-white/50",
+  completed: "border-grass/40 bg-grass/15 text-grass",
+  inProgress: "border-gold/40 bg-gold/15 text-gold",
+  future: "border-[var(--lp-text-faint)]/40 bg-white/[0.03] text-[var(--lp-text-faint)]",
 };
 
 export const REVENUE_STATUS_STYLES: Record<string, string> = {
-  active: "border-emerald-400/30 bg-emerald-400/10 text-emerald-300",
-  planned: "border-sky-400/30 bg-sky-400/10 text-sky-300",
-  exploratory: "border-white/15 bg-white/5 text-white/50",
+  active: "border-grass/40 bg-grass/15 text-grass",
+  planned: "border-gold/40 bg-gold/15 text-gold",
+  exploratory: "border-[var(--lp-text-faint)]/40 bg-white/[0.03] text-[var(--lp-text-faint)]",
 };
 
 export const LIFECYCLE_LOOP_COUNT = 6;

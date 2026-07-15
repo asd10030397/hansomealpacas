@@ -20,9 +20,9 @@ export function LifecycleDiagram() {
   const count = steps.length;
 
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[26rem]">
+    <div className="relative mx-auto aspect-square w-full max-w-[26rem] sm:max-w-[40rem]">
       <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full" aria-hidden="true">
-        <circle cx="50" cy="50" r="38" fill="none" stroke="#ffffff20" strokeWidth="0.5" strokeDasharray="2 3" />
+        <circle cx="50" cy="50" r="38" fill="none" stroke="#8b5a2b" strokeOpacity="0.5" strokeWidth="0.5" strokeDasharray="2 3" />
       </svg>
 
       {steps.map((step, i) => {
@@ -33,7 +33,7 @@ export function LifecycleDiagram() {
           <div key={step.label}>
             <span
               aria-hidden="true"
-              className="absolute -translate-x-1/2 -translate-y-1/2 select-none text-[0.7rem] text-white/35"
+              className="absolute -translate-x-1/2 -translate-y-1/2 select-none text-[0.7rem] text-[color:var(--lp-text-faint)]"
               style={{
                 left: `${midAngle.left}%`,
                 top: `${midAngle.top}%`,
@@ -44,17 +44,17 @@ export function LifecycleDiagram() {
             </span>
 
             <m.div
-              className="absolute flex w-24 -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5 text-center sm:w-28"
+              className="absolute flex w-20 -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1 text-center sm:w-[5.5rem]"
               style={{ left: `${left}%`, top: `${top}%` }}
               initial={{ opacity: reduceMotion ? 1 : 0, scale: reduceMotion ? 1 : 0.85 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true, margin: "-10%" }}
               transition={{ duration: 0.6, ease: EASE, delay: i * 0.12 }}
             >
-              <span className="flex h-14 w-14 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] px-1 text-center text-[0.65rem] font-semibold uppercase tracking-wide text-white sm:h-16 sm:w-16">
+              <span className="lp-card flex h-12 w-12 items-center justify-center px-1 text-center text-[0.55rem] font-semibold uppercase tracking-wide text-gold sm:h-14 sm:w-14">
                 {step.label}
               </span>
-              <span className="text-[0.6875rem] leading-snug text-white/45">{step.body}</span>
+              <span className="text-[0.625rem] leading-tight text-[color:var(--lp-text-faint)]">{step.body}</span>
             </m.div>
           </div>
         );
@@ -64,7 +64,7 @@ export function LifecycleDiagram() {
         <span aria-hidden="true" className="text-2xl">
           🦙
         </span>
-        <span className="mt-1 text-[0.625rem] uppercase tracking-[0.18em] text-white/35">
+        <span className="mt-1 text-[0.625rem] uppercase tracking-[0.18em] text-[color:var(--lp-text-faint)]">
           {t.litepaper.longTermVision.loopLabel}
         </span>
       </div>

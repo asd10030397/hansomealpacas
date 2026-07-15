@@ -22,7 +22,7 @@ export function LitepaperFaqAccordion() {
   }, []);
 
   return (
-    <dl className="divide-y divide-white/10 border-y border-white/10">
+    <dl className="lp-card divide-y divide-wood/30 px-5 sm:px-7">
       {items.map((item, index) => {
         const open = printMode || openIndex === index;
         return (
@@ -32,12 +32,12 @@ export function LitepaperFaqAccordion() {
                 type="button"
                 onClick={() => setOpenIndex(open ? null : index)}
                 aria-expanded={open}
-                className="flex w-full items-center justify-between gap-4 py-5 text-left text-base font-medium text-white transition-colors hover:text-white/80"
+                className="flex w-full items-center justify-between gap-4 py-5 text-left text-base font-medium text-[color:var(--lp-text)] transition-colors hover:text-gold"
               >
                 {item.question}
                 <span
                   aria-hidden="true"
-                  className={`shrink-0 text-xl text-white/40 transition-transform duration-300 ${open ? "rotate-45" : ""}`}
+                  className={`shrink-0 text-xl text-gold transition-transform duration-300 ${open ? "rotate-45" : ""}`}
                 >
                   +
                 </span>
@@ -53,7 +53,7 @@ export function LitepaperFaqAccordion() {
                   transition={{ duration: 0.3, ease: EASE }}
                   className="overflow-hidden"
                 >
-                  <p className="pb-6 pr-8 text-sm leading-relaxed text-white/60">{item.answer}</p>
+                  <p className="pb-6 pr-8 text-sm leading-relaxed text-[color:var(--lp-text-muted)]">{item.answer}</p>
                 </m.dd>
               ) : null}
             </AnimatePresence>

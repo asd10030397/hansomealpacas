@@ -334,6 +334,87 @@ body {
  * no interactive chrome (nav, toggles, download button), no page-split
  * artifacts inside cards.
  */
+/**
+ * Litepaper theme — "premium pixel manual". Dark canvas, but built from the
+ * same wood/gold/cream tokens as the rest of the site, so /litepaper reads
+ * as an official HANSOME document rather than a generic dark-mode doc site.
+ * Scoped to `.litepaper-print` (see app/litepaper/layout.tsx) so none of
+ * this leaks into the light pixel-farm homepage theme.
+ */
+.litepaper-print {
+  --lp-bg: #170f09;
+  --lp-surface: #241a10;
+  --lp-surface-soft: #1d150c;
+  --lp-text: #f3ead4;
+  --lp-text-muted: #cdb992;
+  --lp-text-faint: #8d7852;
+}
+
+.lp-card {
+  border: 3px solid var(--color-wood);
+  background-color: var(--lp-surface);
+  box-shadow: 4px 4px 0 0 color-mix(in srgb, var(--color-wood-dark) 70%, transparent);
+}
+
+.lp-card-hover {
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease,
+    border-color 150ms ease;
+}
+
+.lp-card-hover:hover {
+  border-color: var(--color-gold);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 color-mix(in srgb, var(--color-wood-dark) 80%, transparent);
+}
+
+.lp-card-soft {
+  border: 1.5px solid color-mix(in srgb, var(--color-wood) 55%, transparent);
+  background-color: var(--lp-surface-soft);
+}
+
+/* Pixel-dashed rule, used in place of plain hairline borders between sections/rows. */
+.lp-divider {
+  height: 4px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--color-wood) 0,
+    var(--color-wood) 8px,
+    transparent 8px,
+    transparent 18px
+  );
+  opacity: 0.6;
+}
+
+.lp-eyebrow-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 2px solid var(--color-wood);
+  background-color: color-mix(in srgb, var(--color-gold) 14%, transparent);
+  color: var(--color-gold);
+  box-shadow: 2px 2px 0 0 color-mix(in srgb, var(--color-wood-dark) 70%, transparent);
+}
+
+.lp-pixel-dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  flex-shrink: 0;
+  background-color: var(--lp-text-faint);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-wood-dark) 30%, transparent);
+}
+
+.lp-pixel-dot--active {
+  background-color: var(--color-gold);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-gold) 30%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-card-hover:hover {
+    transform: none;
+  }
+}
+
 @media print {
   /* Fixed floating chrome (e.g. the language toggle) makes no sense on paper on any page. */
   .no-print {

@@ -11,7 +11,7 @@ export function RoadmapTimeline() {
   const phases = t.litepaper.roadmap.phases;
 
   return (
-    <ol className="relative space-y-10 border-l border-white/10 pl-8">
+    <ol className="relative space-y-10 border-l-2 border-wood/50 pl-8">
       {phases.map((phase, i) => (
         <m.li
           key={phase.phase}
@@ -21,16 +21,15 @@ export function RoadmapTimeline() {
           viewport={{ once: true, margin: "-10%" }}
           transition={{ duration: 0.6, ease: EASE, delay: i * 0.1 }}
         >
-          <span
-            aria-hidden="true"
-            className="absolute -left-[2.15rem] top-1 h-3 w-3 rounded-full border-2 border-black bg-white"
-          />
+          <span aria-hidden="true" className="absolute -left-[2.35rem] top-1 h-3 w-3 border-2 border-wood bg-gold" />
 
           <div className="flex flex-wrap items-baseline gap-3">
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-white/40">{phase.phase}</span>
-            <h3 className="text-lg font-semibold text-white">{phase.title}</h3>
+            <span className="font-[family-name:var(--font-anton)] text-[0.6rem] tracking-[0.2em] text-[color:var(--lp-text-faint)]">
+              {phase.phase}
+            </span>
+            <h3 className="text-lg font-semibold text-[color:var(--lp-text)]">{phase.title}</h3>
             <span
-              className={`rounded-full border px-2.5 py-0.5 text-[0.6875rem] font-medium ${ROADMAP_STATUS_STYLES[phase.statusKey] ?? ""}`}
+              className={`border px-2.5 py-0.5 text-[0.6875rem] font-medium ${ROADMAP_STATUS_STYLES[phase.statusKey] ?? ""}`}
             >
               {phase.status}
             </span>
@@ -38,13 +37,14 @@ export function RoadmapTimeline() {
 
           <ul className="mt-4 space-y-2">
             {phase.items.map((item) => (
-              <li key={item.label} className="flex items-start gap-2.5 text-sm leading-relaxed text-white/65">
+              <li
+                key={item.label}
+                className="flex items-start gap-2.5 text-sm leading-relaxed text-[color:var(--lp-text-muted)]"
+              >
                 <span
                   aria-hidden="true"
-                  className={`mt-1 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full border text-[0.5rem] ${
-                    item.done
-                      ? "border-emerald-400/60 bg-emerald-400/20 text-emerald-300"
-                      : "border-white/20 text-transparent"
+                  className={`mt-1 flex h-3.5 w-3.5 shrink-0 items-center justify-center border text-[0.5rem] ${
+                    item.done ? "border-grass/60 bg-grass/20 text-grass" : "border-wood/40 text-transparent"
                   }`}
                 >
                   {item.done ? "✓" : ""}

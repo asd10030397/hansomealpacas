@@ -27,24 +27,27 @@ function LitepaperContent() {
       <LitepaperHero />
 
       <LitepaperSection id="founder-letter" eyebrow="00" title={lp.founderLetter.heading}>
-        <div className="space-y-4 text-[0.9375rem] leading-relaxed text-white/65 sm:text-base">
+        <div className="space-y-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
           {lp.founderLetter.paragraphs.map((p) => (
             <p key={p}>{p}</p>
           ))}
         </div>
-        <p className="mt-6 text-sm font-medium text-white/50">{lp.founderLetter.signature}</p>
+        <p className="mt-6 text-sm font-medium text-[color:var(--lp-text-faint)]">{lp.founderLetter.signature}</p>
       </LitepaperSection>
 
       <LitepaperSection id="introduction" eyebrow="01" title={lp.introduction.heading}>
-        <div className="space-y-4 text-[0.9375rem] leading-relaxed text-white/65 sm:text-base">
+        <div className="space-y-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
           {lp.introduction.paragraphs.map((p) => (
             <p key={p}>{p}</p>
           ))}
         </div>
 
-        <div className="mt-10 border-t border-white/10 pt-8">
-          <h3 className="text-lg font-semibold text-white">{lp.introduction.whatIsHansome.heading}</h3>
-          <div className="mt-3 space-y-4 text-[0.9375rem] leading-relaxed text-white/65 sm:text-base">
+        <div className="mt-10">
+          <div className="lp-divider mb-8 w-16" />
+          <h3 className="font-[family-name:var(--font-anton)] text-base tracking-wide text-[color:var(--lp-text)]">
+            {lp.introduction.whatIsHansome.heading}
+          </h3>
+          <div className="mt-4 space-y-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
             {lp.introduction.whatIsHansome.paragraphs.map((p) => (
               <p key={p}>{p}</p>
             ))}
@@ -53,7 +56,7 @@ function LitepaperContent() {
       </LitepaperSection>
 
       <LitepaperSection id="vision" eyebrow="02" title={lp.vision.heading}>
-        <div className="space-y-4 text-[0.9375rem] leading-relaxed text-white/65 sm:text-base">
+        <div className="space-y-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
           {lp.vision.paragraphs.map((p) => (
             <p key={p}>{p}</p>
           ))}
@@ -63,9 +66,9 @@ function LitepaperContent() {
       <LitepaperSection id="philosophy" eyebrow="03" title={lp.philosophy.heading}>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           {lp.philosophy.pillars.map((pillar) => (
-            <div key={pillar.title} className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
-              <h3 className="text-sm font-semibold text-white">{pillar.title}</h3>
-              <p className="mt-2 text-[0.8125rem] leading-relaxed text-white/55">{pillar.body}</p>
+            <div key={pillar.title} className="lp-card lp-card-hover rounded-2xl p-5">
+              <h3 className="text-sm font-semibold text-gold">{pillar.title}</h3>
+              <p className="mt-2 text-[0.8125rem] leading-relaxed text-[color:var(--lp-text-muted)]">{pillar.body}</p>
             </div>
           ))}
         </div>
@@ -76,36 +79,38 @@ function LitepaperContent() {
           <TokenomicsDiagram />
         </div>
 
-        <div className="space-y-8 text-[0.9375rem] leading-relaxed text-white/65 sm:text-base">
+        <div className="space-y-8 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-white/40">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-gold">
               {lp.tokenomics.totalSupply.heading}
             </h3>
-            <p className="mt-2 text-2xl font-semibold text-white">{lp.tokenomics.totalSupply.value}</p>
+            <p className="mt-2 text-2xl font-semibold text-[color:var(--lp-text)]">{lp.tokenomics.totalSupply.value}</p>
             <p className="mt-2">{lp.tokenomics.totalSupply.body}</p>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-white/40">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-gold">
               {lp.tokenomics.distribution.heading}
             </h3>
             <p className="mt-2">{lp.tokenomics.distribution.body}</p>
-            <div className="mt-4 divide-y divide-white/10 rounded-2xl border border-white/10">
+            <div className="lp-card mt-4 divide-y divide-wood/30 rounded-2xl">
               {lp.tokenomics.distribution.rows.map((row) => (
                 <div key={row.label} className="flex flex-wrap items-baseline justify-between gap-2 px-5 py-4">
                   <div>
-                    <p className="text-sm font-medium text-white">{row.label}</p>
-                    <p className="mt-0.5 text-xs text-white/45">{row.note}</p>
+                    <p className="text-sm font-medium text-[color:var(--lp-text)]">{row.label}</p>
+                    <p className="mt-0.5 text-xs text-[color:var(--lp-text-faint)]">{row.note}</p>
                   </div>
-                  <p className="text-sm font-semibold text-white">{row.value}</p>
+                  <p className="text-sm font-semibold text-[color:var(--lp-text)]">{row.value}</p>
                 </div>
               ))}
             </div>
-            <p className="mt-3 text-xs leading-relaxed text-white/40">{lp.tokenomics.distribution.footnote}</p>
+            <p className="mt-3 text-xs leading-relaxed text-[color:var(--lp-text-faint)]">
+              {lp.tokenomics.distribution.footnote}
+            </p>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-white/40">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-gold">
               {lp.tokenomics.whyFixedSupply.heading}
             </h3>
             <p className="mt-2">{lp.tokenomics.whyFixedSupply.body}</p>
@@ -114,39 +119,42 @@ function LitepaperContent() {
       </LitepaperSection>
 
       <LitepaperSection id="treasury" eyebrow="05" title={lp.treasury.heading}>
-        <p className="text-[0.9375rem] leading-relaxed text-white/65 sm:text-base">{lp.treasury.intro}</p>
+        <p className="text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">{lp.treasury.intro}</p>
 
-        <div className="mt-6 divide-y divide-white/10 rounded-2xl border border-white/10">
+        <div className="lp-card mt-6 divide-y divide-wood/30 rounded-2xl">
           {lp.treasury.lines.map((line) => (
             <div key={line.label} className="px-5 py-4">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <p className="text-sm font-medium text-white">{line.label}</p>
-                <p className="text-xs font-medium text-white/50">{line.value}</p>
+                <p className="text-sm font-medium text-[color:var(--lp-text)]">{line.label}</p>
+                <p className="text-xs font-medium text-[color:var(--lp-text-faint)]">{line.value}</p>
               </div>
-              <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-white/50">{line.detail}</p>
+              <p className="mt-1.5 text-[0.8125rem] leading-relaxed text-[color:var(--lp-text-faint)]">{line.detail}</p>
             </div>
           ))}
         </div>
 
-        <div className="mt-10 border-t border-white/10 pt-8">
-          <h3 className="text-lg font-semibold text-white">{lp.treasury.transparencyHeading}</h3>
-          <p className="mt-2 text-[0.9375rem] leading-relaxed text-white/65 sm:text-base">
+        <div className="mt-10">
+          <div className="lp-divider mb-8 w-16" />
+          <h3 className="font-[family-name:var(--font-anton)] text-base tracking-wide text-[color:var(--lp-text)]">
+            {lp.treasury.transparencyHeading}
+          </h3>
+          <p className="mt-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
             {lp.treasury.transparencyBody}
           </p>
 
           <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {lp.treasury.wallets.map((wallet) => (
-              <div key={wallet.title} className="rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3.5">
-                <p className="text-sm font-medium text-white">{wallet.title}</p>
-                <p className="mt-1 text-xs leading-relaxed text-white/45">{wallet.purpose}</p>
-                <p className="mt-2 text-xs font-medium text-white/70">{wallet.allocation}</p>
+              <div key={wallet.title} className="lp-card rounded-xl px-4 py-3.5">
+                <p className="text-sm font-medium text-[color:var(--lp-text)]">{wallet.title}</p>
+                <p className="mt-1 text-xs leading-relaxed text-[color:var(--lp-text-faint)]">{wallet.purpose}</p>
+                <p className="mt-2 text-xs font-medium text-gold">{wallet.allocation}</p>
               </div>
             ))}
           </div>
 
           <Link
             href="/transparency"
-            className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-white underline decoration-white/30 underline-offset-4 transition-colors hover:decoration-white"
+            className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-gold underline decoration-gold/40 underline-offset-4 transition-colors hover:decoration-gold"
           >
             {lp.treasury.viewWallets}
           </Link>
@@ -154,7 +162,7 @@ function LitepaperContent() {
       </LitepaperSection>
 
       <LitepaperSection id="liquidity" eyebrow="06" title={lp.liquidity.heading}>
-        <div className="space-y-8 text-[0.9375rem] leading-relaxed text-white/65 sm:text-base">
+        <div className="space-y-8 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
           {[
             lp.liquidity.concentratedLiquidity,
             lp.liquidity.longTermStrategy,
@@ -164,7 +172,7 @@ function LitepaperContent() {
             lp.liquidity.noReactiveChasing,
           ].map((block) => (
             <div key={block.heading}>
-              <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-white/40">{block.heading}</h3>
+              <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-gold">{block.heading}</h3>
               <p className="mt-2">{block.body}</p>
               {block.links ? (
                 <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5">
@@ -174,7 +182,7 @@ function LitepaperContent() {
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm font-medium text-white underline decoration-white/30 underline-offset-4 transition-colors hover:decoration-white"
+                      className="text-sm font-medium text-gold underline decoration-gold/40 underline-offset-4 transition-colors hover:decoration-gold"
                     >
                       {link.label}
                     </a>
@@ -187,20 +195,20 @@ function LitepaperContent() {
       </LitepaperSection>
 
       <LitepaperSection id="revenue" eyebrow="07" title={lp.revenue.heading}>
-        <p className="text-[0.9375rem] leading-relaxed text-white/65 sm:text-base">{lp.revenue.intro}</p>
+        <p className="text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">{lp.revenue.intro}</p>
 
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {lp.revenue.streams.map((stream) => (
-            <div key={stream.id} className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+            <div key={stream.id} className="lp-card lp-card-hover rounded-2xl p-5">
               <div className="flex items-center justify-between gap-3">
-                <h3 className="text-sm font-semibold text-white">{stream.title}</h3>
+                <h3 className="text-sm font-semibold text-[color:var(--lp-text)]">{stream.title}</h3>
                 <span
-                  className={`rounded-full border px-2.5 py-0.5 text-[0.625rem] font-medium ${REVENUE_STATUS_STYLES[stream.statusKey] ?? ""}`}
+                  className={`border px-2.5 py-0.5 text-[0.625rem] font-medium ${REVENUE_STATUS_STYLES[stream.statusKey] ?? ""}`}
                 >
                   {stream.status}
                 </span>
               </div>
-              <p className="mt-2.5 text-[0.8125rem] leading-relaxed text-white/55">{stream.body}</p>
+              <p className="mt-2.5 text-[0.8125rem] leading-relaxed text-[color:var(--lp-text-muted)]">{stream.body}</p>
             </div>
           ))}
         </div>
@@ -211,7 +219,7 @@ function LitepaperContent() {
       </LitepaperSection>
 
       <LitepaperSection id="community" eyebrow="09" title={lp.community.heading}>
-        <div className="space-y-4 text-[0.9375rem] leading-relaxed text-white/65 sm:text-base">
+        <div className="space-y-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
           {lp.community.paragraphs.map((p) => (
             <p key={p}>{p}</p>
           ))}
@@ -219,13 +227,13 @@ function LitepaperContent() {
       </LitepaperSection>
 
       <LitepaperSection id="long-term-vision" eyebrow="10" title={lp.longTermVision.heading}>
-        <p className="text-[0.9375rem] leading-relaxed text-white/65 sm:text-base">{lp.longTermVision.intro}</p>
+        <p className="text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">{lp.longTermVision.intro}</p>
 
         <div className="my-10">
           <LifecycleDiagram />
         </div>
 
-        <p className="text-[0.9375rem] leading-relaxed text-white/65 sm:text-base">{lp.longTermVision.closing}</p>
+        <p className="text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">{lp.longTermVision.closing}</p>
       </LitepaperSection>
 
       <LitepaperSection id="faq" eyebrow="11" title={lp.faq.heading}>
@@ -233,18 +241,18 @@ function LitepaperContent() {
       </LitepaperSection>
 
       <LitepaperSection id="changelog" eyebrow="12" title={lp.changelog.heading}>
-        <p className="text-[0.9375rem] leading-relaxed text-white/65 sm:text-base">{lp.changelog.intro}</p>
+        <p className="text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">{lp.changelog.intro}</p>
 
         <ol className="mt-6 space-y-6">
           {lp.changelog.entries.map((entry) => (
-            <li key={entry.version} className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+            <li key={entry.version} className="lp-card rounded-2xl p-5">
               <div className="flex flex-wrap items-baseline gap-3">
-                <span className="text-sm font-semibold text-white">{entry.version}</span>
-                <span className="text-xs text-white/40">{entry.date}</span>
+                <span className="font-[family-name:var(--font-anton)] text-sm text-gold">{entry.version}</span>
+                <span className="text-xs text-[color:var(--lp-text-faint)]">{entry.date}</span>
               </div>
               <ul className="mt-3 space-y-1.5">
                 {entry.changes.map((change) => (
-                  <li key={change} className="text-[0.8125rem] leading-relaxed text-white/55">
+                  <li key={change} className="text-[0.8125rem] leading-relaxed text-[color:var(--lp-text-muted)]">
                     · {change}
                   </li>
                 ))}
@@ -255,27 +263,28 @@ function LitepaperContent() {
       </LitepaperSection>
 
       <LitepaperSection id="language" eyebrow="13" title={lp.language.heading}>
-        <p className="text-[0.9375rem] leading-relaxed text-white/65 sm:text-base">{lp.language.body}</p>
+        <p className="text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">{lp.language.body}</p>
       </LitepaperSection>
 
-      <div className="border-t border-white/10 py-16 text-center">
-        <p className="text-sm text-white/40">{lp.closing.note}</p>
+      <div className="py-16 text-center">
+        <div className="lp-divider mx-auto mb-12 w-16" />
+        <p className="text-sm text-[color:var(--lp-text-faint)]">{lp.closing.note}</p>
         <div className="mt-6 flex flex-wrap items-center justify-center gap-6">
           <Link
             href="/"
-            className="text-sm font-medium text-white underline decoration-white/30 underline-offset-4 hover:decoration-white"
+            className="text-sm font-medium text-gold underline decoration-gold/40 underline-offset-4 hover:decoration-gold"
           >
             {lp.closing.home}
           </Link>
           <Link
             href="/transparency"
-            className="text-sm font-medium text-white underline decoration-white/30 underline-offset-4 hover:decoration-white"
+            className="text-sm font-medium text-gold underline decoration-gold/40 underline-offset-4 hover:decoration-gold"
           >
             {lp.closing.transparency}
           </Link>
           <Link
             href="/swap"
-            className="text-sm font-medium text-white underline decoration-white/30 underline-offset-4 hover:decoration-white"
+            className="text-sm font-medium text-gold underline decoration-gold/40 underline-offset-4 hover:decoration-gold"
           >
             {lp.closing.swap}
           </Link>
