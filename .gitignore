@@ -52,3 +52,14 @@ next-env.d.ts
 # market snapshot history (built automatically in production)
 /data/market-history.json
 .env*
+# .env.example files are safe templates (no secrets) and should be
+# committed — without this exception, the broad `.env*` rule above also
+# blocks them.
+!.env.example
+!**/.env.example
+
+# telegram buy bot (standalone module — see bot/README.md)
+/bot/node_modules
+/bot/dist
+/bot/data
+/bot/*.tsbuildinfo
