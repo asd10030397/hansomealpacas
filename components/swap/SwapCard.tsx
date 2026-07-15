@@ -42,6 +42,14 @@ type SwapDirection = "ethToToken" | "tokenToEth";
 
 type SwapPhase = "idle" | "approvingToken" | "approvingPermit2" | "swapping";
 
+// Reserved so a 100%/MAX fill when paying with ETH still leaves enough ETH
+// in the wallet to cover the swap's own gas cost — filling the literal full
+// balance would otherwise make the transaction fail from insufficient funds.
+// Named constant so this can be tuned later without touching the calc below.
+const ETH_GAS_RESERVE_WEI = parseEther("0.001");
+
+const AMOUNT_PERCENT_PRESETS = [25, 50, 70, 100] as const;
+
 function parseAmountInput(value: string, decimals: number): bigint | null {
   const trimmed = value.trim();
   if (!trimmed) return null;
@@ -449,6 +457,38 @@ export function SwapCard() {
         ? `${formatUnits(tokenBalance, TOKEN_DECIMALS)} ${PROJECT.symbol}`
         : "—";
 
+  const inputDecimals = direction === "ethToToken" ? 18 : TOKEN_DECIMALS;
+
+  // Balance actually available to fill from, for the asset currently being
+  // paid with. For ETH this subtracts the gas reserve above; for HANSOME the
+  // full on-chain balance is usable since no gas buffer applies to it.
+  const availableBalanceWei = useMemo(() => {
+    if (!address) return null;
+    if (inputSymbol === "ETH") {
+      if (!ethBalance) return null;
+      return ethBalance.value > ETH_GAS_RESERVE_WEI ? ethBalance.value - ETH_GAS_RESERVE_WEI : 0n;
+    }
+    return tokenBalance ?? null;
+  }, [address, inputSymbol, ethBalance, tokenBalance]);
+
+  const percentButtonsDisabled =
+    !isConnected || availableBalanceWei === null || availableBalanceWei <= 0n;
+
+  const handleFillPercent = useCallback(
+    (percent: number) => {
+      if (availableBalanceWei === null || availableBalanceWei <= 0n) return;
+      // Integer bigint math only — never touches floating point, so there's
+      // no rounding drift and the result can never exceed the wallet balance.
+      const amountWei = (availableBalanceWei * BigInt(percent)) / 100n;
+      if (amountWei <= 0n) return;
+      resetTxState();
+      setAmountIn(
+        inputDecimals === 18 ? formatEther(amountWei) : formatUnits(amountWei, inputDecimals),
+      );
+    },
+    [availableBalanceWei, inputDecimals, resetTxState],
+  );
+
   const primaryLabel = !isConnected
     ? t.swap.connectWallet
     : isWrongChain
@@ -511,6 +551,35 @@ export function SwapCard() {
             <span className="text-xs text-muted">
               {t.swap.balance}: {balanceLabel}
             </span>
+          </div>
+          <div className="mt-2 grid grid-cols-4 gap-1.5 sm:gap-2">
+            {AMOUNT_PERCENT_PRESETS.map((percent) => (
+              <button
+                key={percent}
+                type="button"
+                onClick={() => handleFillPercent(percent)}
+                disabled={percentButtonsDisabled}
+                aria-label={
+                  percent === 100
+                    ? `${t.swap.fillMax} (100%)`
+                    : `${t.swap.fillPercent} ${percent}%`
+                }
+                className={`rounded-lg border px-1 py-1.5 font-[family-name:var(--font-anton)] text-[11px] leading-none tracking-[0.05em] ${
+                  percentButtonsDisabled
+                    ? "cursor-default border-border bg-surface text-muted opacity-50"
+                    : "pixel-btn cursor-pointer border-wood bg-gold/15 text-gold-light hover:bg-gold/25 active:bg-gold/35"
+                }`}
+              >
+                {percent === 100 ? (
+                  <span className="flex flex-col items-center gap-0.5">
+                    <span>100%</span>
+                    <span className="text-[8px] tracking-[0.15em] opacity-70">MAX</span>
+                  </span>
+                ) : (
+                  `${percent}%`
+                )}
+              </button>
+            ))}
           </div>
           <div className="mt-3 flex items-center gap-3">
             <TokenIcon symbol={inputSymbol} size={36} />

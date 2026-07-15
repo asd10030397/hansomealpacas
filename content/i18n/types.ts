@@ -283,6 +283,8 @@ export type Messages = {
     balance: string;
     slippage: string;
     flipDirection: string;
+    fillPercent: string;
+    fillMax: string;
     swap: string;
     swapping: string;
     approveToken: string;

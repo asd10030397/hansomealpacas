@@ -77,6 +77,8 @@ export const en: Messages = {
     balance: "Balance",
     slippage: "Slippage tolerance",
     flipDirection: "Flip swap direction",
+    fillPercent: "Fill",
+    fillMax: "Fill max available",
     swap: "SWAP",
     swapping: "SWAPPING…",
     approveToken: "APPROVE HANSOME",

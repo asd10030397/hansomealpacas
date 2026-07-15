@@ -76,6 +76,8 @@ export const zh: Messages = {
     balance: "餘額",
     slippage: "滑點容忍度",
     flipDirection: "切換兌換方向",
+    fillPercent: "填入",
+    fillMax: "填入最大可用金額",
     swap: "SWAP",
     swapping: "兌換中…",
     approveToken: "授權 HANSOME",
