@@ -68,6 +68,46 @@ export function WalletCard({
           </div>
         ) : null}
 
+        {wallet.lock ? (
+          <div className="rounded-xl border border-wood/40 bg-wood/10 p-4 sm:p-5">
+            <dt className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.22em] text-gold-light">
+              Liquidity Lock
+              <span className="rounded-full border-2 border-wood bg-gold px-2.5 py-0.5 text-[0.625rem] font-medium uppercase tracking-[0.14em] text-wood-dark">
+                {wallet.lock.badge}
+              </span>
+            </dt>
+            <dd className="mt-3 space-y-1 text-foreground/90">
+              <p>
+                Unlocks <span className="font-medium text-foreground">{wallet.lock.unlockDate}</span>
+              </p>
+              <p className="text-muted">
+                Locked {wallet.lock.lockedAt} via {wallet.lock.lockerName}
+              </p>
+              <p className="mt-2 break-all font-mono text-xs text-gold-light/90">
+                {wallet.lock.lockerAddress}
+              </p>
+            </dd>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <a
+                href={wallet.lock.lockerExplorerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center border border-border px-5 py-2.5 font-[family-name:var(--font-anton)] text-[0.7rem] tracking-[0.14em] text-foreground transition-all hover:border-gold/35 sm:text-xs"
+              >
+                View Lock Contract
+              </a>
+              <a
+                href={wallet.lock.lockTxUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center border border-border px-5 py-2.5 font-[family-name:var(--font-anton)] text-[0.7rem] tracking-[0.14em] text-foreground transition-all hover:border-gold/35 sm:text-xs"
+              >
+                View Lock Transaction
+              </a>
+            </div>
+          </div>
+        ) : null}
+
         <div>
           <dt className="text-xs uppercase tracking-[0.22em] text-gold-light">Initial Allocation (at Launch)</dt>
           <dd className="mt-2 font-medium tabular-nums text-foreground">{wallet.allocation}</dd>

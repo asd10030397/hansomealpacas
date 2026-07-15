@@ -48,7 +48,12 @@ export const en: Messages = {
         variant: "network",
       },
       { label: "TAX", value: "0%" },
-      { label: "LIQUIDITY", value: "Locked", secondary: "Planned" },
+      {
+        label: "LIQUIDITY",
+        value: "Locked",
+        secondary: "Until Jul 2027",
+        link: { href: "/transparency", label: "View Lock →" },
+      },
     ],
   },
   buy: {

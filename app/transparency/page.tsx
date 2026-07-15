@@ -120,6 +120,12 @@ export default function TransparencyPage() {
                 position, not that they were sold — the Liquidity Wallet&apos;s position (visible
                 above) is where they end up.
               </p>
+              <p>
+                The official liquidity position (Position NFT #47299) is locked on-chain via a
+                third-party lock contract until July 15, 2027 — see the Liquidity Lock details on
+                the Liquidity Wallet card above. Trading fees still flow to the Treasury while
+                locked; the underlying liquidity can&apos;t be withdrawn or modified until then.
+              </p>
             </div>
           </section>
         </section>

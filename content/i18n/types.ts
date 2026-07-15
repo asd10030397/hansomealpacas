@@ -213,6 +213,7 @@ export type TokenomicsItem = {
   secondary?: string;
   badge?: string;
   variant?: "default" | "network" | "ticker";
+  link?: { href: string; label: string };
 };
 
 export type Messages = {

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FadeIn } from "@/components/FadeIn";
 import { Section } from "@/components/Section";
 import { useLocale } from "@/context/LocaleContext";
@@ -95,6 +96,15 @@ function TokenomicsCard({ item }: { item: TokenomicsItem }) {
         <span className="mt-5 rounded-full border-2 border-wood bg-gold px-2.5 py-0.5 text-[0.625rem] font-medium uppercase tracking-[0.14em] text-wood-dark sm:mt-6 sm:px-3 sm:text-[0.6875rem]">
           {item.badge}
         </span>
+      ) : null}
+
+      {item.link ? (
+        <Link
+          href={item.link.href}
+          className="mt-5 text-xs font-medium tracking-[0.1em] text-gold-light underline decoration-gold-light/50 underline-offset-4 transition-colors hover:text-gold sm:mt-6 sm:text-sm"
+        >
+          {item.link.label}
+        </Link>
       ) : null}
     </div>
   );

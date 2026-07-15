@@ -48,7 +48,12 @@ export const zh: Messages = {
         variant: "network",
       },
       { label: "稅", value: "0%" },
-      { label: "流動性", value: "鎖倉", secondary: "規劃中" },
+      {
+        label: "流動性",
+        value: "鎖倉",
+        secondary: "至 2027 年 7 月",
+        link: { href: "/transparency", label: "查看鎖倉詳情 →" },
+      },
     ],
   },
   buy: {
