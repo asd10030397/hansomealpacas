@@ -477,11 +477,21 @@ export const zh: Messages = {
           statusKey: "inProgress",
           status: "進行中",
           items: [
-            { label: "被 DEX 資訊聚合平台收錄（GeckoTerminal、DexScreener）", done: true },
-            { label: "送出更廣泛上架平台的申請（CoinGecko、CoinMarketCap）——狀態：待定，尚未確認", done: false },
-            { label: "部署第二個更寬區間的流動性部位，作為常態後備", done: false },
+            { label: "被 DEX 資訊聚合平台收錄——已正式上架 GeckoTerminal 與 DexScreener", done: true },
+            {
+              label:
+                "官方 Uniswap v4 流動性部位（#47299）已透過 Titan Locker 鎖倉 365 天，將於 2027 年 7 月解鎖——這是對長期流動性的具體承諾，可在 /transparency 上驗證",
+              done: true,
+            },
+            { label: "已送出 CoinGecko 上架申請，審核中", done: false },
+            { label: "已送出 CoinMarketCap 上架申請，審核中", done: false },
             { label: "開始定期領取並回收 LP 手續費", done: false },
-            { label: "圍繞品牌、而不是價格目標，培養早期社群", done: false },
+            {
+              label: "持續觀察市場狀況與流動性深度——如果交易量與社群成長真的需要，未來會再加入更多流動性",
+              done: false,
+            },
+            { label: "持續專注在建立 HANSOME 品牌，而不是追逐短期價格目標", done: false },
+            { label: "持續擴大早期社群", done: false },
           ],
         },
         {
@@ -505,6 +515,7 @@ export const zh: Messages = {
       paragraphs: [
         "熱度是一次尖峰，社群才是地板。一波熱潮可以在很短時間內帶來大量關注，也可以同樣快速地把這些關注全部帶走，什麼都不留下。社群——就算規模很小——才是在圖表停止跳動之後，還會留下來在乎這件事的人。",
         "這個專案寧願有一百個真心覺得吉祥物好笑、並且願意留下來的人，也不想要一萬個下週就忘記代號的人。這份文件裡的每一項政策——金庫的自律、流動性的做法、老實區分什麼是真的、什麼只是方向——說到底都是為了同一個目標：給一個真實的社群，以及日後跟這個社群一起打造出來的真正品牌，一個值得參與的理由。",
+        "這已經不只是一個希望了。我們已經有一個真正在運作的 Telegram 社群，靠自然成長慢慢變大，而不是靠付費推廣衝出來的。我們會定期舉辦迷因比賽、抽獎與社群活動，給真正願意參與的人。社群的參與度，正逐漸成為這個專案最重要的優先事項之一，和金庫、流動性的自律並列。",
       ],
     },
     longTermVision: {
@@ -569,6 +580,21 @@ export const zh: Messages = {
       heading: "更新紀錄",
       intro: "這裡記錄的是這份文件本身的修訂歷史，不是整個專案的完整歷史。",
       entries: [
+        {
+          version: "v1.4",
+          date: "2026 年 7 月",
+          changes: [
+            "正式上架 GeckoTerminal。",
+            "正式上架 DexScreener。",
+            "送出 CoinGecko 上架申請（審核中）。",
+            "送出 CoinMarketCap 上架申請（審核中）。",
+            "正式將官方 Uniswap v4 流動性部位（#47299）透過 Titan Locker 鎖倉 365 天，將於 2027 年 7 月解鎖——對長期流動性做出具體、可上鏈驗證的承諾。",
+            "更新路線圖裡的流動性規劃：不再承諾固定新增第二個部位，而是改為持續觀察流動性深度，只在交易量與社群成長真的需要時才加入更多流動性。",
+            "更新路線圖以反映目前的進度。",
+            "更新「社群」章節，加入目前活躍的 Telegram 社群、定期迷因比賽、抽獎與社群活動。",
+            "全文用字微調與文件內容更新。",
+          ],
+        },
         {
           version: "v1.3",
           date: "2026 年 7 月",

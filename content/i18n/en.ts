@@ -490,11 +490,22 @@ export const en: Messages = {
           statusKey: "inProgress",
           status: "In Progress",
           items: [
-            { label: "Get discovered on DEX aggregators (GeckoTerminal, DexScreener)", done: true },
-            { label: "Submit to broader listing platforms (CoinGecko, CoinMarketCap) — status: TODO, not yet confirmed", done: false },
-            { label: "Deploy a second, wider liquidity position as a standing backstop", done: false },
+            { label: "Get discovered on DEX aggregators — officially listed on GeckoTerminal and DexScreener", done: true },
+            {
+              label:
+                "Lock the official Uniswap v4 LP position (#47299) for 365 days via Titan Locker, unlocking July 2027 — a concrete, on-chain commitment to long-term liquidity, verifiable on /transparency",
+              done: true,
+            },
+            { label: "CoinGecko listing application submitted — pending review", done: false },
+            { label: "CoinMarketCap listing application submitted — pending review", done: false },
             { label: "Begin periodic LP fee collection and recycling", done: false },
-            { label: "Grow an early community around the brand, not around a price target", done: false },
+            {
+              label:
+                "Continue monitoring market conditions and liquidity depth — additional liquidity may be added in the future if trading volume and community growth genuinely require it",
+              done: false,
+            },
+            { label: "Continue focusing on building the HANSOME brand instead of short-term price targets", done: false },
+            { label: "Continue growing the early community around the brand", done: false },
           ],
         },
         {
@@ -527,6 +538,7 @@ export const en: Messages = {
       paragraphs: [
         "Hype is a spike. Community is a floor. A hype cycle can bring a lot of attention very quickly and take all of it away just as fast, leaving nothing behind. A community — even a small one — is what's still around to care the day after the chart stops moving.",
         "This project would rather have a hundred people who actually find the mascot funny and stick around than ten thousand people who forget the ticker by next week. Every policy in this document — the treasury discipline, the liquidity approach, being straight about what's real versus what's just a direction — is really in service of one goal: giving a real community, and eventually a real brand built with that community, something worth being part of.",
+        "That's not just an intention anymore. There's an active Telegram community already up and running, growing organically rather than through paid pushes. We run regular meme contests, giveaways, and community events for the people who actually show up — and community participation is quickly becoming one of this project's biggest priorities, right alongside treasury and liquidity discipline.",
       ],
     },
     longTermVision: {
@@ -592,6 +604,21 @@ export const en: Messages = {
       heading: "Changelog",
       intro: "A record of this document's own revisions — not the whole project's history, just this litepaper.",
       entries: [
+        {
+          version: "v1.4",
+          date: "July 2026",
+          changes: [
+            "Officially listed on GeckoTerminal.",
+            "Officially listed on DexScreener.",
+            "Submitted a CoinGecko listing application (pending review).",
+            "Submitted a CoinMarketCap listing application (pending review).",
+            "Officially locked the Uniswap v4 LP position (#47299) for 365 days via Titan Locker, unlocking July 2027 — a concrete, on-chain demonstration of long-term commitment to liquidity.",
+            "Updated the Roadmap's liquidity plans: rather than committing to a fixed second position, liquidity depth is now monitored on an ongoing basis, with more added only if trading volume and community growth genuinely call for it.",
+            "Updated the Roadmap to reflect current milestones.",
+            "Updated the Community section to reflect the active Telegram community, regular meme contests, giveaways, and ongoing community events.",
+            "Minor wording improvements and documentation updates throughout the litepaper.",
+          ],
+        },
         {
           version: "v1.3",
           date: "July 2026",
