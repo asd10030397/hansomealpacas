@@ -20,6 +20,7 @@ import { TxStatusBanner, type TxPhase } from "@/components/swap/TxStatusBanner";
 import { PROJECT } from "@/content/project";
 import { useLocale } from "@/context/LocaleContext";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { useMarketStats } from "@/hooks/useMarketStats";
 import {
   getExplorerAddressUrl,
   PERMIT2_ADDRESS,
@@ -31,6 +32,7 @@ import {
   UNIVERSAL_ROUTER_ADDRESS,
   robinhoodChain,
 } from "@/lib/chain";
+import { formatUsd } from "@/lib/market/format";
 import { requestWatchTokenAsset } from "@/lib/wallet/watchAsset";
 import { erc20Abi, permit2Abi, stateViewAbi, universalRouterAbi } from "@/lib/swap/abis";
 import { buildUniversalRouterCalldata } from "@/lib/swap/encoding";
@@ -61,6 +63,7 @@ export function SwapCard() {
   const { connectors, connect, isPending: isConnecting, error: connectError } = useConnect();
   const { switchChain, isPending: isSwitching } = useSwitchChain();
   const { data: walletClient } = useWalletClient();
+  const { data: marketData } = useMarketStats();
   const [isWatchingAsset, setIsWatchingAsset] = useState(false);
 
   const [direction, setDirection] = useState<SwapDirection>("ethToToken");
@@ -415,6 +418,28 @@ export function SwapCard() {
   const inputSymbol = direction === "ethToToken" ? "ETH" : PROJECT.symbol;
   const outputSymbol = direction === "ethToToken" ? PROJECT.symbol : "ETH";
 
+  // HANSOME/USD comes straight from the market API; ETH/USD is derived from
+  // the same response (priceUsd / priceEth = USD per 1 ETH) so both sides of
+  // the swap stay consistent with a single data source and no extra fetch.
+  const ethUsdPrice =
+    marketData && marketData.priceEth > 0 ? marketData.priceUsd / marketData.priceEth : null;
+
+  const payUsdValue = useMemo(() => {
+    const amountNum = Number(amountIn);
+    if (!marketData || !Number.isFinite(amountNum) || amountNum <= 0) return null;
+    const unitPriceUsd = inputSymbol === "ETH" ? ethUsdPrice : marketData.priceUsd;
+    if (unitPriceUsd === null || !Number.isFinite(unitPriceUsd)) return null;
+    return amountNum * unitPriceUsd;
+  }, [amountIn, marketData, inputSymbol, ethUsdPrice]);
+
+  const receiveUsdValue = useMemo(() => {
+    const amountNum = Number(formattedQuote);
+    if (!marketData || !Number.isFinite(amountNum) || amountNum <= 0) return null;
+    const unitPriceUsd = outputSymbol === "ETH" ? ethUsdPrice : marketData.priceUsd;
+    if (unitPriceUsd === null || !Number.isFinite(unitPriceUsd)) return null;
+    return amountNum * unitPriceUsd;
+  }, [formattedQuote, marketData, outputSymbol, ethUsdPrice]);
+
   const balanceLabel =
     direction === "ethToToken"
       ? ethBalance
@@ -505,6 +530,9 @@ export function SwapCard() {
               {inputSymbol}
             </span>
           </div>
+          <p className="mt-1 text-right text-xs tabular-nums text-muted">
+            ≈ {payUsdValue !== null ? formatUsd(payUsdValue) : "—"}
+          </p>
         </div>
 
         <div className="flex justify-center">
@@ -530,6 +558,9 @@ export function SwapCard() {
               {outputSymbol}
             </span>
           </div>
+          <p className="mt-1 text-right text-xs tabular-nums text-muted">
+            ≈ {receiveUsdValue !== null ? formatUsd(receiveUsdValue) : "—"}
+          </p>
           <p className="mt-2 text-right text-xs text-muted">
             {t.swap.slippage}: {(DEFAULT_SLIPPAGE_BPS / 100).toFixed(2)}%
           </p>
