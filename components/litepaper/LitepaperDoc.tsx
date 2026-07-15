@@ -159,12 +159,28 @@ function LitepaperContent() {
             lp.liquidity.concentratedLiquidity,
             lp.liquidity.longTermStrategy,
             lp.liquidity.lpFees,
+            lp.liquidity.onChainVerification,
             lp.liquidity.multiplePositions,
             lp.liquidity.noReactiveChasing,
           ].map((block) => (
             <div key={block.heading}>
               <h3 className="text-sm font-semibold uppercase tracking-[0.14em] text-white/40">{block.heading}</h3>
               <p className="mt-2">{block.body}</p>
+              {block.links ? (
+                <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5">
+                  {block.links.map((link) => (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-medium text-white underline decoration-white/30 underline-offset-4 transition-colors hover:decoration-white"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              ) : null}
             </div>
           ))}
         </div>

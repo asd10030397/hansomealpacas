@@ -321,7 +321,7 @@ export const en: Messages = {
         },
         {
           title: "Transparency",
-          body: "All four wallets involved in this project — Deployment, Liquidity, Treasury, and Founder — are public and viewable on-chain at any time. See the Treasury Policy section and the live /transparency page for current addresses and balances.",
+          body: "All four wallets involved in this project — Deployment, Liquidity, Treasury, and Founder — are public and viewable on-chain at any time. See the Treasury Policy section and the live /transparency page for current addresses and balances. Official wallets, treasury activity, liquidity information, and other transparency data are kept on that page, updated from on-chain information whenever possible.",
         },
         {
           title: "Long-Term Thinking",
@@ -424,6 +424,20 @@ export const en: Messages = {
       lpFees: {
         heading: "LP Fees",
         body: "The pool carries a 0.05% swap fee, which accrues to whoever holds the liquidity position — currently the Treasury. These fees are real, on-chain revenue generated independently of any token tax, and the intent is to periodically collect and recycle them back into liquidity rather than let them sit unclaimed.",
+      },
+      onChainVerification: {
+        heading: "On-Chain Verification",
+        body: "The official Uniswap v4 LP position (#47299) is locked via TitanLockerManagerV2 until July 15, 2027. That isn't something you have to take our word for — the lock contract and the lock transaction are both public on Blockscout, so anyone can verify it independently.",
+        links: [
+          {
+            href: "https://robinhoodchain.blockscout.com/address/0x26b0654A0756DCd036D4e7215324f3D2Be34D79e",
+            label: "View Lock Contract →",
+          },
+          {
+            href: "https://robinhoodchain.blockscout.com/tx/0x8ac188afa59c9bc26626bfec6977fbc25c294003d8761b2e41030ad0aab3bcf3",
+            label: "View Lock Transaction →",
+          },
+        ],
       },
       multiplePositions: {
         heading: "Multiple LP Positions",

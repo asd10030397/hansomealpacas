@@ -315,7 +315,7 @@ export const zh: Messages = {
         },
         {
           title: "透明公開",
-          body: "這個專案涉及的四個錢包——部署錢包、流動性錢包、金庫與創辦人錢包——全部公開，任何時候都能在鏈上查證。詳見下方「金庫政策」章節，以及即時更新的 /transparency 頁面，查看目前地址與餘額。",
+          body: "這個專案涉及的四個錢包——部署錢包、流動性錢包、金庫與創辦人錢包——全部公開，任何時候都能在鏈上查證。詳見下方「金庫政策」章節，以及即時更新的 /transparency 頁面，查看目前地址與餘額。官方錢包、金庫動向、流動性資訊等透明度相關資料都會放在那個頁面上，並盡可能以鏈上資訊即時更新。",
         },
         {
           title: "長期思維",
@@ -411,6 +411,20 @@ export const zh: Messages = {
       lpFees: {
         heading: "LP 手續費",
         body: "資金池收取 0.05% 的交易手續費，會累積給目前持有流動性部位的一方——目前是金庫。這筆手續費是真實、獨立於任何代幣稅之外的鏈上收入，我們的目標是定期把它領出來、再投入流動性，而不是讓它一直閒置不動。",
+      },
+      onChainVerification: {
+        heading: "上鏈驗證",
+        body: "官方 Uniswap v4 流動性部位（#47299）已透過 TitanLockerManagerV2 鎖倉，將於 2027 年 7 月 15 日解鎖。這不需要單靠我們的說法——鎖倉合約與鎖倉交易都公開在 Blockscout 上，任何人都可以自行驗證。",
+        links: [
+          {
+            href: "https://robinhoodchain.blockscout.com/address/0x26b0654A0756DCd036D4e7215324f3D2Be34D79e",
+            label: "查看鎖倉合約 →",
+          },
+          {
+            href: "https://robinhoodchain.blockscout.com/tx/0x8ac188afa59c9bc26626bfec6977fbc25c294003d8761b2e41030ad0aab3bcf3",
+            label: "查看鎖倉交易 →",
+          },
+        ],
       },
       multiplePositions: {
         heading: "多個 LP 部位",

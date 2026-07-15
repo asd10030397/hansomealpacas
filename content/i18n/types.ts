@@ -50,6 +50,12 @@ export type LitepaperRevenueStream = {
   body: string;
 };
 
+export type LitepaperPolicyBlock = {
+  heading: string;
+  body: string;
+  links?: readonly { href: string; label: string }[];
+};
+
 export type LitepaperRoadmapItem = {
   label: string;
   done: boolean;
@@ -159,11 +165,12 @@ export type LitepaperMessages = {
   };
   liquidity: {
     heading: string;
-    concentratedLiquidity: { heading: string; body: string };
-    longTermStrategy: { heading: string; body: string };
-    lpFees: { heading: string; body: string };
-    multiplePositions: { heading: string; body: string };
-    noReactiveChasing: { heading: string; body: string };
+    concentratedLiquidity: LitepaperPolicyBlock;
+    longTermStrategy: LitepaperPolicyBlock;
+    lpFees: LitepaperPolicyBlock;
+    onChainVerification: LitepaperPolicyBlock;
+    multiplePositions: LitepaperPolicyBlock;
+    noReactiveChasing: LitepaperPolicyBlock;
   };
   revenue: {
     heading: string;
