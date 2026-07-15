@@ -73,6 +73,32 @@ cd bot
 npm install
 ```
 
+## Deployment model: Railway (production) vs. local (dev/test only)
+
+**Production runs on Railway**, independent of any developer's machine —
+that's the only instance that should ever use the real `BOT_TOKEN` /
+`CHAT_ID` / `MESSAGE_THREAD_ID` for the live HANSOME community group.
+
+**Local `npm start` / `npm run dev` is for development and testing only.**
+Do **not** point your local `.env` at the production bot token or the
+production chat. Telegram's `getUpdates` long-polling only allows one
+active consumer per bot token — if your local instance and the Railway
+deployment both run with the same `BOT_TOKEN` at the same time, they will
+fight over polling (commands intermittently fail) and, because each
+keeps its own separate SQLite database, **both may independently detect
+the same on-chain trade as "new" and send duplicate notifications** to
+the real group.
+
+Instead, for local dev/testing use:
+
+- A **separate test bot** (create one with @BotFather — it's free and
+  instant) for `BOT_TOKEN`.
+- A **separate test group/channel** you control for `CHAT_ID` (add your
+  test bot as admin there).
+
+This way local runs never contend with Railway's long-polling and never
+risk posting into the real community chat.
+
 ## Configure `.env`
 
 ```bash
@@ -81,12 +107,20 @@ cp .env.example .env
 
 Then edit `.env`:
 
-- `BOT_TOKEN` — from @BotFather.
-- `CHAT_ID` — the group/channel to post alerts to. For a public channel
-  you can use `@yourchannel`. For a group or private channel, add the bot
-  as admin, send a message, then check
+- `BOT_TOKEN` — from @BotFather. **Locally, use a separate test bot** —
+  see "Deployment model" above. Only the Railway deployment should use
+  the production bot's token.
+- `CHAT_ID` — the group/channel to post alerts to. **Locally, use a test
+  group you control**, not the production community chat. For a public
+  channel you can use `@yourchannel`. For a group or private channel, add
+  the bot as admin, send a message, then check
   `https://api.telegram.org/bot<token>/getUpdates` for the numeric
   `chat.id` (often negative, e.g. `-1001234567890`).
+- `MESSAGE_THREAD_ID` — only relevant if `CHAT_ID` is a forum supergroup
+  (Topics enabled) and you want alerts in a specific topic rather than
+  "General". See the comment in `.env.example` for how to find the real
+  thread id (it's a live `message_thread_id` field, not a link's trailing
+  message id — the two aren't the same thing in general).
 
 Everything else (RPC URL, pool/token addresses, links, polling interval,
 database path, log level) already has sensible defaults matching the
@@ -115,6 +149,9 @@ alive.
 
 ## Run continuously (PM2)
 
+Not needed for this project's production bot — it runs on Railway, which
+already keeps it alive across crashes/redeploys. This section is kept for
+reference if you ever need to self-host outside Railway (e.g. a VPS).
 [PM2](https://pm2.keymetrics.io/) keeps the process alive across crashes
 and reboots.
 
