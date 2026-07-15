@@ -11,7 +11,9 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   {
-    ignores: ["contracts/**"],
+    // "bot" is a standalone project deployed separately (Railway) with its
+    // own lint/build tooling — keep it out of the website's ESLint scope.
+    ignores: ["contracts/**", "bot/**"],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];

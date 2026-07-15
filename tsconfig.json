@@ -23,5 +23,11 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "contracts"]
+  // "bot" is a standalone Node.js project (deployed independently on Railway,
+  // see bot/README.md) with its own tsconfig.json and dependencies (e.g.
+  // ethers) that are intentionally NOT installed at the website root. It must
+  // stay excluded here or `next build`'s type-checking picks up bot/src/**
+  // via the "**/*.ts" include glob above and fails with "Cannot find module
+  // 'ethers'" since that package isn't a website dependency.
+  "exclude": ["node_modules", "contracts", "bot", "bot/**"]
 }
