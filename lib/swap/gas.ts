@@ -32,22 +32,6 @@ export async function getSafeGasFees(
     // still being a tiny absolute amount (gas price is sub-gwei).
     const maxFeePerGas = gasPrice * 4n;
 
-    // TEMPORARY DEBUG LOGGING — remove once the MetaMask gas-fee fix has been
-    // manually verified against a real approve + swap on the live site.
-    console.log("[gas][DEBUG] eth_gasPrice raw:", gasPrice.toString(), "wei", `(${Number(gasPrice) / 1e9} gwei)`);
-    console.log(
-      "[gas][DEBUG] override maxFeePerGas:",
-      maxFeePerGas.toString(),
-      "wei",
-      `(${Number(maxFeePerGas) / 1e9} gwei)`,
-    );
-    console.log(
-      "[gas][DEBUG] override maxPriorityFeePerGas:",
-      maxPriorityFeePerGas.toString(),
-      "wei",
-      `(${Number(maxPriorityFeePerGas) / 1e9} gwei)`,
-    );
-
     return { maxFeePerGas, maxPriorityFeePerGas };
   } catch (error) {
     console.warn("[gas] getSafeGasFees failed, falling back to wallet defaults:", error);
