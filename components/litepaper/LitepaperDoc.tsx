@@ -252,7 +252,10 @@ function LitepaperContent() {
           <img
             src={lp.hansomeHub.conceptArt.src}
             alt={lp.hansomeHub.conceptArt.alt}
-            className="w-full rounded-2xl border border-wood/40 object-cover"
+            width={1536}
+            height={1024}
+            loading="lazy"
+            className="h-auto w-full rounded-2xl border border-wood/40 object-contain"
           />
           <figcaption className="mt-3 text-center text-xs italic leading-relaxed text-[color:var(--lp-text-faint)]">
             {lp.hansomeHub.conceptArt.caption}
