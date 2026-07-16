@@ -76,38 +76,59 @@ function woolBeanie() {
   return { S, cx, sitRow: 16, widthFactor: 1.16, sink: 0.055, id: "wool-beanie", name: "Wool Beanie", tier: "common" };
 }
 
-// flower crown: green vine band + little flowers
+// flower crown: curved circlet that wraps the head dome (arched band, layered
+// depth, varied clustered flowers + leaves) rather than a flat headband
 function flowerCrown() {
-  const W = 50, H = 16, cx = 25;
+  const W = 56, H = 24, cx = 28, half = 26;
   const S = new Sprite(W, H);
-  // vine band with slight arc
-  for (let x = 4; x <= 46; x++) {
-    const arc = Math.round(Math.pow((x - cx) / 22, 2) * 3); // dips at sides
-    const y = 9 + arc;
-    S.set(x, y, P.greenM); S.set(x, y + 1, P.greenD);
-    if (x % 4 === 0) S.set(x, y - 1, P.leafL);
+  // arch: band is highest at the centre and curves down toward the ears (wraps the dome)
+  const bandY = (x) => { const t = (x - cx) / half; return 11 + Math.round(t * t * 8); };
+  // back band (darker, sits a touch higher to imply the crown continuing behind the head)
+  for (let x = 5; x <= W - 6; x++) { const y = bandY(x) - 1; S.set(x, y, P.greenD); }
+  // main vine band, 2 rows thick with a highlight ridge for depth
+  for (let x = 4; x <= W - 5; x++) {
+    const y = bandY(x);
+    S.set(x, y - 1, P.leafL);
+    S.set(x, y, P.greenM);
+    S.set(x, y + 1, P.greenD);
   }
-  // flowers along the band
-  const cols = [[8, P.pink, P.pinkD], [17, P.goldL, P.goldM], [25, P.berryL, P.berryM], [33, P.purpL, P.purpM], [42, P.pink, P.pinkD]];
-  for (const [fx, pet, petD] of cols) {
-    const arc = Math.round(Math.pow((fx - cx) / 22, 2) * 3);
-    const fy = 6 + arc;
-    // 5-petal little flower
-    S.set(fx, fy - 1, pet); S.set(fx - 1, fy, pet); S.set(fx + 1, fy, pet); S.set(fx, fy + 1, pet);
-    S.set(fx - 1, fy - 1, petD); S.set(fx + 1, fy + 1, petD);
+  // small leaves poking up along the band
+  for (const lx of [11, 22, 34, 45]) { const y = bandY(lx); S.set(lx, y - 2, P.leafD); S.set(lx - 1, y - 2, P.leafL); S.set(lx + 1, y - 1, P.leafD); }
+  // flowers: bigger toward the centre-front, smaller toward the sides -> depth
+  const flower = (fx, size, pet, petD) => {
+    const fy = bandY(fx) - 2;
     S.set(fx, fy, P.yolk);
-  }
+    S.set(fx, fy - 1, pet); S.set(fx, fy + 1, pet); S.set(fx - 1, fy, pet); S.set(fx + 1, fy, pet);
+    S.set(fx - 1, fy - 1, petD); S.set(fx + 1, fy + 1, petD);
+    if (size === 2) {
+      S.set(fx + 1, fy - 1, pet); S.set(fx - 1, fy + 1, petD);
+      S.set(fx, fy - 2, petD); S.set(fx, fy + 2, petD); S.set(fx - 2, fy, petD); S.set(fx + 2, fy, petD);
+      S.set(fx, fy, P.goldL);
+    }
+  };
+  flower(10, 1, P.pink, P.pinkD);
+  flower(18, 1, P.goldL, P.goldM);
+  flower(24, 2, P.berryL, P.berryM);
+  flower(28, 2, P.purpL, P.purpM);
+  flower(32, 2, P.pink, P.pinkD);
+  flower(38, 1, P.goldL, P.goldM);
+  flower(46, 1, P.berryL, P.berryM);
   S.autoOutline(P.outline, false);
-  return { S, cx, sitRow: 11, widthFactor: 1.28, sink: 0.06, id: "flower-crown", name: "Flower Crown", tier: "rare" };
+  return { S, cx, sitRow: 12, widthFactor: 1.32, sink: 0.045, id: "flower-crown", name: "Flower Crown", tier: "rare" };
 }
 
 // winter bobble hat: big pom, ribbed knit dome, cuff
 function bobbleHat() {
   const W = 40, H = 30, cx = 20;
   const S = new Sprite(W, H);
-  // big pom
-  S.rect(cx - 3, 0, cx + 3, 4, CREAMHI);
-  S.set(cx - 4, 1, CREAMHI); S.set(cx + 4, 1, CREAMHI); S.set(cx - 4, 2, CREAMHI); S.set(cx + 4, 2, CREAMHI); S.set(cx - 4, 3, CREAMHI); S.set(cx + 4, 3, CREAMHI);
+  // big pom — cool blue-white with shading + a dark knot so it reads clearly
+  // against the warm cream wool (was near-invisible when cream-on-cream)
+  const pomRows = [[1, 0], [3, 1], [4, 2], [4, 3], [3, 4], [1, 5]];
+  for (const [hw, y] of pomRows) sym(S, y, cx, hw, P.white);
+  for (let y = 0; y <= 5; y++) for (let x = cx - 4; x <= cx + 4; x++) if (S.get(x, y) === P.white && x > cx + 1) S.set(x, y, P.denimL);
+  S.set(cx - 2, 1, CREAMHI); S.set(cx - 1, 2, CREAMHI); // top-left highlight
+  S.set(cx + 1, 3, P.denimD); S.set(cx - 1, 4, P.denimD); // texture specks
+  S.set(cx, 5, P.denimD); // knot into the hat
   // dome
   const dome = [[4, 5], [6, 6], [8, 7], [9, 8], [10, 9], [11, 10], [11, 12], [12, 14], [12, 16]];
   for (const [hw, y] of dome) sym(S, y, cx, hw, P.denimM);
@@ -167,6 +188,7 @@ for (const hat of hats) {
     pngW: w, pngH: h, scale: SCALE,
     centerXpx: hat.cx * SCALE, sitYpx: hat.sitRow * SCALE,
     widthFactor: hat.widthFactor, sink: hat.sink,
+    offsets: {}, // per-archetype {dx,dy} overrides — empty = fully anchor-driven (none needed)
   };
   console.log(`${hat.id.padEnd(12)} ${w}x${h}  center=${hat.cx * SCALE} sit=${hat.sitRow * SCALE} wf=${hat.widthFactor}`);
 }

@@ -8,18 +8,24 @@
     "mascotBase": "public/pixel/alpaca-nft-master-base.png"
   },
   "mascotPolicy": {
-    "rule": "The canonical alpaca (mascotBase) is the official HANSOME mascot and the face of the brand. It is used ONLY for branding. There is exactly one mascot. It is NOT part of the NFT collection, is NEVER minted, has no tokenId, and is NOT counted toward the 500 total supply.",
-    "isMinted": false,
-    "partOfCollection": false,
+    "rule": "The canonical alpaca (mascotBase) is the official HANSOME mascot and the face of the brand. It is branding only, is NEVER independently minted, has no tokenId of its own, and is NOT counted toward the 500 Genesis NFTs. It is permanently owned and controlled by the HANSOME project.",
+    "isIndependentlyMinted": false,
+    "partOfCollectionAsOwnToken": false,
     "countsTowardTotalSupply": false,
+    "permanentlyOwnedBy": "the HANSOME project",
+    "usedFor": ["website", "branding", "marketing", "social media", "HUB", "official announcements"],
     "appliesTo": "public/pixel/alpaca-nft-master-base.png",
+    "founderException": {
+      "note": "Founder NFT #001 (one of the 10 Reserved) uses the iconic mascot appearance as its visual base. It is the ONLY NFT in the entire Genesis collection permitted to use the iconic side-swept wool, the signature mascot expression, and the recognizable mascot silhouette.",
+      "ipNote": "Minting or owning Founder #001 does NOT transfer ownership of the mascot, brand identity, trademarks, or intellectual property. The mascot and all HANSOME IP remain permanently owned by the HANSOME project."
+    },
     "generatorMustNever": [
-      "mint or tokenize the mascot",
-      "use the mascot base for any minted token, including Founder #001",
-      "produce a base body that replicates the mascot's exact wool shape / silhouette / ear / expression",
-      "treat the mascot as the generic base and only swap accessories"
+      "mint the mascot as its own standalone token",
+      "use the iconic mascot appearance for any token other than Founder #001",
+      "let any Public, Reserved (other than #001), or Legendary NFT reuse the exact mascot appearance",
+      "produce a random base body that replicates the mascot's exact wool shape / silhouette / ear / expression"
     ],
-    "everyAlpacaInCollection": {
+    "everyAlpacaInCollectionExceptFounder": {
       "mustBeOriginalIn": ["woolShape", "headSilhouette", "earShape", "facialExpression", "fluffStyle"],
       "mustStillReadAs": "clearly the same HANSOME universe (shared palette, proportions, pixel-art rendering, cozy countryside identity)"
     }
@@ -45,9 +51,17 @@
       "label": "Founder NFT",
       "generation": "manual",
       "isReserved": true,
-      "usesMascotAppearance": false,
+      "usesMascotAppearance": true,
       "excludeFromRandomPool": true,
-      "notes": "Founder #001 is hand-designed and is ONE of the 10 Reserved NFTs (counted inside the reserved allocation, not in addition to it). It is a distinct, original HANSOME alpaca — it does NOT use the branding-only mascot appearance. Do not create any additional Founder outside the reserved allocation."
+      "mascotAppearance": {
+        "usesIconicSideSweptWool": true,
+        "usesSignatureExpression": true,
+        "usesRecognizableSilhouette": true,
+        "exclusive": "Founder #001 is the ONLY NFT in the entire Genesis collection allowed to use the iconic mascot appearance."
+      },
+      "founderExclusiveTraits": ["Founder Crown", "HANSOME Pendant", "Founder Background", "Founder Badge"],
+      "ipNote": "Founder #001 uses the mascot appearance as its visual base, but minting/owning it does NOT transfer the mascot, brand identity, trademarks, or IP — all of which remain permanently owned by the HANSOME project.",
+      "notes": "Founder #001 is hand-designed and is ONE of the 10 Reserved NFTs (counted inside the reserved allocation, not in addition to it). Do not create any additional Founder outside the reserved allocation. Do not generate its artwork yet."
     },
     "legendaryTokenIds": {
       "count": 20,
@@ -95,7 +109,7 @@
     "effects"
   ],
   "layerNotes": {
-    "base": "The individual alpaca body for this token (from the 'base' category). Each is an original HANSOME alpaca with its own wool shape / head silhouette / ear / expression — NOT the mascot. Every minted token (including Founder #001) uses an original base; the mascot base is branding-only and is never composited into a token. Base art is composited pixel-for-pixel, never smoothed or upscaled.",
+    "base": "The individual alpaca body for this token (from the 'base' category). Each is an original HANSOME alpaca with its own wool shape / head silhouette / ear / expression — NOT the mascot — EXCEPT Founder #001, which uses the iconic mascot appearance as its base. The mascot is never minted as its own standalone token. Base art is composited pixel-for-pixel, never smoothed or upscaled.",
     "fur": "Wool-style overlay drawn on top of the chosen base (tufts / texture / edge puffs). 'Classic' is a no-op.",
     "necklace": "Sits above clothing so a collar/pendant reads over a scarf or sweater.",
     "hat": "Topmost worn item.",
@@ -128,9 +142,22 @@
     "previews": "public/pixel/traits/previews/",
     "metadata": "NOT generated yet — explicitly out of scope until the trait library is approved."
   },
+  "avatarSystem": {
+    "principle": "Treat Genesis as a reusable AVATAR system, not a one-off NFT image generator. Every trait must fit every archetype automatically through the anatomy anchor system. Avoid character-specific assets whenever possible.",
+    "pipeline": ["NFT metadata", "avatar builder", "animated character", "HANSOME HUB"],
+    "goal": "Every Genesis NFT should eventually become a fully playable alpaca inside HANSOME HUB.",
+    "prioritize": ["shared proportions", "shared animation rig", "reusable anchor-fitted traits", "attachment anchors", "maintainability", "pixel-perfect consistency"],
+    "over": "maximizing the number of trait combinations",
+    "rules": [
+      "Traits attach via anchors (crown / ear / eye / neck / chest), scaled per-archetype from measured anatomy.",
+      "Prefer ONE anchor-fitted asset per trait that serves all archetypes over per-character variants.",
+      "Any unavoidable per-archetype manual offset must be documented in that trait's meta file (e.g., hats/_hats-meta.json > offsets)."
+    ]
+  },
   "status": {
-    "phase": "trait-system-defined",
+    "phase": "trait-fitting",
     "reviewBatchOnly": true,
-    "notes": "Only a small style-guide review batch has been drawn (5 hats, 5 glasses, 5 clothing, 5 necklaces, 5 backgrounds). Full library, metadata, and the 500-piece generation are on hold pending approval."
+    "completed": ["base archetype family (8)", "anatomy anchors", "hats (5, anchor-fitted)"],
+    "notes": "Anchor-driven trait-fitting in progress. Hats reviewed first. Necklaces, glasses, clothing, mouth, ear accessories, effects follow in that order. Full library, metadata, Legendary, Founder #001 artwork, and the 500-piece generation remain on hold pending approval."
   }
 }

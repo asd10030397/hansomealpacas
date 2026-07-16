@@ -17,9 +17,9 @@
       "framing": "front-facing, full-body (head + body + four legs + hooves + tail)",
       "renderStyle": "soft-shaded pixel art matching the HANSOME mascot palette and rendering",
       "excludeFromRandomPool": ["mascot"],
-      "description": "The individual alpaca body. Each is an ORIGINAL, full-body HANSOME alpaca with its own wool shape, head silhouette, ear shape, facial expression, and fluff style — sharing the HANSOME palette, proportions, and pixel rendering, but never a clone of the mascot. Every one 'lives in the same village'. The mascot is branding-only (never minted); Founder #001 is its own original reserved alpaca and is not this mascot.",
+      "description": "The individual alpaca body. Each is an ORIGINAL, full-body HANSOME alpaca with its own wool shape, head silhouette, ear shape, facial expression, and fluff style — sharing the HANSOME palette, proportions, and pixel rendering, but never a clone of the mascot. Every one 'lives in the same village'. The mascot is never minted as its own token; its iconic appearance is used ONLY by Founder #001 (one of the 10 Reserved).",
       "reserved": [
-        { "id": "mascot", "name": "HANSOME Mascot", "file": "../../alpaca-nft-master-base.png", "usage": "branding-only", "minted": false, "status": "not-in-collection", "notes": "Official mascot. Branding only — never minted, not counted in the 500, and never used as a token base (including Founder #001)." }
+        { "id": "mascot", "name": "HANSOME Mascot", "file": "../../alpaca-nft-master-base.png", "usage": "branding-only + Founder #001 base", "independentlyMinted": false, "usedByToken": 1, "status": "founder-#001-only", "notes": "Official mascot. Branding only, never independently minted, not counted in the 500, permanently owned by the HANSOME project. Its iconic appearance is used ONLY as the visual base of Founder #001 — no other Public/Reserved/Legendary NFT may reuse it." }
       ],
       "items": [
         { "id": "puff", "name": "Puff", "file": "base/puff.png", "personality": "cozy / sleepy", "status": "ready" },
@@ -175,6 +175,7 @@
       "fitSystem": "anchor-fitted (per-archetype crown seat + head-width scale)",
       "metaFile": "hats/_hats-meta.json",
       "reviewBatch": 5,
+      "manualOffsets": "none — all 5 hats fit all 8 archetypes fully anchor-driven (verified: no clipping / floating / eye-overlap; consistent scaling)",
       "items": [
         { "id": "straw-hat", "name": "Straw Sun Hat", "file": "hats/straw-hat.png", "tier": "common", "status": "ready" },
         { "id": "wool-beanie", "name": "Wool Beanie", "file": "hats/wool-beanie.png", "tier": "common", "status": "ready" },

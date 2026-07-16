@@ -82,14 +82,29 @@ async function stripBackground(name) {
     }
   }
 
-  const outPath = path.join(BASE, `${name}.png`);
-  await sharp(Buffer.from(data), { raw: { width: W, height: H, channels: ch } })
-    .png()
-    .toFile(outPath);
-
   const bbox = { x0: minX, y0: minY, x1: maxX, y1: maxY, w: maxX - minX + 1, h: maxY - minY + 1 };
-  console.log(`  ${name.padEnd(8)} bbox=[${bbox.x0},${bbox.y0} .. ${bbox.x1},${bbox.y1}] ${bbox.w}x${bbox.h} kept=${kept}`);
-  return { name, W, H, bbox };
+  const stripped = await sharp(Buffer.from(data), { raw: { width: W, height: H, channels: ch } }).png().toBuffer();
+  console.log(`  ${name.padEnd(8)} rawbbox=[${bbox.x0},${bbox.y0} .. ${bbox.x1},${bbox.y1}] ${bbox.w}x${bbox.h} kept=${kept}`);
+  return { name, W, H, bbox, stripped };
+}
+
+// Canonical avatar frame: reserve headroom (hats) and margins (effects) so every
+// trait fits within the 1024 canvas. One uniform scale across the family preserves
+// each archetype's relative size/personality; all are ground-aligned + centered.
+const FRAME = { canvas: 1024, groundY: 985, regionH: 745, centerX: 512 };
+
+async function frameBase(r, SF) {
+  const drawW = Math.max(1, Math.round(r.bbox.w * SF));
+  const drawH = Math.max(1, Math.round(r.bbox.h * SF));
+  const left = Math.round(FRAME.centerX - drawW / 2);
+  const top = FRAME.groundY - drawH;
+  const cut = await sharp(r.stripped).extract({ left: r.bbox.x0, top: r.bbox.y0, width: r.bbox.w, height: r.bbox.h })
+    .resize(drawW, drawH, { kernel: "nearest" }).png().toBuffer();
+  await sharp({ create: { width: FRAME.canvas, height: FRAME.canvas, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+    .composite([{ input: cut, left, top }]).png().toFile(path.join(BASE, `${r.name}.png`));
+  const bbox = { x0: left, y0: top, x1: left + drawW - 1, y1: top + drawH - 1, w: drawW, h: drawH };
+  console.log(`  ${r.name.padEnd(8)} framed=[${bbox.x0},${bbox.y0} .. ${bbox.x1},${bbox.y1}] ${bbox.w}x${bbox.h}`);
+  return { ...r, bbox };
 }
 
 async function buildContactSheet(results) {
@@ -138,9 +153,21 @@ async function buildContactSheet(results) {
   console.log("contact sheet ->", out);
 }
 
-const results = [];
 console.log("stripping backgrounds...");
-for (const [name] of FAMILY) results.push(await stripBackground(name));
-fs.writeFileSync(path.join(BASE, "_bbox.json"), JSON.stringify(Object.fromEntries(results.map((r) => [r.name, r.bbox])), null, 2));
+const stripped = [];
+for (const [name] of FAMILY) stripped.push(await stripBackground(name));
+
+// uniform scale so the tallest archetype fills the reserved region; preserves relative sizes
+const maxH = Math.max(...stripped.map((r) => r.bbox.h));
+const SF = FRAME.regionH / maxH;
+console.log(`framing into canonical avatar frame (SF=${SF.toFixed(4)}, ground=${FRAME.groundY}, regionH=${FRAME.regionH})...`);
+const results = [];
+for (const r of stripped) results.push(await frameBase(r, SF));
+
+fs.writeFileSync(path.join(BASE, "_bbox.json"), JSON.stringify({
+  frame: FRAME, scaleFactor: +SF.toFixed(4),
+  note: "Framed (post-normalization) bounding boxes on the 1024 canvas. One uniform scale keeps relative sizes; all ground-aligned + centered with headroom reserved for hats/effects.",
+  boxes: Object.fromEntries(results.map((r) => [r.name, r.bbox])),
+}, null, 2));
 await buildContactSheet(results);
 console.log("done.");

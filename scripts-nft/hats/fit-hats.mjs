@@ -39,23 +39,76 @@ async function headMetrics(name) {
   return res;
 }
 
-async function placeHat(name, hatId) {
+// Fully anchor-driven placement. Optional documented offsets live in
+// meta[hatId].offsets[archetype] = { dx, dy } and default to zero.
+async function computePlacement(name, hatId) {
   const m = meta[hatId];
   const a = anchors[name];
   const { headW, headTopY } = await headMetrics(name);
-  const targetW = headW * m.widthFactor;
-  const scale = targetW / m.pngW;
+  const scale = (headW * m.widthFactor) / m.pngW;
   const drawW = Math.max(1, Math.round(m.pngW * scale));
   const drawH = Math.max(1, Math.round(m.pngH * scale));
-  const left = Math.round(a.crown.x - m.centerXpx * scale);
-  // seat the hat's sit-line onto the real dome top, nestled a little into the wool
-  const top = Math.round(headTopY + a.bbox.h * m.sink - m.sitYpx * scale);
-  const hatBuf = await sharp(path.join(HATS, `${hatId}.png`)).resize(drawW, drawH, { kernel: "nearest" }).png().toBuffer();
-  // base + hat on transparent canvas
-  const comp = await sharp(path.join(BASE, `${name}.png`))
-    .composite([{ input: hatBuf, left, top }])
+  const off = (m.offsets && m.offsets[name]) || { dx: 0, dy: 0 };
+  const left = Math.round(a.crown.x - m.centerXpx * scale) + (off.dx || 0);
+  const top = Math.round(headTopY + a.bbox.h * m.sink - m.sitYpx * scale) + (off.dy || 0);
+  return { left, top, drawW, drawH, scale, headW, headTopY };
+}
+
+async function placeHat(name, hatId) {
+  const p = await computePlacement(name, hatId);
+  const hatBuf = await sharp(path.join(HATS, `${hatId}.png`)).resize(p.drawW, p.drawH, { kernel: "nearest" }).png().toBuffer();
+  return await sharp(path.join(BASE, `${name}.png`))
+    .composite([{ input: hatBuf, left: p.left, top: p.top }])
     .png().toBuffer();
-  return comp;
+}
+
+// Opaque bounding box of a hat sprite within its own PNG (ignores transparent padding).
+const artBoxCache = {};
+async function hatArtBox(hatId) {
+  if (artBoxCache[hatId]) return artBoxCache[hatId];
+  const { data, info } = await sharp(path.join(HATS, `${hatId}.png`)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const W = info.width, H = info.height;
+  let x0 = W, y0 = H, x1 = 0, y1 = 0;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (data[(y * W + x) * 4 + 3] > 16) {
+    if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+  }
+  const box = { x0, y0, x1, y1 };
+  artBoxCache[hatId] = box;
+  return box;
+}
+
+// Verify placement across the whole family. Returns a list of issue rows.
+async function verify() {
+  const rows = [];
+  for (const hatId of Object.keys(meta)) {
+    const box = await hatArtBox(hatId);
+    for (const name of ARCHES) {
+      const p = await computePlacement(name, hatId);
+      const a = anchors[name];
+      // real drawn art extents (exclude transparent sprite padding)
+      const artTop = p.top + box.y0 * p.scale;
+      const artBottom = p.top + box.y1 * p.scale;
+      const artLeft = p.left + box.x0 * p.scale;
+      const artRight = p.left + box.x1 * p.scale;
+      const eyeTop = a.eye.lineY - Math.round(a.bbox.h * 0.05);
+      const issues = [];
+      if (artBottom <= p.headTopY) issues.push("FLOATING");             // must nestle into wool
+      if (artBottom > eyeTop) issues.push("EYE-OVERLAP");               // must clear the eyes
+      if (artLeft < 0 || artRight > 1024 || artTop < 0) issues.push("CLIP-CANVAS");
+      const widthRatio = +(p.drawW / p.headW).toFixed(3);               // should equal widthFactor
+      rows.push({ hatId, name, widthRatio, wf: meta[hatId].widthFactor, issues, artTop: Math.round(artTop), artBottom: Math.round(artBottom), headTopY: p.headTopY, eyeTop });
+    }
+  }
+  const bad = rows.filter((r) => r.issues.length);
+  console.log(`\nVERIFY: ${rows.length} placements, ${bad.length} with issues`);
+  for (const r of bad) console.log(`  ! ${r.hatId}/${r.name}: ${r.issues.join(", ")}  [artTop=${r.artTop} artBottom=${r.artBottom} headTopY=${r.headTopY} eyeTop=${r.eyeTop}]`);
+  // scaling consistency: widthRatio should match widthFactor for every archetype of a hat
+  for (const hatId of Object.keys(meta)) {
+    const rs = rows.filter((r) => r.hatId === hatId);
+    const consistent = rs.every((r) => Math.abs(r.widthRatio - r.wf) < 0.02);
+    console.log(`  scale ${hatId.padEnd(12)} ${consistent ? "consistent" : "INCONSISTENT"} (wf=${meta[hatId].widthFactor})`);
+  }
+  return bad;
 }
 
 function label(text, w, size = 22) {
@@ -118,3 +171,5 @@ for (const hatId of Object.keys(meta)) {
 await sharp({ create: { width: SW, height: SH, channels: 4, background: { r: 234, g: 224, b: 205, alpha: 1 } } })
   .composite(ocomps).png().toFile(path.join(PREV, "_ALL-HATS.png"));
 console.log("wrote _ALL-HATS.png");
+
+await verify();
