@@ -323,7 +323,7 @@ export const en: Messages = {
         },
         {
           title: "Transparency",
-          body: "All four wallets involved in this project — Deployment, Liquidity, Treasury, and Founder — are public and viewable on-chain at any time. See the Treasury Policy section and the live /transparency page for current addresses and balances. Official wallets, treasury activity, liquidity information, and other transparency data are kept on that page, updated from on-chain information whenever possible.",
+          body: "All four wallets involved in this project — Deployment, Liquidity, Treasury, and Founder — are public and viewable on-chain at any time. See the Treasury Policy section and the live /transparency page for current addresses and balances. Official wallets, treasury activity, liquidity information, and other transparency data are kept on that page, updated from on-chain information whenever possible. Every liquidity operation the Treasury carries out — including the July 2026 liquidity optimization described in the Liquidity Policy section — happens through public transactions anyone can verify, and the original locked position has stayed completely untouched through all of them. Long-term sustainability, not short-term hype, is what those decisions are made for.",
         },
         {
           title: "Long-Term Thinking",
@@ -421,7 +421,7 @@ export const en: Messages = {
       },
       longTermStrategy: {
         heading: "Long-Term LP Strategy",
-        body: "The current approach favors a small number of well-understood positions over constant micromanagement. The intended long-term shape is a barbell: one tighter position for capital efficiency near the current price, plus at least one wider or full-range position sized as a standing backstop, so a single large trade can never fully exhaust tradeable liquidity in one direction. As of this writing, the project operates a single position; the backstop position is a planned addition, not yet deployed.",
+        body: "The current approach favors a small number of well-understood positions over constant micromanagement. The intended long-term shape is a barbell: one tighter position for capital efficiency near the current price, plus at least one wider or full-range position sized as a standing backstop, so a single large trade can never fully exhaust tradeable liquidity in one direction. As of July 2026, that barbell is live — see Liquidity Optimization below for what changed.",
       },
       lpFees: {
         heading: "LP Fees",
@@ -441,9 +441,17 @@ export const en: Messages = {
           },
         ],
       },
+      liquidityOptimization: {
+        heading: "Liquidity Optimization (July 2026)",
+        body: "In July 2026, the Treasury carried out a liquidity optimization on the official Uniswap v4 pool. The original 365-day locked position (#47299, see On-Chain Verification above) was left completely unchanged — nothing about that lock was touched or unwound. Alongside it, the Treasury added two new, Treasury-owned liquidity positions: a narrow-range position sized to reduce swap slippage near the current price, and a wider-range position held as additional downside protection. Combined, official liquidity across all positions now exceeds $10,000. This was funded through disclosed Treasury liquidity management, and every step of it is publicly verifiable on-chain.",
+      },
+      improvedTradingExperience: {
+        heading: "Improved Trading Experience",
+        body: "Since the optimization above, swap slippage on the official pool has been reduced noticeably at typical trade sizes. Medium and larger trades now execute more efficiently, with less price impact than before. Market depth is better on both sides of the current price, and the overall experience for anyone buying in for the first time is meaningfully smoother than it was.",
+      },
       multiplePositions: {
         heading: "Multiple LP Positions",
-        body: "A single concentrated position has a hard capacity limit in each direction. Running more than one position — at different ranges, potentially funded from different sources — is the standard way serious concentrated-liquidity operators avoid that limit becoming a single point of failure. This is a stated design direction for HANSOME, planned but not yet implemented.",
+        body: "A single concentrated position has a hard capacity limit in each direction. Running more than one position — at different ranges, potentially funded from different sources — is the standard way serious concentrated-liquidity operators avoid that limit becoming a single point of failure. As described in Liquidity Optimization above, this is now implemented for HANSOME: the original locked position runs alongside two additional Treasury-owned positions.",
       },
       noReactiveChasing: {
         heading: "Why We Won't Constantly Chase Price With Reactive Liquidity",
@@ -512,6 +520,14 @@ export const en: Messages = {
                 "Lock the official Uniswap v4 LP position (#47299) for 365 days via Titan Locker, unlocking July 2027 — a concrete, on-chain commitment to long-term liquidity, verifiable on /transparency",
               done: true,
             },
+            {
+              label:
+                "Complete a Treasury-led liquidity optimization on the official Uniswap v4 pool, adding two new Treasury-owned positions alongside the original locked position (see Liquidity Policy)",
+              done: true,
+            },
+            { label: "Improve swap infrastructure and gas-fee handling on Robinhood Chain for more reliable transactions", done: true },
+            { label: "Build internal tooling to support ongoing Treasury liquidity management", done: true },
+            { label: "Continue making incremental improvements to the website and overall trading experience", done: false },
             { label: "CoinGecko listing application submitted — pending review", done: false },
             { label: "CoinMarketCap listing application submitted — pending review", done: false },
             { label: "Begin periodic LP fee collection and recycling", done: false },
@@ -554,7 +570,7 @@ export const en: Messages = {
       paragraphs: [
         "Hype is a spike. Community is a floor. A hype cycle can bring a lot of attention very quickly and take all of it away just as fast, leaving nothing behind. A community — even a small one — is what's still around to care the day after the chart stops moving.",
         "This project would rather have a hundred people who actually find the mascot funny and stick around than ten thousand people who forget the ticker by next week. Every policy in this document — the treasury discipline, the liquidity approach, being straight about what's real versus what's just a direction — is really in service of one goal: giving a real community, and eventually a real brand built with that community, something worth being part of.",
-        "That's not just an intention anymore. There's an active Telegram community already up and running, growing organically rather than through paid pushes. We run regular meme contests, giveaways, and community events for the people who actually show up — and community participation is quickly becoming one of this project's biggest priorities, right alongside treasury and liquidity discipline.",
+        "That's not just an intention anymore. There's an active Telegram community already up and running, growing organically rather than through paid pushes. We run regular meme contests, giveaways, AMA sessions, and community events for the people who actually show up, and we're starting to work with KOLs and run broader marketing campaigns to bring in people worth keeping around. Community participation is quickly becoming one of this project's biggest priorities, right alongside treasury and liquidity discipline.",
       ],
     },
     longTermVision: {
@@ -620,6 +636,18 @@ export const en: Messages = {
       heading: "Changelog",
       intro: "A record of this document's own revisions — not the whole project's history, just this litepaper.",
       entries: [
+        {
+          version: "v1.5",
+          date: "July 2026",
+          changes: [
+            "Completed a Treasury-led liquidity optimization on the official Uniswap v4 pool: added two new Treasury-owned positions — a narrow-range position for lower swap slippage and a wide-range position for additional downside protection — while leaving the original 365-day locked position (#47299) completely unchanged.",
+            "Updated the Liquidity Policy section to reflect that the barbell liquidity strategy, previously described as planned, is now live, with official liquidity across all positions exceeding $10,000.",
+            "Added notes on the improved trading experience following the optimization: reduced swap slippage, more efficient execution for medium and larger trades, and better market depth.",
+            "Added notes on recent infrastructure improvements: swap infrastructure, gas-fee handling on Robinhood Chain, transaction reliability, and internal liquidity management tooling.",
+            "Expanded the Community section to reflect AMA sessions, KOL collaborations, and ongoing marketing campaigns alongside existing meme contests, giveaways, and community events.",
+            "Expanded the Transparency pillar in Core Philosophy to explicitly note that all liquidity operations are performed on-chain and are publicly verifiable, and that the project prioritizes long-term sustainability over short-term hype.",
+          ],
+        },
         {
           version: "v1.4",
           date: "July 2026",

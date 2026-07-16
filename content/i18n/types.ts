@@ -169,6 +169,8 @@ export type LitepaperMessages = {
     longTermStrategy: LitepaperPolicyBlock;
     lpFees: LitepaperPolicyBlock;
     onChainVerification: LitepaperPolicyBlock;
+    liquidityOptimization: LitepaperPolicyBlock;
+    improvedTradingExperience: LitepaperPolicyBlock;
     multiplePositions: LitepaperPolicyBlock;
     noReactiveChasing: LitepaperPolicyBlock;
   };

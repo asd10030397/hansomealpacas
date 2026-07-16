@@ -168,6 +168,8 @@ function LitepaperContent() {
             lp.liquidity.longTermStrategy,
             lp.liquidity.lpFees,
             lp.liquidity.onChainVerification,
+            lp.liquidity.liquidityOptimization,
+            lp.liquidity.improvedTradingExperience,
             lp.liquidity.multiplePositions,
             lp.liquidity.noReactiveChasing,
           ].map((block) => (
