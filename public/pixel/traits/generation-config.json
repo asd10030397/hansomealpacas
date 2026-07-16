@@ -8,34 +8,46 @@
     "mascotBase": "public/pixel/alpaca-nft-master-base.png"
   },
   "mascotPolicy": {
-    "rule": "The canonical alpaca (mascotBase) is the official HANSOME mascot and the face of the brand. Its exact side-swept wool, head silhouette, ear shape, and expression are brand identity and are RESERVED. Exactly ONE NFT in the entire Genesis collection may use this exact appearance: the Founder NFT (#001).",
-    "reservedFor": "founder-#001-only",
+    "rule": "The canonical alpaca (mascotBase) is the official HANSOME mascot and the face of the brand. It is used ONLY for branding. There is exactly one mascot. It is NOT part of the NFT collection, is NEVER minted, has no tokenId, and is NOT counted toward the 500 total supply.",
+    "isMinted": false,
+    "partOfCollection": false,
+    "countsTowardTotalSupply": false,
     "appliesTo": "public/pixel/alpaca-nft-master-base.png",
     "generatorMustNever": [
-      "use the mascot base for any token other than #001",
+      "mint or tokenize the mascot",
+      "use the mascot base for any minted token, including Founder #001",
       "produce a base body that replicates the mascot's exact wool shape / silhouette / ear / expression",
       "treat the mascot as the generic base and only swap accessories"
     ],
-    "everyOtherAlpaca": {
+    "everyAlpacaInCollection": {
       "mustBeOriginalIn": ["woolShape", "headSilhouette", "earShape", "facialExpression", "fluffStyle"],
       "mustStillReadAs": "clearly the same HANSOME universe (shared palette, proportions, pixel-art rendering, cozy countryside identity)"
     }
   },
   "distribution": {
+    "totalSupply": 500,
     "publicMint": 470,
     "legendary": 20,
     "reserved": 10,
-    "notes": "publicMint + legendary + reserved must equal totalSupply (470 + 20 + 10 = 500)."
+    "founderIsWithinReserved": true,
+    "notes": "CANONICAL Genesis distribution: 470 public + 20 legendary + 10 reserved = 500. Founder NFT #001 is ONE of the 10 Reserved NFTs (not an extra). The mascot is separate: never minted and not counted here."
   },
   "tokenIdPolicy": {
     "startId": 1,
+    "endId": 500,
+    "mascot": {
+      "minted": false,
+      "tokenId": null,
+      "notes": "The mascot has no tokenId and never occupies any id in the 1..500 range. Branding only."
+    },
     "founder": {
       "tokenId": 1,
-      "label": "Founder Alpaca",
+      "label": "Founder NFT",
       "generation": "manual",
+      "isReserved": true,
+      "usesMascotAppearance": false,
       "excludeFromRandomPool": true,
-      "usesMascotAppearance": true,
-      "notes": "NFT #001 is hand-designed and is the ONLY token permitted to use the canonical mascot appearance (mascotBase). The generator must never produce or overwrite it."
+      "notes": "Founder #001 is hand-designed and is ONE of the 10 Reserved NFTs (counted inside the reserved allocation, not in addition to it). It is a distinct, original HANSOME alpaca — it does NOT use the branding-only mascot appearance. Do not create any additional Founder outside the reserved allocation."
     },
     "legendaryTokenIds": {
       "count": 20,
@@ -47,15 +59,16 @@
     },
     "reservedTokenIds": {
       "count": 10,
-      "purposes": ["founder-extra", "team", "community-events", "partnerships", "future-ecosystem-rewards"],
+      "includesFounder": true,
+      "purposes": ["founder-#001", "team", "community-events", "partnerships", "future-ecosystem-rewards"],
       "excludeFromRandomPool": true,
-      "notes": "10 reserved NFTs held back from the public generation pool. May be minted normally-generated or hand-picked, but their IDs are set aside up front so they can never accidentally land in the public 470.",
-      "reservedAssignments": []
+      "notes": "10 reserved NFTs held back from the public generation pool — INCLUDING Founder #001 as one of the ten. Their IDs are set aside up front so they can never land in the public 470. 470 public + 20 legendary + 10 reserved = 500.",
+      "reservedAssignments": [{ "tokenId": 1, "role": "founder" }]
     }
   },
   "randomPool": {
     "size": 470,
-    "notes": "Only these 470 are procedurally generated from the trait system. Founder (1), Legendary (20) and Reserved (10) IDs are removed from the candidate id set before generation.",
+    "notes": "Only these 470 are procedurally generated from the trait system. Legendary (20) and Reserved (10, which includes Founder #001) IDs are removed from the candidate id set before generation. The mascot is not a token and is never in the pool.",
     "seed": 20260717,
     "deterministic": true
   },
@@ -82,7 +95,7 @@
     "effects"
   ],
   "layerNotes": {
-    "base": "The individual alpaca body for this token (from the 'base' category). Each is an original HANSOME alpaca with its own wool shape / head silhouette / ear / expression — NOT the mascot. Only token #001 uses the reserved mascot base. Base art is composited pixel-for-pixel, never smoothed or upscaled.",
+    "base": "The individual alpaca body for this token (from the 'base' category). Each is an original HANSOME alpaca with its own wool shape / head silhouette / ear / expression — NOT the mascot. Every minted token (including Founder #001) uses an original base; the mascot base is branding-only and is never composited into a token. Base art is composited pixel-for-pixel, never smoothed or upscaled.",
     "fur": "Wool-style overlay drawn on top of the chosen base (tufts / texture / edge puffs). 'Classic' is a no-op.",
     "necklace": "Sits above clothing so a collar/pendant reads over a scarf or sweater.",
     "hat": "Topmost worn item.",
@@ -108,7 +121,7 @@
     "enforce": true,
     "method": "sha256-of-sorted-trait-id-list",
     "maxAttemptsPerToken": 500,
-    "notes": "No two public NFTs may share an identical trait combination. Founder and Legendary are outside this check."
+    "notes": "No two public NFTs may share an identical trait combination. Legendary and Reserved NFTs (Reserved includes Founder #001) are hand-authored and outside this check."
   },
   "outputs": {
     "composites": "public/pixel/genesis/{tokenId}.png",

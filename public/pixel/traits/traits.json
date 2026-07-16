@@ -17,9 +17,9 @@
       "framing": "front-facing, full-body (head + body + four legs + hooves + tail)",
       "renderStyle": "soft-shaded pixel art matching the HANSOME mascot palette and rendering",
       "excludeFromRandomPool": ["mascot"],
-      "description": "The individual alpaca body. Each is an ORIGINAL, full-body HANSOME alpaca with its own wool shape, head silhouette, ear shape, facial expression, and fluff style — sharing the HANSOME palette, proportions, and pixel rendering, but never a clone of the mascot. Every one 'lives in the same village'. The mascot (head-and-neck bust) is reserved for Founder #001 and is not part of this pool.",
+      "description": "The individual alpaca body. Each is an ORIGINAL, full-body HANSOME alpaca with its own wool shape, head silhouette, ear shape, facial expression, and fluff style — sharing the HANSOME palette, proportions, and pixel rendering, but never a clone of the mascot. Every one 'lives in the same village'. The mascot is branding-only (never minted); Founder #001 is its own original reserved alpaca and is not this mascot.",
       "reserved": [
-        { "id": "mascot", "name": "HANSOME Mascot", "file": "../../alpaca-nft-master-base.png", "reservedFor": "founder-#001-only", "status": "reserved", "notes": "Brand-identity appearance. Never used by any token except the Founder NFT." }
+        { "id": "mascot", "name": "HANSOME Mascot", "file": "../../alpaca-nft-master-base.png", "usage": "branding-only", "minted": false, "status": "not-in-collection", "notes": "Official mascot. Branding only — never minted, not counted in the 500, and never used as a token base (including Founder #001)." }
       ],
       "items": [
         { "id": "puff", "name": "Puff", "file": "base/puff.png", "personality": "cozy / sleepy", "status": "ready" },

@@ -64,7 +64,7 @@
     }
   ],
   "reservedExclusions": {
-    "comment": "Legendary and Founder trait combos are hand-authored and are NOT validated against these rules; they are one-of-one art.",
-    "excludeFromRandomPool": ["founder", "legendary"]
+    "comment": "Legendary and Reserved NFTs (the Reserved allocation includes Founder #001) are hand-authored one-of-one art and are NOT validated against these rules. The mascot is not a token and is excluded entirely.",
+    "excludeFromRandomPool": ["legendary", "reserved"]
   }
 }

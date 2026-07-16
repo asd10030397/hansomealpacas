@@ -26,7 +26,7 @@
   },
   "notes": [
     "These weights are the starting point for the FULL library; the review batch does not need to hit these distributions.",
-    "Legendary NFTs and the Founder NFT are outside this rarity model entirely — they are hand-designed, not drawn from weights.",
+    "Legendary NFTs and the Reserved NFTs (Reserved includes Founder #001) are outside this rarity model entirely — they are hand-designed, not drawn from weights.",
     "Rarity for HANSOME-original traits (mouth flowers, wool styles, face marks) is intentionally skewed so the cozy defaults dominate and special nature traits feel earned."
   ]
 }
