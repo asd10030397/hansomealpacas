@@ -1,0 +1,62 @@
+{
+  "straw-hat": {
+    "name": "Straw Sun Hat",
+    "tier": "common",
+    "file": "hats/straw-hat.png",
+    "pngW": 832,
+    "pngH": 480,
+    "scale": 16,
+    "centerXpx": 416,
+    "sitYpx": 272,
+    "widthFactor": 1.7,
+    "sink": 0.02
+  },
+  "wool-beanie": {
+    "name": "Wool Beanie",
+    "tier": "common",
+    "file": "hats/wool-beanie.png",
+    "pngW": 640,
+    "pngH": 448,
+    "scale": 16,
+    "centerXpx": 320,
+    "sitYpx": 256,
+    "widthFactor": 1.16,
+    "sink": 0.055
+  },
+  "flower-crown": {
+    "name": "Flower Crown",
+    "tier": "rare",
+    "file": "hats/flower-crown.png",
+    "pngW": 800,
+    "pngH": 256,
+    "scale": 16,
+    "centerXpx": 400,
+    "sitYpx": 176,
+    "widthFactor": 1.28,
+    "sink": 0.06
+  },
+  "bobble-hat": {
+    "name": "Bobble Hat",
+    "tier": "uncommon",
+    "file": "hats/bobble-hat.png",
+    "pngW": 640,
+    "pngH": 480,
+    "scale": 16,
+    "centerXpx": 320,
+    "sitYpx": 272,
+    "widthFactor": 1.14,
+    "sink": 0.05
+  },
+  "cloth-cap": {
+    "name": "Cloth Cap",
+    "tier": "uncommon",
+    "file": "hats/cloth-cap.png",
+    "pngW": 736,
+    "pngH": 384,
+    "scale": 16,
+    "centerXpx": 368,
+    "sitYpx": 224,
+    "widthFactor": 1.18,
+    "sink": 0.045
+  }
+}

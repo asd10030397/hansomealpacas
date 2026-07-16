@@ -171,13 +171,16 @@
       "required": false,
       "planned": 25,
       "noneAllowed": true,
-      "description": "Headwear resting on the wool crown. Countryside/handmade — straw, wool, flowers, farm caps.",
+      "description": "Headwear resting on the wool crown. Countryside/handmade — straw, wool, flowers, farm caps. Authored as tight transparent sprites; placed on each archetype via the crown anchor + measured head width (see hats/_hats-meta.json, scripts-nft/hats/fit-hats.mjs).",
+      "fitSystem": "anchor-fitted (per-archetype crown seat + head-width scale)",
+      "metaFile": "hats/_hats-meta.json",
+      "reviewBatch": 5,
       "items": [
-        { "id": "straw-hat", "name": "Straw Hat", "file": "hats/straw-hat.png", "tier": "common", "status": "ready" },
-        { "id": "farmer-cap", "name": "Farmer Cap", "file": "hats/farmer-cap.png", "tier": "common", "status": "ready" },
-        { "id": "wool-beanie", "name": "Wool Beanie", "file": "hats/wool-beanie.png", "tier": "uncommon", "status": "ready" },
-        { "id": "acorn-cap", "name": "Acorn Cap", "file": "hats/acorn-cap.png", "tier": "rare", "status": "ready" },
-        { "id": "flower-crown", "name": "Flower Crown", "file": "hats/flower-crown.png", "tier": "epic", "status": "ready" }
+        { "id": "straw-hat", "name": "Straw Sun Hat", "file": "hats/straw-hat.png", "tier": "common", "status": "ready" },
+        { "id": "wool-beanie", "name": "Wool Beanie", "file": "hats/wool-beanie.png", "tier": "common", "status": "ready" },
+        { "id": "bobble-hat", "name": "Bobble Hat", "file": "hats/bobble-hat.png", "tier": "uncommon", "status": "ready" },
+        { "id": "cloth-cap", "name": "Cloth Cap", "file": "hats/cloth-cap.png", "tier": "uncommon", "status": "ready" },
+        { "id": "flower-crown", "name": "Flower Crown", "file": "hats/flower-crown.png", "tier": "rare", "status": "ready" }
       ]
     },
     "effects": {
