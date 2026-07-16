@@ -8,6 +8,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const BASE = "public/pixel/traits/base";
+const NORM = path.join(BASE, "normalized"); // fit onto normalized avatar frame
 const HATS = "public/pixel/traits/hats";
 const PREV = path.join(HATS, "previews");
 fs.mkdirSync(PREV, { recursive: true });
@@ -22,7 +23,7 @@ const CARD = { r: 255, g: 252, b: 245, alpha: 1 };
 const headCache = {};
 async function headMetrics(name) {
   if (headCache[name]) return headCache[name];
-  const { data, info } = await sharp(path.join(BASE, `${name}.png`)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const { data, info } = await sharp(path.join(NORM, `${name}.png`)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   const W = info.width, H = info.height;
   const a = anchors[name];
   const bH = a.bbox.h;
@@ -57,7 +58,7 @@ async function computePlacement(name, hatId) {
 async function placeHat(name, hatId) {
   const p = await computePlacement(name, hatId);
   const hatBuf = await sharp(path.join(HATS, `${hatId}.png`)).resize(p.drawW, p.drawH, { kernel: "nearest" }).png().toBuffer();
-  return await sharp(path.join(BASE, `${name}.png`))
+  return await sharp(path.join(NORM, `${name}.png`))
     .composite([{ input: hatBuf, left: p.left, top: p.top }])
     .png().toBuffer();
 }

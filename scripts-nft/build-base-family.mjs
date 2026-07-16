@@ -1,18 +1,26 @@
 // Build the HANSOME Genesis base-body family:
 //  1. Strip the flat background from each archetype -> transparent PNG (pixel-clean,
 //     border flood-fill; the alpaca is protected by its dark outline).
-//  2. Compute the silhouette bounding box for each.
-//  3. Emit a family contact sheet for review.
+//  2. Preserve the ORIGINAL (unframed) transparent artwork  -> base/original/<name>.png
+//     (the visual source of truth for NFT portrait generation).
+//  3. Produce the NORMALIZED avatar-frame artwork           -> base/normalized/<name>.png
+//     (uniform scale, ground-aligned, centered; for avatar proportions, rigging,
+//      trait fitting, and HANSOME HUB rendering).
+//  4. Emit a full frame-transform document + a family contact sheet.
+//
+// Pixel art only: ALL scaling is nearest-neighbor. No smoothing / soft interpolation.
 //
 // Sources: public/pixel/traits/base/_source/*.png  (white-background originals)
-// Outputs: public/pixel/traits/base/<name>.png     (transparent)
-//          public/pixel/traits/base/_family-contact-sheet.png
 import sharp from "sharp";
 import fs from "node:fs";
 import path from "node:path";
 
 const BASE = "public/pixel/traits/base";
 const SRC = path.join(BASE, "_source");
+const ORIG = path.join(BASE, "original");
+const NORM = path.join(BASE, "normalized");
+fs.mkdirSync(ORIG, { recursive: true });
+fs.mkdirSync(NORM, { recursive: true });
 
 // name -> short personality label for the contact sheet
 const FAMILY = [
@@ -101,10 +109,10 @@ async function frameBase(r, SF) {
   const cut = await sharp(r.stripped).extract({ left: r.bbox.x0, top: r.bbox.y0, width: r.bbox.w, height: r.bbox.h })
     .resize(drawW, drawH, { kernel: "nearest" }).png().toBuffer();
   await sharp({ create: { width: FRAME.canvas, height: FRAME.canvas, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
-    .composite([{ input: cut, left, top }]).png().toFile(path.join(BASE, `${r.name}.png`));
+    .composite([{ input: cut, left, top }]).png().toFile(path.join(NORM, `${r.name}.png`));
   const bbox = { x0: left, y0: top, x1: left + drawW - 1, y1: top + drawH - 1, w: drawW, h: drawH };
   console.log(`  ${r.name.padEnd(8)} framed=[${bbox.x0},${bbox.y0} .. ${bbox.x1},${bbox.y1}] ${bbox.w}x${bbox.h}`);
-  return { ...r, bbox };
+  return { ...r, origBbox: r.bbox, bbox, place: { left, top, drawW, drawH }, scale: SF };
 }
 
 async function buildContactSheet(results) {
@@ -138,7 +146,7 @@ async function buildContactSheet(results) {
 
     // trait, trimmed to bbox then fit into CELL
     const b = r.bbox;
-    const trait = await sharp(path.join(BASE, `${name}.png`))
+    const trait = await sharp(path.join(NORM, `${name}.png`))
       .extract({ left: b.x0, top: b.y0, width: b.w, height: b.h })
       .resize(CELL, CELL, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 }, kernel: "nearest" })
       .png().toBuffer();
@@ -157,7 +165,16 @@ console.log("stripping backgrounds...");
 const stripped = [];
 for (const [name] of FAMILY) stripped.push(await stripBackground(name));
 
-// uniform scale so the tallest archetype fills the reserved region; preserves relative sizes
+// (1) Preserve the ORIGINAL (unframed) transparent artwork — visual source of truth
+// for NFT portrait generation. This is the stripped alpaca on the full 1024 canvas,
+// with NO scaling/resampling applied (identity-preserving).
+console.log("writing original (unframed) archetypes...");
+for (const r of stripped) {
+  await sharp(r.stripped).png().toFile(path.join(ORIG, `${r.name}.png`));
+}
+
+// (2) Produce the NORMALIZED avatar frame. Uniform scale so the tallest archetype fills
+// the reserved region; preserves relative sizes. Nearest-neighbor only (no smoothing).
 const maxH = Math.max(...stripped.map((r) => r.bbox.h));
 const SF = FRAME.regionH / maxH;
 console.log(`framing into canonical avatar frame (SF=${SF.toFixed(4)}, ground=${FRAME.groundY}, regionH=${FRAME.regionH})...`);
@@ -169,5 +186,50 @@ fs.writeFileSync(path.join(BASE, "_bbox.json"), JSON.stringify({
   note: "Framed (post-normalization) bounding boxes on the 1024 canvas. One uniform scale keeps relative sizes; all ground-aligned + centered with headroom reserved for hats/effects.",
   boxes: Object.fromEntries(results.map((r) => [r.name, r.bbox])),
 }, null, 2));
+
+// (3) Full frame-transform document: original <-> normalized mapping for every archetype.
+const transform = {
+  canvas: FRAME.canvas,
+  resampling: "nearest-neighbor",
+  smoothing: false,
+  interpolation: "none (pixel art; nearest-neighbor scaling only)",
+  frame: FRAME,
+  uniformScale: +SF.toFixed(6),
+  scaleReference: "SF = FRAME.regionH / max(originalBboxHeight); one uniform scale for the whole family",
+  groundAlignment: `all archetypes bottom-aligned to y=${FRAME.groundY}; horizontally centered on x=${FRAME.centerX}`,
+  paths: {
+    source: "public/pixel/traits/base/_source/<name>.png (white-background originals)",
+    original: "public/pixel/traits/base/original/<name>.png (transparent, UNFRAMED — NFT portrait source of truth)",
+    normalized: "public/pixel/traits/base/normalized/<name>.png (transparent, avatar-frame — trait fitting / HUB / rigging)",
+  },
+  anchors: {
+    space: "NORMALIZED",
+    file: "public/pixel/traits/base/anchors.json",
+    note: "Anchors are detected in normalized space and used for trait fitting + HUB rendering.",
+    mapToOriginal: "ox = origCenterX + (nx - 512) / SF ;  oy = origBottomY - (985 - ny) / SF",
+    mapToNormalized: "nx = 512 + (ox - origCenterX) * SF ;  ny = 985 - (origBottomY - oy) * SF",
+  },
+  archetypes: Object.fromEntries(results.map((r) => {
+    const o = r.origBbox, n = r.bbox;
+    return [r.name, {
+      original: {
+        bbox: { x0: o.x0, y0: o.y0, x1: o.x1, y1: o.y1, w: o.w, h: o.h },
+        centerX: Math.round((o.x0 + o.x1) / 2),
+        bottomY: o.y1,
+      },
+      normalized: {
+        bbox: { x0: n.x0, y0: n.y0, x1: n.x1, y1: n.y1, w: n.w, h: n.h },
+        scale: +SF.toFixed(6),
+        offset: { left: r.place.left, top: r.place.top },
+        drawSize: { w: r.place.drawW, h: r.place.drawH },
+        groundAlignedY: FRAME.groundY,
+      },
+      resampled: o.w !== n.w || o.h !== n.h ? "nearest-neighbor" : "none (1:1)",
+    }];
+  })),
+};
+fs.writeFileSync(path.join(BASE, "_frame-transform.json"), JSON.stringify(transform, null, 2));
+console.log("frame-transform ->", path.join(BASE, "_frame-transform.json"));
+
 await buildContactSheet(results);
 console.log("done.");

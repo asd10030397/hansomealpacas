@@ -1,0 +1,67 @@
+{
+  "hansome-pendant": {
+    "name": "HANSOME Pendant",
+    "tier": "rare",
+    "file": "necklaces/hansome-pendant.png",
+    "pngW": 800,
+    "pngH": 544,
+    "scale": 16,
+    "centerXpx": 400,
+    "neckYpx": 48,
+    "widthFactor": 0.86,
+    "sink": 0.01,
+    "offsets": {}
+  },
+  "bell-collar": {
+    "name": "Bell Collar",
+    "tier": "uncommon",
+    "file": "necklaces/bell-collar.png",
+    "pngW": 832,
+    "pngH": 576,
+    "scale": 16,
+    "centerXpx": 416,
+    "neckYpx": 48,
+    "widthFactor": 0.9,
+    "sink": 0.005,
+    "offsets": {}
+  },
+  "clover-pendant": {
+    "name": "Clover Pendant",
+    "tier": "rare",
+    "file": "necklaces/clover-pendant.png",
+    "pngW": 800,
+    "pngH": 576,
+    "scale": 16,
+    "centerXpx": 400,
+    "neckYpx": 48,
+    "widthFactor": 0.9,
+    "sink": 0.01,
+    "offsets": {}
+  },
+  "wooden-beads": {
+    "name": "Wooden Necklace",
+    "tier": "common",
+    "file": "necklaces/wooden-beads.png",
+    "pngW": 864,
+    "pngH": 544,
+    "scale": 16,
+    "centerXpx": 432,
+    "neckYpx": 64,
+    "widthFactor": 0.92,
+    "sink": 0.005,
+    "offsets": {}
+  },
+  "berry-string": {
+    "name": "Berry String",
+    "tier": "uncommon",
+    "file": "necklaces/berry-string.png",
+    "pngW": 896,
+    "pngH": 480,
+    "scale": 16,
+    "centerXpx": 448,
+    "neckYpx": 64,
+    "widthFactor": 0.94,
+    "sink": 0.005,
+    "offsets": {}
+  }
+}

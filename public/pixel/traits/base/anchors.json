@@ -1,5 +1,5 @@
 {
-  "note": "First-pass geometric anchors on the 1024x1024 canvas. crown=hat, ear=ear accessory, eye=glasses line, neck=necklace, chest=clothing. Verify against _anchors-overlay.png before trait-fitting.",
+  "note": "First-pass geometric anchors on the 1024x1024 canvas. crown=hat, ear=ear accessory, eye=glasses line, neck=neck accessory, chest=clothing. Verify against _anchors-overlay.png before trait-fitting.",
   "canvas": {
     "width": 1024,
     "height": 1024

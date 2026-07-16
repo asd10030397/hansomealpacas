@@ -108,10 +108,14 @@
     "hat",
     "effects"
   ],
+  "categoryLabels": {
+    "comment": "Display names for categories; internal keys / folders kept stable to preserve asset IDs and references.",
+    "necklace": "Neck Accessories"
+  },
   "layerNotes": {
     "base": "The individual alpaca body for this token (from the 'base' category). Each is an original HANSOME alpaca with its own wool shape / head silhouette / ear / expression — NOT the mascot — EXCEPT Founder #001, which uses the iconic mascot appearance as its base. The mascot is never minted as its own standalone token. Base art is composited pixel-for-pixel, never smoothed or upscaled.",
     "fur": "Wool-style overlay drawn on top of the chosen base (tufts / texture / edge puffs). 'Classic' is a no-op.",
-    "necklace": "Sits above clothing so a collar/pendant reads over a scarf or sweater.",
+    "necklace": "Neck Accessories (display name). Sits above clothing so a collar/pendant reads over a scarf or sweater.",
     "hat": "Topmost worn item.",
     "effects": "Ambient foreground elements (butterfly, bee, falling leaf, sparkles). Drawn last, may extend beyond the alpaca silhouette."
   },
@@ -157,7 +161,7 @@
   "status": {
     "phase": "trait-fitting",
     "reviewBatchOnly": true,
-    "completed": ["base archetype family (8)", "anatomy anchors", "hats (5, anchor-fitted)"],
-    "notes": "Anchor-driven trait-fitting in progress. Hats reviewed first. Necklaces, glasses, clothing, mouth, ear accessories, effects follow in that order. Full library, metadata, Legendary, Founder #001 artwork, and the 500-piece generation remain on hold pending approval."
+    "completed": ["base archetype family (8)", "anatomy anchors", "hats (5, anchor-fitted)", "neck accessories (5, anchor-fitted)"],
+    "notes": "Anchor-driven trait-fitting in progress. Hats reviewed first, then Neck Accessories. Glasses, clothing, mouth, ear accessories, effects follow in that order. Full library, metadata, Legendary, Founder #001 artwork, and the 500-piece generation remain on hold pending approval."
   }
 }

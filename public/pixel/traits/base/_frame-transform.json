@@ -1,0 +1,309 @@
+{
+  "canvas": 1024,
+  "resampling": "nearest-neighbor",
+  "smoothing": false,
+  "interpolation": "none (pixel art; nearest-neighbor scaling only)",
+  "frame": {
+    "canvas": 1024,
+    "groundY": 985,
+    "regionH": 745,
+    "centerX": 512
+  },
+  "uniformScale": 0.781742,
+  "scaleReference": "SF = FRAME.regionH / max(originalBboxHeight); one uniform scale for the whole family",
+  "groundAlignment": "all archetypes bottom-aligned to y=985; horizontally centered on x=512",
+  "paths": {
+    "source": "public/pixel/traits/base/_source/<name>.png (white-background originals)",
+    "original": "public/pixel/traits/base/original/<name>.png (transparent, UNFRAMED — NFT portrait source of truth)",
+    "normalized": "public/pixel/traits/base/normalized/<name>.png (transparent, avatar-frame — trait fitting / HUB / rigging)"
+  },
+  "anchors": {
+    "space": "NORMALIZED",
+    "file": "public/pixel/traits/base/anchors.json",
+    "note": "Anchors are detected in normalized space and used for trait fitting + HUB rendering.",
+    "mapToOriginal": "ox = origCenterX + (nx - 512) / SF ;  oy = origBottomY - (985 - ny) / SF",
+    "mapToNormalized": "nx = 512 + (ox - origCenterX) * SF ;  ny = 985 - (origBottomY - oy) * SF"
+  },
+  "archetypes": {
+    "puff": {
+      "original": {
+        "bbox": {
+          "x0": 194,
+          "y0": 55,
+          "x1": 844,
+          "y1": 957,
+          "w": 651,
+          "h": 903
+        },
+        "centerX": 519,
+        "bottomY": 957
+      },
+      "normalized": {
+        "bbox": {
+          "x0": 258,
+          "y0": 279,
+          "x1": 766,
+          "y1": 984,
+          "w": 509,
+          "h": 706
+        },
+        "scale": 0.781742,
+        "offset": {
+          "left": 258,
+          "top": 279
+        },
+        "drawSize": {
+          "w": 509,
+          "h": 706
+        },
+        "groundAlignedY": 985
+      },
+      "resampled": "nearest-neighbor"
+    },
+    "curly": {
+      "original": {
+        "bbox": {
+          "x0": 265,
+          "y0": 34,
+          "x1": 771,
+          "y1": 978,
+          "w": 507,
+          "h": 945
+        },
+        "centerX": 518,
+        "bottomY": 978
+      },
+      "normalized": {
+        "bbox": {
+          "x0": 314,
+          "y0": 246,
+          "x1": 709,
+          "y1": 984,
+          "w": 396,
+          "h": 739
+        },
+        "scale": 0.781742,
+        "offset": {
+          "left": 314,
+          "top": 246
+        },
+        "drawSize": {
+          "w": 396,
+          "h": 739
+        },
+        "groundAlignedY": 985
+      },
+      "resampled": "nearest-neighbor"
+    },
+    "topknot": {
+      "original": {
+        "bbox": {
+          "x0": 317,
+          "y0": 51,
+          "x1": 723,
+          "y1": 977,
+          "w": 407,
+          "h": 927
+        },
+        "centerX": 520,
+        "bottomY": 977
+      },
+      "normalized": {
+        "bbox": {
+          "x0": 353,
+          "y0": 260,
+          "x1": 670,
+          "y1": 984,
+          "w": 318,
+          "h": 725
+        },
+        "scale": 0.781742,
+        "offset": {
+          "left": 353,
+          "top": 260
+        },
+        "drawSize": {
+          "w": 318,
+          "h": 725
+        },
+        "groundAlignedY": 985
+      },
+      "resampled": "nearest-neighbor"
+    },
+    "cria": {
+      "original": {
+        "bbox": {
+          "x0": 250,
+          "y0": 95,
+          "x1": 760,
+          "y1": 934,
+          "w": 511,
+          "h": 840
+        },
+        "centerX": 505,
+        "bottomY": 934
+      },
+      "normalized": {
+        "bbox": {
+          "x0": 313,
+          "y0": 328,
+          "x1": 711,
+          "y1": 984,
+          "w": 399,
+          "h": 657
+        },
+        "scale": 0.781742,
+        "offset": {
+          "left": 313,
+          "top": 328
+        },
+        "drawSize": {
+          "w": 399,
+          "h": 657
+        },
+        "groundAlignedY": 985
+      },
+      "resampled": "nearest-neighbor"
+    },
+    "sleek": {
+      "original": {
+        "bbox": {
+          "x0": 357,
+          "y0": 33,
+          "x1": 685,
+          "y1": 985,
+          "w": 329,
+          "h": 953
+        },
+        "centerX": 521,
+        "bottomY": 985
+      },
+      "normalized": {
+        "bbox": {
+          "x0": 384,
+          "y0": 240,
+          "x1": 640,
+          "y1": 984,
+          "w": 257,
+          "h": 745
+        },
+        "scale": 0.781742,
+        "offset": {
+          "left": 384,
+          "top": 240
+        },
+        "drawSize": {
+          "w": 257,
+          "h": 745
+        },
+        "groundAlignedY": 985
+      },
+      "resampled": "nearest-neighbor"
+    },
+    "scruffy": {
+      "original": {
+        "bbox": {
+          "x0": 239,
+          "y0": 40,
+          "x1": 793,
+          "y1": 981,
+          "w": 555,
+          "h": 942
+        },
+        "centerX": 516,
+        "bottomY": 981
+      },
+      "normalized": {
+        "bbox": {
+          "x0": 295,
+          "y0": 249,
+          "x1": 728,
+          "y1": 984,
+          "w": 434,
+          "h": 736
+        },
+        "scale": 0.781742,
+        "offset": {
+          "left": 295,
+          "top": 249
+        },
+        "drawSize": {
+          "w": 434,
+          "h": 736
+        },
+        "groundAlignedY": 985
+      },
+      "resampled": "nearest-neighbor"
+    },
+    "bramble": {
+      "original": {
+        "bbox": {
+          "x0": 269,
+          "y0": 56,
+          "x1": 793,
+          "y1": 964,
+          "w": 525,
+          "h": 909
+        },
+        "centerX": 531,
+        "bottomY": 964
+      },
+      "normalized": {
+        "bbox": {
+          "x0": 307,
+          "y0": 274,
+          "x1": 716,
+          "y1": 984,
+          "w": 410,
+          "h": 711
+        },
+        "scale": 0.781742,
+        "offset": {
+          "left": 307,
+          "top": 274
+        },
+        "drawSize": {
+          "w": 410,
+          "h": 711
+        },
+        "groundAlignedY": 985
+      },
+      "resampled": "nearest-neighbor"
+    },
+    "elder": {
+      "original": {
+        "bbox": {
+          "x0": 244,
+          "y0": 38,
+          "x1": 816,
+          "y1": 968,
+          "w": 573,
+          "h": 931
+        },
+        "centerX": 530,
+        "bottomY": 968
+      },
+      "normalized": {
+        "bbox": {
+          "x0": 288,
+          "y0": 257,
+          "x1": 735,
+          "y1": 984,
+          "w": 448,
+          "h": 728
+        },
+        "scale": 0.781742,
+        "offset": {
+          "left": 288,
+          "top": 257
+        },
+        "drawSize": {
+          "w": 448,
+          "h": 728
+        },
+        "groundAlignedY": 985
+      },
+      "resampled": "nearest-neighbor"
+    }
+  }
+}

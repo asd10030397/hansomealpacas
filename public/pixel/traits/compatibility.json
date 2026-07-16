@@ -1,6 +1,10 @@
 {
   "collection": "HANSOME Genesis",
-  "purpose": "Constrain random combinations so traits never overlap in a way that looks broken (a hat crushing ear flowers, a necklace floating over a turtleneck, etc.).",
+  "purpose": "Constrain random combinations so traits never overlap in a way that looks broken (a hat crushing ear flowers, a neck accessory floating over a turtleneck, etc.).",
+  "categoryLabels": {
+    "comment": "Display names; internal keys kept stable. 'necklace' displays as 'Neck Accessories'.",
+    "necklace": "Neck Accessories"
+  },
   "layerOrder": ["background", "base", "fur", "clothing", "necklace", "face", "mouth", "ears", "glasses", "hat", "effects"],
   "singleSelectCategories": ["background", "fur", "mouth", "glasses", "hat", "clothing", "necklace"],
   "traitTags": {
@@ -20,11 +24,11 @@
       "denim-overalls": ["straps"]
     },
     "necklace": {
-      "wooden-bead": ["collar"],
+      "hansome-pendant": ["pendant"],
       "bell-collar": ["collar"],
-      "daisy-chain": ["collar", "floral"],
-      "berry-string": ["collar"],
-      "clover-pendant": ["pendant"]
+      "clover-pendant": ["pendant", "floral"],
+      "wooden-beads": ["collar", "pendant"],
+      "berry-string": ["collar", "floral"]
     }
   },
   "rules": [
@@ -40,7 +44,7 @@
       "type": "category-suppressed-by-tag",
       "when": { "category": "clothing", "hasTag": "covers-neck" },
       "suppress": "necklace",
-      "reason": "A scarf/sweater/poncho wrapped around the neck would hide a necklace or collar."
+      "reason": "A scarf/sweater/poncho wrapped around the neck would hide a neck accessory or collar."
     },
     {
       "id": "single-glasses",
@@ -53,8 +57,8 @@
     {
       "id": "floral-harmony",
       "type": "soft-bonus",
-      "pair": ["hat:flower-crown", "necklace:daisy-chain"],
-      "reason": "Floral crown + daisy chain reads as an intentional cottagecore set. Allowed and thematically encouraged, not required."
+      "pair": ["hat:flower-crown", "necklace:clover-pendant"],
+      "reason": "Flower crown + clover pendant reads as an intentional cottagecore nature set. Allowed and thematically encouraged, not required."
     }
   ],
   "hardExclusions": [

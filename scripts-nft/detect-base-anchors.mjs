@@ -14,10 +14,11 @@ import fs from "node:fs";
 import path from "node:path";
 
 const BASE = "public/pixel/traits/base";
+const NORM = path.join(BASE, "normalized"); // anchors are detected in normalized space
 const NAMES = ["puff", "curly", "topknot", "cria", "sleek", "scruffy", "bramble", "elder"];
 
 function loadRaw(name) {
-  return sharp(path.join(BASE, `${name}.png`)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  return sharp(path.join(NORM, `${name}.png`)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
 }
 
 function analyze(data, W, H) {
@@ -139,7 +140,7 @@ for (const name of NAMES) {
   anchors[name] = a;
   const over = overlaySvg(info.width, info.height, a, name);
   const flat = await sharp({ create: { width: info.width, height: info.height, channels: 4, background: { r: 255, g: 252, b: 245, alpha: 1 } } })
-    .composite([{ input: path.join(BASE, `${name}.png`) }, { input: over }])
+    .composite([{ input: path.join(NORM, `${name}.png`) }, { input: over }])
     .png().toBuffer();
   cells.push(await sharp(flat).resize(CELL, CELL, { fit: "contain", background: { r: 255, g: 252, b: 245, alpha: 1 } }).png().toBuffer());
   const ef = a.eye.left.fallback || a.eye.right.fallback ? " (eye=fallback)" : "";

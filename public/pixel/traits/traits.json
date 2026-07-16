@@ -21,18 +21,33 @@
       "reserved": [
         { "id": "mascot", "name": "HANSOME Mascot", "file": "../../alpaca-nft-master-base.png", "usage": "branding-only + Founder #001 base", "independentlyMinted": false, "usedByToken": 1, "status": "founder-#001-only", "notes": "Official mascot. Branding only, never independently minted, not counted in the 500, permanently owned by the HANSOME project. Its iconic appearance is used ONLY as the visual base of Founder #001 — no other Public/Reserved/Legendary NFT may reuse it." }
       ],
+      "artworkVersions": {
+        "note": "Two versions are preserved for every archetype. Nearest-neighbor scaling only — no smoothing / soft interpolation anywhere in the pipeline.",
+        "original": {
+          "folder": "base/original",
+          "purpose": "UNFRAMED transparent artwork — the visual source of truth for NFT portrait generation. No scaling applied (identity-preserving).",
+          "canonical": true
+        },
+        "normalized": {
+          "folder": "base/normalized",
+          "purpose": "Canonical avatar-frame artwork — uniform scale, ground-aligned, centered with reserved headroom. Used for shared avatar proportions, animation rigging, trait fitting, and HANSOME HUB rendering.",
+          "usedForTraitFitting": true
+        },
+        "transformDoc": "base/_frame-transform.json"
+      },
       "items": [
-        { "id": "puff", "name": "Puff", "file": "base/puff.png", "personality": "cozy / sleepy", "status": "ready" },
-        { "id": "curly", "name": "Curly", "file": "base/curly.png", "personality": "sweet / gentle", "status": "ready" },
-        { "id": "topknot", "name": "Topknot", "file": "base/topknot.png", "personality": "tidy / gentle", "status": "ready" },
-        { "id": "cria", "name": "Cria", "file": "base/cria.png", "personality": "adorable / baby", "status": "ready" },
-        { "id": "sleek", "name": "Sleek", "file": "base/sleek.png", "personality": "elegant / curious", "status": "ready" },
-        { "id": "scruffy", "name": "Scruffy", "file": "base/scruffy.png", "personality": "cheeky / mischievous", "status": "ready" },
-        { "id": "bramble", "name": "Bramble", "file": "base/bramble.png", "personality": "sleepy / calm", "status": "ready" },
-        { "id": "elder", "name": "Elder", "file": "base/elder.png", "personality": "calm / wise", "status": "ready" }
+        { "id": "puff", "name": "Puff", "file": "base/normalized/puff.png", "originalFile": "base/original/puff.png", "personality": "cozy / sleepy", "status": "ready" },
+        { "id": "curly", "name": "Curly", "file": "base/normalized/curly.png", "originalFile": "base/original/curly.png", "personality": "sweet / gentle", "status": "ready" },
+        { "id": "topknot", "name": "Topknot", "file": "base/normalized/topknot.png", "originalFile": "base/original/topknot.png", "personality": "tidy / gentle", "status": "ready" },
+        { "id": "cria", "name": "Cria", "file": "base/normalized/cria.png", "originalFile": "base/original/cria.png", "personality": "adorable / baby", "status": "ready" },
+        { "id": "sleek", "name": "Sleek", "file": "base/normalized/sleek.png", "originalFile": "base/original/sleek.png", "personality": "elegant / curious", "status": "ready" },
+        { "id": "scruffy", "name": "Scruffy", "file": "base/normalized/scruffy.png", "originalFile": "base/original/scruffy.png", "personality": "cheeky / mischievous", "status": "ready" },
+        { "id": "bramble", "name": "Bramble", "file": "base/normalized/bramble.png", "originalFile": "base/original/bramble.png", "personality": "sleepy / calm", "status": "ready" },
+        { "id": "elder", "name": "Elder", "file": "base/normalized/elder.png", "originalFile": "base/original/elder.png", "personality": "calm / wise", "status": "ready" }
       ],
       "anchorsFile": "base/anchors.json",
-      "anchorsStatus": "generated (first-pass, verified via base/_anchors-overlay.png)",
+      "anchorsSpace": "normalized",
+      "anchorsStatus": "generated + verified via base/_anchors-overlay.png (detected on the normalized frame)",
       "candidateModels": {
         "A_baked_archetypes": "CHOSEN. A curated set of full-body base bodies (each its own wool+silhouette+ear+expression). Individuality comes from base + accessories + palette shifts.",
         "B_modular_layers": "Not used. Split base identity into layered sub-traits — more combinations but harder art cohesion."
@@ -87,18 +102,25 @@
       ]
     },
     "necklace": {
+      "label": "Neck Accessories",
+      "categoryKey": "necklace",
+      "keyNote": "Category renamed to 'Neck Accessories' for display. The internal key 'necklace' and folder 'necklaces/' are kept stable so existing asset IDs and references don't break.",
       "folder": "necklaces",
       "layer": 4,
       "required": false,
       "planned": 12,
       "noneAllowed": true,
-      "description": "Natural pendants and collars around the base of the neck — beads, bells, flowers, berries.",
+      "description": "Neck Accessories — bold, handcrafted pieces worn around the neck/upper chest (carved pendants, farm bells, clover charms, wooden beads, berry vines). Designed as strong character traits that read at NFT size, cozy countryside village feel — not realistic/luxury jewelry. Sits above clothing in the z-order (clothing compatibility considered, clothing not yet drawn). Authored as tight transparent sprites; placed on each archetype via the neck + chest anchors and measured neck width (see necklaces/_necklaces-meta.json, scripts-nft/necklaces/fit-necklaces.mjs).",
+      "fitSystem": "anchor-fitted (per-archetype neck seat + neck-width scale)",
+      "metaFile": "necklaces/_necklaces-meta.json",
+      "reviewBatch": 5,
+      "manualOffsets": "none — all 5 neck accessories fit all 8 archetypes fully anchor-driven (verified 40/40: no face/leg clipping, no floating, no out-of-bounds; consistent scaling)",
       "items": [
-        { "id": "wooden-bead", "name": "Wooden Bead Necklace", "file": "necklaces/wooden-bead.png", "tier": "common", "status": "ready" },
+        { "id": "hansome-pendant", "name": "HANSOME Pendant", "file": "necklaces/hansome-pendant.png", "tier": "rare", "status": "ready" },
         { "id": "bell-collar", "name": "Bell Collar", "file": "necklaces/bell-collar.png", "tier": "uncommon", "status": "ready" },
-        { "id": "daisy-chain", "name": "Daisy Chain", "file": "necklaces/daisy-chain.png", "tier": "uncommon", "status": "ready" },
-        { "id": "berry-string", "name": "Wild Berry String", "file": "necklaces/berry-string.png", "tier": "rare", "status": "ready" },
-        { "id": "clover-pendant", "name": "Clover Pendant", "file": "necklaces/clover-pendant.png", "tier": "epic", "status": "ready" }
+        { "id": "clover-pendant", "name": "Clover Pendant", "file": "necklaces/clover-pendant.png", "tier": "rare", "status": "ready" },
+        { "id": "wooden-beads", "name": "Wooden Necklace", "file": "necklaces/wooden-beads.png", "tier": "common", "status": "ready" },
+        { "id": "berry-string", "name": "Berry String", "file": "necklaces/berry-string.png", "tier": "uncommon", "status": "ready" }
       ]
     },
     "face": {

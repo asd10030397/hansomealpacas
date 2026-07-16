@@ -8,6 +8,10 @@
     "epic":     { "weight": 7,   "label": "Epic",     "targetShare": "~5%" },
     "mythic":   { "weight": 2,   "label": "Mythic",   "targetShare": "~1% (held mostly for hand-tuned standouts)" }
   },
+  "categoryLabels": {
+    "comment": "Display names for categories. Internal keys are kept stable; 'necklace' displays as 'Neck Accessories'.",
+    "necklace": "Neck Accessories"
+  },
   "categoryNoneWeight": {
     "comment": "Weight of the empty/none option for optional categories, expressed on the same scale as tier weights. Higher = the slot is more often empty. Required categories (background, fur, mouth) have no 'none'.",
     "clothing": 90,
