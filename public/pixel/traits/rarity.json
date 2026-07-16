@@ -1,0 +1,32 @@
+{
+  "collection": "HANSOME Genesis",
+  "model": "Each category picks one item by weighted random draw. Optional categories also carry a 'none' weight (chance the alpaca wears nothing in that slot). Per-item weight = its tier weight unless an explicit 'weight' override is set on the item in traits.json.",
+  "tiers": {
+    "common":   { "weight": 100, "label": "Common",   "targetShare": "~55%" },
+    "uncommon": { "weight": 48,  "label": "Uncommon", "targetShare": "~27%" },
+    "rare":     { "weight": 20,  "label": "Rare",     "targetShare": "~12%" },
+    "epic":     { "weight": 7,   "label": "Epic",     "targetShare": "~5%" },
+    "mythic":   { "weight": 2,   "label": "Mythic",   "targetShare": "~1% (held mostly for hand-tuned standouts)" }
+  },
+  "categoryNoneWeight": {
+    "comment": "Weight of the empty/none option for optional categories, expressed on the same scale as tier weights. Higher = the slot is more often empty. Required categories (background, fur, mouth) have no 'none'.",
+    "clothing": 90,
+    "necklace": 120,
+    "face": 140,
+    "ears": 170,
+    "glasses": 110,
+    "hat": 70,
+    "effects": 210
+  },
+  "requiredCategories": ["background", "fur", "mouth"],
+  "defaults": {
+    "comment": "For required categories, these default items are weighted heavily so most alpacas keep the canonical look; variants are the rarer standouts.",
+    "fur": { "defaultItem": "classic", "defaultWeight": 140 },
+    "mouth": { "defaultItem": "fresh-grass", "defaultWeight": 140 }
+  },
+  "notes": [
+    "These weights are the starting point for the FULL library; the review batch does not need to hit these distributions.",
+    "Legendary NFTs and the Founder NFT are outside this rarity model entirely — they are hand-designed, not drawn from weights.",
+    "Rarity for HANSOME-original traits (mouth flowers, wool styles, face marks) is intentionally skewed so the cozy defaults dominate and special nature traits feel earned."
+  ]
+}

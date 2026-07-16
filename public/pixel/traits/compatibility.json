@@ -1,0 +1,70 @@
+{
+  "collection": "HANSOME Genesis",
+  "purpose": "Constrain random combinations so traits never overlap in a way that looks broken (a hat crushing ear flowers, a necklace floating over a turtleneck, etc.).",
+  "layerOrder": ["background", "base", "fur", "clothing", "necklace", "face", "mouth", "ears", "glasses", "hat", "effects"],
+  "singleSelectCategories": ["background", "fur", "mouth", "glasses", "hat", "clothing", "necklace"],
+  "traitTags": {
+    "comment": "Tags let compatibility rules target groups of traits instead of listing every pair.",
+    "hat": {
+      "wool-beanie": ["covers-ears", "snug"],
+      "straw-hat": ["wide-brim"],
+      "farmer-cap": ["casual"],
+      "acorn-cap": ["snug", "small"],
+      "flower-crown": ["open-top", "floral"]
+    },
+    "clothing": {
+      "wool-scarf": ["covers-neck"],
+      "knit-sweater": ["covers-neck", "high-collar"],
+      "cozy-poncho": ["covers-neck", "covers-chest", "high-collar"],
+      "plaid-bandana": ["neckerchief"],
+      "denim-overalls": ["straps"]
+    },
+    "necklace": {
+      "wooden-bead": ["collar"],
+      "bell-collar": ["collar"],
+      "daisy-chain": ["collar", "floral"],
+      "berry-string": ["collar"],
+      "clover-pendant": ["pendant"]
+    }
+  },
+  "rules": [
+    {
+      "id": "ears-hidden-by-snug-hats",
+      "type": "category-suppressed-by-tag",
+      "when": { "category": "hat", "hasTag": "covers-ears" },
+      "suppress": "ears",
+      "reason": "A snug beanie pulled over the head would cover an ear flower or bell."
+    },
+    {
+      "id": "necklace-hidden-by-neck-clothing",
+      "type": "category-suppressed-by-tag",
+      "when": { "category": "clothing", "hasTag": "covers-neck" },
+      "suppress": "necklace",
+      "reason": "A scarf/sweater/poncho wrapped around the neck would hide a necklace or collar."
+    },
+    {
+      "id": "single-glasses",
+      "type": "single-select",
+      "category": "glasses",
+      "reason": "Only one pair of eyewear over the visible eye."
+    }
+  ],
+  "encouraged": [
+    {
+      "id": "floral-harmony",
+      "type": "soft-bonus",
+      "pair": ["hat:flower-crown", "necklace:daisy-chain"],
+      "reason": "Floral crown + daisy chain reads as an intentional cottagecore set. Allowed and thematically encouraged, not required."
+    }
+  ],
+  "hardExclusions": [
+    {
+      "comment": "Explicit blocked pairs beyond the tag rules above. Format: 'category:id'.",
+      "pairs": []
+    }
+  ],
+  "reservedExclusions": {
+    "comment": "Legendary and Founder trait combos are hand-authored and are NOT validated against these rules; they are one-of-one art.",
+    "excludeFromRandomPool": ["founder", "legendary"]
+  }
+}

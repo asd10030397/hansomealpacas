@@ -1,0 +1,177 @@
+{
+  "collection": "HANSOME Genesis",
+  "canvas": { "width": 1024, "height": 1024, "pixelGrid": 16 },
+  "itemStatusLegend": {
+    "ready": "Asset PNG exists and is approved-for-review in this batch.",
+    "planned": "Name reserved in the trait system; artwork not drawn yet.",
+    "default": "Always-present baseline for a required category; 'classic'/'fresh-grass' render the canonical base with no overlay."
+  },
+  "categories": {
+    "background": {
+      "folder": "backgrounds",
+      "layer": 0,
+      "required": true,
+      "planned": 20,
+      "selectExactlyOne": true,
+      "description": "Full-canvas countryside scenes behind the alpaca. Warm, cozy, rural — never neon or club-style.",
+      "items": [
+        { "id": "meadow-green", "name": "Green Meadow", "file": "backgrounds/meadow-green.png", "tier": "common", "status": "ready" },
+        { "id": "morning-sky", "name": "Morning Sky", "file": "backgrounds/morning-sky.png", "tier": "common", "status": "ready" },
+        { "id": "sunset-pasture", "name": "Sunset Pasture", "file": "backgrounds/sunset-pasture.png", "tier": "uncommon", "status": "ready" },
+        { "id": "barn-wood", "name": "Barn Wood", "file": "backgrounds/barn-wood.png", "tier": "rare", "status": "ready" },
+        { "id": "starry-night", "name": "Starry Night", "file": "backgrounds/starry-night.png", "tier": "epic", "status": "ready" }
+      ]
+    },
+    "fur": {
+      "folder": "fur",
+      "layer": 2,
+      "required": true,
+      "planned": 8,
+      "selectExactlyOne": true,
+      "description": "Wool Styles. Overlay tufts/texture drawn over the base silhouette. 'Classic' is the untouched canonical wool.",
+      "items": [
+        { "id": "classic", "name": "Classic", "file": null, "tier": "common", "status": "default" },
+        { "id": "fluffy", "name": "Fluffy", "tier": "common", "status": "planned" },
+        { "id": "curly", "name": "Curly", "tier": "uncommon", "status": "planned" },
+        { "id": "long-wool", "name": "Long Wool", "tier": "uncommon", "status": "planned" },
+        { "id": "winter-wool", "name": "Winter Wool", "tier": "rare", "status": "planned" },
+        { "id": "wind-blown", "name": "Wind Blown", "tier": "rare", "status": "planned" },
+        { "id": "puffy", "name": "Puffy", "tier": "uncommon", "status": "planned" },
+        { "id": "elegant", "name": "Elegant", "tier": "epic", "status": "planned" }
+      ]
+    },
+    "clothing": {
+      "folder": "clothing",
+      "layer": 3,
+      "required": false,
+      "planned": 25,
+      "noneAllowed": true,
+      "description": "Cozy garments on the neck/chest — scarves, knitwear, bandanas, ponchos. Handmade village feel, not street fashion.",
+      "items": [
+        { "id": "wool-scarf", "name": "Wool Scarf", "file": "clothing/wool-scarf.png", "tier": "common", "status": "ready" },
+        { "id": "plaid-bandana", "name": "Plaid Bandana", "file": "clothing/plaid-bandana.png", "tier": "common", "status": "ready" },
+        { "id": "knit-sweater", "name": "Knit Sweater", "file": "clothing/knit-sweater.png", "tier": "uncommon", "status": "ready" },
+        { "id": "cozy-poncho", "name": "Cozy Poncho", "file": "clothing/cozy-poncho.png", "tier": "rare", "status": "ready" },
+        { "id": "denim-overalls", "name": "Denim Overalls", "file": "clothing/denim-overalls.png", "tier": "rare", "status": "ready" }
+      ]
+    },
+    "necklace": {
+      "folder": "necklaces",
+      "layer": 4,
+      "required": false,
+      "planned": 12,
+      "noneAllowed": true,
+      "description": "Natural pendants and collars around the base of the neck — beads, bells, flowers, berries.",
+      "items": [
+        { "id": "wooden-bead", "name": "Wooden Bead Necklace", "file": "necklaces/wooden-bead.png", "tier": "common", "status": "ready" },
+        { "id": "bell-collar", "name": "Bell Collar", "file": "necklaces/bell-collar.png", "tier": "uncommon", "status": "ready" },
+        { "id": "daisy-chain", "name": "Daisy Chain", "file": "necklaces/daisy-chain.png", "tier": "uncommon", "status": "ready" },
+        { "id": "berry-string", "name": "Wild Berry String", "file": "necklaces/berry-string.png", "tier": "rare", "status": "ready" },
+        { "id": "clover-pendant", "name": "Clover Pendant", "file": "necklaces/clover-pendant.png", "tier": "epic", "status": "ready" }
+      ]
+    },
+    "face": {
+      "folder": "face",
+      "layer": 5,
+      "required": false,
+      "planned": 6,
+      "noneAllowed": true,
+      "description": "Face Details — subtle marks on the cheek/face. Added folder (not in the original list) so the described Face Details traits have a home.",
+      "items": [
+        { "id": "rosy-cheeks", "name": "Rosy Cheeks", "tier": "common", "status": "planned" },
+        { "id": "freckles", "name": "Freckles", "tier": "uncommon", "status": "planned" },
+        { "id": "small-star-mark", "name": "Small Star Mark", "tier": "rare", "status": "planned" },
+        { "id": "tiny-heart-mark", "name": "Tiny Heart Mark", "tier": "rare", "status": "planned" },
+        { "id": "soft-blush", "name": "Soft Blush", "tier": "common", "status": "planned" },
+        { "id": "beauty-spot", "name": "Beauty Spot", "tier": "uncommon", "status": "planned" }
+      ]
+    },
+    "mouth": {
+      "folder": "mouth",
+      "layer": 6,
+      "required": true,
+      "planned": 8,
+      "selectExactlyOne": true,
+      "description": "Mouth Accessories — what the alpaca is nibbling. 'Fresh Grass' is the canonical default already on the base.",
+      "items": [
+        { "id": "fresh-grass", "name": "Fresh Grass", "file": null, "tier": "common", "status": "default" },
+        { "id": "wheat", "name": "Wheat", "tier": "common", "status": "planned" },
+        { "id": "white-flower", "name": "White Flower", "tier": "uncommon", "status": "planned" },
+        { "id": "pink-flower", "name": "Pink Flower", "tier": "uncommon", "status": "planned" },
+        { "id": "four-leaf-clover", "name": "Four-leaf Clover", "tier": "epic", "status": "planned" },
+        { "id": "lavender", "name": "Lavender", "tier": "rare", "status": "planned" },
+        { "id": "small-leaf", "name": "Small Leaf", "tier": "common", "status": "planned" },
+        { "id": "wild-berry", "name": "Wild Berry", "tier": "rare", "status": "planned" }
+      ]
+    },
+    "ears": {
+      "folder": "ears",
+      "layer": 7,
+      "required": false,
+      "planned": 5,
+      "noneAllowed": true,
+      "description": "Ear Accessories — small decorations on the ear. Added folder (not in the original list) so the described Ear Accessories have a home.",
+      "items": [
+        { "id": "daisy-flower", "name": "Daisy Flower", "tier": "uncommon", "status": "planned" },
+        { "id": "sunflower", "name": "Sunflower", "tier": "rare", "status": "planned" },
+        { "id": "small-ribbon", "name": "Small Ribbon", "tier": "common", "status": "planned" },
+        { "id": "leaf-decoration", "name": "Leaf Decoration", "tier": "common", "status": "planned" },
+        { "id": "tiny-bell", "name": "Tiny Bell", "tier": "uncommon", "status": "planned" }
+      ]
+    },
+    "glasses": {
+      "folder": "glasses",
+      "layer": 8,
+      "required": false,
+      "planned": 15,
+      "noneAllowed": true,
+      "description": "Eyewear over the visible eye. Frame reads across the 3/4 face.",
+      "items": [
+        { "id": "round-glasses", "name": "Round Glasses", "file": "glasses/round-glasses.png", "tier": "common", "status": "ready" },
+        { "id": "reading-glasses", "name": "Reading Glasses", "file": "glasses/reading-glasses.png", "tier": "uncommon", "status": "ready" },
+        { "id": "sunglasses", "name": "Sunglasses", "file": "glasses/sunglasses.png", "tier": "uncommon", "status": "ready" },
+        { "id": "heart-glasses", "name": "Heart Glasses", "file": "glasses/heart-glasses.png", "tier": "rare", "status": "ready" },
+        { "id": "monocle", "name": "Monocle", "file": "glasses/monocle.png", "tier": "epic", "status": "ready" }
+      ]
+    },
+    "hat": {
+      "folder": "hats",
+      "layer": 9,
+      "required": false,
+      "planned": 25,
+      "noneAllowed": true,
+      "description": "Headwear resting on the wool crown. Countryside/handmade — straw, wool, flowers, farm caps.",
+      "items": [
+        { "id": "straw-hat", "name": "Straw Hat", "file": "hats/straw-hat.png", "tier": "common", "status": "ready" },
+        { "id": "farmer-cap", "name": "Farmer Cap", "file": "hats/farmer-cap.png", "tier": "common", "status": "ready" },
+        { "id": "wool-beanie", "name": "Wool Beanie", "file": "hats/wool-beanie.png", "tier": "uncommon", "status": "ready" },
+        { "id": "acorn-cap", "name": "Acorn Cap", "file": "hats/acorn-cap.png", "tier": "rare", "status": "ready" },
+        { "id": "flower-crown", "name": "Flower Crown", "file": "hats/flower-crown.png", "tier": "epic", "status": "ready" }
+      ]
+    },
+    "effects": {
+      "folder": "effects",
+      "layer": 10,
+      "required": false,
+      "planned": 15,
+      "noneAllowed": true,
+      "description": "Nature Accessories & ambient overlays — butterfly, bee, falling leaf, floating clover, vine, gentle sparkles. Drawn on top.",
+      "items": [
+        { "id": "vine", "name": "Vine", "tier": "uncommon", "status": "planned" },
+        { "id": "small-butterfly", "name": "Small Butterfly", "tier": "rare", "status": "planned" },
+        { "id": "falling-leaf", "name": "Falling Leaf", "tier": "common", "status": "planned" },
+        { "id": "tiny-bee", "name": "Tiny Bee", "tier": "rare", "status": "planned" },
+        { "id": "floating-clover", "name": "Floating Clover", "tier": "uncommon", "status": "planned" }
+      ]
+    },
+    "legendary": {
+      "folder": "legendary",
+      "layer": null,
+      "required": false,
+      "planned": 20,
+      "excludeFromRandomPool": true,
+      "description": "20 one-of-one hand-designed alpacas, each with its own identity. NOT random combinations. Layer order does not apply; each is a full custom composite.",
+      "items": []
+    }
+  }
+}

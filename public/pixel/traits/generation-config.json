@@ -1,0 +1,103 @@
+{
+  "$schema": "./_schema-notes.md",
+  "collection": {
+    "name": "HANSOME Genesis",
+    "symbol": "HANSOME-GEN",
+    "totalSupply": 500,
+    "description": "The Genesis collection of the HANSOME universe. Every alpaca is the same canonical HANSOME alpaca, given its own identity through handcrafted, countryside-flavored traits.",
+    "canonicalBase": "public/pixel/alpaca-nft-master-base.png"
+  },
+  "distribution": {
+    "publicMint": 470,
+    "legendary": 20,
+    "reserved": 10,
+    "notes": "publicMint + legendary + reserved must equal totalSupply (470 + 20 + 10 = 500)."
+  },
+  "tokenIdPolicy": {
+    "startId": 1,
+    "founder": {
+      "tokenId": 1,
+      "label": "Founder Alpaca",
+      "generation": "manual",
+      "excludeFromRandomPool": true,
+      "notes": "NFT #001 is hand-designed. The generator must never produce or overwrite it."
+    },
+    "legendaryTokenIds": {
+      "count": 20,
+      "assignment": "reserved-explicit",
+      "generation": "manual",
+      "excludeFromRandomPool": true,
+      "notes": "Exactly 20 Legendary NFTs, each individually hand-designed with its own identity. They are NOT random trait combinations. Their token IDs are pinned in legendaryAssignments before any random generation runs.",
+      "legendaryAssignments": []
+    },
+    "reservedTokenIds": {
+      "count": 10,
+      "purposes": ["founder-extra", "team", "community-events", "partnerships", "future-ecosystem-rewards"],
+      "excludeFromRandomPool": true,
+      "notes": "10 reserved NFTs held back from the public generation pool. May be minted normally-generated or hand-picked, but their IDs are set aside up front so they can never accidentally land in the public 470.",
+      "reservedAssignments": []
+    }
+  },
+  "randomPool": {
+    "size": 470,
+    "notes": "Only these 470 are procedurally generated from the trait system. Founder (1), Legendary (20) and Reserved (10) IDs are removed from the candidate id set before generation.",
+    "seed": 20260717,
+    "deterministic": true
+  },
+  "canvas": {
+    "width": 1024,
+    "height": 1024,
+    "pixelGrid": 16,
+    "format": "png",
+    "background": "transparent-until-background-layer",
+    "resampling": "nearest",
+    "smoothing": false
+  },
+  "layerOrder": [
+    "background",
+    "base",
+    "fur",
+    "clothing",
+    "necklace",
+    "face",
+    "mouth",
+    "ears",
+    "glasses",
+    "hat",
+    "effects"
+  ],
+  "layerNotes": {
+    "base": "The canonical master base PNG. Never repainted, recolored, smoothed, or upscaled. Always composited pixel-for-pixel.",
+    "fur": "Wool-style overlay drawn on top of the base silhouette (tufts / texture / edge puffs). 'Classic' is a no-op that shows the base as-is.",
+    "necklace": "Sits above clothing so a collar/pendant reads over a scarf or sweater.",
+    "hat": "Topmost worn item.",
+    "effects": "Ambient foreground elements (butterfly, bee, falling leaf, sparkles). Drawn last, may extend beyond the alpaca silhouette."
+  },
+  "anatomy": {
+    "comment": "Pixel coordinates on the 1024x1024 canvas, derived from the canonical base. Used to place traits so they fit the alpaca naturally.",
+    "headCrown": { "x0": 300, "y0": 40, "x1": 660, "y1": 190 },
+    "eye": { "x0": 524, "y0": 357, "x1": 628, "y1": 413 },
+    "farEyeApprox": { "x0": 430, "y0": 370, "x1": 500, "y1": 420 },
+    "ear": { "x0": 658, "y0": 288, "x1": 822, "y1": 405 },
+    "nose": { "x0": 381, "y0": 454, "x1": 497, "y1": 500 },
+    "mouth": { "x0": 508, "y0": 508, "x1": 578, "y1": 572 },
+    "neck": { "x0": 341, "y0": 540, "x1": 720, "y1": 680 },
+    "chest": { "x0": 340, "y0": 640, "x1": 785, "y1": 900 }
+  },
+  "uniqueness": {
+    "enforce": true,
+    "method": "sha256-of-sorted-trait-id-list",
+    "maxAttemptsPerToken": 500,
+    "notes": "No two public NFTs may share an identical trait combination. Founder and Legendary are outside this check."
+  },
+  "outputs": {
+    "composites": "public/pixel/genesis/{tokenId}.png",
+    "previews": "public/pixel/traits/previews/",
+    "metadata": "NOT generated yet — explicitly out of scope until the trait library is approved."
+  },
+  "status": {
+    "phase": "trait-system-defined",
+    "reviewBatchOnly": true,
+    "notes": "Only a small style-guide review batch has been drawn (5 hats, 5 glasses, 5 clothing, 5 necklaces, 5 backgrounds). Full library, metadata, and the 500-piece generation are on hold pending approval."
+  }
+}
