@@ -220,7 +220,142 @@ function LitepaperContent() {
         <RoadmapTimeline />
       </LitepaperSection>
 
-      <LitepaperSection id="community" eyebrow="09" title={lp.community.heading}>
+      <LitepaperSection id="hansome-hub" eyebrow="09" title={lp.hansomeHub.heading}>
+        <p className="text-sm italic leading-relaxed text-[color:var(--lp-text-faint)]">{lp.hansomeHub.disclaimer}</p>
+
+        <div className="mt-10">
+          <div className="flex flex-wrap items-baseline gap-3">
+            <span className="font-[family-name:var(--font-anton)] text-[0.6rem] tracking-[0.2em] text-[color:var(--lp-text-faint)]">
+              {lp.hansomeHub.phase.label}
+            </span>
+            <h3 className="text-lg font-semibold text-[color:var(--lp-text)]">{lp.hansomeHub.phase.title}</h3>
+          </div>
+          <p className="mt-2 text-sm font-medium text-gold">{lp.hansomeHub.phase.tagline}</p>
+          <div className="mt-4 space-y-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
+            {lp.hansomeHub.phase.paragraphs.map((p) => (
+              <p key={p}>{p}</p>
+            ))}
+          </div>
+          <div className="lp-card mt-6 rounded-2xl p-5">
+            <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-gold">{lp.hansomeHub.phase.features.heading}</h4>
+            <ul className="mt-3 space-y-2">
+              {lp.hansomeHub.phase.features.items.map((item) => (
+                <li key={item} className="text-[0.8125rem] leading-relaxed text-[color:var(--lp-text-muted)]">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <figure className="my-10">
+          <img
+            src={lp.hansomeHub.conceptArt.src}
+            alt={lp.hansomeHub.conceptArt.alt}
+            className="w-full rounded-2xl border border-wood/40 object-cover"
+          />
+          <figcaption className="mt-3 text-center text-xs italic leading-relaxed text-[color:var(--lp-text-faint)]">
+            {lp.hansomeHub.conceptArt.caption}
+          </figcaption>
+        </figure>
+
+        <div className="mt-10">
+          <h3 className="font-[family-name:var(--font-anton)] text-base tracking-wide text-[color:var(--lp-text)]">
+            {lp.hansomeHub.nftEcosystem.heading}
+          </h3>
+          <div className="mt-4 space-y-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
+            {lp.hansomeHub.nftEcosystem.paragraphs.map((p) => (
+              <p key={p}>{p}</p>
+            ))}
+          </div>
+          <div className="lp-card mt-6 rounded-2xl p-5">
+            <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-gold">
+              {lp.hansomeHub.nftEcosystem.features.heading}
+            </h4>
+            <ul className="mt-3 space-y-2">
+              {lp.hansomeHub.nftEcosystem.features.items.map((item) => (
+                <li key={item} className="text-[0.8125rem] leading-relaxed text-[color:var(--lp-text-muted)]">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <p className="mt-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
+            {lp.hansomeHub.nftEcosystem.closing}
+          </p>
+        </div>
+
+        <div className="mt-10">
+          <h3 className="font-[family-name:var(--font-anton)] text-base tracking-wide text-[color:var(--lp-text)]">
+            {lp.hansomeHub.communityGames.heading}
+          </h3>
+          <p className="mt-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
+            {lp.hansomeHub.communityGames.intro}
+          </p>
+          <ul className="mt-3 space-y-2">
+            {lp.hansomeHub.communityGames.items.map((item) => (
+              <li key={item} className="text-[0.8125rem] leading-relaxed text-[color:var(--lp-text-muted)]">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="mt-10">
+          <h3 className="font-[family-name:var(--font-anton)] text-base tracking-wide text-[color:var(--lp-text)]">
+            {lp.hansomeHub.vision.heading}
+          </h3>
+          <div className="mt-4 space-y-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
+            {lp.hansomeHub.vision.paragraphs.map((p) => (
+              <p key={p}>{p}</p>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-10">
+          <div className="lp-divider mb-8 w-16" />
+          <div className="flex flex-wrap items-baseline gap-3">
+            <span className="font-[family-name:var(--font-anton)] text-[0.6rem] tracking-[0.2em] text-[color:var(--lp-text-faint)]">
+              {lp.hansomeHub.competitivePhase.label}
+            </span>
+            <h3 className="text-lg font-semibold text-[color:var(--lp-text)]">{lp.hansomeHub.competitivePhase.title}</h3>
+          </div>
+          <p className="mt-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
+            {lp.hansomeHub.competitivePhase.intro}
+          </p>
+          <div className="lp-card mt-6 rounded-2xl p-5">
+            <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-gold">
+              {lp.hansomeHub.competitivePhase.activities.heading}
+            </h4>
+            <ul className="mt-3 space-y-2">
+              {lp.hansomeHub.competitivePhase.activities.items.map((item) => (
+                <li key={item} className="text-[0.8125rem] leading-relaxed text-[color:var(--lp-text-muted)]">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="mt-6">
+            <h4 className="text-sm font-semibold uppercase tracking-[0.14em] text-gold">
+              {lp.hansomeHub.competitivePhase.rewards.heading}
+            </h4>
+            <p className="mt-2 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
+              {lp.hansomeHub.competitivePhase.rewards.intro}
+            </p>
+            <ul className="mt-3 space-y-2">
+              {lp.hansomeHub.competitivePhase.rewards.items.map((item) => (
+                <li key={item} className="text-[0.8125rem] leading-relaxed text-[color:var(--lp-text-muted)]">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <p className="mt-10 text-sm italic leading-relaxed text-[color:var(--lp-text-faint)]">{lp.hansomeHub.closingNote}</p>
+      </LitepaperSection>
+
+      <LitepaperSection id="community" eyebrow="10" title={lp.community.heading}>
         <div className="space-y-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
           {lp.community.paragraphs.map((p) => (
             <p key={p}>{p}</p>
@@ -228,7 +363,7 @@ function LitepaperContent() {
         </div>
       </LitepaperSection>
 
-      <LitepaperSection id="long-term-vision" eyebrow="10" title={lp.longTermVision.heading}>
+      <LitepaperSection id="long-term-vision" eyebrow="11" title={lp.longTermVision.heading}>
         <p className="text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">{lp.longTermVision.intro}</p>
 
         <div className="my-10">
@@ -238,11 +373,11 @@ function LitepaperContent() {
         <p className="text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">{lp.longTermVision.closing}</p>
       </LitepaperSection>
 
-      <LitepaperSection id="faq" eyebrow="11" title={lp.faq.heading}>
+      <LitepaperSection id="faq" eyebrow="12" title={lp.faq.heading}>
         <LitepaperFaqAccordion />
       </LitepaperSection>
 
-      <LitepaperSection id="changelog" eyebrow="12" title={lp.changelog.heading}>
+      <LitepaperSection id="changelog" eyebrow="13" title={lp.changelog.heading}>
         <p className="text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">{lp.changelog.intro}</p>
 
         <ol className="mt-6 space-y-6">
@@ -264,7 +399,7 @@ function LitepaperContent() {
         </ol>
       </LitepaperSection>
 
-      <LitepaperSection id="language" eyebrow="13" title={lp.language.heading}>
+      <LitepaperSection id="language" eyebrow="14" title={lp.language.heading}>
         <p className="text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">{lp.language.body}</p>
       </LitepaperSection>
 

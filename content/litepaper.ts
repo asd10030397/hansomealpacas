@@ -16,6 +16,7 @@ export const LITEPAPER_SECTION_ORDER: readonly string[] = [
   "liquidity",
   "revenue",
   "roadmap",
+  "hansome-hub",
   "community",
   "long-term-vision",
   "faq",

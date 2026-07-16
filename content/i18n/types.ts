@@ -87,6 +87,67 @@ export type LitepaperChangelogEntry = {
   changes: readonly string[];
 };
 
+export type LitepaperHubFeatureList = {
+  heading: string;
+  items: readonly string[];
+};
+
+export type LitepaperHubPhase = {
+  label: string;
+  title: string;
+  tagline: string;
+  paragraphs: readonly string[];
+  features: LitepaperHubFeatureList;
+};
+
+export type LitepaperHubConceptArt = {
+  src: string;
+  alt: string;
+  caption: string;
+};
+
+export type LitepaperHubNftEcosystem = {
+  heading: string;
+  paragraphs: readonly string[];
+  features: LitepaperHubFeatureList;
+  closing: string;
+};
+
+export type LitepaperHubCommunityGames = {
+  heading: string;
+  intro: string;
+  items: readonly string[];
+};
+
+export type LitepaperHubVision = {
+  heading: string;
+  paragraphs: readonly string[];
+};
+
+export type LitepaperHubCompetitivePhase = {
+  label: string;
+  title: string;
+  intro: string;
+  activities: LitepaperHubFeatureList;
+  rewards: {
+    heading: string;
+    intro: string;
+    items: readonly string[];
+  };
+};
+
+export type LitepaperHub = {
+  heading: string;
+  disclaimer: string;
+  phase: LitepaperHubPhase;
+  conceptArt: LitepaperHubConceptArt;
+  nftEcosystem: LitepaperHubNftEcosystem;
+  communityGames: LitepaperHubCommunityGames;
+  vision: LitepaperHubVision;
+  competitivePhase: LitepaperHubCompetitivePhase;
+  closingNote: string;
+};
+
 export type LitepaperMessages = {
   meta: {
     title: string;
@@ -183,6 +244,7 @@ export type LitepaperMessages = {
     heading: string;
     phases: readonly LitepaperRoadmapPhase[];
   };
+  hansomeHub: LitepaperHub;
   community: {
     heading: string;
     paragraphs: readonly string[];
