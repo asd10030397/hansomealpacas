@@ -8,6 +8,7 @@ import {
   useChainId,
   useConnect,
   useConnection,
+  usePublicClient,
   useReadContract,
   useSwitchChain,
   useWaitForTransactionReceipt,
@@ -36,6 +37,7 @@ import { formatUsd } from "@/lib/market/format";
 import { requestWatchTokenAsset } from "@/lib/wallet/watchAsset";
 import { erc20Abi, permit2Abi, stateViewAbi, universalRouterAbi } from "@/lib/swap/abis";
 import { buildUniversalRouterCalldata } from "@/lib/swap/encoding";
+import { getSafeGasFees } from "@/lib/swap/gas";
 import { DEFAULT_SLIPPAGE_BPS, applySlippage, quoteFromPoolState } from "@/lib/swap/quote";
 
 type SwapDirection = "ethToToken" | "tokenToEth";
@@ -71,6 +73,7 @@ export function SwapCard() {
   const { connectors, connect, isPending: isConnecting, error: connectError } = useConnect();
   const { switchChain, isPending: isSwitching } = useSwitchChain();
   const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient({ chainId: ROBINHOOD_CHAIN_ID });
   const { data: marketData } = useMarketStats();
   const [isWatchingAsset, setIsWatchingAsset] = useState(false);
 
@@ -223,12 +226,14 @@ export function SwapCard() {
         setTxPhase("loading");
         setTxMessage(t.swap.status.approvingPermit2);
         const expiration = BigInt(Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30);
+        const gasFees = await getSafeGasFees(publicClient);
         writeContract({
           address: PERMIT2_ADDRESS,
           abi: permit2Abi,
           functionName: "approve",
           args: [TOKEN_ADDRESS, UNIVERSAL_ROUTER_ADDRESS, maxUint160, Number(expiration)],
           chainId: ROBINHOOD_CHAIN_ID,
+          ...gasFees,
         });
         return;
       }
@@ -249,6 +254,7 @@ export function SwapCard() {
           amountOutMin,
           deadline,
         );
+        const gasFees = await getSafeGasFees(publicClient);
 
         writeContract({
           address: UNIVERSAL_ROUTER_ADDRESS,
@@ -257,6 +263,7 @@ export function SwapCard() {
           args: [calldata.commands, calldata.inputs, calldata.deadline],
           value: calldata.value,
           chainId: ROBINHOOD_CHAIN_ID,
+          ...gasFees,
         });
         return;
       }
@@ -278,6 +285,7 @@ export function SwapCard() {
     amountOutMin,
     direction,
     writeContract,
+    publicClient,
     refetchTokenAllowance,
     refetchPermit2Allowance,
     refetchEthBalance,
@@ -346,7 +354,7 @@ export function SwapCard() {
     }
   }, [walletClient, resetTxState, t.swap.addToWallet, t.swap.watchAssetFailed, t.swap.watchAssetRejected, t.swap.watchAssetSuccess]);
 
-  const handleSwap = useCallback(() => {
+  const handleSwap = useCallback(async () => {
     if (!parsedAmountIn || parsedAmountIn <= 0n || !amountOutMin) return;
     resetTxState();
 
@@ -355,12 +363,14 @@ export function SwapCard() {
       setSwapPhase("approvingToken");
       setTxPhase("loading");
       setTxMessage(t.swap.status.approvingToken);
+      const gasFees = await getSafeGasFees(publicClient);
       writeContract({
         address: TOKEN_ADDRESS,
         abi: erc20Abi,
         functionName: "approve",
         args: [PERMIT2_ADDRESS, maxUint256],
         chainId: ROBINHOOD_CHAIN_ID,
+        ...gasFees,
       });
       return;
     }
@@ -371,12 +381,14 @@ export function SwapCard() {
       setTxPhase("loading");
       setTxMessage(t.swap.status.approvingPermit2);
       const expiration = BigInt(Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30);
+      const gasFees = await getSafeGasFees(publicClient);
       writeContract({
         address: PERMIT2_ADDRESS,
         abi: permit2Abi,
         functionName: "approve",
         args: [TOKEN_ADDRESS, UNIVERSAL_ROUTER_ADDRESS, maxUint160, Number(expiration)],
         chainId: ROBINHOOD_CHAIN_ID,
+        ...gasFees,
       });
       return;
     }
@@ -393,6 +405,7 @@ export function SwapCard() {
       amountOutMin,
       deadline,
     );
+    const gasFees = await getSafeGasFees(publicClient);
 
     writeContract({
       address: UNIVERSAL_ROUTER_ADDRESS,
@@ -401,6 +414,7 @@ export function SwapCard() {
       args: [calldata.commands, calldata.inputs, calldata.deadline],
       value: calldata.value,
       chainId: ROBINHOOD_CHAIN_ID,
+      ...gasFees,
     });
   }, [
     parsedAmountIn,
@@ -410,6 +424,7 @@ export function SwapCard() {
     needsPermit2Approval,
     resetTxState,
     writeContract,
+    publicClient,
     t.swap.status.approvingToken,
     t.swap.status.approvingPermit2,
     t.swap.status.swapping,
