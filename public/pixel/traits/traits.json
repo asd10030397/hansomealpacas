@@ -32,7 +32,7 @@
         { "id": "elder", "name": "Elder", "file": "base/elder.png", "personality": "calm / wise", "status": "ready" }
       ],
       "anchorsFile": "base/anchors.json",
-      "anchorsStatus": "pending — generated once the roster is locked",
+      "anchorsStatus": "generated (first-pass, verified via base/_anchors-overlay.png)",
       "candidateModels": {
         "A_baked_archetypes": "CHOSEN. A curated set of full-body base bodies (each its own wool+silhouette+ear+expression). Individuality comes from base + accessories + palette shifts.",
         "B_modular_layers": "Not used. Split base identity into layered sub-traits — more combinations but harder art cohesion."
