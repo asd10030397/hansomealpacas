@@ -7,6 +7,23 @@
     "default": "Always-present baseline for a required category; 'classic'/'fresh-grass' render the canonical base with no overlay."
   },
   "categories": {
+    "base": {
+      "folder": "base",
+      "layer": 1,
+      "required": true,
+      "selectExactlyOne": true,
+      "planned": "TBD — pending production-method decision",
+      "excludeFromRandomPool": ["mascot"],
+      "description": "The individual alpaca body. Each is an ORIGINAL HANSOME alpaca with its own wool shape, head silhouette, ear shape, facial expression, and fluff style — sharing the HANSOME palette, proportions, and pixel rendering, but never a clone of the mascot. All variants align to the shared anatomy anchor contract (see generation-config.json > baseAnatomyContract) so worn traits fit.",
+      "reserved": [
+        { "id": "mascot", "name": "HANSOME Mascot", "file": "../../alpaca-nft-master-base.png", "reservedFor": "founder-#001-only", "status": "reserved", "notes": "Brand-identity appearance. Never used by any token except the Founder NFT." }
+      ],
+      "items": [],
+      "candidateModels": {
+        "A_baked_archetypes": "A curated set of ~16-24 fully distinct base bodies (each its own wool+silhouette+ear+expression). Simplest to keep on-brand; individuality comes from base + accessories + palette shifts.",
+        "B_modular_layers": "Split base identity into layered sub-traits (headSilhouette x earShape x expression x fluff) that combine, yielding far more unique individuals from fewer drawn parts, at the cost of harder art cohesion."
+      }
+    },
     "background": {
       "folder": "backgrounds",
       "layer": 0,
@@ -28,7 +45,7 @@
       "required": true,
       "planned": 8,
       "selectExactlyOne": true,
-      "description": "Wool Styles. Overlay tufts/texture drawn over the base silhouette. 'Classic' is the untouched canonical wool.",
+      "description": "Wool Styles. Overlay tufts/texture drawn over the chosen individual base. 'Classic' adds no overlay. Note: under the mascot policy this is a texture accent on an already-original base, not a way to re-create the mascot's wool.",
       "items": [
         { "id": "classic", "name": "Classic", "file": null, "tier": "common", "status": "default" },
         { "id": "fluffy", "name": "Fluffy", "tier": "common", "status": "planned" },

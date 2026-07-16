@@ -4,8 +4,22 @@
     "name": "HANSOME Genesis",
     "symbol": "HANSOME-GEN",
     "totalSupply": 500,
-    "description": "The Genesis collection of the HANSOME universe. Every alpaca is the same canonical HANSOME alpaca, given its own identity through handcrafted, countryside-flavored traits.",
-    "canonicalBase": "public/pixel/alpaca-nft-master-base.png"
+    "description": "The Genesis collection of the HANSOME universe. Every alpaca is its own original individual — sharing the HANSOME look and feel, but with a unique wool shape, head silhouette, ear shape, expression, and fluff. They are NOT the mascot wearing different accessories.",
+    "mascotBase": "public/pixel/alpaca-nft-master-base.png"
+  },
+  "mascotPolicy": {
+    "rule": "The canonical alpaca (mascotBase) is the official HANSOME mascot and the face of the brand. Its exact side-swept wool, head silhouette, ear shape, and expression are brand identity and are RESERVED. Exactly ONE NFT in the entire Genesis collection may use this exact appearance: the Founder NFT (#001).",
+    "reservedFor": "founder-#001-only",
+    "appliesTo": "public/pixel/alpaca-nft-master-base.png",
+    "generatorMustNever": [
+      "use the mascot base for any token other than #001",
+      "produce a base body that replicates the mascot's exact wool shape / silhouette / ear / expression",
+      "treat the mascot as the generic base and only swap accessories"
+    ],
+    "everyOtherAlpaca": {
+      "mustBeOriginalIn": ["woolShape", "headSilhouette", "earShape", "facialExpression", "fluffStyle"],
+      "mustStillReadAs": "clearly the same HANSOME universe (shared palette, proportions, pixel-art rendering, cozy countryside identity)"
+    }
   },
   "distribution": {
     "publicMint": 470,
@@ -20,7 +34,8 @@
       "label": "Founder Alpaca",
       "generation": "manual",
       "excludeFromRandomPool": true,
-      "notes": "NFT #001 is hand-designed. The generator must never produce or overwrite it."
+      "usesMascotAppearance": true,
+      "notes": "NFT #001 is hand-designed and is the ONLY token permitted to use the canonical mascot appearance (mascotBase). The generator must never produce or overwrite it."
     },
     "legendaryTokenIds": {
       "count": 20,
@@ -67,14 +82,19 @@
     "effects"
   ],
   "layerNotes": {
-    "base": "The canonical master base PNG. Never repainted, recolored, smoothed, or upscaled. Always composited pixel-for-pixel.",
-    "fur": "Wool-style overlay drawn on top of the base silhouette (tufts / texture / edge puffs). 'Classic' is a no-op that shows the base as-is.",
+    "base": "The individual alpaca body for this token (from the 'base' category). Each is an original HANSOME alpaca with its own wool shape / head silhouette / ear / expression — NOT the mascot. Only token #001 uses the reserved mascot base. Base art is composited pixel-for-pixel, never smoothed or upscaled.",
+    "fur": "Wool-style overlay drawn on top of the chosen base (tufts / texture / edge puffs). 'Classic' is a no-op.",
     "necklace": "Sits above clothing so a collar/pendant reads over a scarf or sweater.",
     "hat": "Topmost worn item.",
     "effects": "Ambient foreground elements (butterfly, bee, falling leaf, sparkles). Drawn last, may extend beyond the alpaca silhouette."
   },
+  "baseAnatomyContract": {
+    "comment": "So that hats/glasses/necklaces/etc. line up on every individual, all base-body variants share a common set of anatomy anchor points (crown, eye, ear, muzzle, mouth, neck, chest) within the tolerances below. Variation happens in wool/silhouette/ear/expression AROUND these anchors, not by moving them arbitrarily. Each base may also declare per-base anchor overrides.",
+    "sharedAnchorsFrom": "the canonical anatomy block below",
+    "anchorToleranceCells": 2
+  },
   "anatomy": {
-    "comment": "Pixel coordinates on the 1024x1024 canvas, derived from the canonical base. Used to place traits so they fit the alpaca naturally.",
+    "comment": "Pixel coordinates on the 1024x1024 canvas. Originally derived from the mascot; used as the SHARED anchor contract that every base variant aligns to so traits fit naturally.",
     "headCrown": { "x0": 300, "y0": 40, "x1": 660, "y1": 190 },
     "eye": { "x0": 524, "y0": 357, "x1": 628, "y1": 413 },
     "farEyeApprox": { "x0": 430, "y0": 370, "x1": 500, "y1": 420 },
