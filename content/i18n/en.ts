@@ -443,7 +443,7 @@ export const en: Messages = {
       },
       liquidityOptimization: {
         heading: "Liquidity Optimization (July 2026)",
-        body: "In July 2026, the Treasury carried out a liquidity optimization on the official Uniswap v4 pool. The original 365-day locked position (#47299, see On-Chain Verification above) was left completely unchanged — nothing about that lock was touched or unwound. Alongside it, the Treasury added two new, Treasury-owned liquidity positions: a narrow-range position sized to reduce swap slippage near the current price, and a wider-range position held as additional downside protection. Combined, official liquidity across all positions now exceeds $10,000. This was funded through disclosed Treasury liquidity management, and every step of it is publicly verifiable on-chain.",
+        body: "In July 2026, the Treasury carried out a liquidity optimization on the official Uniswap v4 pool. The original 365-day locked position (#47299, see On-Chain Verification above) was left completely unchanged — nothing about that lock was touched or unwound. Alongside it, the Treasury added two new, Treasury-owned liquidity positions: a narrow-range position sized to reduce swap slippage near the current price, and a wider-range position held as additional downside protection. Combined, this meaningfully increased the capital backing official liquidity beyond the original locked position alone. This was funded through disclosed Treasury liquidity management, and every step of it is publicly verifiable on-chain.",
       },
       improvedTradingExperience: {
         heading: "Improved Trading Experience",
@@ -641,7 +641,7 @@ export const en: Messages = {
           date: "July 2026",
           changes: [
             "Completed a Treasury-led liquidity optimization on the official Uniswap v4 pool: added two new Treasury-owned positions — a narrow-range position for lower swap slippage and a wide-range position for additional downside protection — while leaving the original 365-day locked position (#47299) completely unchanged.",
-            "Updated the Liquidity Policy section to reflect that the barbell liquidity strategy, previously described as planned, is now live, with official liquidity across all positions exceeding $10,000.",
+            "Updated the Liquidity Policy section to reflect that the barbell liquidity strategy, previously described as planned, is now live across three Treasury-linked positions.",
             "Added notes on the improved trading experience following the optimization: reduced swap slippage, more efficient execution for medium and larger trades, and better market depth.",
             "Added notes on recent infrastructure improvements: swap infrastructure, gas-fee handling on Robinhood Chain, transaction reliability, and internal liquidity management tooling.",
             "Expanded the Community section to reflect AMA sessions, KOL collaborations, and ongoing marketing campaigns alongside existing meme contests, giveaways, and community events.",
