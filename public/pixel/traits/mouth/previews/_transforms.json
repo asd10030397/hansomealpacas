@@ -1,0 +1,350 @@
+{
+  "note": "Per-placement transform for mouth traits. x,y = the dedicated mouth anchor (bite target, canvas px) — the sprite's bite point maps here. scale = uniform nearest-neighbor scale applied to the trait PNG (face-scale proxy = eye span x widthFactor / pngW). rotation = degrees (0 = horizontal/level bite, no tilt) = anchor bite-angle + per-trait rotationDeg. left,top = final composite offset.",
+  "placements": {
+    "fresh-grass": {
+      "rotationDeg": 0,
+      "placements": {
+        "puff": {
+          "x": 515,
+          "y": 528,
+          "scale": 0.2777,
+          "rotation": 0,
+          "left": 479,
+          "top": 479
+        },
+        "curly": {
+          "x": 485,
+          "y": 498,
+          "scale": 0.2734,
+          "rotation": 0,
+          "left": 450,
+          "top": 450
+        },
+        "topknot": {
+          "x": 500,
+          "y": 510,
+          "scale": 0.2497,
+          "rotation": 0,
+          "left": 468,
+          "top": 466
+        },
+        "cria": {
+          "x": 490,
+          "y": 642,
+          "scale": 0.3423,
+          "rotation": 0,
+          "left": 446,
+          "top": 582
+        },
+        "sleek": {
+          "x": 480,
+          "y": 448,
+          "scale": 0.211,
+          "rotation": 0,
+          "left": 453,
+          "top": 411
+        },
+        "scruffy": {
+          "x": 490,
+          "y": 505,
+          "scale": 0.3078,
+          "rotation": 0,
+          "left": 451,
+          "top": 451
+        },
+        "bramble": {
+          "x": 488,
+          "y": 528,
+          "scale": 0.2669,
+          "rotation": 0,
+          "left": 454,
+          "top": 481
+        },
+        "elder": {
+          "x": 483,
+          "y": 488,
+          "scale": 0.2734,
+          "rotation": 0,
+          "left": 448,
+          "top": 440
+        }
+      }
+    },
+    "wheat": {
+      "rotationDeg": 0,
+      "placements": {
+        "puff": {
+          "x": 515,
+          "y": 528,
+          "scale": 0.224,
+          "rotation": 0,
+          "left": 486,
+          "top": 467
+        },
+        "curly": {
+          "x": 485,
+          "y": 498,
+          "scale": 0.2205,
+          "rotation": 0,
+          "left": 457,
+          "top": 438
+        },
+        "topknot": {
+          "x": 500,
+          "y": 510,
+          "scale": 0.2014,
+          "rotation": 0,
+          "left": 474,
+          "top": 455
+        },
+        "cria": {
+          "x": 490,
+          "y": 642,
+          "scale": 0.276,
+          "rotation": 0,
+          "left": 455,
+          "top": 567
+        },
+        "sleek": {
+          "x": 480,
+          "y": 448,
+          "scale": 0.1701,
+          "rotation": 0,
+          "left": 458,
+          "top": 402
+        },
+        "scruffy": {
+          "x": 490,
+          "y": 505,
+          "scale": 0.2483,
+          "rotation": 0,
+          "left": 458,
+          "top": 437
+        },
+        "bramble": {
+          "x": 488,
+          "y": 528,
+          "scale": 0.2153,
+          "rotation": 0,
+          "left": 460,
+          "top": 469
+        },
+        "elder": {
+          "x": 483,
+          "y": 488,
+          "scale": 0.2205,
+          "rotation": 0,
+          "left": 455,
+          "top": 428
+        }
+      }
+    },
+    "white-flower": {
+      "rotationDeg": 0,
+      "placements": {
+        "puff": {
+          "x": 515,
+          "y": 528,
+          "scale": 0.2598,
+          "rotation": 0,
+          "left": 482,
+          "top": 457
+        },
+        "curly": {
+          "x": 485,
+          "y": 498,
+          "scale": 0.2558,
+          "rotation": 0,
+          "left": 452,
+          "top": 428
+        },
+        "topknot": {
+          "x": 500,
+          "y": 510,
+          "scale": 0.2336,
+          "rotation": 0,
+          "left": 470,
+          "top": 446
+        },
+        "cria": {
+          "x": 490,
+          "y": 642,
+          "scale": 0.3202,
+          "rotation": 0,
+          "left": 449,
+          "top": 555
+        },
+        "sleek": {
+          "x": 480,
+          "y": 448,
+          "scale": 0.1974,
+          "rotation": 0,
+          "left": 455,
+          "top": 394
+        },
+        "scruffy": {
+          "x": 490,
+          "y": 505,
+          "scale": 0.288,
+          "rotation": 0,
+          "left": 453,
+          "top": 427
+        },
+        "bramble": {
+          "x": 488,
+          "y": 528,
+          "scale": 0.2497,
+          "rotation": 0,
+          "left": 456,
+          "top": 460
+        },
+        "elder": {
+          "x": 483,
+          "y": 488,
+          "scale": 0.2558,
+          "rotation": 0,
+          "left": 450,
+          "top": 418
+        }
+      }
+    },
+    "lavender": {
+      "rotationDeg": 0,
+      "placements": {
+        "puff": {
+          "x": 515,
+          "y": 528,
+          "scale": 0.2217,
+          "rotation": 0,
+          "left": 487,
+          "top": 461
+        },
+        "curly": {
+          "x": 485,
+          "y": 498,
+          "scale": 0.2183,
+          "rotation": 0,
+          "left": 457,
+          "top": 432
+        },
+        "topknot": {
+          "x": 500,
+          "y": 510,
+          "scale": 0.1994,
+          "rotation": 0,
+          "left": 474,
+          "top": 449
+        },
+        "cria": {
+          "x": 490,
+          "y": 642,
+          "scale": 0.2733,
+          "rotation": 0,
+          "left": 455,
+          "top": 559
+        },
+        "sleek": {
+          "x": 480,
+          "y": 448,
+          "scale": 0.1684,
+          "rotation": 0,
+          "left": 458,
+          "top": 397
+        },
+        "scruffy": {
+          "x": 490,
+          "y": 505,
+          "scale": 0.2458,
+          "rotation": 0,
+          "left": 459,
+          "top": 430
+        },
+        "bramble": {
+          "x": 488,
+          "y": 528,
+          "scale": 0.2131,
+          "rotation": 0,
+          "left": 461,
+          "top": 463
+        },
+        "elder": {
+          "x": 483,
+          "y": 488,
+          "scale": 0.2183,
+          "rotation": 0,
+          "left": 455,
+          "top": 422
+        }
+      }
+    },
+    "four-leaf-clover": {
+      "rotationDeg": 0,
+      "placements": {
+        "puff": {
+          "x": 515,
+          "y": 528,
+          "scale": 0.262,
+          "rotation": 0,
+          "left": 486,
+          "top": 482
+        },
+        "curly": {
+          "x": 485,
+          "y": 498,
+          "scale": 0.258,
+          "rotation": 0,
+          "left": 456,
+          "top": 453
+        },
+        "topknot": {
+          "x": 500,
+          "y": 510,
+          "scale": 0.2356,
+          "rotation": 0,
+          "left": 474,
+          "top": 469
+        },
+        "cria": {
+          "x": 490,
+          "y": 642,
+          "scale": 0.323,
+          "rotation": 0,
+          "left": 454,
+          "top": 585
+        },
+        "sleek": {
+          "x": 480,
+          "y": 448,
+          "scale": 0.1991,
+          "rotation": 0,
+          "left": 458,
+          "top": 413
+        },
+        "scruffy": {
+          "x": 490,
+          "y": 505,
+          "scale": 0.2905,
+          "rotation": 0,
+          "left": 457,
+          "top": 454
+        },
+        "bramble": {
+          "x": 488,
+          "y": 528,
+          "scale": 0.2519,
+          "rotation": 0,
+          "left": 460,
+          "top": 484
+        },
+        "elder": {
+          "x": 483,
+          "y": 488,
+          "scale": 0.258,
+          "rotation": 0,
+          "left": 454,
+          "top": 443
+        }
+      }
+    }
+  }
+}

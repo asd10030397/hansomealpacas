@@ -127,6 +127,7 @@ function overlaySvg(W, H, a, label) {
   dot(a.ear.left, "#ff29c3"); dot(a.ear.right, "#ff29c3");
   dot(a.eye.left, "#1e6bff"); dot(a.eye.right, "#1e6bff");
   dot(a.neck, "#12b81f"); dot(a.chest, "#ff8c00", 11);
+  if (a.mouth) { m.push(`<circle cx="${a.mouth.x}" cy="${a.mouth.y}" r="11" fill="#00c2c2" stroke="#000" stroke-width="2"/>`); m.push(`<line x1="${a.mouth.x - 20}" y1="${a.mouth.y}" x2="${a.mouth.x + 20}" y2="${a.mouth.y}" stroke="#00c2c2" stroke-width="2"/><line x1="${a.mouth.x}" y1="${a.mouth.y - 20}" x2="${a.mouth.x}" y2="${a.mouth.y + 20}" stroke="#00c2c2" stroke-width="2"/>`); }
   m.push(`<text x="20" y="46" font-family="Verdana" font-size="34" font-weight="bold" fill="#5b4636">${label}</text>`);
   return Buffer.from(`<svg width="${W}" height="${H}">${m.join("")}</svg>`);
 }
@@ -146,6 +147,26 @@ const EYE_OVERRIDES = {
   elder: { left: { x: 424, y: 425 }, right: { x: 551, y: 424 } },
 };
 
+// Dedicated MOUTH anchor per archetype — the actual bite position (centre of the
+// smile: below the nose, centred on the muzzle, above the chin). Read directly off
+// each normalized base via the labelled face crops (scripts-nft/mouth/_locate-faces.mjs).
+// This is INDEPENDENT of the eye anchors — mouth traits must not be derived from eyes,
+// because the eye-to-muzzle distance varies too much across archetypes.
+// x,y = bite position. rot = muzzle bite ANGLE in degrees (0 = horizontal / upright,
+// front-facing). All Genesis faces are front-facing and level, so every bite angle is 0;
+// a tilted muzzle (e.g. a future 3/4 pose) would set rot here and every mouth trait
+// would follow it automatically.
+const MOUTH_ANCHORS = {
+  puff: { x: 515, y: 528, rot: 0 },
+  curly: { x: 485, y: 498, rot: 0 },
+  topknot: { x: 500, y: 510, rot: 0 },
+  cria: { x: 490, y: 642, rot: 0 },
+  sleek: { x: 480, y: 448, rot: 0 },
+  scruffy: { x: 490, y: 505, rot: 0 },
+  bramble: { x: 488, y: 528, rot: 0 },
+  elder: { x: 483, y: 488, rot: 0 },
+};
+
 const anchors = {};
 const cells = [];
 const CELL = 340;
@@ -159,6 +180,7 @@ for (const name of NAMES) {
     a.eye.lineY = Math.round((ov.left.y + ov.right.y) / 2);
     a.eye.overridden = true;
   }
+  if (MOUTH_ANCHORS[name]) a.mouth = { rot: 0, ...MOUTH_ANCHORS[name], source: "hand-verified" };
   anchors[name] = a;
   const over = overlaySvg(info.width, info.height, a, name);
   const flat = await sharp({ create: { width: info.width, height: info.height, channels: 4, background: { r: 255, g: 252, b: 245, alpha: 1 } } })
@@ -166,20 +188,20 @@ for (const name of NAMES) {
     .png().toBuffer();
   cells.push(await sharp(flat).resize(CELL, CELL, { fit: "contain", background: { r: 255, g: 252, b: 245, alpha: 1 } }).png().toBuffer());
   const ef = a.eye.left.fallback || a.eye.right.fallback ? " (eye=fallback)" : "";
-  console.log(`${name.padEnd(8)} crown(${a.crown.x},${a.crown.y}) eyeY=${a.eye.lineY} neck(${a.neck.x},${a.neck.y}) chest(${a.chest.x},${a.chest.y})${ef}`);
+  console.log(`${name.padEnd(8)} crown(${a.crown.x},${a.crown.y}) eyeY=${a.eye.lineY} mouth(${a.mouth ? a.mouth.x + "," + a.mouth.y : "-"}) neck(${a.neck.x},${a.neck.y}) chest(${a.chest.x},${a.chest.y})${ef}`);
 }
 
 fs.writeFileSync(path.join(BASE, "anchors.json"), JSON.stringify({
-  note: "Geometric anchors on the 1024x1024 canvas (normalized frame). crown=hat, ear=ear accessory, eye=glasses line, neck=neck accessory, chest=clothing. Some eye anchors are hand-verified overrides (see EYE_OVERRIDES in detect-base-anchors.mjs). Verify against _anchors-overlay.png before trait-fitting.",
+  note: "Geometric anchors on the 1024x1024 canvas (normalized frame). crown=hat, ear=ear accessory, eye=glasses line, neck=neck accessory, chest=clothing, mouth=bite position for mouth traits. Some eye anchors are hand-verified overrides (see EYE_OVERRIDES) and every mouth anchor is hand-verified (see MOUTH_ANCHORS) in detect-base-anchors.mjs. The mouth anchor is INDEPENDENT of the eyes. Verify against _anchors-overlay.png before trait-fitting.",
   canvas: { width: 1024, height: 1024 },
-  legend: { crown: "red", ear: "magenta", eye: "blue", neck: "green", chest: "orange" },
+  legend: { crown: "red", ear: "magenta", eye: "blue", neck: "green", chest: "orange", mouth: "teal" },
   archetypes: anchors,
 }, null, 2));
 
 // contact sheet of overlays (4x2)
 const COLS = 4, ROWS = 2, PAD = 16;
 const SW = COLS * (CELL + PAD) + PAD, SH = ROWS * (CELL + PAD) + PAD + 50;
-const comp = [{ input: Buffer.from(`<svg width="${SW}" height="50"><text x="${SW / 2}" y="36" font-family="Verdana" font-size="28" font-weight="bold" fill="#5b4636" text-anchor="middle">Base Anatomy Anchors — crown/ear/eye/neck/chest</text></svg>`), top: 8, left: 0 }];
+const comp = [{ input: Buffer.from(`<svg width="${SW}" height="50"><text x="${SW / 2}" y="36" font-family="Verdana" font-size="28" font-weight="bold" fill="#5b4636" text-anchor="middle">Base Anatomy Anchors — crown/ear/eye/neck/chest/mouth</text></svg>`), top: 8, left: 0 }];
 cells.forEach((buf, i) => {
   const c = i % COLS, r = Math.floor(i / COLS);
   comp.push({ input: buf, top: 50 + PAD + r * (CELL + PAD), left: PAD + c * (CELL + PAD) });

@@ -1,0 +1,77 @@
+{
+  "fresh-grass": {
+    "name": "Fresh Grass",
+    "tier": "common",
+    "file": "mouth/fresh-grass.png",
+    "pngW": 288,
+    "pngH": 208,
+    "scale": 16,
+    "bitePx": {
+      "x": 128,
+      "y": 176
+    },
+    "widthFactor": 0.62,
+    "rotationDeg": 0,
+    "offsets": {}
+  },
+  "wheat": {
+    "name": "Wheat Stalk",
+    "tier": "common",
+    "file": "mouth/wheat.png",
+    "pngW": 288,
+    "pngH": 320,
+    "scale": 16,
+    "bitePx": {
+      "x": 128,
+      "y": 272
+    },
+    "widthFactor": 0.5,
+    "rotationDeg": 0,
+    "offsets": {}
+  },
+  "white-flower": {
+    "name": "Wildflower",
+    "tier": "uncommon",
+    "file": "mouth/white-flower.png",
+    "pngW": 288,
+    "pngH": 320,
+    "scale": 16,
+    "bitePx": {
+      "x": 128,
+      "y": 272
+    },
+    "widthFactor": 0.58,
+    "rotationDeg": 0,
+    "offsets": {}
+  },
+  "lavender": {
+    "name": "Lavender Sprig",
+    "tier": "rare",
+    "file": "mouth/lavender.png",
+    "pngW": 256,
+    "pngH": 352,
+    "scale": 16,
+    "bitePx": {
+      "x": 128,
+      "y": 304
+    },
+    "widthFactor": 0.44,
+    "rotationDeg": 0,
+    "offsets": {}
+  },
+  "four-leaf-clover": {
+    "name": "Four-leaf Clover",
+    "tier": "epic",
+    "file": "mouth/four-leaf-clover.png",
+    "pngW": 256,
+    "pngH": 208,
+    "scale": 16,
+    "bitePx": {
+      "x": 112,
+      "y": 176
+    },
+    "widthFactor": 0.52,
+    "rotationDeg": 0,
+    "offsets": {}
+  }
+}

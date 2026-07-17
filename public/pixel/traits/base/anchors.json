@@ -1,5 +1,5 @@
 {
-  "note": "Geometric anchors on the 1024x1024 canvas (normalized frame). crown=hat, ear=ear accessory, eye=glasses line, neck=neck accessory, chest=clothing. Some eye anchors are hand-verified overrides (see EYE_OVERRIDES in detect-base-anchors.mjs). Verify against _anchors-overlay.png before trait-fitting.",
+  "note": "Geometric anchors on the 1024x1024 canvas (normalized frame). crown=hat, ear=ear accessory, eye=glasses line, neck=neck accessory, chest=clothing, mouth=bite position for mouth traits. Some eye anchors are hand-verified overrides (see EYE_OVERRIDES) and every mouth anchor is hand-verified (see MOUTH_ANCHORS) in detect-base-anchors.mjs. The mouth anchor is INDEPENDENT of the eyes. Verify against _anchors-overlay.png before trait-fitting.",
   "canvas": {
     "width": 1024,
     "height": 1024
@@ -9,7 +9,8 @@
     "ear": "magenta",
     "eye": "blue",
     "neck": "green",
-    "chest": "orange"
+    "chest": "orange",
+    "mouth": "teal"
   },
   "archetypes": {
     "puff": {
@@ -58,7 +59,13 @@
         "x": 505,
         "y": 661
       },
-      "ground": 984
+      "ground": 984,
+      "mouth": {
+        "rot": 0,
+        "x": 515,
+        "y": 528,
+        "source": "hand-verified"
+      }
     },
     "curly": {
       "bbox": {
@@ -106,7 +113,13 @@
         "x": 508,
         "y": 665
       },
-      "ground": 984
+      "ground": 984,
+      "mouth": {
+        "rot": 0,
+        "x": 485,
+        "y": 498,
+        "source": "hand-verified"
+      }
     },
     "topknot": {
       "bbox": {
@@ -154,7 +167,13 @@
         "x": 506,
         "y": 697
       },
-      "ground": 984
+      "ground": 984,
+      "mouth": {
+        "rot": 0,
+        "x": 500,
+        "y": 510,
+        "source": "hand-verified"
+      }
     },
     "cria": {
       "bbox": {
@@ -199,7 +218,13 @@
         "x": 518,
         "y": 789
       },
-      "ground": 984
+      "ground": 984,
+      "mouth": {
+        "rot": 0,
+        "x": 490,
+        "y": 642,
+        "source": "hand-verified"
+      }
     },
     "sleek": {
       "bbox": {
@@ -247,7 +272,13 @@
         "x": 519,
         "y": 624
       },
-      "ground": 984
+      "ground": 984,
+      "mouth": {
+        "rot": 0,
+        "x": 480,
+        "y": 448,
+        "source": "hand-verified"
+      }
     },
     "scruffy": {
       "bbox": {
@@ -295,7 +326,13 @@
         "x": 527,
         "y": 687
       },
-      "ground": 984
+      "ground": 984,
+      "mouth": {
+        "rot": 0,
+        "x": 490,
+        "y": 505,
+        "source": "hand-verified"
+      }
     },
     "bramble": {
       "bbox": {
@@ -343,7 +380,13 @@
         "x": 511,
         "y": 702
       },
-      "ground": 984
+      "ground": 984,
+      "mouth": {
+        "rot": 0,
+        "x": 488,
+        "y": 528,
+        "source": "hand-verified"
+      }
     },
     "elder": {
       "bbox": {
@@ -391,7 +434,13 @@
         "x": 515,
         "y": 626
       },
-      "ground": 984
+      "ground": 984,
+      "mouth": {
+        "rot": 0,
+        "x": 483,
+        "y": 488,
+        "source": "hand-verified"
+      }
     }
   }
 }

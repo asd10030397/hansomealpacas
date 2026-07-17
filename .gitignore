@@ -63,3 +63,6 @@ next-env.d.ts
 /bot/dist
 /bot/data
 /bot/*.tsbuildinfo
+
+# NFT dev scratch: labelled face crops used to read mouth anchors
+public/pixel/traits/base/_face-locate/
