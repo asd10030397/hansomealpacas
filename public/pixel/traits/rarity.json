@@ -14,7 +14,7 @@
   },
   "categoryNoneWeight": {
     "comment": "Weight of the empty/none option for optional categories, expressed on the same scale as tier weights. Higher = the slot is more often empty. Required categories (background, fur, mouth) have no 'none'.",
-    "clothing": 90,
+    "clothing": 60,
     "necklace": 120,
     "face": 140,
     "ears": 170,
@@ -31,6 +31,7 @@
   "notes": [
     "These weights are the starting point for the FULL library; the review batch does not need to hit these distributions.",
     "Legendary NFTs and the Reserved NFTs (Reserved includes Founder #001) are outside this rarity model entirely — they are hand-designed, not drawn from weights.",
-    "Rarity for HANSOME-original traits (mouth flowers, wool styles, face marks) is intentionally skewed so the cozy defaults dominate and special nature traits feel earned."
+    "Rarity for HANSOME-original traits (mouth flowers, wool styles, face marks) is intentionally skewed so the cozy defaults dominate and special nature traits feel earned.",
+    "Clothing is intentionally a small pool (Cozy Wool Scarf, Festival Ribbon Outfit); its 'none' weight was lowered to 60 so the two cozy pieces still appear at a reasonable rate. Farmer Overalls / Farm Vest / Explorer Cape were removed for reading too human-like / RPG-like."
   ]
 }

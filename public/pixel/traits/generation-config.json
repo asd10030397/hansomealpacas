@@ -161,7 +161,7 @@
   "status": {
     "phase": "trait-fitting",
     "reviewBatchOnly": true,
-    "completed": ["base archetype family (8)", "anatomy anchors", "hats (5, anchor-fitted)", "neck accessories (5, anchor-fitted)", "glasses (5, anchor-fitted)", "clothing (5, archetype-aware parametric fit — 40/40 clean)"],
-    "notes": "Anchor-driven trait-fitting in progress. Order: hats, neck accessories, glasses, clothing (done). Clothing uses a parametric per-archetype fitter (adaptive-scarf.mjs + adaptive-clothing.mjs): each garment is drawn from measured anatomy (neck/shoulder/chest + per-row silhouette envelope) with a per-garment anchor hierarchy, verified for clipping/floating/silhouette/face/legs (40/40 clean). Mouth, ear accessories, effects follow next. Full library, metadata, Legendary, Founder #001 artwork, and the 500-piece generation remain on hold pending approval."
+    "completed": ["base archetype family (8)", "anatomy anchors", "hats (5, anchor-fitted)", "neck accessories (5, anchor-fitted)", "glasses (5, anchor-fitted)", "clothing (2 kept: Cozy Wool Scarf + Festival Ribbon Outfit, archetype-aware parametric fit — 16/16 clean; Farmer Overalls / Farm Vest / Explorer Cape removed as too human/RPG-like)"],
+    "notes": "Anchor-driven trait-fitting in progress. Order: hats, neck accessories, glasses, clothing (done). Clothing uses a parametric per-archetype fitter (adaptive-scarf.mjs + adaptive-clothing.mjs): each garment is drawn from measured anatomy (neck/shoulder/chest + per-row silhouette envelope) with a per-garment anchor hierarchy, verified for clipping/floating/silhouette/face/legs. Genesis pool trimmed to the two cozy pieces (Scarf + Festival Ribbon, 16/16 clean); the three human/RPG-like garments were excluded. Mouth, ear accessories, effects follow next. Full library, metadata, Legendary, Founder #001 artwork, and the 500-piece generation remain on hold pending approval."
   }
 }

@@ -18,10 +18,7 @@
     },
     "clothing": {
       "wool-scarf": ["covers-neck"],
-      "knit-sweater": ["covers-neck", "high-collar"],
-      "cozy-poncho": ["covers-neck", "covers-chest", "high-collar"],
-      "plaid-bandana": ["neckerchief"],
-      "denim-overalls": ["straps"]
+      "festival-ribbon": ["sash", "covers-chest"]
     },
     "necklace": {
       "hansome-pendant": ["pendant"],

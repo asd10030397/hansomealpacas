@@ -174,7 +174,9 @@ function renderTight(S) {
   return { buf, w, h };
 }
 
-const items = [farmerOveralls(), woolScarf(), farmVest(), explorerCape(), festivalRibbon()];
+// Genesis clothing pool: only the two cozy pieces that preserve the warm/fluffy alpaca
+// identity. Farmer Overalls / Farm Vest / Explorer Cape were removed (too human/RPG-like).
+const items = [woolScarf(), festivalRibbon()];
 const meta = {};
 for (const n of items) {
   const { buf, w, h } = renderTight(n.S);
