@@ -11,21 +11,21 @@
       "y": 176
     },
     "widthFactor": 0.62,
-    "rotationDeg": 0,
+    "rotationDeg": 85,
     "offsets": {}
   },
   "wheat": {
     "name": "Wheat Stalk",
     "tier": "common",
     "file": "mouth/wheat.png",
-    "pngW": 288,
-    "pngH": 320,
+    "pngW": 352,
+    "pngH": 208,
     "scale": 16,
     "bitePx": {
-      "x": 128,
-      "y": 272
+      "x": 16,
+      "y": 96
     },
-    "widthFactor": 0.5,
+    "widthFactor": 0.62,
     "rotationDeg": 0,
     "offsets": {}
   },
@@ -33,30 +33,30 @@
     "name": "Wildflower",
     "tier": "uncommon",
     "file": "mouth/white-flower.png",
-    "pngW": 288,
-    "pngH": 320,
+    "pngW": 256,
+    "pngH": 208,
     "scale": 16,
     "bitePx": {
       "x": 128,
-      "y": 272
+      "y": 176
     },
-    "widthFactor": 0.58,
-    "rotationDeg": 0,
+    "widthFactor": 0.5,
+    "rotationDeg": 85,
     "offsets": {}
   },
   "lavender": {
     "name": "Lavender Sprig",
     "tier": "rare",
     "file": "mouth/lavender.png",
-    "pngW": 256,
-    "pngH": 352,
+    "pngW": 224,
+    "pngH": 208,
     "scale": 16,
     "bitePx": {
-      "x": 128,
-      "y": 304
+      "x": 112,
+      "y": 176
     },
     "widthFactor": 0.44,
-    "rotationDeg": 0,
+    "rotationDeg": 85,
     "offsets": {}
   },
   "four-leaf-clover": {
@@ -71,7 +71,7 @@
       "y": 176
     },
     "widthFactor": 0.52,
-    "rotationDeg": 0,
+    "rotationDeg": 85,
     "offsets": {}
   }
 }
