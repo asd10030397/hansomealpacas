@@ -92,13 +92,18 @@
       "required": false,
       "planned": 25,
       "noneAllowed": true,
-      "description": "Cozy garments on the neck/chest — scarves, knitwear, bandanas, ponchos. Handmade village feel, not street fashion.",
+      "description": "Cozy HANSOME countryside garments on the torso — farm workwear, knit scarves, gilets, travel capes, festival sashes. Handmade village feel, not street fashion. Each garment is DRAWN per-archetype from measured anatomy (neck/shoulder/chest + a per-row silhouette envelope) so it truly fits each body instead of being one PNG scaled onto every alpaca.",
+      "fitSystem": "archetype-aware parametric fit — per-garment anchor hierarchy: Overalls = leg/stance centre + chest + body width; Vest = body centre + chest/shoulder + torso width; Cape = body centre + neck/shoulder, follows the silhouette; Ribbon = body centre + chest, diagonal; Scarf = neck-centred. (adaptive-scarf.mjs + adaptive-clothing.mjs)",
+      "variants": "per-archetype fitted PNGs in clothing/<id>/<archetype>.png (scarf: cozy-wool-scarf/<archetype>.png); base authoring sprite in clothing/<id>.png",
+      "reviewBatch": 5,
+      "verification": "40/40 clean across 5 items x 8 archetypes — 0 canvas-clip, 0 floating (silhouette envelope +1 cell outline tolerance), 0 face-cover, 0 leg-clip",
+      "specialCases": "sleek widened (slim/tall), cria scaled down (cute proportions), bramble/elder fill wider bodies without stretch, scruffy kept inside the fluffy wool",
       "items": [
-        { "id": "wool-scarf", "name": "Wool Scarf", "file": "clothing/wool-scarf.png", "tier": "common", "status": "ready" },
-        { "id": "plaid-bandana", "name": "Plaid Bandana", "file": "clothing/plaid-bandana.png", "tier": "common", "status": "ready" },
-        { "id": "knit-sweater", "name": "Knit Sweater", "file": "clothing/knit-sweater.png", "tier": "uncommon", "status": "ready" },
-        { "id": "cozy-poncho", "name": "Cozy Poncho", "file": "clothing/cozy-poncho.png", "tier": "rare", "status": "ready" },
-        { "id": "denim-overalls", "name": "Denim Overalls", "file": "clothing/denim-overalls.png", "tier": "rare", "status": "ready" }
+        { "id": "farmer-overalls", "name": "Farmer Overalls", "file": "clothing/farmer-overalls.png", "tier": "common", "status": "ready" },
+        { "id": "wool-scarf", "name": "Cozy Wool Scarf", "file": "clothing/wool-scarf.png", "tier": "uncommon", "status": "ready" },
+        { "id": "farm-vest", "name": "Farm Vest", "file": "clothing/farm-vest.png", "tier": "uncommon", "status": "ready" },
+        { "id": "explorer-cape", "name": "Explorer Cape", "file": "clothing/explorer-cape.png", "tier": "rare", "status": "ready" },
+        { "id": "festival-ribbon", "name": "Festival Ribbon Outfit", "file": "clothing/festival-ribbon.png", "tier": "epic", "status": "ready" }
       ]
     },
     "necklace": {
