@@ -131,12 +131,34 @@ function overlaySvg(W, H, a, label) {
   return Buffer.from(`<svg width="${W}" height="${H}">${m.join("")}</svg>`);
 }
 
+// Hand-verified eye overrides where auto-detection is unreliable (soft-shaded faces).
+// Coordinates read directly from the normalized base art. Eyes drive glasses fitting,
+// so accuracy matters more here than for broad anchors like crown/neck.
+// The auto-detector reliably finds the LEFT eye but tends to pull the RIGHT eye onto the
+// right-side wool/cheek shading (over-wide span). These are read directly from the art.
+const EYE_OVERRIDES = {
+  puff: { left: { x: 447, y: 479 }, right: { x: 576, y: 479 } },
+  curly: { left: { x: 446, y: 450 }, right: { x: 573, y: 450 } },
+  topknot: { left: { x: 454, y: 446 }, right: { x: 570, y: 446 } },
+  sleek: { left: { x: 444, y: 390 }, right: { x: 542, y: 388 } },
+  scruffy: { left: { x: 431, y: 450 }, right: { x: 574, y: 452 } },
+  bramble: { left: { x: 448, y: 466 }, right: { x: 572, y: 466 } },
+  elder: { left: { x: 424, y: 425 }, right: { x: 551, y: 424 } },
+};
+
 const anchors = {};
 const cells = [];
 const CELL = 340;
 for (const name of NAMES) {
   const { data, info } = await loadRaw(name);
   const a = analyze(data, info.width, info.height);
+  const ov = EYE_OVERRIDES[name];
+  if (ov) {
+    a.eye.left = { ...a.eye.left, ...ov.left, fallback: false };
+    a.eye.right = { ...a.eye.right, ...ov.right, fallback: false };
+    a.eye.lineY = Math.round((ov.left.y + ov.right.y) / 2);
+    a.eye.overridden = true;
+  }
   anchors[name] = a;
   const over = overlaySvg(info.width, info.height, a, name);
   const flat = await sharp({ create: { width: info.width, height: info.height, channels: 4, background: { r: 255, g: 252, b: 245, alpha: 1 } } })
@@ -148,7 +170,7 @@ for (const name of NAMES) {
 }
 
 fs.writeFileSync(path.join(BASE, "anchors.json"), JSON.stringify({
-  note: "First-pass geometric anchors on the 1024x1024 canvas. crown=hat, ear=ear accessory, eye=glasses line, neck=necklace, chest=clothing. Verify against _anchors-overlay.png before trait-fitting.",
+  note: "Geometric anchors on the 1024x1024 canvas (normalized frame). crown=hat, ear=ear accessory, eye=glasses line, neck=neck accessory, chest=clothing. Some eye anchors are hand-verified overrides (see EYE_OVERRIDES in detect-base-anchors.mjs). Verify against _anchors-overlay.png before trait-fitting.",
   canvas: { width: 1024, height: 1024 },
   legend: { crown: "red", ear: "magenta", eye: "blue", neck: "green", chest: "orange" },
   archetypes: anchors,

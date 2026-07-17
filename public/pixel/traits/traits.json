@@ -178,13 +178,17 @@
       "required": false,
       "planned": 15,
       "noneAllowed": true,
-      "description": "Eyewear over the visible eye. Frame reads across the 3/4 face.",
+      "description": "Front-facing eyewear over the two eyes (two lenses + bridge; temple arms are hidden behind the wool on a front view). Cozy handcrafted village feel. Authored as tight transparent sprites; placed on each archetype via the EYE anchors (lenses scaled so the lens gap matches the eye span, seated on the eye line) and the EAR anchors (Farm Goggles draws its strap to the ears). See glasses/_glasses-meta.json, scripts-nft/glasses/fit-glasses.mjs.",
+      "fitSystem": "anchor-fitted (eye-span lens scale + eye-line seat; ear anchors for goggles strap)",
+      "metaFile": "glasses/_glasses-meta.json",
+      "reviewBatch": 5,
+      "manualOffsets": "none — all 5 glasses fit all 8 archetypes fully anchor-driven (verified 40/40: eyes aligned, 0 floating/off-head, 0 out-of-bounds). Eye anchors hand-verified for puff/sleek/scruffy/bramble/elder (see EYE_OVERRIDES in scripts-nft/detect-base-anchors.mjs).",
       "items": [
         { "id": "round-glasses", "name": "Round Glasses", "file": "glasses/round-glasses.png", "tier": "common", "status": "ready" },
         { "id": "reading-glasses", "name": "Reading Glasses", "file": "glasses/reading-glasses.png", "tier": "uncommon", "status": "ready" },
         { "id": "sunglasses", "name": "Sunglasses", "file": "glasses/sunglasses.png", "tier": "uncommon", "status": "ready" },
         { "id": "heart-glasses", "name": "Heart Glasses", "file": "glasses/heart-glasses.png", "tier": "rare", "status": "ready" },
-        { "id": "monocle", "name": "Monocle", "file": "glasses/monocle.png", "tier": "epic", "status": "ready" }
+        { "id": "farm-goggles", "name": "Farm Goggles", "file": "glasses/farm-goggles.png", "tier": "epic", "status": "ready" }
       ]
     },
     "hat": {

@@ -1,0 +1,67 @@
+{
+  "round-glasses": {
+    "name": "Round Glasses",
+    "tier": "common",
+    "file": "glasses/round-glasses.png",
+    "pngW": 736,
+    "pngH": 320,
+    "scale": 16,
+    "centerXpx": 368,
+    "eyeRowPx": 160,
+    "lensGapPx": 352,
+    "strapToEar": false,
+    "offsets": { "curly": { "dx": -20, "dy": 0 }, "topknot": { "dx": -10, "dy": 0 }, "bramble": { "dx": -20, "dy": 0 } }
+  },
+  "reading-glasses": {
+    "name": "Reading Glasses",
+    "tier": "uncommon",
+    "file": "glasses/reading-glasses.png",
+    "pngW": 768,
+    "pngH": 320,
+    "scale": 16,
+    "centerXpx": 384,
+    "eyeRowPx": 128,
+    "lensGapPx": 384,
+    "strapToEar": false,
+    "offsets": { "curly": { "dx": -20, "dy": 0 }, "topknot": { "dx": -10, "dy": 0 }, "bramble": { "dx": -20, "dy": 0 } }
+  },
+  "sunglasses": {
+    "name": "Sunglasses",
+    "tier": "uncommon",
+    "file": "glasses/sunglasses.png",
+    "pngW": 768,
+    "pngH": 320,
+    "scale": 16,
+    "centerXpx": 384,
+    "eyeRowPx": 160,
+    "lensGapPx": 384,
+    "strapToEar": false,
+    "offsets": { "curly": { "dx": -20, "dy": 0 }, "topknot": { "dx": -10, "dy": 0 }, "bramble": { "dx": -20, "dy": 0 } }
+  },
+  "heart-glasses": {
+    "name": "Heart Glasses",
+    "tier": "rare",
+    "file": "glasses/heart-glasses.png",
+    "pngW": 800,
+    "pngH": 352,
+    "scale": 16,
+    "centerXpx": 400,
+    "eyeRowPx": 160,
+    "lensGapPx": 352,
+    "strapToEar": false,
+    "offsets": { "curly": { "dx": -20, "dy": 0 }, "topknot": { "dx": -10, "dy": 0 }, "bramble": { "dx": -20, "dy": 0 } }
+  },
+  "farm-goggles": {
+    "name": "Farm Goggles",
+    "tier": "epic",
+    "file": "glasses/farm-goggles.png",
+    "pngW": 768,
+    "pngH": 352,
+    "scale": 16,
+    "centerXpx": 384,
+    "eyeRowPx": 176,
+    "lensGapPx": 352,
+    "strapToEar": true,
+    "offsets": { "curly": { "dx": -20, "dy": 0 }, "topknot": { "dx": -10, "dy": 0 }, "bramble": { "dx": -20, "dy": 0 } }
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "note": "First-pass geometric anchors on the 1024x1024 canvas. crown=hat, ear=ear accessory, eye=glasses line, neck=neck accessory, chest=clothing. Verify against _anchors-overlay.png before trait-fitting.",
+  "note": "Geometric anchors on the 1024x1024 canvas (normalized frame). crown=hat, ear=ear accessory, eye=glasses line, neck=neck accessory, chest=clothing. Some eye anchors are hand-verified overrides (see EYE_OVERRIDES in detect-base-anchors.mjs). Verify against _anchors-overlay.png before trait-fitting.",
   "canvas": {
     "width": 1024,
     "height": 1024
@@ -39,13 +39,16 @@
       "eye": {
         "left": {
           "x": 447,
-          "y": 480
+          "y": 479,
+          "fallback": false
         },
         "right": {
-          "x": 621,
-          "y": 473
+          "x": 576,
+          "y": 479,
+          "fallback": false
         },
-        "lineY": 477
+        "lineY": 479,
+        "overridden": true
       },
       "neck": {
         "x": 463,
@@ -83,14 +86,17 @@
       },
       "eye": {
         "left": {
-          "x": 450,
-          "y": 461
+          "x": 446,
+          "y": 450,
+          "fallback": false
         },
         "right": {
-          "x": 590,
-          "y": 458
+          "x": 573,
+          "y": 450,
+          "fallback": false
         },
-        "lineY": 460
+        "lineY": 450,
+        "overridden": true
       },
       "neck": {
         "x": 490,
@@ -128,14 +134,17 @@
       },
       "eye": {
         "left": {
-          "x": 460,
-          "y": 452
+          "x": 454,
+          "y": 446,
+          "fallback": false
         },
         "right": {
-          "x": 577,
-          "y": 457
+          "x": 570,
+          "y": 446,
+          "fallback": false
         },
-        "lineY": 455
+        "lineY": 446,
+        "overridden": true
       },
       "neck": {
         "x": 504,
@@ -218,14 +227,17 @@
       },
       "eye": {
         "left": {
-          "x": 451,
-          "y": 435
+          "x": 444,
+          "y": 390,
+          "fallback": false
         },
         "right": {
-          "x": 557,
-          "y": 424
+          "x": 542,
+          "y": 388,
+          "fallback": false
         },
-        "lineY": 430
+        "lineY": 389,
+        "overridden": true
       },
       "neck": {
         "x": 494,
@@ -263,14 +275,17 @@
       },
       "eye": {
         "left": {
-          "x": 423,
-          "y": 449
+          "x": 431,
+          "y": 450,
+          "fallback": false
         },
         "right": {
-          "x": 603,
-          "y": 453
+          "x": 574,
+          "y": 452,
+          "fallback": false
         },
-        "lineY": 451
+        "lineY": 451,
+        "overridden": true
       },
       "neck": {
         "x": 506,
@@ -309,13 +324,16 @@
       "eye": {
         "left": {
           "x": 448,
-          "y": 485
+          "y": 466,
+          "fallback": false
         },
         "right": {
-          "x": 620,
-          "y": 459
+          "x": 572,
+          "y": 466,
+          "fallback": false
         },
-        "lineY": 472
+        "lineY": 466,
+        "overridden": true
       },
       "neck": {
         "x": 491,
@@ -353,14 +371,17 @@
       },
       "eye": {
         "left": {
-          "x": 436,
-          "y": 434
+          "x": 424,
+          "y": 425,
+          "fallback": false
         },
         "right": {
-          "x": 616,
-          "y": 438
+          "x": 551,
+          "y": 424,
+          "fallback": false
         },
-        "lineY": 436
+        "lineY": 425,
+        "overridden": true
       },
       "neck": {
         "x": 491,
