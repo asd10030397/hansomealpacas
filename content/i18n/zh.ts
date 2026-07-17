@@ -237,7 +237,6 @@ export const zh: Messages = {
         liquidity: "流動性政策",
         revenue: "營收策略",
         roadmap: "路線圖",
-        "hansome-hub": "HANSOME HUB",
         community: "社群",
         "long-term-vision": "長期願景",
         faq: "常見問題",
@@ -542,85 +541,6 @@ export const zh: Messages = {
         },
       ],
     },
-    hansomeHub: {
-      heading: "HANSOME HUB 與 NFT 生態系",
-      disclaimer:
-        "以下內容是我們對 HANSOME 未來可能發展方向的長期願景——不是承諾、不是已編列預算的專案，也不保證會推出。這個章節裡沒有任何日期，內容也可能改變、延後，或者最終沒有實現。",
-      phase: {
-        label: "第四階段",
-        title: "HANSOME HUB 與 NFT 生態系",
-        tagline: "打造一個由社群驅動的線上遊戲世界。",
-        paragraphs: [
-          "我們的長期願景，是打造一個線上社交空間，讓大家可以在裡面見面、聊天、玩遊戲，並透過自己的 NFT 身分互動。",
-          "我們希望 HANSOME 不只是另一個迷因代幣，而是一個社群可以一起相處、交朋友，並在有趣又友善的環境裡享受遊戲的地方。",
-        ],
-        features: {
-          heading: "規劃中的功能",
-          items: [
-            "🌍 一個持續運作的線上社交空間",
-            "🦙 用你的 HANSOME NFT 作為遊戲內的化身",
-            "💬 公開與私人聊天室",
-            "👥 與其他社群成員即時互動",
-            "🏠 建立私人房間，和朋友聊天或一起玩遊戲",
-            "🎮 休閒、策略與棋盤遊戲",
-            "🎨 未來的化身客製化與外觀功能",
-          ],
-        },
-      },
-      conceptArt: {
-        src: "/images/hansome-hub-concept.png",
-        alt: "HANSOME HUB 概念圖，呈現社群社交與遊戲空間的初期構想",
-        caption: "概念圖 — HANSOME HUB 的初期構想（開發過程中可能調整）",
-      },
-      nftEcosystem: {
-        heading: "NFT 生態系",
-        paragraphs: [
-          "NFT 未來計畫成為 HANSOME 生態系裡重要的一部分。",
-          "我們希望 HANSOME NFT 不只是收藏品，而是在 HANSOME HUB 裡真正具有實際用途。",
-        ],
-        features: {
-          heading: "規劃中的 NFT 功能",
-          items: [
-            "🦙 用你的 HANSOME NFT 作為遊戲內的化身",
-            "👕 未來的化身外觀與客製化",
-            "🎖 專屬的個人檔案徽章與稱號",
-            "🏆 專屬的錦標賽與活動獎勵",
-            "🎨 限量版收藏 NFT",
-            "🌟 隨著生態系發展，加入更多用途與體驗",
-          ],
-        },
-        closing: "我們的長期目標，是讓 NFT 真正成為社群體驗中有意義的一部分，而不只是一張數位圖片。",
-      },
-      communityGames: {
-        heading: "社群遊戲",
-        intro: "可能納入的遊戲包括但不限於：",
-        items: ["♟ 西洋棋", "🇨🇳 中國象棋", "⚫ 五子棋", "🃏 紙牌遊戲", "🎲 更多由社群發起的遊戲"],
-      },
-      vision: {
-        heading: "長期願景",
-        paragraphs: [
-          "HANSOME HUB 的目標，是成為 Handsome Alpacas 社群的社交家園，讓持有者可以互動、玩遊戲、參加活動，並建立長久的友誼。",
-          "我們也計畫推出一系列可以在整個生態系中使用的 HANSOME NFT，讓持有者擁有獨特的身分，並在 HANSOME HUB 裡獲得額外的用途。",
-          "長期目標是讓 $HANSOME 成為串連這些體驗的生態系貨幣。",
-        ],
-      },
-      competitivePhase: {
-        label: "第五階段",
-        title: "競技社群",
-        intro: "隨著 HANSOME HUB 持續成長、加入更多遊戲，我們計畫透過錦標賽與競技活動，進一步擴展社群體驗。",
-        activities: {
-          heading: "規劃中的活動",
-          items: ["🏆 社群錦標賽", "♟ 西洋棋比賽", "🇨🇳 中國象棋比賽", "🃏 紙牌遊戲錦標賽", "🎮 社群挑戰", "🎉 季節性與特別活動"],
-        },
-        rewards: {
-          heading: "獎勵",
-          intro: "參賽者與獲勝者可能會獲得：",
-          items: ["🪙 $HANSOME 代幣獎勵", "🎖 專屬 NFT", "👑 特殊的遊戲內稱號", "🎁 限量社群獎勵"],
-        },
-      },
-      closingNote:
-        "上面關於 HANSOME HUB 與 NFT 生態系的內容，描述的是一個長期願景，不是承諾。目前這些內容都還沒有編列預算、排定時程，也不保證會實現——寫在這裡，是為了讓社群看見我們希望前進的方向，並老實標註這是理想中的規劃，而不是已經上線的功能。",
-    },
     community: {
       heading: "社群",
       paragraphs: [
@@ -691,13 +611,6 @@ export const zh: Messages = {
       heading: "更新紀錄",
       intro: "這裡記錄的是這份文件本身的修訂歷史，不是整個專案的完整歷史。",
       entries: [
-        {
-          version: "v1.6",
-          date: "2026 年 7 月",
-          changes: [
-            "新增一個長期願景章節「HANSOME HUB 與 NFT 生態系」，描述規劃中的社群社交空間、具備遊戲內用途的 NFT 生態系、社群遊戲，以及未來可能推出的競技／錦標賽階段。這個章節明確標註為長期願景，不是承諾或已排定的發布計畫——沒有日期，也沒有保證。",
-          ],
-        },
         {
           version: "v1.5",
           date: "2026 年 7 月",

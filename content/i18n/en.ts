@@ -242,7 +242,6 @@ export const en: Messages = {
         liquidity: "Liquidity Policy",
         revenue: "Revenue Strategy",
         roadmap: "Roadmap",
-        "hansome-hub": "HANSOME HUB",
         community: "Community",
         "long-term-vision": "Long-Term Vision",
         faq: "FAQ",
@@ -566,92 +565,6 @@ export const en: Messages = {
         },
       ],
     },
-    hansomeHub: {
-      heading: "HANSOME HUB & NFT Ecosystem",
-      disclaimer:
-        "Everything below is a long-term vision for where HANSOME could go — not a commitment, a funded project, or a guaranteed release. Nothing in this section has a date, and any of it may change, get delayed, or never ship.",
-      phase: {
-        label: "Phase 4",
-        title: "HANSOME HUB & NFT Ecosystem",
-        tagline: "Building a community-driven online gaming world.",
-        paragraphs: [
-          "Our long-term vision is to create an online social hub where people can meet, chat, play games, and connect using their NFT identities.",
-          "Rather than simply being another meme token, we hope to build a place where the community can spend time together, make friends, and enjoy games in a fun and welcoming environment.",
-        ],
-        features: {
-          heading: "Planned Features",
-          items: [
-            "🌍 A persistent online social hub",
-            "🦙 Use your HANSOME NFT as your in-game avatar",
-            "💬 Public and private chat rooms",
-            "👥 Meet and interact with other community members in real time",
-            "🏠 Create private rooms to chat or play with friends",
-            "🎮 Casual, strategy, and board games",
-            "🎨 Future avatar customization and cosmetic features",
-          ],
-        },
-      },
-      conceptArt: {
-        src: "/images/hansome-hub-concept.png",
-        alt: "Concept art illustrating an early vision of HANSOME HUB, a community social and gaming space",
-        caption: "Concept Art — Early Vision of HANSOME HUB (Subject to change during development)",
-      },
-      nftEcosystem: {
-        heading: "NFT Ecosystem",
-        paragraphs: [
-          "NFTs are planned to become an important part of the HANSOME ecosystem.",
-          "Rather than existing only as collectibles, HANSOME NFTs are intended to have real utility inside HANSOME HUB.",
-        ],
-        features: {
-          heading: "Planned NFT Features",
-          items: [
-            "🦙 Use your HANSOME NFT as your in-game avatar",
-            "👕 Future avatar cosmetics and customization",
-            "🎖 Unique profile badges and titles",
-            "🏆 Exclusive tournament and event rewards",
-            "🎨 Limited edition collectible NFTs",
-            "🌟 Additional utility and experiences as the ecosystem evolves",
-          ],
-        },
-        closing: "Our long-term goal is to make NFTs a meaningful part of the community experience rather than simply digital artwork.",
-      },
-      communityGames: {
-        heading: "Community Games",
-        intro: "Potential games may include, but are not limited to:",
-        items: ["♟ Chess", "🇨🇳 Chinese Chess (Xiangqi)", "⚫ Gomoku", "🃏 Card games", "🎲 Additional community-driven games"],
-      },
-      vision: {
-        heading: "Long-Term Vision",
-        paragraphs: [
-          "HANSOME HUB is intended to become the social home of the Handsome Alpacas community, where holders can interact, play games, participate in events, and create lasting friendships.",
-          "We also plan to introduce a collection of HANSOME NFTs that can be used throughout the ecosystem, giving holders a unique identity and additional utility inside HANSOME HUB.",
-          "The long-term goal is for $HANSOME to become the ecosystem currency that connects these experiences.",
-        ],
-      },
-      competitivePhase: {
-        label: "Phase 5",
-        title: "Competitive Community",
-        intro: "As HANSOME HUB continues to grow and more games are introduced, we plan to expand the community experience through tournaments and competitive events.",
-        activities: {
-          heading: "Planned Activities",
-          items: [
-            "🏆 Community tournaments",
-            "♟ Chess competitions",
-            "🇨🇳 Chinese Chess competitions",
-            "🃏 Card game tournaments",
-            "🎮 Community challenges",
-            "🎉 Seasonal and special events",
-          ],
-        },
-        rewards: {
-          heading: "Rewards",
-          intro: "Participants and winners may receive:",
-          items: ["🪙 $HANSOME token rewards", "🎖 Exclusive NFTs", "👑 Special in-game titles", "🎁 Limited community rewards"],
-        },
-      },
-      closingNote:
-        "HANSOME HUB and the NFT ecosystem above describe a long-term vision, not a promise. None of it is funded, scheduled, or guaranteed today — it's here so the community can see the direction we're hoping to grow toward, labeled honestly as aspirational rather than live.",
-    },
     community: {
       heading: "Community",
       paragraphs: [
@@ -723,13 +636,6 @@ export const en: Messages = {
       heading: "Changelog",
       intro: "A record of this document's own revisions — not the whole project's history, just this litepaper.",
       entries: [
-        {
-          version: "v1.6",
-          date: "July 2026",
-          changes: [
-            "Added a new long-term vision section, \"HANSOME HUB & NFT Ecosystem,\" describing a planned community social hub, an NFT ecosystem with in-game utility, community games, and a possible future competitive/tournament phase. Presented explicitly as a long-term vision, not a commitment or scheduled release — no dates, no guarantees.",
-          ],
-        },
         {
           version: "v1.5",
           date: "July 2026",
