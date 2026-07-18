@@ -122,8 +122,9 @@ export function GameNav() {
         </nav>
 
         <div className="game-nav__tools">
-          <GameLanguageToggle />
-          <PixelBadge tone="blue">{t.common.chainBadge}</PixelBadge>
+          <span className="hidden sm:inline-flex">
+            <PixelBadge tone="blue">{t.common.chainBadge}</PixelBadge>
+          </span>
           <div className="hidden sm:block">
             <AudioSettings />
           </div>
@@ -138,15 +139,17 @@ export function GameNav() {
           >
             {t.common.menu}
           </PixelButton>
+          {/* Far top-right — last in tools flex */}
+          <GameLanguageToggle />
         </div>
       </div>
 
       {menuOpen ? (
         <nav id="game-mobile-nav" className="game-nav__drawer" aria-label={t.nav.mobileAria}>
           {links.map((l) => renderItem(l, true))}
-          <div className="flex items-center justify-between gap-2 pt-2">
-            <GameLanguageToggle />
+          <div className="flex items-center justify-end gap-2 pt-2">
             <AudioSettings />
+            <GameLanguageToggle />
           </div>
         </nav>
       ) : null}
