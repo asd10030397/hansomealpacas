@@ -2,14 +2,15 @@
 
 .dash-cmd {
   display: grid;
-  gap: 1rem;
+  gap: 1.1rem;
 }
 
 .dash-cmd__prompt {
   border: 3px solid #0d1018;
   background: linear-gradient(180deg, #1a2438 0%, #121826 100%);
-  padding: 1rem 1.1rem;
+  padding: 1.05rem 1.15rem;
   box-shadow: 4px 4px 0 #0a0c12;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .dash-cmd__prompt-label {
@@ -44,7 +45,11 @@
 .dash-cmd__stat {
   border: 2px solid #0d1018;
   background: #121826;
-  padding: 0.7rem 0.75rem;
+  padding: 0.75rem 0.8rem;
+  min-height: 4.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .dash-cmd__stat-label {
@@ -123,16 +128,6 @@
   font-family: var(--font-anton), monospace;
   font-size: 0.8rem;
   color: #f0c44a;
-}
-
-.dash-cmd__secondary {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-}
-
-.dash-cmd__secondary .pixel-title {
-  min-width: 6.5rem;
 }
 
 .dash-cmd__demo {

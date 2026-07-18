@@ -44,6 +44,12 @@ export type GameMessages = {
     musicToggleTitle: string;
     sfxToggleTitle: string;
     sfxToggleAria: string;
+    phaseChanged: string;
+    txPending: string;
+    txSuccess: string;
+    txError: string;
+    emptyTitle: string;
+    unavailableTitle: string;
   };
   nav: {
     brand: string;

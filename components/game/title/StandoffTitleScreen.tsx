@@ -1,6 +1,7 @@
 "use client";
 
 import { useGameI18n } from "@/hooks/game/useGameI18n";
+import { isHansomeGameConfigured } from "@/lib/game/hansomeGame";
 import { StandoffMenu } from "./StandoffMenu";
 import { StandoffStage } from "./StandoffStage";
 import "@/styles/title-standoff.css";
@@ -11,10 +12,11 @@ import "@/styles/title-standoff.css";
  */
 export function StandoffTitleScreen() {
   const { t } = useGameI18n();
+  const live = isHansomeGameConfigured();
 
   return (
     <section className="standoff">
-      <p className="standoff__demo">{t.common.demoBanner}</p>
+      {live ? null : <p className="standoff__demo">{t.common.demoBanner}</p>}
       <StandoffStage />
       <StandoffMenu />
     </section>

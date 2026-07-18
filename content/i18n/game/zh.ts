@@ -43,6 +43,12 @@ export const gameZh: GameMessages = {
     musicToggleTitle: "音樂 — Alpaca Warpath",
     sfxToggleTitle: "音效 — 按鈕與遊戲提示音",
     sfxToggleAria: "切換音效",
+    phaseChanged: "階段",
+    txPending: "處理中",
+    txSuccess: "成功",
+    txError: "錯誤",
+    emptyTitle: "尚無內容",
+    unavailableTitle: "尚未開放",
   },
   nav: {
     brand: "HANSOME",
@@ -244,7 +250,7 @@ export const gameZh: GameMessages = {
   explore: {
     heading: "部署",
     blurb:
-      "選擇地點並準備 Commit。這是把 NFT 投入每日循環的戰略部署，不是世界探索。鏈上 Commit 尚未接線 — 目前僅示範選取。",
+      "選擇地點後按「繼續至 Commit」。Salt 會留在本機直到 Reveal。HansomeGame 部署後即可鏈上提交。",
     mapTitle: "選擇地點",
     mapEyebrow: "權重 1 / 2 / 3 / 5 / 8",
     flowTitle: "部署流程",
@@ -261,12 +267,12 @@ export const gameZh: GameMessages = {
   },
   myNfts: {
     heading: "我的 NFT",
-    blurb: "模擬庫存。待創世 NFT 鏈上持有查詢接線後替換。",
+    blurb: "即時讀取已連接錢包的創世 NFT 庫存——含圖像、陣營、特性與鏈上可領獎勵。",
   },
   rewards: {
     heading: "獎勵",
     blurb:
-      "可領取餘額透過玩法記在 NFT 上。RewardDistributor 連接前為示範資料 — 非錢包餘額收益。",
+      "透過 RewardDistributor 領取記在 NFT 上的 HANSOME。即時模式讀鏈上 claimable()；本機模式僅使用模擬結算。",
   },
   leaderboard: {
     heading: "排行榜",
@@ -301,11 +307,13 @@ export const gameZh: GameMessages = {
   },
   commit: {
     heading: "提交",
-    blurb: "為每日地點選擇產生雜湊。鏈上 Commit 尚未接線。",
+    blurb:
+      "密封地點雜湊。密鑰存在本機供 Reveal 使用；設定遊戲合約地址後可鏈上提交。",
   },
   reveal: {
     heading: "揭示",
-    blurb: "於揭示時段公開你的提交。目前僅示範介面。",
+    blurb:
+      "用本機保存的 salt 公開地點。HansomeGame 部署後可鏈上揭示。",
   },
   docs: {
     heading: "玩家文件",

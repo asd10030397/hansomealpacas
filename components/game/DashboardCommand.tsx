@@ -1,26 +1,30 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { ActionGrid } from "@/components/game/ActionGrid";
-import { ComingSoonButton } from "@/components/game/ComingSoonButton";
 import { WalletGateButton } from "@/components/game/WalletGateButton";
 import {
   GamePhaseBadge,
   PixelCountdown,
   PixelPanel,
 } from "@/components/ui/pixel";
-import { MOCK_DASHBOARD, MOCK_REWARDS } from "@/data/game/mock";
+import { MOCK_DASHBOARD } from "@/data/game/mock";
+import { useClaimRewards } from "@/hooks/game/useClaimRewards";
+import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
-import { gameHref } from "@/lib/game/paths";
 import type { GameDayState, GamePhase } from "@/types/game";
 import "@/styles/dashboard-command.css";
 
-function mainActionForPhase(phase: GamePhase, t: ReturnType<typeof useGameI18n>["t"]) {
+function mainActionForPhase(
+  phase: GamePhase,
+  t: ReturnType<typeof useGameI18n>["t"],
+  hrefs: ReturnType<typeof useGameHref>,
+) {
   switch (phase) {
     case "COMMIT":
       return {
         kind: "link" as const,
-        /** Location selection first — commit() comes after confirm. */
-        href: gameHref.explore,
+        href: hrefs.explore,
         label: t.dashboard.mainCommit,
         feature: t.features.commit,
         variant: "gold" as const,
@@ -28,20 +32,24 @@ function mainActionForPhase(phase: GamePhase, t: ReturnType<typeof useGameI18n>[
     case "REVEAL":
       return {
         kind: "link" as const,
-        href: gameHref.reveal,
+        href: hrefs.reveal,
         label: t.dashboard.mainReveal,
         feature: t.features.reveal,
         variant: "gold" as const,
       };
     case "SETTLEMENT":
       return {
-        kind: "status" as const,
+        kind: "link" as const,
+        // Settlement presentation page ships separately; rewards reads live claimable.
+        href: hrefs.rewards,
         label: t.dashboard.mainSettlement,
         feature: t.features.settlementStatus,
+        variant: "gold" as const,
       };
     case "CLAIM":
       return {
-        kind: "soon" as const,
+        kind: "link" as const,
+        href: hrefs.rewards,
         label: t.dashboard.mainClaim,
         feature: t.features.claim,
         variant: "green" as const,
@@ -61,17 +69,35 @@ export function DashboardCommand({
   phase: GamePhase;
 }) {
   const { t } = useGameI18n();
-  const main = mainActionForPhase(phase, t);
+  const gameHref = useGameHref();
+  const claim = useClaimRewards();
+  const main = mainActionForPhase(phase, t, gameHref);
   const nextSettlementLabel =
     phase === "SETTLEMENT"
       ? t.dashboard.settlementNow
       : phase === "CLAIM"
         ? t.dashboard.settlementDone
         : t.dashboard.nextSettlementAfterReveal;
+  const prevPhase = useRef<GamePhase | null>(null);
+  const [pulse, setPulse] = useState(false);
+
+  useEffect(() => {
+    if (prevPhase.current == null) {
+      prevPhase.current = phase;
+      return;
+    }
+    if (prevPhase.current === phase) return;
+    prevPhase.current = phase;
+    setPulse(true);
+    const id = window.setTimeout(() => setPulse(false), 700);
+    return () => window.clearTimeout(id);
+  }, [phase]);
 
   return (
     <div className="dash-cmd">
-      <div className="dash-cmd__prompt">
+      <div
+        className={`dash-cmd__prompt dash-cmd__prompt--${phase}${pulse ? " dash-cmd__phase-pulse" : ""}`}
+      >
         <p className="dash-cmd__prompt-label">{t.dashboard.doNowLabel}</p>
         <p className="dash-cmd__prompt-text">{t.dashboard.doNow[phase]}</p>
       </div>
@@ -99,10 +125,16 @@ export function DashboardCommand({
         <div className="dash-cmd__stat">
           <p className="dash-cmd__stat-label">{t.dashboard.rankLabel}</p>
           <p className="dash-cmd__stat-value dash-cmd__stat-value--gold">
-            #{MOCK_DASHBOARD.seasonRank}{" "}
-            <span className="text-[0.65rem] text-[var(--hg-muted)]">
-              / {MOCK_DASHBOARD.seasonRankOf}
-            </span>
+            {claim.live ? (
+              <span className="text-[0.75rem] text-[var(--hg-muted)]">—</span>
+            ) : (
+              <>
+                #{MOCK_DASHBOARD.seasonRank}{" "}
+                <span className="text-[0.65rem] text-[var(--hg-muted)]">
+                  / {MOCK_DASHBOARD.seasonRankOf}
+                </span>
+              </>
+            )}
           </p>
         </div>
       </div>
@@ -110,36 +142,29 @@ export function DashboardCommand({
 
       <div className="dash-cmd__main">
         <p className="dash-cmd__main-label">{t.dashboard.mainActionLabel}</p>
-        {main.kind === "link" ? (
-          <WalletGateButton
-            feature={main.feature}
-            href={main.href}
-            variant={main.variant}
-            size="lg"
-          >
-            {main.label}
-          </WalletGateButton>
-        ) : main.kind === "soon" ? (
-          <ComingSoonButton feature={main.feature} variant={main.variant} size="lg">
-            {main.label}
-          </ComingSoonButton>
-        ) : (
-          <div className="border-2 border-[#0d1018] bg-[#121826] px-4 py-4 text-center">
-            <p className="pixel-title text-sm text-[#f0c44a]">{main.label}</p>
-            <p className="mt-2 text-xs text-[var(--hg-muted)]">
-              {t.dashboard.settlementStatusLine(day.settlementStatus)}
-            </p>
-          </div>
-        )}
+        <WalletGateButton
+          feature={main.feature}
+          href={main.href}
+          variant={main.variant}
+          size="lg"
+        >
+          {main.label}
+        </WalletGateButton>
 
         <dl className="dash-cmd__rewards mt-2">
           <div className="dash-cmd__reward-cell">
             <dt>{t.dashboard.pendingRewards}</dt>
-            <dd>{MOCK_REWARDS.totalPending.toLocaleString()} HANSOME</dd>
+            <dd>
+              {claim.displayTotal} {claim.live ? "tHANSOME" : "HANSOME"}
+              {!claim.live ? " · MOCK" : ""}
+            </dd>
           </div>
           <div className="dash-cmd__reward-cell">
             <dt>{t.dashboard.claimableRewards}</dt>
-            <dd>{MOCK_REWARDS.claimable.toLocaleString()} HANSOME</dd>
+            <dd>
+              {claim.displayTotal} {claim.live ? "tHANSOME" : "HANSOME"}
+              {!claim.live ? " · MOCK" : claim.canClaim ? " · CLAIMABLE" : " · NONE"}
+            </dd>
           </div>
           <div className="dash-cmd__reward-cell">
             <dt>{t.dashboard.nextSettlement}</dt>

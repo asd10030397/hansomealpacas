@@ -42,6 +42,12 @@ export const gameEn: GameMessages = {
     musicToggleTitle: "Music — Alpaca Warpath",
     sfxToggleTitle: "Sound effects — UI clicks and game cues",
     sfxToggleAria: "Toggle sound effects",
+    phaseChanged: "Phase",
+    txPending: "Pending",
+    txSuccess: "Success",
+    txError: "Error",
+    emptyTitle: "Nothing here yet",
+    unavailableTitle: "Not available",
   },
   nav: {
     brand: "HANSOME",
@@ -245,7 +251,7 @@ export const gameEn: GameMessages = {
   explore: {
     heading: "DEPLOY",
     blurb:
-      "Choose a location and prepare to Commit. This is strategic deployment into the daily loop — not world exploration. On-chain Commit is not wired yet; selection is demo only.",
+      "Choose a location, then Continue to Commit. Salt stays on this device until Reveal. On-chain submit activates when HansomeGame is deployed.",
     mapTitle: "CHOOSE LOCATION",
     mapEyebrow: "WEIGHTS 1 / 2 / 3 / 5 / 8",
     flowTitle: "DEPLOY FLOW",
@@ -262,12 +268,13 @@ export const gameEn: GameMessages = {
   },
   myNfts: {
     heading: "MY NFTS",
-    blurb: "Mock inventory until Genesis NFT ownership is wired on-chain.",
+    blurb:
+      "Live Genesis inventory from your connected wallet — artwork, role, traits, and claimable rewards from the chain.",
   },
   rewards: {
     heading: "REWARDS",
     blurb:
-      "Claimable balances book to your NFTs through gameplay. Demo data until RewardDistributor is connected — not wallet balance earnings.",
+      "Claim HANSOME booked to your NFTs via RewardDistributor. Live mode reads claimable() on-chain; local mode uses mock settlement only.",
   },
   leaderboard: {
     heading: "LEADERBOARD",
@@ -306,11 +313,13 @@ export const gameEn: GameMessages = {
   },
   commit: {
     heading: "COMMIT",
-    blurb: "Hash your daily location choice. On-chain commit is not wired yet.",
+    blurb:
+      "Seal your location hash. Secrets are stored locally for Reveal; on-chain commit runs when the game contract address is configured.",
   },
   reveal: {
     heading: "REVEAL",
-    blurb: "Reveal your commitment in the reveal window. Demo UI only for now.",
+    blurb:
+      "Open your sealed location using the salt stored on this device. On-chain reveal runs when HansomeGame is deployed.",
   },
   docs: {
     heading: "PLAYER DOCS",

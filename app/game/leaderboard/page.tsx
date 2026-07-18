@@ -5,6 +5,7 @@ import { ComingSoonButton } from "@/components/game/ComingSoonButton";
 import { PixelBadge, PixelButton, PixelPanel } from "@/components/ui/pixel";
 import { MOCK_LEADERBOARDS, type LeaderboardBoardId } from "@/data/game/mock";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
+import { isHansomeGameConfigured } from "@/lib/game/hansomeGame";
 
 const BOARD_ORDER: LeaderboardBoardId[] = [
   "season",
@@ -20,7 +21,9 @@ export default function LeaderboardPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-3 py-6">
-      <p className="mock-chip mb-3">{t.common.demoBanner}</p>
+      {!isHansomeGameConfigured() ? (
+        <p className="mock-chip mb-3">{t.common.demoBanner}</p>
+      ) : null}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="pixel-title text-lg text-[#f0c44a]">{t.leaderboard.heading}</h1>

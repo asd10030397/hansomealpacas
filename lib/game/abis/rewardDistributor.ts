@@ -1,0 +1,23 @@
+export const rewardDistributorAbi = [
+  {
+    type: "function",
+    name: "claimable",
+    stateMutability: "view",
+    inputs: [{ name: "tokenId", type: "uint256" }],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function",
+    name: "claim",
+    stateMutability: "nonpayable",
+    inputs: [{ name: "tokenId", type: "uint256" }],
+    outputs: [],
+  },
+  {
+    type: "function",
+    name: "claimMany",
+    stateMutability: "nonpayable",
+    inputs: [{ name: "tokenIds", type: "uint256[]" }],
+    outputs: [],
+  },
+] as const;

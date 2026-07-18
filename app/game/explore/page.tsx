@@ -1,20 +1,35 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LocationCard } from "@/components/game/LocationCard";
 import { PixelBadge, PixelButton, PixelPanel } from "@/components/ui/pixel";
 import { GAME_LOCATIONS } from "@/data/game/locations";
+import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
+import { setPendingLocation } from "@/lib/game/commitSecret";
+import { isHansomeGameConfigured } from "@/lib/game/hansomeGame";
 import type { LocationId, NftSide } from "@/types/game";
 
 export default function ExplorePage() {
   const { t } = useGameI18n();
+  const gameHref = useGameHref();
+  const router = useRouter();
   const [side, setSide] = useState<NftSide>("Alpaca");
   const [selected, setSelected] = useState<LocationId | null>(null);
 
+  const continueToCommit = () => {
+    if (selected == null) return;
+    setPendingLocation(selected);
+    router.push(`${gameHref.commit}?location=${selected}`);
+  };
+
   return (
     <div className="mx-auto max-w-5xl px-3 py-6">
-      <p className="mock-chip mb-3">{t.common.demoBanner}</p>
+      {/* Demo banner removed when live game address is configured */}
+      {!isHansomeGameConfigured() ? (
+        <p className="mock-chip mb-3">{t.common.demoBanner}</p>
+      ) : null}
       <h1 className="pixel-title text-lg text-[#f0c44a]">{t.explore.heading}</h1>
       <p className="mt-2 text-sm text-[var(--hg-muted)]">{t.explore.blurb}</p>
 
@@ -34,7 +49,7 @@ export default function ExplorePage() {
         </ol>
       </PixelPanel>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-4 flex flex-wrap items-center gap-2">
         <PixelButton
           size="sm"
           variant={side === "Alpaca" ? "green" : "slate"}
@@ -60,6 +75,15 @@ export default function ExplorePage() {
             {GAME_LOCATIONS[selected].name} · W{GAME_LOCATIONS[selected].weight}
           </PixelBadge>
         ) : null}
+        <PixelButton
+          size="sm"
+          variant="gold"
+          className="ml-auto w-auto"
+          disabled={selected == null}
+          onClick={continueToCommit}
+        >
+          CONTINUE TO COMMIT
+        </PixelButton>
       </div>
 
       <PixelPanel className="mt-4" title={t.explore.mapTitle} eyebrow={t.explore.mapEyebrow}>

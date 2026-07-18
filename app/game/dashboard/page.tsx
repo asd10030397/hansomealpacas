@@ -7,13 +7,26 @@ import { useGameState } from "@/hooks/game/useGameState";
 
 export default function GameDashboardPage() {
   const { t } = useGameI18n();
-  const { day, now, phaseEndsAt, phase, setDemoPhase } = useGameState();
+  const { day, now, phaseEndsAt, phase, setDemoPhase, isMock, isLoading, chainDayState } =
+    useGameState();
 
   return (
-    <div className="mx-auto max-w-3xl px-3 py-6">
-      <p className="mock-chip mb-3">{t.common.demoBanner}</p>
-      <h1 className="pixel-title text-lg text-[#f0c44a]">{t.dashboard.heading}</h1>
-      <p className="mt-2 max-w-2xl text-sm text-[var(--hg-muted)]">{t.dashboard.blurb}</p>
+    <div className="mx-auto max-w-3xl px-3 py-6 sm:px-4">
+      {isMock ? <p className="mock-chip mb-3">{t.common.demoBanner}</p> : null}
+      <h1 className="pixel-title pixel-title-display text-lg text-[#f0c44a] sm:text-xl">
+        {t.dashboard.heading}
+      </h1>
+      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--hg-muted)]">
+        {t.dashboard.blurb}
+      </p>
+      {!isMock ? (
+        <p className="mt-2 text-xs text-[var(--hg-muted)]">
+          Live chain · Day {day.day}
+          {chainDayState != null ? ` · state ${chainDayState}` : ""}
+          {isLoading ? " · syncing…" : ""}
+          {day.settled ? " · settled" : ""}
+        </p>
+      ) : null}
 
       <div className="mt-5">
         <DashboardCommand
@@ -24,24 +37,32 @@ export default function GameDashboardPage() {
         />
       </div>
 
-      <PixelPanel
-        className="dash-cmd__demo mt-4"
-        title={t.dashboard.demoPhaseTitle}
-        eyebrow={t.dashboard.demoPhaseEyebrow}
-      >
-        <div className="flex flex-wrap gap-2">
-          {(["COMMIT", "REVEAL", "SETTLEMENT", "CLAIM"] as const).map((p) => (
-            <PixelButton
-              key={p}
-              size="sm"
-              variant={phase === p ? "gold" : "slate"}
-              onClick={() => setDemoPhase(p)}
-            >
-              {t.phases[p]}
-            </PixelButton>
-          ))}
-        </div>
-      </PixelPanel>
+      {isMock ? (
+        <PixelPanel
+          className="dash-cmd__demo mt-4"
+          title={t.dashboard.demoPhaseTitle}
+          eyebrow={t.dashboard.demoPhaseEyebrow}
+        >
+          <div
+            className="grid grid-cols-2 gap-2 sm:grid-cols-4"
+            role="group"
+            aria-label={t.dashboard.demoPhaseTitle}
+          >
+            {(["COMMIT", "REVEAL", "SETTLEMENT", "CLAIM"] as const).map((p) => (
+              <PixelButton
+                key={p}
+                size="sm"
+                variant={phase === p ? "gold" : "slate"}
+                className="w-full"
+                aria-pressed={phase === p}
+                onClick={() => setDemoPhase(p)}
+              >
+                {t.phases[p]}
+              </PixelButton>
+            ))}
+          </div>
+        </PixelPanel>
+      ) : null}
     </div>
   );
 }

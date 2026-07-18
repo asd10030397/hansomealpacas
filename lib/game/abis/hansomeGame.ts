@@ -1,0 +1,100 @@
+/** Minimal HansomeGame ABI for Commit / Reveal / settleDay (Season 1 loop). */
+export const hansomeGameAbi = [
+  {
+    type: "function",
+    name: "commit",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "tokenId", type: "uint256" },
+      { name: "day", type: "uint256" },
+      { name: "commitHash", type: "bytes32" },
+    ],
+    outputs: [],
+  },
+  {
+    type: "function",
+    name: "reveal",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "tokenId", type: "uint256" },
+      { name: "day", type: "uint256" },
+      { name: "locationId", type: "uint8" },
+      { name: "salt", type: "bytes32" },
+    ],
+    outputs: [],
+  },
+  {
+    type: "function",
+    name: "computeCommitHash",
+    stateMutability: "pure",
+    inputs: [
+      { name: "tokenId", type: "uint256" },
+      { name: "day", type: "uint256" },
+      { name: "locationId", type: "uint8" },
+      { name: "salt", type: "bytes32" },
+    ],
+    outputs: [{ name: "", type: "bytes32" }],
+  },
+  {
+    type: "function",
+    name: "commitHashOf",
+    stateMutability: "view",
+    inputs: [
+      { name: "tokenId", type: "uint256" },
+      { name: "day", type: "uint256" },
+    ],
+    outputs: [{ name: "", type: "bytes32" }],
+  },
+  {
+    type: "function",
+    name: "currentDay",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+  {
+    type: "function",
+    name: "dayState",
+    stateMutability: "view",
+    inputs: [{ name: "day", type: "uint256" }],
+    outputs: [{ name: "", type: "uint8" }],
+  },
+  {
+    type: "function",
+    name: "settleDay",
+    stateMutability: "nonpayable",
+    inputs: [{ name: "day", type: "uint256" }],
+    outputs: [],
+  },
+  {
+    type: "function",
+    name: "isSettled",
+    stateMutability: "view",
+    inputs: [{ name: "day", type: "uint256" }],
+    outputs: [{ name: "", type: "bool" }],
+  },
+  {
+    type: "function",
+    name: "locationOf",
+    stateMutability: "view",
+    inputs: [
+      { name: "tokenId", type: "uint256" },
+      { name: "day", type: "uint256" },
+    ],
+    outputs: [{ name: "", type: "uint8" }],
+  },
+  {
+    type: "function",
+    name: "distributor",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ name: "", type: "address" }],
+  },
+  {
+    type: "function",
+    name: "dayZero",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256" }],
+  },
+] as const;

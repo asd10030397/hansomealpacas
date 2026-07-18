@@ -1,17 +1,15 @@
 "use client";
 
-import { ComingSoonButton } from "@/components/game/ComingSoonButton";
 import { WalletGateButton } from "@/components/game/WalletGateButton";
+import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
-import { gameHref } from "@/lib/game/paths";
 import type { GamePhase } from "@/types/game";
 
 type SecondaryAction = {
   key: string;
   label: string;
   feature: string;
-  href?: string;
-  comingSoon?: boolean;
+  href: string;
   variant?: "gold" | "green" | "slate";
 };
 
@@ -21,6 +19,7 @@ type SecondaryAction = {
  */
 export function ActionGrid({ phase }: { phase: GamePhase }) {
   const { t } = useGameI18n();
+  const gameHref = useGameHref();
 
   const byPhase: Record<GamePhase, SecondaryAction[]> = {
     COMMIT: [
@@ -48,6 +47,29 @@ export function ActionGrid({ phase }: { phase: GamePhase }) {
         variant: "slate",
       },
       {
+        key: "settlement",
+        label: "SETTLEMENT",
+        feature: t.features.settlementStatus,
+        href: gameHref.rewards,
+        variant: "slate",
+      },
+      {
+        key: "board",
+        label: t.actions.leaderboard,
+        feature: t.features.leaderboard,
+        href: gameHref.leaderboard,
+        variant: "slate",
+      },
+    ],
+    SETTLEMENT: [
+      {
+        key: "settlement",
+        label: "SETTLEMENT",
+        feature: t.features.settlementStatus,
+        href: gameHref.rewards,
+        variant: "gold",
+      },
+      {
         key: "rewards",
         label: t.actions.rewards,
         feature: t.features.rewards,
@@ -62,34 +84,18 @@ export function ActionGrid({ phase }: { phase: GamePhase }) {
         variant: "slate",
       },
     ],
-    SETTLEMENT: [
-      {
-        key: "nfts",
-        label: t.actions.myNfts,
-        feature: t.features.myNfts,
-        href: gameHref.myNfts,
-        variant: "slate",
-      },
-      {
-        key: "board",
-        label: t.actions.leaderboard,
-        feature: t.features.leaderboard,
-        href: gameHref.leaderboard,
-        variant: "slate",
-      },
-    ],
     CLAIM: [
       {
-        key: "nfts",
-        label: t.actions.myNfts,
-        feature: t.features.myNfts,
-        href: gameHref.myNfts,
-        variant: "slate",
+        key: "rewards",
+        label: t.actions.claim,
+        feature: t.features.claim,
+        href: gameHref.rewards,
+        variant: "green",
       },
       {
-        key: "rewards",
-        label: t.actions.rewards,
-        feature: t.features.rewards,
+        key: "settlement",
+        label: "SETTLEMENT",
+        feature: t.features.settlementStatus,
         href: gameHref.rewards,
         variant: "slate",
       },
@@ -106,31 +112,19 @@ export function ActionGrid({ phase }: { phase: GamePhase }) {
   const actions = byPhase[phase];
 
   return (
-    <div className="dash-cmd__secondary">
-      {actions.map((a) =>
-        a.comingSoon || !a.href ? (
-          <ComingSoonButton
-            key={a.key}
-            feature={a.feature}
-            variant={a.variant ?? "slate"}
-            size="sm"
-            className="w-auto"
-          >
-            {a.label}
-          </ComingSoonButton>
-        ) : (
-          <WalletGateButton
-            key={a.key}
-            feature={a.feature}
-            href={a.href}
-            variant={a.variant ?? "slate"}
-            size="sm"
-            className="w-auto"
-          >
-            {a.label}
-          </WalletGateButton>
-        ),
-      )}
+    <div className="dash-cmd__secondary" role="navigation" aria-label={t.dashboard.alsoAvailable}>
+      {actions.map((a) => (
+        <WalletGateButton
+          key={a.key}
+          feature={a.feature}
+          href={a.href}
+          variant={a.variant ?? "slate"}
+          size="md"
+          className="w-full"
+        >
+          {a.label}
+        </WalletGateButton>
+      ))}
     </div>
   );
 }
