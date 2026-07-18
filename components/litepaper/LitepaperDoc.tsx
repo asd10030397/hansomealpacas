@@ -13,7 +13,12 @@ import {
 import { TokenomicsDiagram } from "@/components/litepaper/diagrams/TokenomicsDiagram";
 import { LifecycleDiagram } from "@/components/litepaper/diagrams/LifecycleDiagram";
 import { RoadmapTimeline } from "@/components/litepaper/diagrams/RoadmapTimeline";
-import { LITEPAPER_SECTION_ORDER, REVENUE_STATUS_STYLES } from "@/content/litepaper";
+import { FlywheelDiagram } from "@/components/litepaper/diagrams/FlywheelDiagram";
+import {
+  GAMEPLAY_OVERVIEW_IMAGE,
+  LITEPAPER_SECTION_ORDER,
+  REVENUE_STATUS_STYLES,
+} from "@/content/litepaper";
 
 function LitepaperContent() {
   const { t } = useLocale();
@@ -74,7 +79,72 @@ function LitepaperContent() {
         </div>
       </LitepaperSection>
 
-      <LitepaperSection id="tokenomics" eyebrow="04" title={lp.tokenomics.heading}>
+      <LitepaperSection id="gameplay-overview" eyebrow="04" title={lp.gameplayOverview.heading}>
+        <div className="space-y-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
+          <p>{lp.gameplayOverview.opening}</p>
+        </div>
+
+        <figure className="mx-auto mt-8 w-full min-w-0 max-w-xl sm:mt-10">
+          <img
+            src={GAMEPLAY_OVERVIEW_IMAGE}
+            alt={lp.gameplayOverview.imageAlt}
+            className="lp-card mx-auto block h-auto w-full max-w-full rounded-2xl object-contain"
+            loading="lazy"
+            decoding="async"
+          />
+          <figcaption className="mt-5 space-y-1.5 text-center">
+            <p className="font-[family-name:var(--font-anton)] text-base tracking-wide text-[color:var(--lp-text)]">
+              {lp.gameplayOverview.captionTitle}
+            </p>
+            {lp.gameplayOverview.captionLines.map((line) => (
+              <p
+                key={line}
+                className="text-[0.875rem] leading-relaxed text-[color:var(--lp-text-muted)]"
+              >
+                {line}
+              </p>
+            ))}
+          </figcaption>
+        </figure>
+
+        <div className="mt-8 space-y-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:mt-10 sm:text-base">
+          {lp.gameplayOverview.paragraphs.map((p) => (
+            <p key={p}>{p}</p>
+          ))}
+          <ul className="space-y-2 pl-1">
+            {lp.gameplayOverview.roles.map((role) => (
+              <li key={role}>{role}</li>
+            ))}
+          </ul>
+          <p>{lp.gameplayOverview.loopLabel}</p>
+          {lp.gameplayOverview.closing.map((p) => (
+            <p key={p}>{p}</p>
+          ))}
+        </div>
+
+        <div className="lp-card mt-10 rounded-2xl p-5 sm:p-7">
+          <div className="lp-divider mb-6 w-16" />
+          <h3 className="font-[family-name:var(--font-anton)] text-base tracking-wide text-[color:var(--lp-text)]">
+            {lp.gameplayOverview.cta.heading}
+          </h3>
+          <p className="mt-3 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
+            {lp.gameplayOverview.cta.body}
+          </p>
+          <ul className="mt-4 space-y-1.5 text-[0.875rem] leading-relaxed text-[color:var(--lp-text-muted)]">
+            {lp.gameplayOverview.cta.bullets.map((item) => (
+              <li key={item}>{"\u2022"} {item}</li>
+            ))}
+          </ul>
+          <Link
+            href={lp.gameplayOverview.cta.href}
+            className="pixel-btn mt-6 inline-flex items-center border border-wood bg-gradient-to-b from-gold-pale to-gold px-5 py-2.5 font-[family-name:var(--font-anton)] text-[0.7rem] tracking-[0.12em] text-wood-dark transition-opacity hover:opacity-95"
+          >
+            {lp.gameplayOverview.cta.button}
+          </Link>
+        </div>
+      </LitepaperSection>
+
+      <LitepaperSection id="tokenomics" eyebrow="05" title={lp.tokenomics.heading}>
         <div className="mb-10">
           <TokenomicsDiagram />
         </div>
@@ -118,7 +188,7 @@ function LitepaperContent() {
         </div>
       </LitepaperSection>
 
-      <LitepaperSection id="treasury" eyebrow="05" title={lp.treasury.heading}>
+      <LitepaperSection id="treasury" eyebrow="06" title={lp.treasury.heading}>
         <p className="text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">{lp.treasury.intro}</p>
 
         <div className="lp-card mt-6 divide-y divide-wood/30 rounded-2xl">
@@ -161,7 +231,7 @@ function LitepaperContent() {
         </div>
       </LitepaperSection>
 
-      <LitepaperSection id="liquidity" eyebrow="06" title={lp.liquidity.heading}>
+      <LitepaperSection id="liquidity" eyebrow="07" title={lp.liquidity.heading}>
         <div className="space-y-8 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
           {[
             lp.liquidity.concentratedLiquidity,
@@ -196,7 +266,7 @@ function LitepaperContent() {
         </div>
       </LitepaperSection>
 
-      <LitepaperSection id="revenue" eyebrow="07" title={lp.revenue.heading}>
+      <LitepaperSection id="revenue" eyebrow="08" title={lp.revenue.heading}>
         <p className="text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">{lp.revenue.intro}</p>
 
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -216,11 +286,11 @@ function LitepaperContent() {
         </div>
       </LitepaperSection>
 
-      <LitepaperSection id="roadmap" eyebrow="08" title={lp.roadmap.heading}>
+      <LitepaperSection id="roadmap" eyebrow="09" title={lp.roadmap.heading}>
         <RoadmapTimeline />
       </LitepaperSection>
 
-      <LitepaperSection id="community" eyebrow="09" title={lp.community.heading}>
+      <LitepaperSection id="community" eyebrow="10" title={lp.community.heading}>
         <div className="space-y-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
           {lp.community.paragraphs.map((p) => (
             <p key={p}>{p}</p>
@@ -228,7 +298,29 @@ function LitepaperContent() {
         </div>
       </LitepaperSection>
 
-      <LitepaperSection id="long-term-vision" eyebrow="10" title={lp.longTermVision.heading}>
+
+      <LitepaperSection id="sustainable-ecosystem" eyebrow="11" title={lp.sustainableEcosystem.heading}>
+        <div className="space-y-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
+          {lp.sustainableEcosystem.paragraphs.map((p) => (
+            <p key={p}>{p}</p>
+          ))}
+          <ul className="space-y-2 pl-1">
+            {lp.sustainableEcosystem.investments.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          {lp.sustainableEcosystem.closing.map((p) => (
+            <p key={p}>{p}</p>
+          ))}
+        </div>
+
+        <div className="mt-10">
+          <div className="lp-divider mb-8 w-16" />
+          <FlywheelDiagram />
+        </div>
+      </LitepaperSection>
+
+      <LitepaperSection id="long-term-vision" eyebrow="12" title={lp.longTermVision.heading}>
         <p className="text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">{lp.longTermVision.intro}</p>
 
         <div className="my-10">
@@ -238,11 +330,11 @@ function LitepaperContent() {
         <p className="text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">{lp.longTermVision.closing}</p>
       </LitepaperSection>
 
-      <LitepaperSection id="faq" eyebrow="11" title={lp.faq.heading}>
+      <LitepaperSection id="faq" eyebrow="13" title={lp.faq.heading}>
         <LitepaperFaqAccordion />
       </LitepaperSection>
 
-      <LitepaperSection id="changelog" eyebrow="12" title={lp.changelog.heading}>
+      <LitepaperSection id="changelog" eyebrow="14" title={lp.changelog.heading}>
         <p className="text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">{lp.changelog.intro}</p>
 
         <ol className="mt-6 space-y-6">
@@ -264,7 +356,7 @@ function LitepaperContent() {
         </ol>
       </LitepaperSection>
 
-      <LitepaperSection id="language" eyebrow="13" title={lp.language.heading}>
+      <LitepaperSection id="language" eyebrow="15" title={lp.language.heading}>
         <p className="text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">{lp.language.body}</p>
       </LitepaperSection>
 

@@ -130,6 +130,31 @@ export type LitepaperMessages = {
     heading: string;
     pillars: readonly LitepaperPillar[];
   };
+  gameplayOverview: {
+    heading: string;
+    opening: string;
+    paragraphs: readonly string[];
+    roles: readonly string[];
+    loopLabel: string;
+    closing: readonly string[];
+    imageAlt: string;
+    captionTitle: string;
+    captionLines: readonly string[];
+    cta: {
+      heading: string;
+      body: string;
+      bullets: readonly string[];
+      button: string;
+      href: string;
+    };
+  };
+  sustainableEcosystem: {
+    heading: string;
+    paragraphs: readonly string[];
+    investments: readonly string[];
+    flywheel: readonly string[];
+    closing: readonly string[];
+  };
   tokenomics: {
     heading: string;
     diagramCenterLabel: string;

@@ -11,17 +11,22 @@ export const LITEPAPER_SECTION_ORDER: readonly string[] = [
   "introduction",
   "vision",
   "philosophy",
+  "gameplay-overview",
   "tokenomics",
   "treasury",
   "liquidity",
   "revenue",
   "roadmap",
   "community",
+  "sustainable-ecosystem",
   "long-term-vision",
   "faq",
   "changelog",
   "language",
 ] as const;
+
+/** Pixel art for Gameplay Overview (1:1, do not crop). */
+export const GAMEPLAY_OVERVIEW_IMAGE = "/assets/litepaper/gameplay-overview.png";
 
 export type TokenomicsSliceKey = "treasury" | "liquidity" | "founder";
 

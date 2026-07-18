@@ -237,12 +237,14 @@ export const en: Messages = {
         introduction: "Introduction",
         vision: "Vision",
         philosophy: "Core Philosophy",
+        "gameplay-overview": "Gameplay Overview",
         tokenomics: "Tokenomics",
         treasury: "Treasury Policy",
         liquidity: "Liquidity Policy",
         revenue: "Revenue Strategy",
         roadmap: "Roadmap",
         community: "Community",
+        "sustainable-ecosystem": "Sustainable Ecosystem",
         "long-term-vision": "Long-Term Vision",
         faq: "FAQ",
         changelog: "Changelog",
@@ -330,6 +332,51 @@ export const en: Messages = {
           body: "Decisions about liquidity and treasury spending are made on a deliberate, rules-based basis rather than reacting to whatever happened on Twitter that day. Section by section, this document explains what those rules currently are.",
         },
       ],
+    },
+    gameplayOverview: {
+      heading: "Gameplay Overview",
+      opening:
+        "HANSOME: Alpacas vs Cougars is more than a collectible NFT project.",
+      paragraphs: [
+        "Every Genesis NFT has a role inside an on-chain survival game where players compete, survive, and earn rewards.",
+        "Players may become:",
+      ],
+      roles: [
+        "🦙 Alpacas — survive, hide, and outlast the hunt.",
+        "🐆 Cougars — track, hunt, and eliminate prey.",
+      ],
+      loopLabel: "Each day, players make strategic decisions through the game's:",
+      closing: [
+        "Commit → Reveal → Settlement → Claim",
+        "Different NFT traits and abilities influence gameplay, creating a unique experience for every holder.",
+        "This Litepaper provides only a simple overview of the game ecosystem.",
+        "For detailed gameplay mechanics, NFT abilities, locations, reward pools, settlement rules, and claiming instructions, please visit the Game section.",
+      ],
+      imageAlt: "Pixel art of a snarling cougar facing a calm grass-chewing alpaca in a mountain meadow",
+      captionTitle: "HANSOME: Alpacas vs Cougars",
+      captionLines: [
+        "One world.",
+        "Two destinies.",
+        "🦙 Survive as an Alpaca.",
+        "🐆 Hunt as a Cougar.",
+        "Every NFT is playable.",
+        "Every decision matters.",
+      ],
+      cta: {
+        heading: "Want to learn how the game works?",
+        body: "This Litepaper provides only a high-level overview.",
+        bullets: [
+          "Daily gameplay loop",
+          "NFT abilities",
+          "Reward pools",
+          "Locations",
+          "Hunting mechanics",
+          "Settlement rules",
+          "Claim rewards",
+        ],
+        button: "EXPLORE THE GAME",
+        href: "/game",
+      },
     },
     tokenomics: {
       heading: "Tokenomics",
@@ -573,6 +620,35 @@ export const en: Messages = {
         "That's not just an intention anymore. There's an active Telegram community already up and running, growing organically rather than through paid pushes. We run regular meme contests, giveaways, AMA sessions, and community events for the people who actually show up, and we're starting to work with KOLs and run broader marketing campaigns to bring in people worth keeping around. Community participation is quickly becoming one of this project's biggest priorities, right alongside treasury and liquidity discipline.",
       ],
     },
+    sustainableEcosystem: {
+      heading: "Building a Sustainable Ecosystem",
+      paragraphs: [
+        "Building a sustainable ecosystem is our long-term vision.",
+        "Our goal isn't just to launch an NFT collection.",
+        "Revenue generated from the HANSOME: Alpacas vs Cougars NFT mint will be reinvested into the HANSOME ecosystem through:",
+      ],
+      investments: [
+        "🎮 Game development",
+        "📢 Community events & rewards",
+        "🤝 Marketing & partnerships",
+        "💧 Ecosystem growth",
+      ],
+      flywheel: [
+        "NFT Mint Revenue",
+        "Game Development",
+        "More Players",
+        "Stronger Community",
+        "Ecosystem Growth",
+        "Further Development",
+      ],
+      closing: [
+        "As the ecosystem grows, we aim to create more value for both NFT holders and the HANSOME community.",
+        "A stronger ecosystem attracts more players.",
+        "More players create a healthier community.",
+        "A healthier community supports future development.",
+        "That's the flywheel we're building.",
+      ],
+    },
     longTermVision: {
       heading: "Long-Term Vision",
       intro:
@@ -636,6 +712,14 @@ export const en: Messages = {
       heading: "Changelog",
       intro: "A record of this document's own revisions — not the whole project's history, just this litepaper.",
       entries: [
+        {
+          version: "v1.6",
+          date: "July 2026",
+          changes: [
+            "Added a Gameplay Overview section with an Alpacas vs Cougars illustration and a CTA to the Game page for full mechanics.",
+            "Added a Building a Sustainable Ecosystem section describing mint-revenue reinvestment and the ecosystem growth flywheel.",
+          ],
+        },
         {
           version: "v1.5",
           date: "July 2026",
