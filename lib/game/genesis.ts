@@ -14,7 +14,16 @@ export const GENESIS_EXPLORER =
   process.env.NEXT_PUBLIC_GAME_EXPLORER?.trim() ||
   robinhoodTestnetChain.blockExplorers.default.url;
 
-const rawAddress = process.env.NEXT_PUBLIC_GENESIS_NFT_ADDRESS?.trim() ?? "";
+/** Robinhood testnet Genesis (temporary placeholder URI). Override via env. */
+const DEFAULT_TESTNET_GENESIS =
+  "0x43c1d6aF194A796EC612F2bAC04085a409A1347C" as const;
+
+const rawAddress =
+  process.env.NEXT_PUBLIC_GENESIS_NFT_ADDRESS?.trim() ||
+  (Number(process.env.NEXT_PUBLIC_GAME_CHAIN_ID ?? robinhoodTestnetChain.id) ===
+  robinhoodTestnetChain.id
+    ? DEFAULT_TESTNET_GENESIS
+    : "");
 
 /** Deployed HansomeGenesisNFT — empty until env / deployment is set. */
 export const GENESIS_NFT_ADDRESS: Address | null =

@@ -1,0 +1,14 @@
+{
+  "warning": "TESTNET ONLY — do not reuse this merkle root or proofs on mainnet.",
+  "network": "robinhoodTestnet",
+  "chainId": 46630,
+  "merkleRoot": "0xd99a380240a4ef52e77ed44fb3d450e7e1af60d2d093eb8de06e82b998035ccf",
+  "addresses": [
+    "0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A"
+  ],
+  "proofs": {
+    "0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A": [],
+    "0xce152894df356741e7cfdfdd9d0b4d1fdf4a069a": []
+  },
+  "generatedAt": "2026-07-18T17:06:01.439Z"
+}

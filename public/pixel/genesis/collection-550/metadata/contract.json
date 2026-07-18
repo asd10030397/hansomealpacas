@@ -1,0 +1,11 @@
+{
+  "name": "HANSOME Genesis NFT",
+  "description": "Single Genesis collection: 550 = 500 Alpaca + 50 Cougar (off-chain package layout).",
+  "seller_fee_basis_points": 500,
+  "fee_recipient": "0x<treasury>",
+  "packageLayout": {
+    "alpacas": "1-500",
+    "cougars": "501-550",
+    "onChainReveal": "unchanged — sale identities shuffled at reveal"
+  }
+}

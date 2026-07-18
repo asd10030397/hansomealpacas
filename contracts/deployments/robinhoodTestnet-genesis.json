@@ -1,0 +1,28 @@
+{
+  "network": "robinhoodTestnet",
+  "chainId": 46630,
+  "contract": "HansomeGenesisNFT",
+  "address": "0x43c1d6aF194A796EC612F2bAC04085a409A1347C",
+  "randomnessProvider": "0x76CeFc07dC066114cF65BF8B6bA123B7e493FeCF",
+  "randomnessKind": "RevealRandomnessMock",
+  "royaltyReceiver": "0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A",
+  "placeholderURI": "ipfs://hansome-genesis/placeholder.json",
+  "adminTimelockSeconds": 60,
+  "mintPriceWei": "1000000000000000",
+  "publicStart": 1784395020,
+  "whitelistStart": 1784391420,
+  "whitelistMerkleRoot": "0xd99a380240a4ef52e77ed44fb3d450e7e1af60d2d093eb8de06e82b998035ccf",
+  "reservedTo": "0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A",
+  "bootstrapped": true,
+  "testnetWhitelistOnly": true,
+  "deployTxHash": "0x920c33055b4d57bed35fe6cae4dda0ddedde8880956c102f29c78b2dceeee7cb",
+  "deployBlockNumber": 91295262,
+  "deployedAt": "2026-07-18T17:05:36.000Z",
+  "finishedAt": "2026-07-18T17:08:15.533Z",
+  "deployer": "0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A",
+  "smokeTests": {
+    "whitelistMintTx": "0x368536e94768fe9918ea78565e4a8a296cde1af0478851f508e2b39b941c79d2",
+    "publicMintTx": "0x361146c9704f5beb865dbaabe6084b796f5ed34eea1ff0a989798cac2b2b57b9",
+    "totalMintedAfterSmoke": 12
+  }
+}

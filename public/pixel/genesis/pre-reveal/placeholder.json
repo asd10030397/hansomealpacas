@@ -1,0 +1,11 @@
+{
+  "name": "HANSOME Genesis (Unrevealed)",
+  "description": "A HANSOME Genesis NFT awaiting reveal. Side, class, and traits are hidden until the collection reveal.",
+  "image": "ipfs://__IMAGE_CID__/placeholder.png",
+  "attributes": [
+    {
+      "trait_type": "Status",
+      "value": "Unrevealed"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "name": "HANSOME Genesis #505",
+  "description": "One of the 50 HANSOME Cougars inside the Genesis collection. All 50 Cougars are identical: no rarity tiers, no special abilities.",
+  "image": "ipfs://__IMAGE_CID__/505.png",
+  "edition": 505,
+  "attributes": [
+    {
+      "trait_type": "Side",
+      "value": "Cougar"
+    },
+    {
+      "trait_type": "Type",
+      "value": "Cougar"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "None"
+    },
+    {
+      "trait_type": "Edition Size",
+      "value": 50
+    }
+  ],
+  "hansome": {
+    "side": "Cougar",
+    "class": "Cougar",
+    "identical": true,
+    "rarity": "none",
+    "specialAbilities": "none",
+    "weight": 1,
+    "gds": "v1.1 §4.2",
+    "note": "Off-chain package id 501–550. On-chain sale sides are assigned at reveal shuffle — this layout is for IPFS/provenance only."
+  }
+}

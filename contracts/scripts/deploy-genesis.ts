@@ -11,11 +11,13 @@
  *   BOOTSTRAP_SALE=0          — skip commitment / reserve / open-public bootstrap
  *   GENESIS_MINT_PRICE_ETH    — mint price in ETH (default 0.001 on testnet bootstrap)
  *   RESERVE_MINT_TO           — reserved #001–#010 recipient (default: deployer)
+ *   TESTNET_WL_SECONDS        — whitelist window length before public (default 600)
  *
  * Usage: npx hardhat run scripts/deploy-genesis.ts --network <network>
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
 import { ethers, network } from "hardhat";
 import { buildSaleIdentities } from "./lib/genesis-identities";
 import { getDeployerSigner } from "./lib/signer";
@@ -33,8 +35,13 @@ type GenesisDeploymentRecord = {
   saleIdentityCommitment: string;
   mintPriceWei: string;
   publicStart: number;
+  whitelistStart: number;
+  whitelistMerkleRoot: string;
   reservedTo: string;
   bootstrapped: boolean;
+  testnetWhitelistOnly: boolean;
+  deployTxHash: string;
+  deployBlockNumber: number;
   deployedAt: string;
   deployer: string;
 };
@@ -61,15 +68,12 @@ async function main() {
   const useMock =
     process.env.USE_REVEAL_MOCK === "1" || network.name === "robinhoodTestnet" || network.name === "hardhat";
   const bootstrap = process.env.BOOTSTRAP_SALE !== "0";
+  const isTestnet = network.name === "robinhoodTestnet" || network.name === "hardhat";
 
   let adminTimelockSeconds = 0;
   if (process.env.ADMIN_TIMELOCK_SECONDS) {
     adminTimelockSeconds = Number(process.env.ADMIN_TIMELOCK_SECONDS);
-  } else if (
-    process.env.SHORT_ADMIN_TIMELOCK === "1" ||
-    network.name === "robinhoodTestnet" ||
-    network.name === "hardhat"
-  ) {
+  } else if (process.env.SHORT_ADMIN_TIMELOCK === "1" || isTestnet) {
     adminTimelockSeconds = 60;
   }
 
@@ -107,9 +111,15 @@ async function main() {
     placeholderURI,
     adminTimelockSeconds,
   );
+  const deployTx = nft.deploymentTransaction();
+  if (!deployTx) throw new Error("Missing deployment transaction");
+  const deployReceipt = await deployTx.wait();
+  if (!deployReceipt) throw new Error("Missing deployment receipt");
   await nft.waitForDeployment();
   const nftAddress = await nft.getAddress();
   console.log("HansomeGenesisNFT:", nftAddress);
+  console.log("Deploy tx:", deployReceipt.hash);
+  console.log("Deploy block:", deployReceipt.blockNumber);
 
   if (!useMock) {
     const adapter = await ethers.getContractAt("VRFRevealAdapter", randomnessProvider, deployer);
@@ -121,8 +131,11 @@ async function main() {
   const commitment = ethers.keccak256(identities);
   let mintPriceWei = 0n;
   let publicStart = 0;
+  let whitelistStart = 0;
+  let whitelistMerkleRoot = ethers.ZeroHash;
   let reservedTo = process.env.RESERVE_MINT_TO ?? deployer.address;
   let bootstrapped = false;
+  let testnetWhitelistOnly = false;
 
   if (bootstrap) {
     console.log("Bootstrapping sale…");
@@ -131,24 +144,85 @@ async function main() {
     await (await nft.reserveMint(reservedTo)).wait();
     console.log("  Reserved #001–#010 →", reservedTo);
 
-    const priceEth = process.env.GENESIS_MINT_PRICE_ETH ?? (network.name === "robinhoodTestnet" ? "0.001" : "0");
+    const priceEth = process.env.GENESIS_MINT_PRICE_ETH ?? (isTestnet ? "0.001" : "0");
     mintPriceWei = ethers.parseEther(priceEth);
 
     const delay = adminTimelockSeconds === 0 ? 24 * 3600 : adminTimelockSeconds;
     const latest = await ethers.provider.getBlock("latest");
     const now = latest?.timestamp ?? Math.floor(Date.now() / 1000);
-    // Open public immediately once execute becomes available (skip WL window for testnet UX).
-    publicStart = now + delay + 5;
+
+    // Testnet: short WL window so both whitelistMint and publicMint can be exercised.
+    // Mainnet bootstrap path (if ever used with bootstrap): open public right after execute.
+    const wlWindow = Number(process.env.TESTNET_WL_SECONDS ?? "600");
+    if (isTestnet) {
+      testnetWhitelistOnly = true;
+      publicStart = now + delay + wlWindow;
+      const wlAddresses = [deployer.address];
+      const tree = StandardMerkleTree.of(
+        wlAddresses.map((a) => [a]),
+        ["address"],
+      );
+      whitelistMerkleRoot = tree.root;
+
+      const proofs: Record<string, string[]> = {};
+      for (const [i, v] of tree.entries()) {
+        const addr = (v[0] as string).toLowerCase();
+        proofs[ethers.getAddress(addr)] = tree.getProof(i);
+        proofs[addr] = tree.getProof(i);
+      }
+
+      const wlOut = {
+        warning: "TESTNET ONLY — do not reuse this merkle root or proofs on mainnet.",
+        network: network.name,
+        chainId: Number((await ethers.provider.getNetwork()).chainId),
+        merkleRoot: whitelistMerkleRoot,
+        addresses: wlAddresses,
+        proofs,
+        generatedAt: new Date().toISOString(),
+      };
+
+      const deploymentsDir = join(__dirname, "..", "deployments");
+      mkdirSync(deploymentsDir, { recursive: true });
+      writeFileSync(
+        join(deploymentsDir, `${network.name}-genesis-whitelist-TESTNET-ONLY.json`),
+        JSON.stringify(wlOut, null, 2),
+      );
+
+      // Frontend copy (explicitly testnet-scoped filename).
+      const feDir = join(__dirname, "..", "..", "lib", "game", "testnet");
+      mkdirSync(feDir, { recursive: true });
+      writeFileSync(join(feDir, "whitelistProofs.TESTNET-ONLY.json"), JSON.stringify(wlOut, null, 2));
+
+      console.log("  TESTNET merkle root:", whitelistMerkleRoot);
+      console.log("  WL addresses:", wlAddresses.join(", "));
+      console.log("  WL window (sec):", wlWindow);
+    } else {
+      publicStart = now + delay + 5;
+    }
+
+    whitelistStart = publicStart > 3600 ? publicStart - 3600 : 0;
 
     await (await nft.scheduleMintPrice(mintPriceWei)).wait();
     await (await nft.schedulePublicStart(publicStart)).wait();
+    if (testnetWhitelistOnly) {
+      await (await nft.scheduleWhitelistMerkleRoot(whitelistMerkleRoot)).wait();
+    }
     console.log("  Scheduled mintPrice:", ethers.formatEther(mintPriceWei), "ETH");
     console.log("  Scheduled publicStart:", publicStart);
+    console.log("  Expected whitelistStart:", whitelistStart);
 
-    await waitUntilTimestamp(now + delay + 1);
+    // Extra buffer: RPC timestamp can lag a few seconds past local eta.
+    await waitUntilTimestamp(now + delay + 5);
     await (await nft.executeMintPrice(mintPriceWei)).wait();
+    if (testnetWhitelistOnly) {
+      await (await nft.executeWhitelistMerkleRoot(whitelistMerkleRoot)).wait();
+    }
     await (await nft.executePublicStart(publicStart)).wait();
-    console.log("  Public sale executed. isPublicOpen:", await nft.isPublicOpen());
+
+    const openWl = await nft.isWhitelistOpen();
+    const openPub = await nft.isPublicOpen();
+    console.log("  isWhitelistOpen:", openWl);
+    console.log("  isPublicOpen:", openPub);
     bootstrapped = true;
   } else {
     await (await nft.setSaleIdentityCommitment(commitment)).wait();
@@ -169,8 +243,13 @@ async function main() {
     saleIdentityCommitment: commitment,
     mintPriceWei: mintPriceWei.toString(),
     publicStart,
+    whitelistStart,
+    whitelistMerkleRoot,
     reservedTo,
     bootstrapped,
+    testnetWhitelistOnly,
+    deployTxHash: deployReceipt.hash,
+    deployBlockNumber: deployReceipt.blockNumber,
     deployedAt: new Date().toISOString(),
     deployer: deployer.address,
   };
@@ -180,13 +259,40 @@ async function main() {
   const outPath = join(deploymentsDir, `${network.name}-genesis.json`);
   writeFileSync(outPath, JSON.stringify(record, null, 2));
 
-  // Keep packed identities local for later reveal (do not commit secrets beyond commitment).
   writeFileSync(
     join(deploymentsDir, `${network.name}-genesis-identities.bin`),
     Buffer.from(identities),
   );
 
+  const reportPath = join(deploymentsDir, `${network.name}-genesis-report.md`);
+  writeFileSync(
+    reportPath,
+    [
+      `# Genesis deploy report — ${network.name}`,
+      "",
+      `- Contract: \`${nftAddress}\``,
+      `- Chain ID: ${chainId}`,
+      `- Deploy tx: \`${deployReceipt.hash}\``,
+      `- Deploy block: ${deployReceipt.blockNumber}`,
+      `- Deployer: \`${deployer.address}\``,
+      `- Placeholder URI: \`${placeholderURI}\``,
+      `- Mint price: ${ethers.formatEther(mintPriceWei)} ETH`,
+      `- publicStart: ${publicStart}`,
+      `- whitelistStart: ${whitelistStart}`,
+      `- merkleRoot: \`${whitelistMerkleRoot}\``,
+      `- testnetWhitelistOnly: ${testnetWhitelistOnly}`,
+      `- randomness: ${randomnessKind} @ \`${randomnessProvider}\``,
+      `- Deployed at: ${record.deployedAt}`,
+      "",
+      testnetWhitelistOnly
+        ? "WARNING: Merkle root/proofs are TESTNET ONLY. Do not reuse on mainnet."
+        : "",
+      "",
+    ].join("\n"),
+  );
+
   console.log("Saved:", outPath);
+  console.log("Report:", reportPath);
   console.log(JSON.stringify(record, null, 2));
 }
 

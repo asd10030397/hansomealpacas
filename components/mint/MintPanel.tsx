@@ -11,10 +11,17 @@ import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { useGenesisMint } from "@/hooks/game/useGenesisMint";
 import { useWalletUi } from "@/hooks/game/useWalletUi";
 import {
+  GENESIS_CHAIN_ID,
   GENESIS_NFT_ADDRESS,
   getGenesisExplorerAddressUrl,
   getGenesisExplorerTxUrl,
 } from "@/lib/game/genesis";
+import testnetWhitelist from "@/lib/game/testnet/whitelistProofs.TESTNET-ONLY.json";
+
+const testnetProofs =
+  GENESIS_CHAIN_ID === 46630
+    ? (testnetWhitelist.proofs as Record<string, `0x${string}`[]>)
+    : null;
 
 export function MintPanel() {
   const { t } = useGameI18n();
@@ -24,7 +31,7 @@ export function MintPanel() {
     switchToGenesisChain,
     isPending: walletPending,
   } = useWalletUi();
-  const mint = useGenesisMint();
+  const mint = useGenesisMint({ whitelistProofs: testnetProofs });
   const [qty, setQty] = useState(1);
 
   useEffect(() => {
