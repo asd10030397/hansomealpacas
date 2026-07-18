@@ -148,7 +148,7 @@ export const gameZh: GameMessages = {
   },
   docs: {
     heading: "玩家文件",
-    blurb: "兩邊不同玩法與獎勵 — 精簡摘要。完整公式見玩家指南。",
+    blurb: "兩邊不同玩法與獎勵 — 精簡摘要。玩家指南為概覽；正式規則以 GDS v1.1 為準。",
     dailyLoopTitle: "每日流程",
     dailyLoopSteps: [
       "COMMIT — 密封地點雜湊",
@@ -190,7 +190,8 @@ export const gameZh: GameMessages = {
       "Home · Mountain · Grassland · Forest · River — 權重 1 / 2 / 3 / 5 / 8。權重越高，份額敘事與狩獵風險敘事越高。美洲獅不能選 Home。",
     moreTitle: "更多",
     playerGuide: "玩家指南（PDF）",
-    fullRulesNote: "結算公式、特質順序與邊界情況見玩家指南／GDS。",
+    fullRulesNote:
+      "玩家指南涵蓋特質、地點與獎池概覽。結算公式、特質結算順序（King → Runner → Lucky → Guardian → …）與邊界情況定義於 HANSOME GDS v1.1，不在玩家指南 PDF 內。",
   },
   actions: {
     explore: "探索",

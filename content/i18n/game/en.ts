@@ -147,7 +147,7 @@ export const gameEn: GameMessages = {
   },
   docs: {
     heading: "PLAYER DOCS",
-    blurb: "Two sides, two rulebooks — quick summary. Full formulas live in the Player Guide.",
+    blurb: "Two sides, two rulebooks — quick summary. Player Guide is the overview; formal rules live in GDS v1.1.",
     dailyLoopTitle: "DAILY LOOP",
     dailyLoopSteps: [
       "COMMIT — seal a location hash",
@@ -190,7 +190,8 @@ export const gameEn: GameMessages = {
       "Home · Mountain · Grassland · Forest · River — weights 1 / 2 / 3 / 5 / 8. Higher weight, higher share narrative and higher hunt-risk narrative. Cougars cannot choose Home.",
     moreTitle: "MORE",
     playerGuide: "Player Guide (PDF)",
-    fullRulesNote: "Settlement formulas, trait order, and edge cases are in the Player Guide / GDS.",
+    fullRulesNote:
+      "Player Guide covers classes, locations, and pool overview. Settlement formulas, trait resolution order (King → Runner → Lucky → Guardian → …), and edge cases are defined in HANSOME GDS v1.1 — not in the Player Guide PDF.",
   },
   actions: {
     explore: "EXPLORE",
