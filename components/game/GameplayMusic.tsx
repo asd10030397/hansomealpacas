@@ -2,21 +2,19 @@
 
 import { useEffect, useRef } from "react";
 import { useAudioSettings } from "@/hooks/game/useAudioSettings";
-import { useGameState } from "@/hooks/game/useGameState";
 import {
   mountGameplayMusic,
-  playPhaseImpact,
   setGameplayMusicEnabled,
 } from "@/lib/game/gameplay-music";
 import { hasAmbientStarted } from "@/lib/ambient-sound";
 
 /**
  * Battle-mode HANSOME theme for /game/*.
- * Crossfades from site ambient; respects ♪ toggle; stings on Reveal/Settlement.
+ * Crossfades from site ambient; respects ♪ Music toggle only.
+ * Phase impacts / UI cues must use playSfx() + SFX toggle (not Music).
  */
 export function GameplayMusic() {
   const { prefs, hydrated, setMusicEnabled } = useAudioSettings();
-  const { phase } = useGameState();
   const ambientHandoffDone = useRef(false);
 
   useEffect(() => {
@@ -37,11 +35,6 @@ export function GameplayMusic() {
     ambientHandoffDone.current = true;
     setGameplayMusicEnabled(prefs.musicEnabled);
   }, [hydrated, prefs.musicEnabled, setMusicEnabled]);
-
-  useEffect(() => {
-    if (!hydrated || !prefs.musicEnabled) return;
-    playPhaseImpact(phase);
-  }, [hydrated, prefs.musicEnabled, phase]);
 
   return null;
 }

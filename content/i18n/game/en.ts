@@ -39,6 +39,9 @@ export const gameEn: GameMessages = {
     walletRequiredBody: (feature) => `Connect your wallet to use ${feature}.`,
     walletRequiredDemo:
       "Connect an injected wallet on Robinhood Chain. Gameplay pages stay mocked until the game contract is live.",
+    musicToggleTitle: "Music — Alpaca Warpath",
+    sfxToggleTitle: "Sound effects — UI clicks and game cues",
+    sfxToggleAria: "Toggle sound effects",
   },
   nav: {
     brand: "HANSOME",

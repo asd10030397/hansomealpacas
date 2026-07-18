@@ -10,7 +10,7 @@ import {
 export function useAudioSettings() {
   const [prefs, setPrefs] = useState<AudioPreferences>({
     musicEnabled: false,
-    sfxEnabled: false,
+    sfxEnabled: true,
   });
   const [hydrated, setHydrated] = useState(false);
 

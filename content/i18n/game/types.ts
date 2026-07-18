@@ -41,6 +41,9 @@ export type GameMessages = {
     walletRequiredTitle: string;
     walletRequiredBody: (feature: string) => string;
     walletRequiredDemo: string;
+    musicToggleTitle: string;
+    sfxToggleTitle: string;
+    sfxToggleAria: string;
   };
   nav: {
     brand: string;

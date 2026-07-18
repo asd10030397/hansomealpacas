@@ -40,6 +40,9 @@ export const gameZh: GameMessages = {
     walletRequiredBody: (feature) => `請連接錢包以使用「${feature}」。`,
     walletRequiredDemo:
       "請連接瀏覽器錢包並使用 Robinhood Chain。遊戲合約上線前，玩法頁面仍為示範資料。",
+    musicToggleTitle: "音樂 — Alpaca Warpath",
+    sfxToggleTitle: "音效 — 按鈕與遊戲提示音",
+    sfxToggleAria: "切換音效",
   },
   nav: {
     brand: "HANSOME",

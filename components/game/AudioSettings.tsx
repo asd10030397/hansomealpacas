@@ -1,10 +1,16 @@
 "use client";
 
 import { useAudioSettings } from "@/hooks/game/useAudioSettings";
+import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { PixelButton } from "@/components/ui/pixel";
 
-/** Music / SFX toggles — ♪ controls gameplay battle-theme BGM. */
+/**
+ * Music / SFX toggles (separate channels).
+ * - ♪ Music: gameplay BGM (Alpaca Warpath)
+ * - ◫ SFX: UI clicks and future game cues
+ */
 export function AudioSettings() {
+  const { t } = useGameI18n();
   const { prefs, setMusicEnabled, setSfxEnabled } = useAudioSettings();
 
   return (
@@ -14,7 +20,7 @@ export function AudioSettings() {
         variant={prefs.musicEnabled ? "green" : "ghost"}
         onClick={() => setMusicEnabled(!prefs.musicEnabled)}
         aria-pressed={prefs.musicEnabled}
-        title="Music — HANSOME gameplay theme"
+        title={t.common.musicToggleTitle}
       >
         ♪
       </PixelButton>
@@ -23,7 +29,8 @@ export function AudioSettings() {
         variant={prefs.sfxEnabled ? "green" : "ghost"}
         onClick={() => setSfxEnabled(!prefs.sfxEnabled)}
         aria-pressed={prefs.sfxEnabled}
-        title="SFX (reserved for future UI sounds)"
+        aria-label={t.common.sfxToggleAria}
+        title={t.common.sfxToggleTitle}
       >
         ◫
       </PixelButton>

@@ -1,5 +1,5 @@
 /**
- * Gameplay BGM — battle-mode arrangement of the site HANSOME theme.
+ * Gameplay BGM — Alpaca Warpath (game section only).
  * Does not replace /audio/ambient.wav (marketing site music).
  */
 
@@ -8,25 +8,25 @@ import {
   pauseAmbientSound,
 } from "@/lib/ambient-sound";
 
+/** Bump when replacing theme files so browsers skip stale CDN/cache copies. */
+const THEME_CACHE_VER = "warpath-1";
+
 export const GAMEPLAY_AUDIO = {
-  themeOgg: "/audio/game/gameplay-theme.ogg",
-  themeMp3: "/audio/game/gameplay-theme.mp3",
+  themeOgg: `/audio/game/gameplay-theme.ogg?v=${THEME_CACHE_VER}`,
+  themeMp3: `/audio/game/gameplay-theme.mp3?v=${THEME_CACHE_VER}`,
   phaseImpact: "/audio/game/phase-impact.ogg",
 } as const;
 
 /** Keep under site ambient (0.12) so UI / future SFX stay clear. */
 const TARGET_VOLUME = 0.1;
-const IMPACT_VOLUME = 0.16;
 const FADE_IN_MS = 1600;
 const FADE_OUT_MS = 1200;
 
 let theme: HTMLAudioElement | null = null;
-let impact: HTMLAudioElement | null = null;
 let fadeFrame: number | null = null;
 let mountCount = 0;
 let unlockAttached = false;
 let desiredPlaying = false;
-let lastImpactPhase: string | null = null;
 
 function cancelFade() {
   if (fadeFrame !== null) {
@@ -74,16 +74,6 @@ function getTheme(): HTMLAudioElement | null {
     }
   }
   return theme;
-}
-
-function getImpact(): HTMLAudioElement | null {
-  if (typeof window === "undefined") return null;
-  if (!impact) {
-    impact = new Audio(GAMEPLAY_AUDIO.phaseImpact);
-    impact.preload = "auto";
-    impact.volume = IMPACT_VOLUME;
-  }
-  return impact;
 }
 
 function detachUnlock() {
@@ -150,28 +140,12 @@ export function setGameplayMusicEnabled(enabled: boolean): void {
 }
 
 /**
- * Play a short cinematic sting on Reveal / Settlement entry.
- * Skips repeat if the same phase is reported again.
+ * @deprecated Phase impacts belong on the SFX channel (`playSfx("phase-impact")`).
+ * No-op so the Music toggle never drives SFX. Wire via playSfx before Season 1.
  */
 export function playPhaseImpact(phase: string): void {
-  if (!desiredPlaying) return;
-  if (phase !== "REVEAL" && phase !== "SETTLEMENT") return;
-  if (lastImpactPhase === phase) return;
-  lastImpactPhase = phase;
-
-  const el = getImpact();
-  if (!el) return;
-  try {
-    el.currentTime = 0;
-    el.volume = IMPACT_VOLUME;
-    void el.play();
-  } catch {
-    /* autoplay / unlock — ignore */
-  }
-}
-
-export function resetPhaseImpactGate(): void {
-  lastImpactPhase = null;
+  void phase;
+  // Silent until SFX bus — do not couple impacts to BGM.
 }
 
 /**
@@ -190,7 +164,6 @@ export function mountGameplayMusic(): () => void {
       desiredPlaying = false;
       detachUnlock();
       stopThemePlayback();
-      resetPhaseImpactGate();
     }
   };
 }
