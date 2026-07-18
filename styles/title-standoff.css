@@ -13,6 +13,11 @@
   backdrop-filter: blur(2px);
 }
 
+/* Keep game language toggle readable over the title art */
+.hansome-game:has(.standoff) .game-lang__group {
+  background: rgba(12, 16, 28, 0.92);
+}
+
 .hansome-game:has(.standoff) .hansome-game-main {
   padding: 0;
 }

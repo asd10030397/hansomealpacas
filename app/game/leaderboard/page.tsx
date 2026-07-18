@@ -2,18 +2,18 @@
 
 import { ComingSoonButton } from "@/components/game/ComingSoonButton";
 import { PixelBadge, PixelPanel } from "@/components/ui/pixel";
-import { MOCK_BANNER, MOCK_LEADERBOARD } from "@/data/game/mock";
+import { MOCK_LEADERBOARD } from "@/data/game/mock";
+import { useGameI18n } from "@/hooks/game/useGameI18n";
 
 export default function LeaderboardPage() {
+  const { t } = useGameI18n();
   return (
     <div className="mx-auto max-w-3xl px-3 py-6">
-      <p className="mock-chip mb-3">{MOCK_BANNER}</p>
+      <p className="mock-chip mb-3">{t.common.demoBanner}</p>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="pixel-title text-lg text-[#f0c44a]">LEADERBOARD</h1>
-          <p className="mt-2 text-sm text-[var(--hg-muted)]">
-            Preview rankings with mock scores. Live competitive board is not connected yet.
-          </p>
+          <h1 className="pixel-title text-lg text-[#f0c44a]">{t.leaderboard.heading}</h1>
+          <p className="mt-2 text-sm text-[var(--hg-muted)]">{t.leaderboard.blurb}</p>
         </div>
         <ComingSoonButton feature="Live Leaderboard" size="sm" variant="gold" className="w-auto">
           LIVE BOARD

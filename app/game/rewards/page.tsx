@@ -2,17 +2,17 @@
 
 import { ComingSoonButton } from "@/components/game/ComingSoonButton";
 import { PixelPanel } from "@/components/ui/pixel";
-import { MOCK_BANNER, MOCK_REWARDS } from "@/data/game/mock";
+import { MOCK_REWARDS } from "@/data/game/mock";
+import { useGameI18n } from "@/hooks/game/useGameI18n";
 
 export default function RewardsPage() {
+  const { t } = useGameI18n();
   const r = MOCK_REWARDS;
   return (
     <div className="mx-auto max-w-3xl px-3 py-6">
-      <p className="mock-chip mb-3">{MOCK_BANNER}</p>
-      <h1 className="pixel-title text-lg text-[#f0c44a]">REWARDS</h1>
-      <p className="mt-2 text-sm text-[var(--hg-muted)]">
-        Claimable balances follow the NFT. Values below are mock only — not live chain reads.
-      </p>
+      <p className="mock-chip mb-3">{t.common.demoBanner}</p>
+      <h1 className="pixel-title text-lg text-[#f0c44a]">{t.rewards.heading}</h1>
+      <p className="mt-2 text-sm text-[var(--hg-muted)]">{t.rewards.blurb}</p>
 
       <PixelPanel className="mt-4" title="BALANCES" eyebrow="MOCK HANSOME">
         <dl className="grid grid-cols-2 gap-3 text-sm">
@@ -38,8 +38,8 @@ export default function RewardsPage() {
           </div>
         </dl>
         <div className="mt-4">
-          <ComingSoonButton feature="Claim" variant="green" size="lg">
-            CLAIM
+          <ComingSoonButton feature={t.features.claim} variant="green" size="lg">
+            {t.actions.claim}
           </ComingSoonButton>
         </div>
         <p className="mt-2 text-xs text-[var(--hg-muted)]">

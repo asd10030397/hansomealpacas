@@ -3,11 +3,13 @@
 import { useMemo, useState } from "react";
 import { NFTCard } from "@/components/nft/NFTCard";
 import { PixelButton } from "@/components/ui/pixel";
-import { MOCK_BANNER, MOCK_NFTS } from "@/data/game/mock";
+import { MOCK_NFTS } from "@/data/game/mock";
+import { useGameI18n } from "@/hooks/game/useGameI18n";
 
 type Filter = "all" | "alpacas" | "cougars" | "revealed" | "unrevealed";
 
 export default function MyNftsPage() {
+  const { t } = useGameI18n();
   const [filter, setFilter] = useState<Filter>("all");
   const items = useMemo(() => {
     return MOCK_NFTS.filter((n) => {
@@ -29,11 +31,9 @@ export default function MyNftsPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-3 py-6">
-      <p className="mock-chip mb-3">{MOCK_BANNER}</p>
-      <h1 className="pixel-title text-lg text-[#f0c44a]">MY NFTS</h1>
-      <p className="mt-2 text-sm text-[var(--hg-muted)]">
-        Inventory shell with mock ownership. Cougars are identical — no rarity tiers.
-      </p>
+      <p className="mock-chip mb-3">{t.common.demoBanner}</p>
+      <h1 className="pixel-title text-lg text-[#f0c44a]">{t.myNfts.heading}</h1>
+      <p className="mt-2 text-sm text-[var(--hg-muted)]">{t.myNfts.blurb}</p>
       <div className="mt-4 flex flex-wrap gap-2">
         {filters.map((f) => (
           <PixelButton

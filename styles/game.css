@@ -1447,6 +1447,66 @@ html.hansome-game-route body.hansome-game-route {
   gap: 0.5rem;
 }
 
+/* Kill marketing floating language toggle if it ever mounts on game routes */
+html.hansome-game-route [data-marketing-language-toggle="true"],
+html.hansome-game-route [data-language-toggle="true"]:not([data-game-language-toggle="true"]) {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* ========== GAME LANGUAGE TOGGLE (pixel) ========== */
+
+.hansome-game .game-lang {
+  flex-shrink: 0;
+}
+
+.hansome-game .game-lang__group {
+  display: inline-flex;
+  align-items: stretch;
+  border: 2px solid #0d1018;
+  background: #121826;
+  box-shadow:
+    0 0 0 1px #5a6478,
+    2px 2px 0 #0a0c12;
+}
+
+.hansome-game .game-lang__btn {
+  min-width: 2.4rem;
+  min-height: 1.85rem;
+  padding: 0.35rem 0.55rem;
+  border: none;
+  background: transparent;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.08em;
+  color: #9aa3b5;
+  cursor: pointer;
+  transition:
+    color 120ms ease,
+    background-color 120ms ease;
+}
+
+.hansome-game .game-lang__btn + .game-lang__btn {
+  border-left: 2px solid #2a3348;
+}
+
+.hansome-game .game-lang__btn:hover {
+  color: #f3ebe0;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.hansome-game .game-lang__btn--active {
+  color: #1a1520;
+  background: #e8b03a;
+}
+
+.hansome-game .game-lang__btn:focus-visible {
+  outline: 2px solid #f0c44a;
+  outline-offset: 2px;
+  z-index: 1;
+}
+
 .hansome-game .game-nav__drawer {
   display: grid;
   gap: 0.35rem;

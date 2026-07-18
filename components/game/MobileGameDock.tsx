@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { gameHref } from "@/lib/game/paths";
+import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { useWalletUi } from "@/hooks/game/useWalletUi";
 import { ComingSoonModal } from "./ComingSoonModal";
 import { WalletRequiredModal } from "./WalletRequiredModal";
@@ -11,6 +12,7 @@ import { WalletRequiredModal } from "./WalletRequiredModal";
 export function MobileGameDock() {
   const pathname = usePathname();
   const router = useRouter();
+  const { t } = useGameI18n();
   const { wallet, connectMock } = useWalletUi();
   const [soonOpen, setSoonOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
@@ -29,16 +31,16 @@ export function MobileGameDock() {
     <>
       <nav
         className="fixed bottom-0 left-0 right-0 z-50 grid grid-cols-5 border-t-4 border-[#0d1018] bg-[#121826] pb-[env(safe-area-inset-bottom)] md:hidden"
-        aria-label="Quick game actions"
+        aria-label={t.dock.aria}
       >
         <Link href={gameHref.home} className={itemClass(gameHref.home)}>
-          HOME
+          {t.dock.home}
         </Link>
         <Link href={gameHref.dashboard} className={itemClass(gameHref.dashboard)}>
-          PLAY
+          {t.dock.play}
         </Link>
         <Link href={gameHref.explore} className={itemClass(gameHref.explore)}>
-          MAP
+          {t.dock.map}
         </Link>
         <button
           type="button"
@@ -48,21 +50,21 @@ export function MobileGameDock() {
             else setWalletOpen(true);
           }}
         >
-          NFTS
+          {t.dock.nfts}
         </button>
         <button
           type="button"
           className={itemClass(gameHref.rewards, soonOpen)}
           onClick={() => setSoonOpen(true)}
         >
-          LOOT
+          {t.dock.loot}
         </button>
       </nav>
 
       <ComingSoonModal
         open={soonOpen}
         onClose={() => setSoonOpen(false)}
-        feature="Rewards"
+        feature={t.features.rewards}
       />
       <WalletRequiredModal
         open={walletOpen}
@@ -71,7 +73,7 @@ export function MobileGameDock() {
           connectMock();
           router.push(gameHref.myNfts);
         }}
-        feature="My NFTs"
+        feature={t.nav.featureMyNfts}
       />
     </>
   );

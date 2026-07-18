@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef } from "react";
 import { PixelButton } from "@/components/ui/pixel";
+import { useGameI18n } from "@/hooks/game/useGameI18n";
 
 export type WalletRequiredModalProps = {
   open: boolean;
@@ -20,6 +21,7 @@ export function WalletRequiredModal({
   onConnect,
   feature,
 }: WalletRequiredModalProps) {
+  const { t } = useGameI18n();
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -60,9 +62,9 @@ export function WalletRequiredModal({
       >
         <div className="mb-3 flex items-start justify-between gap-3">
           <h2 id={titleId} className="pixel-title text-sm text-[#7ec8e8] sm:text-base">
-            🔗 Wallet Required
+            {t.common.walletRequiredTitle}
           </h2>
-          <PixelButton size="sm" variant="ghost" onClick={onClose} aria-label="Close dialog">
+          <PixelButton size="sm" variant="ghost" onClick={onClose} aria-label={t.common.close}>
             X
           </PixelButton>
         </div>
@@ -70,15 +72,13 @@ export function WalletRequiredModal({
         {feature ? <p className="mock-chip mb-3">{feature}</p> : null}
 
         <div className="space-y-3 text-sm leading-relaxed text-[#cfd6e6]">
-          <p>Connect your wallet to use this feature.</p>
-          <p className="text-[var(--hg-muted)]">
-            Demo mode uses a mock wallet only — no production contracts are connected yet.
-          </p>
+          <p>{feature ? t.common.walletRequiredBody(feature) : t.common.walletRequiredBody("")}</p>
+          <p className="text-[var(--hg-muted)]">{t.common.walletRequiredDemo}</p>
         </div>
 
         <div className="mt-5 flex flex-col gap-2 sm:flex-row">
           <PixelButton variant="slate" className="w-full sm:flex-1" onClick={onClose}>
-            Close
+            {t.common.close}
           </PixelButton>
           <PixelButton
             variant="gold"
@@ -88,7 +88,7 @@ export function WalletRequiredModal({
               onClose();
             }}
           >
-            CONNECT WALLET
+            {t.common.connectWallet}
           </PixelButton>
         </div>
       </div>

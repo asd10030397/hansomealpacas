@@ -3,19 +3,19 @@
 import { ComingSoonButton } from "@/components/game/ComingSoonButton";
 import { GameStatusPanel } from "@/components/game/GameStatusPanel";
 import { PixelPanel } from "@/components/ui/pixel";
-import { MOCK_BANNER, MOCK_NFTS } from "@/data/game/mock";
+import { MOCK_NFTS } from "@/data/game/mock";
+import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { useGameState } from "@/hooks/game/useGameState";
 
 export default function RevealPage() {
+  const { t } = useGameI18n();
   const { day, now, phaseEndsAt, phase } = useGameState();
 
   return (
     <div className="mx-auto max-w-3xl px-3 py-6">
-      <p className="mock-chip mb-3">{MOCK_BANNER}</p>
-      <h1 className="pixel-title text-lg text-[#f0c44a]">REVEAL</h1>
-      <p className="mt-2 text-sm text-[var(--hg-muted)]">
-        Open your committed location + salt. Must match the stored commit hash.
-      </p>
+      <p className="mock-chip mb-3">{t.common.demoBanner}</p>
+      <h1 className="pixel-title text-lg text-[#f0c44a]">{t.reveal.heading}</h1>
+      <p className="mt-2 text-sm text-[var(--hg-muted)]">{t.reveal.blurb}</p>
       <div className="mt-4">
         <GameStatusPanel day={day} now={now} phaseEndsAt={phaseEndsAt} />
       </div>

@@ -1,12 +1,15 @@
 "use client";
 
 import Image from "next/image";
+import { useGameI18n } from "@/hooks/game/useGameI18n";
 
 /**
  * Full-bleed dual-world stage + large facing heroes.
  * Fresh composition — not the previous territory-scene layout.
  */
 export function StandoffStage() {
+  const { t } = useGameI18n();
+
   return (
     <div className="standoff__stage" aria-hidden>
       <div className="standoff__world standoff__world--west">
@@ -71,12 +74,12 @@ export function StandoffStage() {
       </div>
 
       <p className="standoff__whisper standoff__whisper--west">
-        COUGAR TERRITORY
-        <span>HUNT. CLAIM. DOMINATE.</span>
+        {t.title.cougarTerritory}
+        <span>{t.title.cougarTag}</span>
       </p>
       <p className="standoff__whisper standoff__whisper--east">
-        ALPACA RANCH
-        <span>SURVIVE. EXPLORE. EARN.</span>
+        {t.title.alpacaRanch}
+        <span>{t.title.alpacaTag}</span>
       </p>
 
       <div className="standoff__vignette" />

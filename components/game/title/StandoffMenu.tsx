@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { gameHref } from "@/lib/game/paths";
+import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { useWalletUi } from "@/hooks/game/useWalletUi";
 
 /**
@@ -10,21 +11,22 @@ import { useWalletUi } from "@/hooks/game/useWalletUi";
  * Composition hierarchy: title first, actions second.
  */
 export function StandoffMenu() {
+  const { t } = useGameI18n();
   const { wallet, connectMock, disconnectMock } = useWalletUi();
 
   return (
     <div className="standoff__foreground">
       <header className="standoff__brand">
-        <p className="standoff__eyebrow">PIXEL RPG · ROBINHOOD CHAIN</p>
+        <p className="standoff__eyebrow">{t.title.eyebrow}</p>
         <h1 className="standoff__title">
           <span className="standoff__title-line standoff__title-line--top">HANSOME</span>
           <span className="standoff__title-line standoff__title-line--bottom">ALPACAS</span>
         </h1>
         <div className="standoff__rule" aria-hidden />
-        <p className="standoff__tagline">ALPACAS VS COUGARS</p>
+        <p className="standoff__tagline">{t.title.tagline}</p>
       </header>
 
-      <nav className="standoff__menu" aria-label="Main menu">
+      <nav className="standoff__menu" aria-label={t.title.menuAria}>
         <button
           type="button"
           className="standoff__btn standoff__btn--gold"
@@ -40,10 +42,10 @@ export function StandoffMenu() {
           />
           <span className="standoff__btn-label">
             <span>
-              {wallet.connected && wallet.address ? wallet.address : "CONNECT WALLET"}
+              {wallet.connected && wallet.address ? wallet.address : t.title.connect}
             </span>
             <span className="standoff__btn-sub">
-              {wallet.connected ? "MOCK · TAP TO DISCONNECT" : "MOCK WALLET · NO TX"}
+              {wallet.connected ? t.title.connectSubConnected : t.title.connectSub}
             </span>
           </span>
         </button>
@@ -58,8 +60,8 @@ export function StandoffMenu() {
             unoptimized
           />
           <span className="standoff__btn-label">
-            <span>MINT GENESIS NFT</span>
-            <span className="standoff__btn-sub">550 TOTAL SUPPLY</span>
+            <span>{t.title.mint}</span>
+            <span className="standoff__btn-sub">{t.title.mintSub}</span>
           </span>
         </Link>
 
@@ -73,8 +75,8 @@ export function StandoffMenu() {
             unoptimized
           />
           <span className="standoff__btn-label">
-            <span>EXPLORE WORLD</span>
-            <span className="standoff__btn-sub">ENTER THE WORLD</span>
+            <span>{t.title.explore}</span>
+            <span className="standoff__btn-sub">{t.title.exploreSub}</span>
           </span>
         </Link>
       </nav>

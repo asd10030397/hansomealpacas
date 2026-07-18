@@ -2,6 +2,7 @@
 
 import { useState, type ComponentProps, type ReactNode } from "react";
 import { PixelBadge, PixelButton } from "@/components/ui/pixel";
+import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { ComingSoonModal } from "./ComingSoonModal";
 
 type PixelButtonProps = ComponentProps<typeof PixelButton>;
@@ -25,6 +26,7 @@ export function ComingSoonButton({
   className = "",
   ...buttonProps
 }: Props) {
+  const { t } = useGameI18n();
   const [open, setOpen] = useState(false);
 
   return (
@@ -32,7 +34,7 @@ export function ComingSoonButton({
       <span className={`relative inline-flex w-full flex-col items-stretch ${className}`}>
         {showBadge ? (
           <span className="pointer-events-none absolute -right-1 -top-2 z-10">
-            <PixelBadge tone="gold">SOON</PixelBadge>
+            <PixelBadge tone="gold">{t.common.soonBadge}</PixelBadge>
           </span>
         ) : null}
         <PixelButton

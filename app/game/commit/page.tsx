@@ -3,21 +3,21 @@
 import { ComingSoonButton } from "@/components/game/ComingSoonButton";
 import { GameStatusPanel } from "@/components/game/GameStatusPanel";
 import { PixelButton, PixelPanel } from "@/components/ui/pixel";
-import { MOCK_BANNER, MOCK_NFTS } from "@/data/game/mock";
+import { MOCK_NFTS } from "@/data/game/mock";
 import { gameHref } from "@/lib/game/paths";
+import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { useGameState } from "@/hooks/game/useGameState";
 
 export default function CommitPage() {
+  const { t } = useGameI18n();
   const { day, now, phaseEndsAt, phase } = useGameState();
   const playable = MOCK_NFTS.filter((n) => n.revealed);
 
   return (
     <div className="mx-auto max-w-3xl px-3 py-6">
-      <p className="mock-chip mb-3">{MOCK_BANNER}</p>
-      <h1 className="pixel-title text-lg text-[#f0c44a]">COMMIT</h1>
-      <p className="mt-2 text-sm text-[var(--hg-muted)]">
-        Seal today&apos;s location behind a commit hash. Location stays hidden until Reveal.
-      </p>
+      <p className="mock-chip mb-3">{t.common.demoBanner}</p>
+      <h1 className="pixel-title text-lg text-[#f0c44a]">{t.commit.heading}</h1>
+      <p className="mt-2 text-sm text-[var(--hg-muted)]">{t.commit.blurb}</p>
       <div className="mt-4">
         <GameStatusPanel day={day} now={now} phaseEndsAt={phaseEndsAt} />
       </div>

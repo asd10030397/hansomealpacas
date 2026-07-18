@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef } from "react";
 import { PixelButton } from "@/components/ui/pixel";
+import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { OFFICIAL_TELEGRAM_URL, OFFICIAL_X_URL } from "@/lib/links";
 
 export type ComingSoonModalProps = {
@@ -16,6 +17,7 @@ export type ComingSoonModalProps = {
  * Replace the trigger with a real action when the feature ships.
  */
 export function ComingSoonModal({ open, onClose, feature }: ComingSoonModalProps) {
+  const { t } = useGameI18n();
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -57,9 +59,9 @@ export function ComingSoonModal({ open, onClose, feature }: ComingSoonModalProps
       >
         <div className="mb-3 flex items-start justify-between gap-3">
           <h2 id={titleId} className="pixel-title text-sm text-[#f0c44a] sm:text-base">
-            🚧 Coming Soon
+            {t.common.comingSoonTitle}
           </h2>
-          <PixelButton size="sm" variant="ghost" onClick={onClose} aria-label="Close dialog">
+          <PixelButton size="sm" variant="ghost" onClick={onClose} aria-label={t.common.close}>
             X
           </PixelButton>
         </div>
@@ -67,28 +69,28 @@ export function ComingSoonModal({ open, onClose, feature }: ComingSoonModalProps
         {feature ? <p className="mock-chip mb-3">{feature}</p> : null}
 
         <div className="space-y-3 text-sm leading-relaxed text-[#cfd6e6]">
-          <p>This feature is currently under development.</p>
-          <p>The HANSOME team is actively building this part of the game.</p>
-          <p className="text-[#f0c44a]">Stay tuned for future updates!</p>
+          <p>{t.common.comingSoonBody1}</p>
+          <p>{t.common.comingSoonBody2}</p>
+          <p className="text-[#f0c44a]">{t.common.comingSoonBody3}</p>
         </div>
 
         <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
           <PixelButton variant="slate" className="w-full sm:min-w-[7rem] sm:flex-1" onClick={onClose}>
-            Close
+            {t.common.close}
           </PixelButton>
           <PixelButton
             variant="gold"
             className="w-full sm:min-w-[7rem] sm:flex-1"
             href={OFFICIAL_X_URL}
           >
-            Follow X
+            {t.common.followX}
           </PixelButton>
           <PixelButton
             variant="green"
             className="w-full sm:min-w-[7rem] sm:flex-1"
             href={OFFICIAL_TELEGRAM_URL}
           >
-            Join Telegram
+            {t.common.joinTelegram}
           </PixelButton>
         </div>
       </div>
