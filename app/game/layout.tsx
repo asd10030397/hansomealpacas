@@ -6,7 +6,7 @@ import "@/styles/game.css";
 export const metadata: Metadata = {
   title: "HANSOME: Alpacas vs Cougars",
   description:
-    "Premium pixel-art GameFi — Commit, Reveal, Settle, Claim on Robinhood Chain.",
+    "Premium pixel-art GameFi — Commit → Reveal → Settlement → Claim on Robinhood Chain.",
   robots: { index: true, follow: true },
 };
 

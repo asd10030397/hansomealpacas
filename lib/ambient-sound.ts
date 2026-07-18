@@ -141,6 +141,31 @@ async function startPlayback(): Promise<boolean> {
   }
 }
 
+/** True after the site ambient track has successfully started at least once. */
+export function hasAmbientStarted(): boolean {
+  return hasStarted;
+}
+
+/** Fade site ambient toward silence (used when entering /game). */
+export function fadeOutAmbientSound(durationMs = FADE_OUT_MS): void {
+  const instance = getAudio();
+  if (!instance) return;
+  fadeVolume(0, durationMs);
+}
+
+/** Soften ambient without tearing down the element (game section takeover). */
+export function pauseAmbientSound(): void {
+  const instance = getAudio();
+  if (!instance) return;
+  cancelFade();
+  fadeVolume(0, FADE_OUT_MS);
+  window.setTimeout(() => {
+    if (instance.volume < 0.01 && !instance.paused) {
+      instance.pause();
+    }
+  }, FADE_OUT_MS + 40);
+}
+
 export function mountAmbientSound(): () => void {
   if (typeof window === "undefined") return () => {};
 
@@ -154,6 +179,8 @@ export function mountAmbientSound(): () => void {
     mountCount -= 1;
     if (mountCount <= 0) {
       detachUnlockListeners();
+      // Leaving marketing pages — keep element warm but quiet if game takes over.
+      fadeOutAmbientSound(FADE_OUT_MS);
     }
   };
 }

@@ -50,7 +50,7 @@ Do **not** treat TEMP files as final launch art. Prefer `/public/pixel/*` source
 | Location thumbnails (Home + Loc 1–4) | `public/assets/backgrounds/loc-*.png` | Placeholder SVG |
 | NFT unrevealed card art | `public/assets/ui/nft-unrevealed.png` | Placeholder SVG |
 | Ambient VFX sheets (mist, sparkle, grass) | `public/assets/fx/*` | CSS-only |
-| BGM / SFX | `public/audio/game/*` | Not implemented |
+| BGM / SFX | `public/audio/game/*` | Gameplay battle theme + phase impact (site `ambient.wav` unchanged) |
 | Marketplace art | — | Coming Soon |
 
 ---

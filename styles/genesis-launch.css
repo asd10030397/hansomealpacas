@@ -1,0 +1,202 @@
+/* Genesis Launch Page — mint route composition */
+
+.genesis-launch {
+  --gl-ink: #0d1018;
+  --gl-cream: #f3ebe0;
+  --gl-gold: #f0c44a;
+  --gl-muted: #9aa3b5;
+  --gl-panel: #1a2030;
+  --gl-line: #2a3348;
+  position: relative;
+  color: var(--gl-cream);
+}
+
+.genesis-launch__hero {
+  position: relative;
+  overflow: hidden;
+  border-bottom: 4px solid var(--gl-ink);
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(196, 137, 74, 0.18), transparent 55%),
+    radial-gradient(ellipse 70% 50% at 80% 40%, rgba(110, 184, 224, 0.14), transparent 50%),
+    linear-gradient(180deg, #141a28 0%, #0e121c 100%);
+  padding: 1.5rem 0.75rem 1.75rem;
+}
+
+.genesis-launch__hero-inner {
+  position: relative;
+  z-index: 1;
+  margin: 0 auto;
+  max-width: 56rem;
+}
+
+.genesis-launch__eyebrow {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.14em;
+  color: var(--gl-gold);
+}
+
+.genesis-launch__title {
+  margin: 0;
+  font-family: var(--font-anton), monospace;
+  font-size: clamp(1.35rem, 4vw, 2rem);
+  letter-spacing: 0.06em;
+  line-height: 1.15;
+  color: var(--gl-gold);
+  text-shadow: 3px 3px 0 var(--gl-ink);
+}
+
+.genesis-launch__lead {
+  margin: 0.75rem 0 0;
+  max-width: 40rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--gl-muted);
+}
+
+.genesis-launch__cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.genesis-launch__body {
+  margin: 0 auto;
+  max-width: 56rem;
+  padding: 1.25rem 0.75rem 2.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.genesis-launch__grid-2 {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .genesis-launch__grid-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.genesis-launch__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.genesis-launch__list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--gl-line);
+  font-size: 0.8rem;
+}
+
+.genesis-launch__list li span:first-child {
+  color: var(--gl-muted);
+}
+
+.genesis-launch__list li strong {
+  font-family: var(--font-anton), monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  font-weight: 400;
+  color: var(--gl-cream);
+  text-align: right;
+}
+
+.genesis-launch__cycle {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .genesis-launch__cycle {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.genesis-launch__cycle-step {
+  border: 2px solid var(--gl-ink);
+  background: #121826;
+  padding: 0.65rem 0.5rem;
+  text-align: center;
+}
+
+.genesis-launch__cycle-step strong {
+  display: block;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  color: var(--gl-gold);
+}
+
+.genesis-launch__cycle-step span {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.65rem;
+  color: var(--gl-muted);
+}
+
+.genesis-launch__pools {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.genesis-launch__pool {
+  border: 2px solid var(--gl-ink);
+  background: #121826;
+  padding: 0.65rem 0.75rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.genesis-launch__pool strong {
+  font-family: var(--font-anton), monospace;
+  font-size: 0.85rem;
+  color: var(--gl-gold);
+}
+
+.genesis-launch__pool span {
+  font-size: 0.75rem;
+  color: var(--gl-cream);
+}
+
+.genesis-launch__status {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.genesis-launch__status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--gl-line);
+}
+
+.genesis-launch__status-row span:first-child {
+  color: var(--gl-muted);
+}
+
+.genesis-launch__mint-anchor {
+  scroll-margin-top: 5rem;
+}
+
+.genesis-launch__note {
+  margin: 0.75rem 0 0;
+  font-size: 0.7rem;
+  line-height: 1.5;
+  color: var(--gl-muted);
+}

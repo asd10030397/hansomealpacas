@@ -49,9 +49,9 @@ export function MainMenuHero() {
             href={gameHref.explore}
             iconSrc="/assets/icons/menu-explore.svg"
             variant="green"
-            subtitle="ENTER THE WORLD"
+            subtitle="DEPLOY · DAILY LOOP"
           >
-            EXPLORE WORLD
+            ENTER THE GAME
           </RpgMenuButton>
         </nav>
 

@@ -75,8 +75,8 @@ export function StandoffMenu() {
             unoptimized
           />
           <span className="standoff__btn-label">
-            <span>{t.title.explore}</span>
-            <span className="standoff__btn-sub">{t.title.exploreSub}</span>
+            <span>{t.title.enterGame}</span>
+            <span className="standoff__btn-sub">{t.title.enterGameSub}</span>
           </span>
         </Link>
       </nav>

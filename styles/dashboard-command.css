@@ -1,0 +1,140 @@
+/* Daily Game command center — clarity over button density */
+
+.dash-cmd {
+  display: grid;
+  gap: 1rem;
+}
+
+.dash-cmd__prompt {
+  border: 3px solid #0d1018;
+  background: linear-gradient(180deg, #1a2438 0%, #121826 100%);
+  padding: 1rem 1.1rem;
+  box-shadow: 4px 4px 0 #0a0c12;
+}
+
+.dash-cmd__prompt-label {
+  margin: 0;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hg-muted, #9aa3b5);
+}
+
+.dash-cmd__prompt-text {
+  margin: 0.4rem 0 0;
+  font-family: var(--font-anton), monospace;
+  font-size: clamp(0.95rem, 2.8vw, 1.25rem);
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  color: #f0c44a;
+}
+
+.dash-cmd__status {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .dash-cmd__status {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.dash-cmd__stat {
+  border: 2px solid #0d1018;
+  background: #121826;
+  padding: 0.7rem 0.75rem;
+}
+
+.dash-cmd__stat-label {
+  margin: 0;
+  font-size: 0.65rem;
+  color: var(--hg-muted, #9aa3b5);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.dash-cmd__stat-value {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: #f3ebe0;
+}
+
+.dash-cmd__stat-value--gold {
+  color: #f0c44a;
+}
+
+.dash-cmd__phase-explain {
+  margin: 0;
+  border: 2px solid #0d1018;
+  background: #121826;
+  padding: 0.65rem 0.75rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: #e8dfd2;
+}
+
+.dash-cmd__main {
+  display: grid;
+  gap: 0.65rem;
+  border: 3px solid #0d1018;
+  background: #1a2030;
+  padding: 1rem;
+  box-shadow: 4px 4px 0 #0a0c12;
+}
+
+.dash-cmd__main-label {
+  margin: 0;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hg-muted, #9aa3b5);
+}
+
+.dash-cmd__rewards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .dash-cmd__rewards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.dash-cmd__reward-cell {
+  border: 2px solid #2a3348;
+  background: #0e121c;
+  padding: 0.65rem 0.75rem;
+}
+
+.dash-cmd__reward-cell dt {
+  margin: 0;
+  font-size: 0.65rem;
+  color: var(--hg-muted, #9aa3b5);
+}
+
+.dash-cmd__reward-cell dd {
+  margin: 0.3rem 0 0;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.8rem;
+  color: #f0c44a;
+}
+
+.dash-cmd__secondary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.dash-cmd__secondary .pixel-title {
+  min-width: 6.5rem;
+}
+
+.dash-cmd__demo {
+  opacity: 0.85;
+}

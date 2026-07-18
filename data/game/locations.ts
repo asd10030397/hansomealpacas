@@ -1,6 +1,6 @@
 import type { GameLocation } from "@/types/game";
 
-/** GDS weights 1/2/3/5/8. Names are placeholders until world design approval. */
+/** Official GDS locations — weights 1 / 2 / 3 / 5 / 8. Cougars cannot select Home. */
 export const GAME_LOCATIONS: GameLocation[] = [
   {
     id: 0,
@@ -14,7 +14,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
   },
   {
     id: 1,
-    name: "Location 1",
+    name: "Mountain",
     weight: 2,
     riskLabel: "Low",
     pressure: 22,
@@ -24,7 +24,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
   },
   {
     id: 2,
-    name: "Location 2",
+    name: "Grassland",
     weight: 3,
     riskLabel: "Medium",
     pressure: 41,
@@ -34,7 +34,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
   },
   {
     id: 3,
-    name: "Location 3",
+    name: "Forest",
     weight: 5,
     riskLabel: "High",
     pressure: 63,
@@ -44,7 +44,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
   },
   {
     id: 4,
-    name: "Location 4",
+    name: "River",
     weight: 8,
     riskLabel: "Extreme",
     pressure: 88,

@@ -1,5 +1,5 @@
-import { MintPanel } from "@/components/mint/MintPanel";
+import { GenesisLaunchPage } from "@/components/mint/GenesisLaunchPage";
 
 export default function MintPage() {
-  return <MintPanel />;
+  return <GenesisLaunchPage />;
 }

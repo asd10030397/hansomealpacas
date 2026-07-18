@@ -7,14 +7,12 @@ import { gameHref } from "@/lib/game/paths";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { useWalletUi } from "@/hooks/game/useWalletUi";
 import { AudioSettings } from "./AudioSettings";
-import { ComingSoonModal } from "./ComingSoonModal";
 import { GameLanguageToggle } from "./GameLanguageToggle";
 import { WalletRequiredModal } from "./WalletRequiredModal";
 import { PixelBadge, PixelButton, WalletButton } from "@/components/ui/pixel";
 
 type NavLink =
   | { href: string; label: string; kind: "link" }
-  | { label: string; kind: "soon"; feature: string }
   | { href: string; label: string; kind: "wallet"; feature: string };
 
 function navClass(active: boolean) {
@@ -27,10 +25,6 @@ export function GameNav() {
   const { t } = useGameI18n();
   const { wallet, connectMock, disconnectMock } = useWalletUi();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [soon, setSoon] = useState<{ open: boolean; feature: string }>({
-    open: false,
-    feature: "",
-  });
   const [walletModal, setWalletModal] = useState<{
     open: boolean;
     feature: string;
@@ -40,7 +34,7 @@ export function GameNav() {
   const links: NavLink[] = useMemo(
     () => [
       { href: gameHref.home, label: t.nav.home, kind: "link" },
-      { href: gameHref.dashboard, label: t.nav.game, kind: "link" },
+      { href: gameHref.dashboard, label: t.nav.play, kind: "link" },
       { href: gameHref.mint, label: t.nav.mint, kind: "link" },
       {
         href: gameHref.myNfts,
@@ -48,8 +42,8 @@ export function GameNav() {
         kind: "wallet",
         feature: t.nav.featureMyNfts,
       },
-      { label: t.nav.rewards, kind: "soon", feature: t.nav.featureRewards },
-      { label: t.nav.board, kind: "soon", feature: t.nav.featureLeaderboard },
+      { href: gameHref.rewards, label: t.nav.rewards, kind: "link" },
+      { href: gameHref.leaderboard, label: t.nav.leaderboard, kind: "link" },
       { href: gameHref.docs, label: t.nav.docs, kind: "link" },
     ],
     [t],
@@ -68,22 +62,6 @@ export function GameNav() {
         >
           {l.label}
         </Link>
-      );
-    }
-
-    if (l.kind === "soon") {
-      return (
-        <button
-          key={`soon-${l.label}`}
-          type="button"
-          className={mobile ? "game-nav__mobile-link" : navClass(false)}
-          onClick={() => {
-            setSoon({ open: true, feature: l.feature });
-            setMenuOpen(false);
-          }}
-        >
-          {l.label}
-        </button>
       );
     }
 
@@ -139,7 +117,6 @@ export function GameNav() {
           >
             {t.common.menu}
           </PixelButton>
-          {/* Far top-right — last in tools flex */}
           <GameLanguageToggle />
         </div>
       </div>
@@ -154,11 +131,6 @@ export function GameNav() {
         </nav>
       ) : null}
 
-      <ComingSoonModal
-        open={soon.open}
-        onClose={() => setSoon((s) => ({ ...s, open: false }))}
-        feature={soon.feature}
-      />
       <WalletRequiredModal
         open={walletModal.open}
         onClose={() => setWalletModal((s) => ({ ...s, open: false }))}

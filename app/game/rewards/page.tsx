@@ -14,7 +14,7 @@ export default function RewardsPage() {
       <h1 className="pixel-title text-lg text-[#f0c44a]">{t.rewards.heading}</h1>
       <p className="mt-2 text-sm text-[var(--hg-muted)]">{t.rewards.blurb}</p>
 
-      <PixelPanel className="mt-4" title="BALANCES" eyebrow="MOCK HANSOME">
+      <PixelPanel className="mt-4" title="BALANCES" eyebrow="DEMO — NOT LIVE">
         <dl className="grid grid-cols-2 gap-3 text-sm">
           <div>
             <dt className="text-[var(--hg-muted)]">Total pending</dt>

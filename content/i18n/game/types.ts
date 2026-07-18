@@ -9,6 +9,12 @@ export type GameMessages = {
     en: string;
     zh: string;
   };
+  phases: {
+    COMMIT: string;
+    REVEAL: string;
+    SETTLEMENT: string;
+    CLAIM: string;
+  };
   common: {
     demoBanner: string;
     chainBadge: string;
@@ -40,11 +46,11 @@ export type GameMessages = {
     brand: string;
     brandSub: string;
     home: string;
-    game: string;
+    play: string;
     mint: string;
     myNfts: string;
     rewards: string;
-    board: string;
+    leaderboard: string;
     docs: string;
     aria: string;
     mobileAria: string;
@@ -56,7 +62,7 @@ export type GameMessages = {
     aria: string;
     home: string;
     play: string;
-    map: string;
+    deploy: string;
     nfts: string;
     loot: string;
   };
@@ -69,8 +75,8 @@ export type GameMessages = {
     connectSubConnected: string;
     mint: string;
     mintSub: string;
-    explore: string;
-    exploreSub: string;
+    enterGame: string;
+    enterGameSub: string;
     cougarTerritory: string;
     cougarTag: string;
     alpacaRanch: string;
@@ -79,11 +85,64 @@ export type GameMessages = {
   dashboard: {
     heading: string;
     blurb: string;
-    actionsTitle: string;
-    actionsEyebrow: string;
-    actionsHint: string;
+    doNowLabel: string;
+    doNow: Record<"COMMIT" | "REVEAL" | "SETTLEMENT" | "CLAIM", string>;
+    phaseLabel: string;
+    phaseExplain: Record<"COMMIT" | "REVEAL" | "SETTLEMENT" | "CLAIM", string>;
+    countdownLabel: string;
+    dayLabel: string;
+    dayValue: (day: number) => string;
+    rankLabel: string;
+    mainActionLabel: string;
+    mainCommit: string;
+    mainReveal: string;
+    mainSettlement: string;
+    mainClaim: string;
+    settlementStatusLine: (status: string) => string;
+    pendingRewards: string;
+    claimableRewards: string;
+    nextSettlement: string;
+    nextSettlementAfterReveal: string;
+    settlementNow: string;
+    settlementDone: string;
+    alsoAvailable: string;
+    phaseScoped: string;
     demoPhaseTitle: string;
     demoPhaseEyebrow: string;
+  };
+  launch: {
+    eyebrow: string;
+    title: string;
+    lead: string;
+    ctaMint: string;
+    ctaEnter: string;
+    ctaDocs: string;
+    collectionTitle: string;
+    collectionRows: [string, string][];
+    collectionNote: string;
+    reservedTitle: string;
+    reservedRows: [string, string][];
+    saleTitle: string;
+    saleEyebrow: string;
+    saleRows: [string, string][];
+    priceNote: string;
+    cycleTitle: string;
+    cycleSteps: [string, string][];
+    cycleNote: string;
+    locationsTitle: string;
+    locationRows: [string, string][];
+    locationsNote: string;
+    poolsTitle: string;
+    poolAlpaca: string;
+    poolCougar: string;
+    poolHunt: string;
+    poolsNote: string;
+    statusTitle: string;
+    statusEyebrow: string;
+    statusLive: string;
+    statusSoon: string;
+    statusRows: [string, "live" | "soon"][];
+    backHome: string;
   };
   mint: {
     loading: string;
@@ -100,6 +159,8 @@ export type GameMessages = {
     public: string;
     walletMax: string;
     price: string;
+    wlWindow: string;
+    intendedMainnetNote: string;
     wlEligibility: string;
     wlUnknown: string;
     yes: string;
@@ -124,6 +185,13 @@ export type GameMessages = {
   explore: {
     heading: string;
     blurb: string;
+    mapTitle: string;
+    mapEyebrow: string;
+    flowTitle: string;
+    flowSteps: [string, string][];
+    alpacaView: string;
+    cougarView: string;
+    cougarHomeNote: string;
   };
   myNfts: {
     heading: string;
@@ -136,6 +204,27 @@ export type GameMessages = {
   leaderboard: {
     heading: string;
     blurb: string;
+    walletNote: string;
+    boards: {
+      season: string;
+      hunter: string;
+      survivor: string;
+      earnings: string;
+    };
+    boardHints: {
+      season: string;
+      hunter: string;
+      survivor: string;
+      earnings: string;
+    };
+    scoreLabel: string;
+    demoPanel: string;
+    demoEyebrow: string;
+    scoringReviewTitle: string;
+    scoringReviewEyebrow: string;
+    scoringReviewBody: string;
+    scoringReviewPoints: string[];
+    scoringReviewNotice: string;
   };
   commit: {
     heading: string;
@@ -172,31 +261,23 @@ export type GameMessages = {
     fullRulesNote: string;
   };
   actions: {
-    explore: string;
+    deploy: string;
     myNfts: string;
-    myAlpacas: string;
-    myCougars: string;
-    dailyGame: string;
     commit: string;
     reveal: string;
     rewards: string;
     claim: string;
     leaderboard: string;
-    marketplace: string;
-    staking: string;
   };
   features: {
     rewards: string;
     leaderboard: string;
-    marketplace: string;
-    staking: string;
     genesisMint: string;
     commit: string;
     reveal: string;
     claim: string;
-    myAlpacas: string;
-    myCougars: string;
-    dailyGame: string;
-    exploreWorld: string;
+    myNfts: string;
+    settlementStatus: string;
+    deploy: string;
   };
 };

@@ -136,7 +136,7 @@ export function MintPanel() {
           <div>
             <dt className="text-[var(--hg-muted)]">{t.mint.whitelist}</dt>
             <dd>
-              {sale.whitelistCap} · max {sale.wlWalletMax}/wallet · −1h
+              {sale.whitelistCap} · max {sale.wlWalletMax}/wallet · {t.mint.wlWindow}
             </dd>
           </div>
           <div>
@@ -164,6 +164,9 @@ export function MintPanel() {
             </dd>
           </div>
         </dl>
+        <p className="mt-3 text-[10px] leading-relaxed text-[var(--hg-muted)]">
+          {t.mint.intendedMainnetNote}
+        </p>
       </PixelPanel>
 
       <PixelPanel title={t.mint.mintPanel} eyebrow={t.mint.mintEyebrow}>

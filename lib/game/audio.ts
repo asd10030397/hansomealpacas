@@ -1,7 +1,9 @@
 /**
- * Audio manager placeholder — no audio playback yet.
- * Wire Music / SFX toggles here later (Web Audio / Howler / HTMLAudio).
+ * Game audio preferences + thin facade.
+ * Playback lives in `gameplay-music.ts` (battle theme) / future SFX bus.
  */
+
+import { setGameplayMusicEnabled } from "@/lib/game/gameplay-music";
 
 export type AudioChannel = "music" | "sfx";
 
@@ -31,18 +33,19 @@ export function loadAudioPreferences(): AudioPreferences {
 export function saveAudioPreferences(prefs: AudioPreferences): void {
   if (typeof window === "undefined") return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+  setGameplayMusicEnabled(prefs.musicEnabled);
 }
 
-/** TODO: play BGM when musicEnabled && assets ready */
 export function playMusic(trackId: string): void {
-  void trackId;
+  if (trackId === "gameplay" || trackId === "battle") {
+    setGameplayMusicEnabled(true);
+  }
 }
 
-/** TODO: play SFX when sfxEnabled && assets ready */
 export function playSfx(sfxId: string): void {
   void sfxId;
 }
 
 export function stopAllAudio(): void {
-  // intentionally empty
+  setGameplayMusicEnabled(false);
 }

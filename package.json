@@ -9,7 +9,10 @@
     "lint": "next lint",
     "generate:assets": "node scripts/generate-assets.mjs",
     "generate:litepaper-pdf": "node scripts/generate-litepaper-pdf.mjs",
-    "release:check": "node scripts/release-check.mjs"
+    "release:check": "node scripts/release-check.mjs",
+    "test:scoring": "vitest run --config vitest.config.ts",
+    "test:scoring:watch": "vitest --config vitest.config.ts",
+    "generate:gameplay-theme": "node scripts/generate-gameplay-theme.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.2",
@@ -32,6 +35,7 @@
     "playwright": "^1.61.1",
     "sharp": "^0.34.5",
     "tailwindcss": "^4.1.11",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vitest": "^4.1.10"
   }
 }

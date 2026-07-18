@@ -43,7 +43,7 @@ export function LocationCard({
       </div>
       <div className="mb-3 flex flex-wrap gap-1">
         <PixelBadge tone={riskTone}>RISK {location.riskLabel}</PixelBadge>
-        <PixelBadge tone="blue">PRESSURE {location.pressure}</PixelBadge>
+        <PixelBadge tone="blue">PRESSURE {location.pressure} (demo)</PixelBadge>
       </div>
       {!allowed ? (
         <p className="text-xs text-[#c44b3a]">Not available for Cougars</p>

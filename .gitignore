@@ -23,6 +23,7 @@
 *.pem
 /public/scale-preview
 .tmp-trust-assets/
+/tmp/
 
 # debug
 npm-debug.log*

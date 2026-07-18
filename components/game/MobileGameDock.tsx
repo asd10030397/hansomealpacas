@@ -6,7 +6,6 @@ import { useState } from "react";
 import { gameHref } from "@/lib/game/paths";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { useWalletUi } from "@/hooks/game/useWalletUi";
-import { ComingSoonModal } from "./ComingSoonModal";
 import { WalletRequiredModal } from "./WalletRequiredModal";
 
 export function MobileGameDock() {
@@ -14,12 +13,10 @@ export function MobileGameDock() {
   const router = useRouter();
   const { t } = useGameI18n();
   const { wallet, connectMock } = useWalletUi();
-  const [soonOpen, setSoonOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
 
-  const itemClass = (href: string, forceActive = false) => {
+  const itemClass = (href: string) => {
     const active =
-      forceActive ||
       pathname === href ||
       (href !== gameHref.home && pathname.startsWith(href + "/"));
     return `pixel-title flex flex-col items-center justify-center py-3 text-[0.45rem] ${
@@ -40,7 +37,7 @@ export function MobileGameDock() {
           {t.dock.play}
         </Link>
         <Link href={gameHref.explore} className={itemClass(gameHref.explore)}>
-          {t.dock.map}
+          {t.dock.deploy}
         </Link>
         <button
           type="button"
@@ -52,20 +49,11 @@ export function MobileGameDock() {
         >
           {t.dock.nfts}
         </button>
-        <button
-          type="button"
-          className={itemClass(gameHref.rewards, soonOpen)}
-          onClick={() => setSoonOpen(true)}
-        >
+        <Link href={gameHref.rewards} className={itemClass(gameHref.rewards)}>
           {t.dock.loot}
-        </button>
+        </Link>
       </nav>
 
-      <ComingSoonModal
-        open={soonOpen}
-        onClose={() => setSoonOpen(false)}
-        feature={t.features.rewards}
-      />
       <WalletRequiredModal
         open={walletOpen}
         onClose={() => setWalletOpen(false)}

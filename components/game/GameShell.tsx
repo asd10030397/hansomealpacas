@@ -1,6 +1,7 @@
 "use client";
 
 import { GameNav } from "@/components/game/GameNav";
+import { GameplayMusic } from "@/components/game/GameplayMusic";
 import { GameVisualShell } from "@/components/game/GameVisualShell";
 import { MobileGameDock } from "@/components/game/MobileGameDock";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
@@ -11,6 +12,7 @@ export function GameShell({ children }: { children: React.ReactNode }) {
 
   return (
     <GameVisualShell>
+      <GameplayMusic />
       <div className="hansome-game hansome-game-shell">
         <a
           href="#game-main"

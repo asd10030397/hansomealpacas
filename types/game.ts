@@ -17,7 +17,7 @@ export type LocationId = 0 | 1 | 2 | 3 | 4;
 
 export interface GameLocation {
   id: LocationId;
-  /** Placeholder labels until world design is approved. */
+  /** Official GDS location name. */
   name: string;
   weight: 1 | 2 | 3 | 5 | 8;
   riskLabel: "None" | "Low" | "Medium" | "High" | "Extreme";
@@ -42,11 +42,13 @@ export interface GameDayState {
 export interface TerritoryStats {
   cougarsActive: number;
   huntsToday: number;
+  /** Demo label for Hunting Pool slice — not live chain data. */
   huntPoolLabel: string;
   territoryPressure: number;
   alpacasActive: number;
   survivalsToday: number;
-  baseRewardPoolLabel: string;
+  /** Demo label for Alpaca Pool slice — never call this "Base Pool". */
+  alpacaPoolLabel: string;
   ranchActivity: number;
 }
 
@@ -88,12 +90,16 @@ export interface RewardSummary {
   history: { day: number; amount: number; side: NftSide; note: string }[];
 }
 
+/** Gameplay leaderboard boards — never wallet HANSOME balance. */
+export type LeaderboardBoardId = "season" | "hunter" | "survivor" | "earnings";
+
 export interface LeaderboardEntry {
   rank: number;
   label: string;
   side: NftSide;
-  score: number;
-  earned: number;
+  /** Board metric (season points, hunts, days survived, or gameplay earnings). */
+  value: number;
+  unit: string;
 }
 
 export interface WalletUiState {
