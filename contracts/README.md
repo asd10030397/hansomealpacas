@@ -77,6 +77,23 @@ npm run verify:robinhood
 
 Deployment details are saved to `deployments/<network>.json`.
 
+### Genesis NFT (testnet)
+
+```bash
+# 1) Fund the deployer with testnet ETH:
+#    https://faucet.testnet.chain.robinhood.com/
+#    (set DEPLOYER_PRIVATE_KEY, or TREASURY_PRIVATE_KEY is used as fallback)
+
+# 2) Deploy + bootstrap public sale (60s timelock on testnet):
+npx hardhat run scripts/deploy-genesis.ts --network robinhoodTestnet
+
+# 3) Sync address into the Next.js app:
+npx hardhat run scripts/sync-genesis-env.ts --network robinhoodTestnet
+```
+
+Writes `deployments/robinhoodTestnet-genesis.json`. Sale identity bytes are
+saved as `*-genesis-identities.bin` (gitignored — needed for later reveal).
+
 ## Robinhood Chain networks
 
 | Network | Chain ID | RPC |

@@ -58,6 +58,7 @@ describe("HansomeGenesisNFT (hardened)", () => {
       treasury.address,
       await mock.getAddress(),
       "ipfs://placeholder.json",
+      0, // production 24h timelock
     )) as HansomeGenesisNFT;
     await nft.waitForDeployment();
 
@@ -279,6 +280,7 @@ describe("HansomeGenesisNFT (hardened)", () => {
       treasury.address,
       await adapter.getAddress(),
       "ipfs://placeholder.json",
+      0,
     );
     await nft.waitForDeployment();
     await adapter.setConsumer(await nft.getAddress());

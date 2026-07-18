@@ -4,11 +4,18 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const privateKey = process.env.PRIVATE_KEY;
+function envOr(primary: string | undefined, fallback: string): string {
+  const value = primary?.trim();
+  return value ? value : fallback;
+}
+
+const rawKey = (process.env.DEPLOYER_PRIVATE_KEY ?? process.env.PRIVATE_KEY)?.trim();
+const normalizedKey =
+  rawKey && !rawKey.startsWith("0x") ? `0x${rawKey}` : rawKey;
 
 const accounts =
-  privateKey && privateKey.startsWith("0x") && privateKey.length === 66
-    ? [privateKey]
+  normalizedKey && normalizedKey.startsWith("0x") && normalizedKey.length === 66
+    ? [normalizedKey]
     : [];
 
 const config: HardhatUserConfig = {
@@ -26,12 +33,15 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {},
     robinhood: {
-      url: process.env.RH_RPC_URL ?? "https://rpc.mainnet.chain.robinhood.com",
+      url: envOr(process.env.RH_RPC_URL, "https://rpc.mainnet.chain.robinhood.com"),
       chainId: 4663,
       accounts,
     },
     robinhoodTestnet: {
-      url: process.env.RH_TESTNET_RPC_URL ?? "https://rpc.testnet.chain.robinhood.com",
+      url: envOr(
+        process.env.RH_TESTNET_RPC_URL,
+        "https://rpc.testnet.chain.robinhood.com",
+      ),
       chainId: 46630,
       accounts,
     },

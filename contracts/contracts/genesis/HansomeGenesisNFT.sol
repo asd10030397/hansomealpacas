@@ -19,7 +19,7 @@ import {IRevealRandomness, IRevealRandomnessReceiver} from "./randomness/IReveal
  *
  * Security hardening:
  * - saleIdentityCommitment locked before WL mint
- * - Admin params timelocked (24h)
+ * - Admin params timelocked (default 24h; constructor may shorten for testnet only)
  * - Reveal fulfill only via randomnessProvider (VRF adapter) — no owner fulfill
  * - side/class views hidden until collection fully revealed (no partial API leak)
  * - reveal seed hidden until collection revealed
@@ -29,7 +29,8 @@ import {IRevealRandomness, IRevealRandomnessReceiver} from "./randomness/IReveal
 contract HansomeGenesisNFT is ERC721, ERC2981, Ownable, ReentrancyGuard, IHansomeGenesis, IRevealRandomnessReceiver {
     using Strings for uint256;
 
-    uint256 public constant ADMIN_TIMELOCK = 24 hours;
+    /// @notice Admin op delay. Pass `0` in the constructor for the production default (24 hours).
+    uint256 public immutable ADMIN_TIMELOCK;
 
     // ─── Config ─────────────────────────────────────────────────────────
     uint256 public publicStart;
@@ -130,11 +131,14 @@ contract HansomeGenesisNFT is ERC721, ERC2981, Ownable, ReentrancyGuard, IHansom
         address initialOwner,
         address royaltyReceiver,
         address randomnessProvider_,
-        string memory placeholderURI_
+        string memory placeholderURI_,
+        uint256 adminTimelock_
     ) ERC721("HANSOME Genesis NFT", "HGEN") Ownable(initialOwner) {
         if (initialOwner == address(0) || royaltyReceiver == address(0) || randomnessProvider_ == address(0)) {
             revert ZeroAddress();
         }
+        // 0 => production default (24h). Non-zero values are for testnet / local bootstrap only.
+        ADMIN_TIMELOCK = adminTimelock_ == 0 ? 24 hours : adminTimelock_;
         _placeholderURI = placeholderURI_;
         randomnessProvider = randomnessProvider_;
         _setDefaultRoyalty(royaltyReceiver, HansomeTypes.ROYALTY_BPS);

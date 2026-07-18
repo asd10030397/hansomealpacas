@@ -71,6 +71,36 @@ export const robinhoodChain = defineChain({
   },
 });
 
+/** Robinhood Chain testnet — Genesis NFT mint integration target. */
+export const ROBINHOOD_TESTNET_CHAIN_ID = 46630;
+export const DEFAULT_TESTNET_RPC_URL = "https://rpc.testnet.chain.robinhood.com";
+export const DEFAULT_TESTNET_EXPLORER = "https://explorer.testnet.chain.robinhood.com";
+
+export const robinhoodTestnetChain = defineChain({
+  id: ROBINHOOD_TESTNET_CHAIN_ID,
+  name: "Robinhood Chain Testnet",
+  nativeCurrency: {
+    name: "Ether",
+    symbol: "ETH",
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: [
+        process.env.NEXT_PUBLIC_GAME_RPC_URL?.trim() || DEFAULT_TESTNET_RPC_URL,
+      ],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "Blockscout",
+      url:
+        process.env.NEXT_PUBLIC_GAME_EXPLORER?.trim() || DEFAULT_TESTNET_EXPLORER,
+    },
+  },
+  testnet: true,
+});
+
 export function getExplorerAddressUrl(address: string): string {
   const base = robinhoodChain.blockExplorers.default.url.replace(/\/$/, "");
   return `${base}/address/${address}`;

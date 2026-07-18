@@ -16,13 +16,27 @@ function resolvePrivateKey(
 }
 
 export async function getDeployerSigner(provider: Provider): Promise<Wallet> {
-  const privateKey = resolvePrivateKey(
-    process.env.DEPLOYER_PRIVATE_KEY,
-    process.env.PRIVATE_KEY,
-    "DEPLOYER_PRIVATE_KEY",
-  );
+  let privateKey: string;
+  try {
+    privateKey = resolvePrivateKey(
+      process.env.DEPLOYER_PRIVATE_KEY,
+      process.env.PRIVATE_KEY,
+      "DEPLOYER_PRIVATE_KEY",
+    );
+  } catch (err) {
+    // Testnet/dev convenience: allow TREASURY when DEPLOYER is unset (common local .env gap).
+    if (process.env.TREASURY_PRIVATE_KEY?.trim()) {
+      console.warn(
+        "WARNING: DEPLOYER_PRIVATE_KEY missing — using TREASURY_PRIVATE_KEY as deployer signer.",
+      );
+      privateKey = process.env.TREASURY_PRIVATE_KEY.trim();
+    } else {
+      throw err;
+    }
+  }
 
-  const signer = new Wallet(privateKey, provider);
+  const normalized = privateKey.startsWith("0x") ? privateKey : `0x${privateKey}`;
+  const signer = new Wallet(normalized, provider);
   console.log("Signer:", await signer.getAddress());
   return signer;
 }

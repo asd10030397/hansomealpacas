@@ -7,3 +7,8 @@ coverage.json
 .env
 deployments/*.json
 !deployments/.gitkeep
+# Public Genesis deploy records (address / commitment) may be committed.
+!deployments/*-genesis.json
+# Packed sale identities are reveal secrets — never commit.
+deployments/*-genesis-identities.bin
+deployments/*-genesis-identities.json

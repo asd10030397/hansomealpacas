@@ -99,7 +99,11 @@ export interface LeaderboardEntry {
 export interface WalletUiState {
   connected: boolean;
   address: string | null;
+  /** Full checksum address when connected (live wallet). */
+  fullAddress?: string | null;
   networkLabel: string;
-  /** Always true until real wagmi wiring. */
-  isMock: true;
+  chainId?: number;
+  wrongNetwork?: boolean;
+  /** True only for placeholder mock wallet state. */
+  isMock: boolean;
 }

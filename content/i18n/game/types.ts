@@ -21,7 +21,9 @@ export type GameMessages = {
     disconnectAria: string;
     connectAria: string;
     mockTapDisconnect: string;
+    tapDisconnect: string;
     mockNoTx: string;
+    injectedWalletSub: string;
     notConnected: string;
     soonBadge: string;
     comingSoonTitle: string;
@@ -86,6 +88,8 @@ export type GameMessages = {
   mint: {
     loading: string;
     blurb: string;
+    liveBanner: string;
+    notConfigured: string;
     saleStatus: string;
     mintedLabel: string;
     supply: string;
@@ -106,6 +110,16 @@ export type GameMessages = {
     quantity: string;
     decreaseAria: string;
     increaseAria: string;
+    switchNetwork: string;
+    mintPublic: string;
+    mintWhitelist: string;
+    minting: string;
+    mintSuccess: string;
+    txSubmitted: string;
+    mintError: string;
+    saleUpcoming: string;
+    soldOut: string;
+    walletCapReached: string;
   };
   explore: {
     heading: string;
@@ -134,6 +148,28 @@ export type GameMessages = {
   docs: {
     heading: string;
     blurb: string;
+    dailyLoopTitle: string;
+    dailyLoopSteps: [string, string, string, string];
+    poolsTitle: string;
+    poolAlpaca: string;
+    poolCougarBase: string;
+    poolHunt: string;
+    poolPenaltyNote: string;
+    sidesTitle: string;
+    alpacaTitle: string;
+    alpacaGoal: string;
+    alpacaPoints: [string, string, string];
+    cougarTitle: string;
+    cougarGoal: string;
+    cougarPoints: [string, string, string];
+    compareTitle: string;
+    compareHeaders: [string, string, string];
+    compareRows: [string, string, string][];
+    locationsTitle: string;
+    locationsBody: string;
+    moreTitle: string;
+    playerGuide: string;
+    fullRulesNote: string;
   };
   actions: {
     explore: string;

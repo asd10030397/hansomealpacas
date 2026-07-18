@@ -108,6 +108,11 @@ html.hansome-game-route body.hansome-game-route {
   box-shadow: 2px 2px 0 #0d1018;
 }
 
+.hansome-game .mock-chip--live {
+  color: #0e1a14;
+  background: #7dce9a;
+}
+
 @keyframes hg-cloud {
   from {
     transform: translateX(-10%);

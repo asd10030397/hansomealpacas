@@ -25,7 +25,9 @@ export function WalletButton({
         onClick={onDisconnect}
         aria-label={t.common.disconnectAria}
         className="w-full max-w-md"
-        subtitle={t.common.mockTapDisconnect}
+        subtitle={
+          wallet.isMock ? t.common.mockTapDisconnect : t.common.tapDisconnect
+        }
       >
         {wallet.address}
       </PixelButton>
@@ -38,7 +40,7 @@ export function WalletButton({
       onClick={onConnect}
       aria-label={t.common.connectAria}
       className="w-full max-w-md"
-      subtitle={t.common.mockNoTx}
+      subtitle={wallet.isMock ? t.common.mockNoTx : t.common.injectedWalletSub}
     >
       {t.common.connectWallet}
     </PixelButton>

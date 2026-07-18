@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Web3Provider } from "@/components/Web3Provider";
 import { GameShell } from "@/components/game/GameShell";
 import "@/styles/game.css";
 
@@ -17,5 +18,9 @@ export const viewport: Viewport = {
 };
 
 export default function GameLayout({ children }: { children: React.ReactNode }) {
-  return <GameShell>{children}</GameShell>;
+  return (
+    <Web3Provider>
+      <GameShell>{children}</GameShell>
+    </Web3Provider>
+  );
 }

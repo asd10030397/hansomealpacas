@@ -1,37 +1,78 @@
-import { MOCK_MINT } from "@/data/game/mock";
+import { formatEther, type Address } from "viem";
+import {
+  GENESIS_COLLECTION_NAME,
+  GENESIS_SUPPLY,
+} from "@/lib/game/genesis";
 import type { MintSaleState } from "@/types/game";
 
-/**
- * Typed mint service (mock).
- * TODO(contract): replace with HansomeGenesisNFT reads (wagmi/viem).
- * Do not invent contract addresses here.
- */
+export type GenesisOnchainSnapshot = {
+  name?: string;
+  totalMinted: bigint;
+  saleMinted: bigint;
+  mintPrice: bigint;
+  publicStart: bigint;
+  isWhitelistOpen: boolean;
+  isPublicOpen: boolean;
+  reservedMinted: boolean;
+  royaltyBps: number;
+  /** Wallet-specific; null when disconnected. */
+  whitelistMintCount: number | null;
+  publicMintCount: number | null;
+  /** null = unknown (no proof source / disconnected). */
+  whitelistEligible: boolean | null;
+};
 
-export async function fetchMintSaleState(): Promise<MintSaleState> {
-  return { ...MOCK_MINT };
+export function deriveMintPhase(snapshot: {
+  saleMinted: bigint;
+  isWhitelistOpen: boolean;
+  isPublicOpen: boolean;
+}): MintSaleState["phase"] {
+  if (snapshot.saleMinted >= BigInt(GENESIS_SUPPLY.whitelist + GENESIS_SUPPLY.public)) {
+    return "SoldOut";
+  }
+  if (snapshot.isPublicOpen) return "Public";
+  if (snapshot.isWhitelistOpen) return "Whitelist";
+  return "Upcoming";
 }
 
-export type MockMintTxState = "idle" | "preparing" | "awaiting_wallet" | "error";
+export function buildMintSaleState(snapshot: GenesisOnchainSnapshot): MintSaleState {
+  const phase = deriveMintPhase(snapshot);
+  const price = formatEther(snapshot.mintPrice);
+  const mintPriceLabel =
+    snapshot.mintPrice === 0n ? `${price} ETH` : `${trimEther(price)} ETH`;
 
-export interface MockMintRequest {
-  quantity: number;
-  phase: MintSaleState["phase"];
-}
-
-/**
- * Does NOT simulate a successful on-chain mint.
- * Returns an explicit mock error so UI never fakes confirmation.
- */
-export async function requestMockMint(req: MockMintRequest): Promise<{
-  ok: false;
-  state: MockMintTxState;
-  message: string;
-}> {
-  void req;
   return {
-    ok: false,
-    state: "error",
-    message:
-      "Mint is not connected to a contract yet. This is a UI demo — no transaction was sent.",
+    collectionName: snapshot.name?.trim() || GENESIS_COLLECTION_NAME,
+    totalSupply: GENESIS_SUPPLY.total,
+    alpacaCount: GENESIS_SUPPLY.alpaca,
+    cougarCount: GENESIS_SUPPLY.cougar,
+    reservedCount: GENESIS_SUPPLY.reserved,
+    whitelistCap: GENESIS_SUPPLY.whitelist,
+    publicCap: GENESIS_SUPPLY.public,
+    minted: Number(snapshot.totalMinted),
+    phase,
+    mintPriceLabel,
+    whitelistEligible: snapshot.whitelistEligible,
+    royaltyBps: snapshot.royaltyBps,
+    wlWalletMax: GENESIS_SUPPLY.wlWalletMax,
+    publicWalletMax: GENESIS_SUPPLY.publicWalletMax,
+    combinedWalletMax: GENESIS_SUPPLY.combinedWalletMax,
   };
+}
+
+function trimEther(value: string): string {
+  if (!value.includes(".")) return value;
+  return value.replace(/(\.\d*?[1-9])0+$/u, "$1").replace(/\.0+$/u, "");
+}
+
+/** Optional local WL proofs keyed by checksum/lowercase address. */
+export type WhitelistProofMap = Record<string, `0x${string}`[]>;
+
+export function lookupWhitelistProof(
+  address: Address | undefined,
+  proofs: WhitelistProofMap | null | undefined,
+): `0x${string}`[] | null {
+  if (!address || !proofs) return null;
+  const direct = proofs[address] ?? proofs[address.toLowerCase()];
+  return direct ?? null;
 }
