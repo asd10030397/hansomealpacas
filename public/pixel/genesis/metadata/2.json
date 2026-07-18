@@ -1,0 +1,24 @@
+{
+  "name": "HANSOME Genesis #2",
+  "description": "Reserved HANSOME Genesis NFT (team). Hand-designed one-of-one, held back from the public pool.",
+  "image": "genesis/2.png",
+  "edition": 2,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Reserved"
+    },
+    {
+      "trait_type": "Role",
+      "value": "team"
+    }
+  ],
+  "hansome": {
+    "type": "Reserved",
+    "role": "team",
+    "generation": "manual",
+    "artwork": "pending-hand-design",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

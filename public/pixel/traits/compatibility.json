@@ -6,14 +6,14 @@
     "necklace": "Neck Accessories"
   },
   "layerOrder": ["background", "base", "fur", "clothing", "necklace", "face", "mouth", "ears", "glasses", "hat", "effects"],
-  "singleSelectCategories": ["background", "fur", "mouth", "glasses", "hat", "clothing", "necklace"],
+  "singleSelectCategories": ["background", "fur", "mouth", "glasses", "hat", "clothing", "necklace", "ears", "effects"],
   "traitTags": {
     "comment": "Tags let compatibility rules target groups of traits instead of listing every pair.",
     "hat": {
-      "wool-beanie": ["covers-ears", "snug"],
       "straw-hat": ["wide-brim"],
-      "farmer-cap": ["casual"],
-      "acorn-cap": ["snug", "small"],
+      "wool-beanie": ["covers-ears", "snug"],
+      "bobble-hat": ["snug"],
+      "cloth-cap": ["casual"],
       "flower-crown": ["open-top", "floral"]
     },
     "clothing": {
@@ -44,6 +44,13 @@
       "reason": "A scarf/sweater/poncho wrapped around the neck would hide a neck accessory or collar."
     },
     {
+      "id": "necklace-suppressed-by-chest-clothing",
+      "type": "category-suppressed-by-tag",
+      "when": { "category": "clothing", "hasTag": "covers-chest" },
+      "suppress": "necklace",
+      "reason": "Festival Ribbon already occupies the chest with its sash/medallion; a neck accessory on top crowds the same zone and reads cluttered."
+    },
+    {
       "id": "single-glasses",
       "type": "single-select",
       "category": "glasses",
@@ -62,6 +69,43 @@
     {
       "comment": "Explicit blocked pairs beyond the tag rules above. Format: 'category:id'.",
       "pairs": []
+    }
+  ],
+  "gameplayClasses": {
+    "comment": "Gameplay Classes belong ONLY to the Special 21 (Founder #001 + 20 Legendary). Public/Common alpacas have NO gameplay class. Each class is bound 1:1 to a special background.",
+    "classes": ["King", "Guardian", "Farmer", "Lucky", "Runner"],
+    "appliesTo": "special-21-only"
+  },
+  "specialBackgroundClassLock": {
+    "comment": "Special backgrounds are LOCKED to their matching Gameplay Class. Enforced at generation/validation time for the Special 21; public NFTs are already excluded because these backgrounds are not in the random pool.",
+    "enforced": true,
+    "allowed": {
+      "King": "background:king",
+      "Guardian": "background:guardian",
+      "Farmer": "background:farmer",
+      "Lucky": "background:lucky",
+      "Runner": "background:runner"
+    },
+    "notAllowed": [
+      "Common/Public alpaca (no gameplayClass) → any special background",
+      "A Special alpaca whose gameplayClass does not match the background (e.g. Guardian class → King background)"
+    ],
+    "specialBackgroundIds": ["king", "guardian", "farmer", "lucky", "runner"]
+  },
+  "rules_special": [
+    {
+      "id": "special-bg-locked-to-class",
+      "type": "class-locked-background",
+      "when": { "background": "in:king,guardian,farmer,lucky,runner" },
+      "require": "token.hansome.gameplayClass === specialBackgroundClassLock.allowed inverse (background must equal the class's locked background)",
+      "reason": "King Class → King Background, Guardian → Guardian, Farmer → Farmer, Lucky → Lucky, Runner → Runner. Any other pairing is invalid."
+    },
+    {
+      "id": "special-bg-forbidden-for-common",
+      "type": "background-forbidden-without-class",
+      "when": { "background": "in:king,guardian,farmer,lucky,runner" },
+      "forbidWhen": "token has no gameplayClass (i.e. Public/Common alpaca)",
+      "reason": "Only the Special 21 carry a gameplay class; a Common alpaca may never use a special background."
     }
   ],
   "reservedExclusions": {

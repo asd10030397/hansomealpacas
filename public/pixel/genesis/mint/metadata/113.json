@@ -1,0 +1,66 @@
+{
+  "name": "HANSOME Genesis #113",
+  "description": "A HANSOME Genesis alpaca — an original individual of the cozy countryside HANSOME universe. Handcrafted pixel art. Not the mascot.",
+  "image": "ipfs://__IMAGE_CID__/113.png",
+  "edition": 113,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Public"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Common"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Morning Sky"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Curly"
+    },
+    {
+      "trait_type": "Wool",
+      "value": "Classic"
+    },
+    {
+      "trait_type": "Clothing",
+      "value": "Cozy Wool Scarf"
+    },
+    {
+      "trait_type": "Neck Accessory",
+      "value": "None"
+    },
+    {
+      "trait_type": "Mouth",
+      "value": "Wheat Stalk"
+    },
+    {
+      "trait_type": "Ear Accessory",
+      "value": "None"
+    },
+    {
+      "trait_type": "Glasses",
+      "value": "Sunglasses"
+    },
+    {
+      "trait_type": "Hat",
+      "value": "Straw Sun Hat"
+    },
+    {
+      "trait_type": "Effect",
+      "value": "None"
+    }
+  ],
+  "hansome": {
+    "type": "Public",
+    "archetype": "Curly",
+    "comboHash": "6ba13291b48cb25aa34cb10bfc87242415c33e21e98fd34b7a67c7893c53129d",
+    "rarityRank": 397,
+    "rarityScore": 32.937,
+    "rarityOutOf": 470,
+    "gameplayClass": "Common",
+    "ability": "None"
+  }
+}

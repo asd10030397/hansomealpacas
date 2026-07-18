@@ -1,0 +1,24 @@
+{
+  "name": "HANSOME Genesis #1 — Founder",
+  "description": "Founder NFT #001 — the one Genesis alpaca that uses the iconic HANSOME mascot appearance. Hand-designed one-of-one. Owning it does not transfer the mascot/brand/IP, which remain with the HANSOME project.",
+  "image": "genesis/1.png",
+  "edition": 1,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Reserved"
+    },
+    {
+      "trait_type": "Role",
+      "value": "Founder"
+    }
+  ],
+  "hansome": {
+    "type": "Reserved",
+    "role": "founder",
+    "generation": "manual",
+    "artwork": "pending-hand-design",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": true
+  }
+}

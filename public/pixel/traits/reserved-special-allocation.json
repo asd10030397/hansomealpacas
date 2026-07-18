@@ -1,0 +1,42 @@
+{
+  "collection": "HANSOME Genesis NFT",
+  "document": "Reserved Special Alpaca allocation (#001–#010)",
+  "status": "LOCKED",
+  "lastUpdated": "2026-07-17",
+  "rules": {
+    "allReservedAreSpecialAlpacas": true,
+    "notCommons": true,
+    "reservedMeansOwnershipAllocationOnly": true,
+    "gameplayAbilitiesFromClassOnly": true,
+    "noExtraAdvantageFromReservedStatus": true,
+    "noArtworkStyleChange": true,
+    "noGameplayRuleChange": true
+  },
+  "reserved": [
+    { "tokenId": 1, "gameplayClass": "King", "background": "king", "ability": "Permanent immunity to hunting penalty", "usesMascotAppearance": true },
+    { "tokenId": 2, "gameplayClass": "Guardian", "background": "guardian", "ability": "Hunting penalty rate ×0.5" },
+    { "tokenId": 3, "gameplayClass": "Guardian", "background": "guardian", "ability": "Hunting penalty rate ×0.5" },
+    { "tokenId": 4, "gameplayClass": "Farmer", "background": "farmer", "ability": "Effective location reward weight ×1.20 (normalized)" },
+    { "tokenId": 5, "gameplayClass": "Farmer", "background": "farmer", "ability": "Effective location reward weight ×1.20 (normalized)" },
+    { "tokenId": 6, "gameplayClass": "Lucky", "background": "lucky", "ability": "20% chance to fully avoid the day's hunting penalty" },
+    { "tokenId": 7, "gameplayClass": "Lucky", "background": "lucky", "ability": "20% chance to fully avoid the day's hunting penalty" },
+    { "tokenId": 8, "gameplayClass": "Runner", "background": "runner", "ability": "30% chance to escape hunting (penalty = 0)" },
+    { "tokenId": 9, "gameplayClass": "Runner", "background": "runner", "ability": "30% chance to escape hunting (penalty = 0)" },
+    { "tokenId": 10, "gameplayClass": "Runner", "background": "runner", "ability": "30% chance to escape hunting (penalty = 0)" }
+  ],
+  "classCountsReserved": {
+    "King": 1,
+    "Guardian": 2,
+    "Farmer": 2,
+    "Lucky": 2,
+    "Runner": 3
+  },
+  "remainingSpecialsInRandomPool": {
+    "total": 11,
+    "Guardian": 3,
+    "Farmer": 3,
+    "Lucky": 3,
+    "Runner": 2,
+    "note": "Token IDs for pool Specials are assigned at Genesis reveal shuffle — not reserved."
+  }
+}

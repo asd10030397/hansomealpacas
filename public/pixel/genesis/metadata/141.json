@@ -1,0 +1,56 @@
+{
+  "name": "HANSOME Genesis #141",
+  "description": "A HANSOME Genesis alpaca — an original individual of the cozy countryside HANSOME universe. Handcrafted pixel art. Not the mascot.",
+  "image": "genesis/141.png",
+  "edition": 141,
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Sunset Pasture"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Scruffy"
+    },
+    {
+      "trait_type": "Wool",
+      "value": "Classic"
+    },
+    {
+      "trait_type": "Clothing",
+      "value": "None"
+    },
+    {
+      "trait_type": "Neck Accessory",
+      "value": "Bell Collar"
+    },
+    {
+      "trait_type": "Mouth",
+      "value": "Lavender Sprig"
+    },
+    {
+      "trait_type": "Ear Accessory",
+      "value": "Small Flower"
+    },
+    {
+      "trait_type": "Glasses",
+      "value": "None"
+    },
+    {
+      "trait_type": "Hat",
+      "value": "None"
+    },
+    {
+      "trait_type": "Effect",
+      "value": "Small Fireflies"
+    }
+  ],
+  "hansome": {
+    "type": "Public",
+    "archetype": "Scruffy",
+    "comboHash": "07071c3cceb079bcb2876b367a77bc245e19917eb1b014cee8ba3903f8ed9c60",
+    "rarityRank": 60,
+    "rarityScore": 72.456,
+    "rarityOutOf": 470
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
 import type { Locale } from "@/content/i18n/types";
 
@@ -17,6 +18,7 @@ function segmentClass(active: boolean) {
 
 export function LanguageToggle() {
   const { locale, setLocale, t } = useLocale();
+  const pathname = usePathname();
   const [printMode, setPrintMode] = useState(false);
 
   // CSS alone (`display: none`) can still leave a text-layer artifact for
@@ -34,6 +36,8 @@ export function LanguageToggle() {
     if (next !== locale) setLocale(next);
   };
 
+  // Game shell has its own chrome — hide marketing EN/中文 toggle on /game/*
+  if (pathname === "/game" || pathname.startsWith("/game/")) return null;
   if (printMode) return null;
 
   return (

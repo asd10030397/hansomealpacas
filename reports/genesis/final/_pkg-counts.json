@@ -1,0 +1,15 @@
+{
+  "counts": {
+    "Public": 470,
+    "Legendary": 20,
+    "Reserved": 10
+  },
+  "classCounts": {
+    "King": 1,
+    "Guardian": 5,
+    "Farmer": 5,
+    "Lucky": 5,
+    "Runner": 5,
+    "Common": 479
+  }
+}

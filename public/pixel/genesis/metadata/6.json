@@ -1,0 +1,24 @@
+{
+  "name": "HANSOME Genesis #6",
+  "description": "Reserved HANSOME Genesis NFT (partnerships). Hand-designed one-of-one, held back from the public pool.",
+  "image": "genesis/6.png",
+  "edition": 6,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Reserved"
+    },
+    {
+      "trait_type": "Role",
+      "value": "partnerships"
+    }
+  ],
+  "hansome": {
+    "type": "Reserved",
+    "role": "partnerships",
+    "generation": "manual",
+    "artwork": "pending-hand-design",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

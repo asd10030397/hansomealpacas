@@ -1,0 +1,19 @@
+{
+  "name": "HANSOME Genesis #25 — Legendary #15",
+  "description": "Legendary HANSOME Genesis NFT — an individually hand-designed one-of-one, not a random trait combination.",
+  "image": "genesis/25.png",
+  "edition": 25,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Legendary"
+    }
+  ],
+  "hansome": {
+    "type": "Legendary",
+    "label": "Legendary #15",
+    "generation": "manual",
+    "artwork": "pending-hand-design",
+    "excludedFromRarity": true
+  }
+}

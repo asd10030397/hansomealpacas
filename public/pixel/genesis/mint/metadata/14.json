@@ -1,0 +1,39 @@
+{
+  "name": "HANSOME Genesis #14 — Keeper of the Herd",
+  "description": "Tidy, disciplined, and endlessly reliable — the one who counts every alpaca home before the gates close at dusk.",
+  "image": "ipfs://__IMAGE_CID__/14.png",
+  "edition": 14,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Guardian"
+    },
+    {
+      "trait_type": "Background",
+      "value": "guardian"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Topknot"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Guardian Insignia Pin"
+    }
+  ],
+  "hansome": {
+    "type": "Legendary",
+    "gameplayClass": "Guardian",
+    "ability": "Hunting penalty rate ×0.5",
+    "specialBackground": "guardian",
+    "baseArchetype": "topknot",
+    "role": "Keeper of the Herd",
+    "specialId": "SP-05",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

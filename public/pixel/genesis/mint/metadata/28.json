@@ -1,0 +1,39 @@
+{
+  "name": "HANSOME Genesis #28 — The Trailblazer",
+  "description": "Finds the paths no one else will — over the creek, through the brambles, first to every new corner of the world.",
+  "image": "ipfs://__IMAGE_CID__/28.png",
+  "edition": 28,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Runner"
+    },
+    {
+      "trait_type": "Background",
+      "value": "runner"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Scruffy"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Motion Streaks"
+    }
+  ],
+  "hansome": {
+    "type": "Legendary",
+    "gameplayClass": "Runner",
+    "ability": "30% chance to escape hunting (penalty = 0)",
+    "specialBackground": "runner",
+    "baseArchetype": "scruffy",
+    "role": "The Trailblazer",
+    "specialId": "SP-19",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

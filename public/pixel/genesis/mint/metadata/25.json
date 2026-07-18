@@ -1,0 +1,39 @@
+{
+  "name": "HANSOME Genesis #25 — The Lucky Star",
+  "description": "The one everyone wants on their team. Somehow always draws the long straw, finds the shortcut, and lands on all four hooves.",
+  "image": "ipfs://__IMAGE_CID__/25.png",
+  "edition": 25,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Lucky"
+    },
+    {
+      "trait_type": "Background",
+      "value": "lucky"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Topknot"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Clover"
+    }
+  ],
+  "hansome": {
+    "type": "Legendary",
+    "gameplayClass": "Lucky",
+    "ability": "20% chance to fully avoid the day's hunting penalty",
+    "specialBackground": "lucky",
+    "baseArchetype": "topknot",
+    "role": "The Lucky Star",
+    "specialId": "SP-16",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

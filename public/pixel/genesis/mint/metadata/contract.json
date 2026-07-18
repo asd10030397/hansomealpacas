@@ -1,0 +1,8 @@
+{
+  "name": "HANSOME Genesis NFT",
+  "description": "HANSOME Genesis — a single 550-token collection for Alpacas vs Cougars: 500 Alpacas + 50 identical Cougars. One mint entry; side revealed after sale. Rules per HANSOME GDS v1.1. Royalty 5%.",
+  "image": "ipfs://__IMAGE_CID__/1.png",
+  "external_link": "https://hansomealpacas.xyz",
+  "seller_fee_basis_points": 500,
+  "fee_recipient": "0x<treasury>"
+}

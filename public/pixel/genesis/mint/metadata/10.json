@@ -1,0 +1,38 @@
+{
+  "name": "HANSOME Genesis #10 — Reserved Special (Runner)",
+  "description": "A Reserved Special Alpaca of HANSOME Genesis. Reserved status is ownership allocation only. Gameplay power comes only from Gameplay Class (Runner). Not a Common.",
+  "image": "ipfs://__IMAGE_CID__/10.png",
+  "edition": 10,
+  "attributes": [
+    {
+      "trait_type": "Side",
+      "value": "Alpaca"
+    },
+    {
+      "trait_type": "Type",
+      "value": "Reserved"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Runner"
+    },
+    {
+      "trait_type": "Background",
+      "value": "runner"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Motion Streaks"
+    }
+  ],
+  "hansome": {
+    "side": "Alpaca",
+    "type": "Reserved",
+    "gameplayClass": "Runner",
+    "ability": "30% chance to escape hunting (penalty = 0)",
+    "specialBackground": "runner",
+    "allocation": "reserved-special",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

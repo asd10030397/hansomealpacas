@@ -1,0 +1,39 @@
+{
+  "name": "HANSOME Genesis #16 — Keeper of the Golden Fields",
+  "description": "Happiest knee-deep in ripe wheat at golden hour. Believes a full barn and a warm nap are the two great achievements of a good life.",
+  "image": "ipfs://__IMAGE_CID__/16.png",
+  "edition": 16,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Farmer"
+    },
+    {
+      "trait_type": "Background",
+      "value": "farmer"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Puff"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Wheat Sprig"
+    }
+  ],
+  "hansome": {
+    "type": "Legendary",
+    "gameplayClass": "Farmer",
+    "ability": "Effective location reward weight ×1.20 (normalized)",
+    "specialBackground": "farmer",
+    "baseArchetype": "puff",
+    "role": "Keeper of the Golden Fields",
+    "specialId": "SP-07",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

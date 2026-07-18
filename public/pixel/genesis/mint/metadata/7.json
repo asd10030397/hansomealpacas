@@ -1,0 +1,38 @@
+{
+  "name": "HANSOME Genesis #7 — Reserved Special (Lucky)",
+  "description": "A Reserved Special Alpaca of HANSOME Genesis. Reserved status is ownership allocation only. Gameplay power comes only from Gameplay Class (Lucky). Not a Common.",
+  "image": "ipfs://__IMAGE_CID__/7.png",
+  "edition": 7,
+  "attributes": [
+    {
+      "trait_type": "Side",
+      "value": "Alpaca"
+    },
+    {
+      "trait_type": "Type",
+      "value": "Reserved"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Lucky"
+    },
+    {
+      "trait_type": "Background",
+      "value": "lucky"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Clover"
+    }
+  ],
+  "hansome": {
+    "side": "Alpaca",
+    "type": "Reserved",
+    "gameplayClass": "Lucky",
+    "ability": "20% chance to fully avoid the day's hunting penalty",
+    "specialBackground": "lucky",
+    "allocation": "reserved-special",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

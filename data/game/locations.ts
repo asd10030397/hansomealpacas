@@ -1,0 +1,55 @@
+import type { GameLocation } from "@/types/game";
+
+/** GDS weights 1/2/3/5/8. Names are placeholders until world design approval. */
+export const GAME_LOCATIONS: GameLocation[] = [
+  {
+    id: 0,
+    name: "Home",
+    weight: 1,
+    riskLabel: "None",
+    pressure: 0,
+    alpacaAllowed: true,
+    cougarAllowed: false,
+    thumbnail: "/assets/backgrounds/loc-home.svg",
+  },
+  {
+    id: 1,
+    name: "Location 1",
+    weight: 2,
+    riskLabel: "Low",
+    pressure: 22,
+    alpacaAllowed: true,
+    cougarAllowed: true,
+    thumbnail: "/assets/backgrounds/loc-1.svg",
+  },
+  {
+    id: 2,
+    name: "Location 2",
+    weight: 3,
+    riskLabel: "Medium",
+    pressure: 41,
+    alpacaAllowed: true,
+    cougarAllowed: true,
+    thumbnail: "/assets/backgrounds/loc-2.svg",
+  },
+  {
+    id: 3,
+    name: "Location 3",
+    weight: 5,
+    riskLabel: "High",
+    pressure: 63,
+    alpacaAllowed: true,
+    cougarAllowed: true,
+    thumbnail: "/assets/backgrounds/loc-3.svg",
+  },
+  {
+    id: 4,
+    name: "Location 4",
+    weight: 8,
+    riskLabel: "Extreme",
+    pressure: 88,
+    alpacaAllowed: true,
+    cougarAllowed: true,
+    thumbnail: "/assets/backgrounds/loc-4.svg",
+  },
+];

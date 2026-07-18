@@ -1,0 +1,77 @@
+{
+  "small-flower": {
+    "name": "Small Flower",
+    "tier": "common",
+    "file": "ears/small-flower.png",
+    "pngW": 208,
+    "pngH": 224,
+    "scale": 16,
+    "pinPx": {
+      "x": 96,
+      "y": 192
+    },
+    "widthFactor": 0.5,
+    "ear": "left",
+    "offsets": {}
+  },
+  "leaf-clip": {
+    "name": "Leaf Clip",
+    "tier": "common",
+    "file": "ears/leaf-clip.png",
+    "pngW": 192,
+    "pngH": 224,
+    "scale": 16,
+    "pinPx": {
+      "x": 64,
+      "y": 192
+    },
+    "widthFactor": 0.5,
+    "ear": "left",
+    "offsets": {}
+  },
+  "tiny-bell": {
+    "name": "Tiny Bell",
+    "tier": "rare",
+    "file": "ears/tiny-bell.png",
+    "pngW": 160,
+    "pngH": 208,
+    "scale": 16,
+    "pinPx": {
+      "x": 80,
+      "y": 32
+    },
+    "widthFactor": 0.34,
+    "ear": "left",
+    "offsets": {}
+  },
+  "feather": {
+    "name": "Feather",
+    "tier": "rare",
+    "file": "ears/feather.png",
+    "pngW": 160,
+    "pngH": 256,
+    "scale": 16,
+    "pinPx": {
+      "x": 64,
+      "y": 224
+    },
+    "widthFactor": 0.48,
+    "ear": "left",
+    "offsets": {}
+  },
+  "golden-ear-tag": {
+    "name": "Golden Ear Tag",
+    "tier": "epic",
+    "file": "ears/golden-ear-tag.png",
+    "pngW": 176,
+    "pngH": 192,
+    "scale": 16,
+    "pinPx": {
+      "x": 80,
+      "y": 48
+    },
+    "widthFactor": 0.38,
+    "ear": "left",
+    "offsets": {}
+  }
+}

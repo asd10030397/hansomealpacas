@@ -1,0 +1,67 @@
+{
+  "small-sparkles": {
+    "name": "Small Sparkles",
+    "tier": "rare",
+    "file": "effects/small-sparkles.png",
+    "layer": "effects",
+    "fullCanvas": true,
+    "safeZone": {
+      "x0": 372,
+      "y0": 300,
+      "x1": 652,
+      "y1": 720
+    }
+  },
+  "falling-leaves": {
+    "name": "Falling Leaves",
+    "tier": "rare",
+    "file": "effects/falling-leaves.png",
+    "layer": "effects",
+    "fullCanvas": true,
+    "safeZone": {
+      "x0": 372,
+      "y0": 300,
+      "x1": 652,
+      "y1": 720
+    }
+  },
+  "fireflies": {
+    "name": "Small Fireflies",
+    "tier": "rare",
+    "file": "effects/fireflies.png",
+    "layer": "effects",
+    "fullCanvas": true,
+    "safeZone": {
+      "x0": 372,
+      "y0": 300,
+      "x1": 652,
+      "y1": 720
+    }
+  },
+  "snowflakes": {
+    "name": "Soft Snowflakes",
+    "tier": "rare",
+    "file": "effects/snowflakes.png",
+    "layer": "effects",
+    "fullCanvas": true,
+    "safeZone": {
+      "x0": 372,
+      "y0": 300,
+      "x1": 652,
+      "y1": 720
+    }
+  },
+  "golden-glow": {
+    "name": "Golden Glow",
+    "tier": "legendary",
+    "file": "effects/golden-glow.png",
+    "layer": "effects",
+    "fullCanvas": true,
+    "safeZone": {
+      "x0": 372,
+      "y0": 300,
+      "x1": 652,
+      "y1": 720
+    }
+  }
+}

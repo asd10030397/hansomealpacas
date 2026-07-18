@@ -1,0 +1,8 @@
+{
+  "name": "HANSOME Genesis NFT",
+  "description": "Cougar identity template for HANSOME Genesis (single 550-token collection). All 50 Cougars are identical: no rarity, no traits, no special abilities. Minted only via the Genesis mixed mint. Royalty 5%. Rules per HANSOME GDS v1.1.",
+  "image": "ipfs://__IMAGE_CID__/cougar.png",
+  "external_link": "https://hansomealpacas.xyz",
+  "seller_fee_basis_points": 500,
+  "fee_recipient": "0x<treasury>"
+}

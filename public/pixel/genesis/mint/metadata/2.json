@@ -1,0 +1,38 @@
+{
+  "name": "HANSOME Genesis #2 — Reserved Special (Guardian)",
+  "description": "A Reserved Special Alpaca of HANSOME Genesis. Reserved status is ownership allocation only. Gameplay power comes only from Gameplay Class (Guardian). Not a Common.",
+  "image": "ipfs://__IMAGE_CID__/2.png",
+  "edition": 2,
+  "attributes": [
+    {
+      "trait_type": "Side",
+      "value": "Alpaca"
+    },
+    {
+      "trait_type": "Type",
+      "value": "Reserved"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Guardian"
+    },
+    {
+      "trait_type": "Background",
+      "value": "guardian"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Guardian Insignia Pin"
+    }
+  ],
+  "hansome": {
+    "side": "Alpaca",
+    "type": "Reserved",
+    "gameplayClass": "Guardian",
+    "ability": "Hunting penalty rate ×0.5",
+    "specialBackground": "guardian",
+    "allocation": "reserved-special",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

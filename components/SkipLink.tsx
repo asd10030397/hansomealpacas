@@ -1,9 +1,14 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
 
 export function SkipLink() {
   const { t } = useLocale();
+  const pathname = usePathname();
+
+  // Marketing skip target (#about) — hide on game routes
+  if (pathname === "/game" || pathname.startsWith("/game/")) return null;
 
   return (
     <a

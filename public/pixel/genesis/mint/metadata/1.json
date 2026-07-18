@@ -1,0 +1,42 @@
+{
+  "name": "HANSOME Genesis #1 — The Founder King",
+  "description": "The first alpaca of the meadow and the origin of the whole herd. Where HANSOME walks, the village follows. He wears the crown of the pasture kingdom not as a ruler over others, but as the one who remembers every alpaca's name.",
+  "image": "ipfs://__IMAGE_CID__/1.png",
+  "edition": 1,
+  "attributes": [
+    {
+      "trait_type": "Side",
+      "value": "Alpaca"
+    },
+    {
+      "trait_type": "Type",
+      "value": "Reserved"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "King"
+    },
+    {
+      "trait_type": "Background",
+      "value": "king"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Mascot (Founder)"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Founder Crown"
+    }
+  ],
+  "hansome": {
+    "side": "Alpaca",
+    "type": "Reserved",
+    "gameplayClass": "King",
+    "ability": "Permanent immunity to hunting penalty",
+    "specialBackground": "king",
+    "allocation": "reserved-special",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": true
+  }
+}

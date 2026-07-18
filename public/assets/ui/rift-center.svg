@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 900" shape-rendering="crispEdges" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="core" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff6c8"/>
+      <stop offset="35%" stop-color="#ffd24a"/>
+      <stop offset="65%" stop-color="#ff8a3a"/>
+      <stop offset="100%" stop-color="#ffd24a"/>
+    </linearGradient>
+  </defs>
+  <!-- Outer glow bars -->
+  <rect x="10" y="0" width="44" height="900" fill="#ff8a3a" opacity="0.25"/>
+  <rect x="18" y="0" width="28" height="900" fill="#f4d06a" opacity="0.45"/>
+  <!-- Jagged core -->
+  <path fill="url(#core)" d="M28 0 L36 40 L30 80 L38 120 L28 160 L40 210 L30 260 L42 310 L28 360 L40 410 L30 460 L42 510 L28 560 L40 610 L30 660 L42 720 L28 780 L36 840 L30 900 L24 900 L18 840 L26 780 L14 720 L26 660 L14 610 L26 560 L14 510 L26 460 L14 410 L26 360 L14 310 L26 260 L16 210 L26 160 L18 120 L26 80 L20 40 Z"/>
+  <!-- Hot sparks -->
+  <rect x="8" y="120" width="4" height="4" fill="#fff6c8"/>
+  <rect x="52" y="240" width="4" height="4" fill="#ffe08a"/>
+  <rect x="6" y="400" width="4" height="4" fill="#fff6c8"/>
+  <rect x="54" y="520" width="4" height="4" fill="#ffb14a"/>
+  <rect x="10" y="680" width="4" height="4" fill="#fff6c8"/>
+  <rect x="50" y="800" width="4" height="4" fill="#ffe08a"/>
+</svg>

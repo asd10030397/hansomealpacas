@@ -1,0 +1,39 @@
+{
+  "name": "HANSOME Genesis #11 — Warden of the Old Stones",
+  "description": "The eldest guardian, who has watched the standing stones at the meadow's edge for longer than anyone can recall. Calm as bedrock, and just as immovable.",
+  "image": "ipfs://__IMAGE_CID__/11.png",
+  "edition": 11,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Guardian"
+    },
+    {
+      "trait_type": "Background",
+      "value": "guardian"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Elder"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Guardian Insignia Pin"
+    }
+  ],
+  "hansome": {
+    "type": "Legendary",
+    "gameplayClass": "Guardian",
+    "ability": "Hunting penalty rate ×0.5",
+    "specialBackground": "guardian",
+    "baseArchetype": "elder",
+    "role": "Warden of the Old Stones",
+    "specialId": "SP-02",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

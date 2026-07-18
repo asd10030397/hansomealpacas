@@ -1,0 +1,39 @@
+{
+  "name": "HANSOME Genesis #26 — The Dawn Runner",
+  "description": "Runs the ridge line every morning to wake the sun. Nobody has beaten it to the top — nobody has really tried.",
+  "image": "ipfs://__IMAGE_CID__/26.png",
+  "edition": 26,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Runner"
+    },
+    {
+      "trait_type": "Background",
+      "value": "runner"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Sleek"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Motion Streaks"
+    }
+  ],
+  "hansome": {
+    "type": "Legendary",
+    "gameplayClass": "Runner",
+    "ability": "30% chance to escape hunting (penalty = 0)",
+    "specialBackground": "runner",
+    "baseArchetype": "sleek",
+    "role": "The Dawn Runner",
+    "specialId": "SP-17",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

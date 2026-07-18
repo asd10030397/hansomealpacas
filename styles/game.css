@@ -1,0 +1,1655 @@
+/* Scoped game shell — does not alter marketing site styles outside /game. */
+
+/* Kill marketing sky / surface bleed while on game routes */
+html.hansome-game-route,
+html.hansome-game-route body.hansome-game-route {
+  background-color: #0e121c !important;
+  background-image: none !important;
+  color: #f3ebe0;
+}
+
+html.hansome-game-route body.hansome-game-route {
+  /* Override Tailwind bg-background from root layout */
+  --color-background: #0e121c;
+  --color-surface: #1e2433;
+  --color-foreground: #f3ebe0;
+  --color-sky: #0e121c;
+  --color-sky-light: #121826;
+}
+
+.hansome-game {
+  --hg-ink: #1a1520;
+  --hg-cream: #f3ebe0;
+  --hg-gold: #e8b03a;
+  --hg-gold-dark: #9a6a12;
+  --hg-green: #3f9e4a;
+  --hg-green-dark: #24632c;
+  --hg-cougar: #2a3348;
+  --hg-cougar-accent: #c4894a;
+  --hg-alpaca: #6eb8e0;
+  --hg-alpaca-warm: #f0d9a0;
+  --hg-rift: #f4d06a;
+  --hg-panel: #1e2433;
+  --hg-panel-border: #0d1018;
+  --hg-danger: #c44b3a;
+  --hg-muted: #9aa3b5;
+  position: relative;
+  min-height: 100dvh;
+  color: var(--hg-cream);
+  font-family: var(--font-body), system-ui, sans-serif;
+  background: #0e121c;
+  image-rendering: pixelated;
+}
+
+.hansome-game-shell {
+  /* Full independent viewport shell */
+  min-height: 100dvh;
+  background: #0e121c;
+}
+
+.hansome-game-main {
+  padding-bottom: 0;
+  background: transparent;
+}
+
+.hansome-game .menu-panel {
+  backdrop-filter: none;
+  box-shadow:
+    0 0 0 2px #5a6478,
+    6px 6px 0 0 #0a0c12;
+}
+
+.hansome-game * {
+  box-sizing: border-box;
+}
+
+.hansome-game .pixelated,
+.hansome-game img {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.hansome-game .pixel-title {
+  font-family: var(--font-anton), monospace;
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+}
+
+/* Display titles only — avoid “double text” on buttons / dock */
+.hansome-game h1.pixel-title,
+.hansome-game .pixel-title-display {
+  text-shadow: 3px 3px 0 #0a0c12;
+}
+
+.hansome-game button.pixel-title,
+.hansome-game a.pixel-title {
+  text-shadow: none;
+}
+
+.hansome-game .pixel-border {
+  border-style: solid;
+  border-width: 3px;
+  border-color: #0d1018;
+  box-shadow:
+    0 0 0 2px #5a6478,
+    4px 4px 0 0 #0a0c12;
+}
+
+.hansome-game .mock-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.5rem;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.55rem;
+  color: #1a1520;
+  background: #f0c44a;
+  border: 2px solid #0d1018;
+  box-shadow: 2px 2px 0 #0d1018;
+}
+
+@keyframes hg-cloud {
+  from {
+    transform: translateX(-10%);
+  }
+  to {
+    transform: translateX(110%);
+  }
+}
+
+@keyframes hg-grass {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(2px);
+  }
+}
+
+@keyframes hg-idle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes hg-idle-cougar {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.01);
+  }
+}
+
+@keyframes hg-idle-alpaca {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(-0.6deg);
+  }
+}
+
+@keyframes hg-rift {
+  0%,
+  100% {
+    opacity: 0.85;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.35);
+  }
+}
+
+@keyframes hg-rift-glow {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: translateX(-50%) scaleX(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: translateX(-50%) scaleX(1.15);
+  }
+}
+
+@keyframes hg-ember {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-70px) scale(0.3);
+    opacity: 0;
+  }
+}
+
+@keyframes hg-particle {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-40px) scale(0.4);
+    opacity: 0;
+  }
+}
+
+@keyframes hg-mist-slow {
+  0%,
+  100% {
+    transform: translateX(-4%);
+    opacity: 0.15;
+  }
+  50% {
+    transform: translateX(5%);
+    opacity: 0.32;
+  }
+}
+
+@keyframes hg-coming-soon-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.92);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes hg-rays {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes hg-mist {
+  0%,
+  100% {
+    transform: translateX(-2%);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateX(2%);
+    opacity: 0.35;
+  }
+}
+
+.hansome-game .coming-soon-pop {
+  animation: hg-coming-soon-pop 220ms steps(6, end);
+}
+
+.hansome-game .anim-rays {
+  background: repeating-linear-gradient(
+    105deg,
+    transparent 0 18px,
+    rgba(255, 236, 170, 0.07) 18px 22px
+  );
+  animation: hg-rays 7s ease-in-out infinite;
+}
+
+.hansome-game .anim-rays-slow {
+  background: repeating-linear-gradient(
+    75deg,
+    transparent 0 28px,
+    rgba(255, 248, 220, 0.08) 28px 32px
+  );
+  animation: hg-rays 11s ease-in-out infinite;
+}
+
+.hansome-game .anim-mist {
+  animation: hg-mist 10s ease-in-out infinite;
+}
+
+.hansome-game .anim-cloud {
+  animation: hg-cloud 48s linear infinite;
+}
+
+.hansome-game .anim-cloud-slow {
+  animation: hg-cloud 72s linear infinite;
+}
+
+.hansome-game .anim-grass {
+  animation: hg-grass 2.4s ease-in-out infinite;
+}
+
+.hansome-game .anim-idle {
+  animation: hg-idle 2.8s ease-in-out infinite;
+}
+
+.hansome-game .anim-rift {
+  animation: hg-rift 2.2s ease-in-out infinite;
+}
+
+.hansome-game .anim-particle {
+  animation: hg-particle 3s ease-out infinite;
+}
+
+.hansome-game .anim-idle-cougar {
+  animation: hg-idle-cougar 3.2s ease-in-out infinite;
+}
+
+.hansome-game .anim-idle-alpaca {
+  animation: hg-idle-alpaca 2.6s ease-in-out infinite;
+}
+
+.hansome-game .anim-rift-glow {
+  animation: hg-rift-glow 2.4s ease-in-out infinite;
+}
+
+.hansome-game .anim-ember {
+  animation: hg-ember 2.8s ease-out infinite;
+}
+
+.hansome-game .anim-mist-slow {
+  animation: hg-mist-slow 16s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hansome-game .anim-cloud,
+  .hansome-game .anim-cloud-slow,
+  .hansome-game .anim-grass,
+  .hansome-game .anim-idle,
+  .hansome-game .anim-idle-cougar,
+  .hansome-game .anim-idle-alpaca,
+  .hansome-game .anim-rift,
+  .hansome-game .anim-rift-glow,
+  .hansome-game .anim-ember,
+  .hansome-game .anim-particle,
+  .hansome-game .anim-rays,
+  .hansome-game .anim-rays-slow,
+  .hansome-game .anim-mist,
+  .hansome-game .anim-mist-slow,
+  .hansome-game .coming-soon-pop {
+    animation: none !important;
+  }
+}
+
+/* ========== RPG TITLE SCREEN ========== */
+
+.hansome-game .title-screen {
+  position: relative;
+  isolation: isolate;
+  min-height: calc(100dvh - 3.75rem);
+  overflow: hidden;
+}
+
+.hansome-game .title-stage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hansome-game .title-stage__world {
+  position: absolute;
+  inset: 0;
+}
+
+/* ========== COUGAR TERRITORY SCENE (left half composition) ========== */
+
+.hansome-game .cougar-scene {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 54%;
+  z-index: 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 78%, transparent 100%);
+}
+
+.hansome-game .cougar-scene__plate {
+  position: absolute;
+  inset: 0;
+}
+
+.hansome-game .cougar-scene__plate-img {
+  object-fit: cover;
+  object-position: 32% 48%;
+  image-rendering: auto !important;
+  /* Cooler grade of the shared standoff world */
+  filter: saturate(0.95) brightness(0.9) hue-rotate(-6deg) contrast(1.04);
+}
+
+.hansome-game .cougar-scene__grade--sky {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(12, 18, 36, 0.2) 0%, transparent 38%),
+    linear-gradient(90deg, rgba(8, 12, 24, 0.35) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.hansome-game .cougar-scene__grade--ground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  height: 34%;
+  background: linear-gradient(180deg, transparent, rgba(10, 12, 16, 0.45) 55%, rgba(8, 10, 14, 0.72));
+  pointer-events: none;
+}
+
+.hansome-game .cougar-scene__mist {
+  position: absolute;
+  left: 4%;
+  right: 18%;
+  top: 42%;
+  z-index: 2;
+  height: 48px;
+  background: linear-gradient(90deg, transparent, rgba(170, 190, 210, 0.16), transparent);
+  pointer-events: none;
+}
+
+.hansome-game .cougar-scene__mist--low {
+  top: 58%;
+  height: 36px;
+  opacity: 0.75;
+}
+
+/* Shared hero stage — crouching cougar vs standing alpaca: match head Y */
+.hansome-game .cougar-scene__hero {
+  position: absolute;
+  z-index: 4;
+  left: 8%;
+  right: 28%;
+  bottom: 8%;
+  height: 58%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.hansome-game .cougar-scene__contact-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  z-index: 0;
+  width: 78%;
+  height: 14%;
+  transform: translateX(-50%) scaleY(0.4);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 74%);
+  filter: blur(1.5px);
+}
+
+.hansome-game .cougar-scene__hero-img {
+  position: relative;
+  z-index: 1;
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.32));
+}
+
+.hansome-game .cougar-scene__fg {
+  position: absolute;
+  left: 0;
+  right: 6%;
+  bottom: 0;
+  z-index: 5;
+  height: 22%;
+  pointer-events: none;
+}
+
+.hansome-game .cougar-scene__fg-rocks {
+  position: absolute;
+  left: -4%;
+  right: -4%;
+  bottom: 0;
+  width: 108%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left bottom;
+  image-rendering: auto !important;
+  opacity: 1;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 35%, #000 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 35%, #000 100%);
+}
+
+.hansome-game .cougar-scene__fg-bush {
+  position: absolute;
+  bottom: 28%;
+  width: 3.5rem;
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.4));
+}
+
+.hansome-game .cougar-scene__fg-bush--a {
+  left: 4%;
+  width: 4.5rem;
+  bottom: 26%;
+}
+
+.hansome-game .cougar-scene__fg-bush--b {
+  left: 34%;
+  width: 3.75rem;
+  bottom: 32%;
+  opacity: 0.95;
+}
+
+.hansome-game .cougar-scene__label {
+  position: absolute;
+  z-index: 6;
+  left: 1.25rem;
+  top: 14%;
+  max-width: 11rem;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.62rem;
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+  color: #e0a060;
+  text-align: left;
+  text-shadow: 2px 2px 0 #0a0c12;
+}
+
+.hansome-game .cougar-scene__label span {
+  display: block;
+  margin-top: 0.35rem;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  opacity: 0.9;
+}
+
+/* ========== ALPACA RANCH SCENE (right half — mirrored from cougar) ========== */
+
+.hansome-game .alpaca-scene {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 54%;
+  z-index: 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(270deg, #000 0%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(270deg, #000 0%, #000 78%, transparent 100%);
+}
+
+.hansome-game .alpaca-scene__plate {
+  position: absolute;
+  inset: 0;
+}
+
+.hansome-game .alpaca-scene__plate-img {
+  object-fit: cover;
+  object-position: 55% 42%;
+  image-rendering: auto !important;
+  /* Cool grade to match left territory / mountain light */
+  filter: saturate(0.9) brightness(0.9) hue-rotate(-4deg) contrast(1.04);
+}
+
+.hansome-game .alpaca-scene__grade--sky {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(18, 32, 56, 0.22) 0%, transparent 40%),
+    linear-gradient(270deg, rgba(12, 22, 36, 0.28) 0%, transparent 58%);
+  pointer-events: none;
+}
+
+.hansome-game .alpaca-scene__grade--ground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  height: 34%;
+  background: linear-gradient(180deg, transparent, rgba(18, 28, 20, 0.5) 55%, rgba(10, 14, 12, 0.72));
+  pointer-events: none;
+}
+
+/* Mist removed from alpaca feet zone — white haze read as transparent grass */
+
+.hansome-game .alpaca-scene__hero {
+  position: absolute;
+  z-index: 4;
+  left: 28%;
+  right: 8%;
+  /* Hooves sit just into solid FG band */
+  bottom: 7%;
+  /* Standing alpaca needs lower stage height so head aligns with crouched cougar */
+  height: 52%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.hansome-game .alpaca-scene__contact-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: 2%;
+  z-index: 0;
+  width: 70%;
+  height: 10%;
+  transform: translateX(-50%) scaleY(0.45);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.55) 42%, transparent 70%);
+}
+
+.hansome-game .alpaca-scene__hero-img {
+  position: relative;
+  z-index: 1;
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  /* Dusty warm grade — cream reads as ranch light, not sticker white */
+  filter:
+    drop-shadow(0 6px 0 rgba(0, 0, 0, 0.5))
+    sepia(0.28)
+    saturate(0.78)
+    brightness(0.86)
+    contrast(1.06);
+}
+
+.hansome-game .alpaca-scene__fg {
+  position: absolute;
+  left: 6%;
+  right: 0;
+  bottom: 0;
+  /* Behind hero so soft ledge cannot wash cream legs */
+  z-index: 3;
+  height: 18%;
+  pointer-events: none;
+  background: #182214;
+}
+
+.hansome-game .alpaca-scene__fg-ground {
+  position: absolute;
+  left: -4%;
+  right: -4%;
+  bottom: 0;
+  width: 108%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right bottom;
+  image-rendering: auto !important;
+  opacity: 1;
+  mix-blend-mode: normal;
+}
+
+.hansome-game .alpaca-scene__label {
+  position: absolute;
+  z-index: 6;
+  right: 1.25rem;
+  top: 14%;
+  max-width: 11rem;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.62rem;
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+  color: #f5ecc0;
+  text-align: right;
+  text-shadow: 2px 2px 0 #0a0c12;
+}
+
+.hansome-game .alpaca-scene__label span {
+  display: block;
+  margin-top: 0.35rem;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  opacity: 0.9;
+}
+
+.hansome-game .title-stage__blend {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  z-index: 1;
+  width: 18%;
+  height: 100%;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    90deg,
+    rgba(20, 28, 48, 0.35),
+    rgba(40, 36, 28, 0.12) 45%,
+    rgba(60, 110, 70, 0.2)
+  );
+  mix-blend-mode: soft-light;
+}
+
+.hansome-game .title-stage__horizon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 38%;
+  z-index: 1;
+  height: 28%;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(18, 24, 36, 0.12) 40%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+.hansome-game .title-stage__grade--alpaca {
+  position: absolute;
+  inset: 0 0 0 45%;
+  z-index: 1;
+  background: linear-gradient(270deg, rgba(40, 100, 50, 0.18), rgba(90, 170, 210, 0.08) 55%, transparent);
+}
+
+.hansome-game .title-stage__grade--bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  height: 22%;
+  background: linear-gradient(180deg, transparent, rgba(8, 10, 16, 0.55));
+}
+
+.hansome-game .title-stage__rays {
+  position: absolute;
+  inset: 0 0 0 48%;
+  z-index: 1;
+  opacity: 0.55;
+}
+
+.hansome-game .title-stage__char {
+  position: absolute;
+  z-index: 4;
+  bottom: 2%;
+  width: clamp(40vw, 36vw, 520px);
+  max-width: 40%;
+}
+
+.hansome-game .title-stage__char--alpaca {
+  right: 1%;
+  bottom: 3%;
+  width: clamp(38vw, 36vw, 500px);
+  max-width: 38%;
+}
+
+.hansome-game .title-stage__char-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: 1%;
+  z-index: 0;
+  width: 82%;
+  height: 14%;
+  transform: translateX(-50%) scaleY(0.45);
+  border-radius: 50%;
+  filter: blur(0.5px);
+}
+
+.hansome-game .title-stage__char-shadow--alpaca {
+  background: radial-gradient(ellipse, rgba(20, 40, 12, 0.72) 0%, transparent 72%);
+  width: 64%;
+  bottom: 5%;
+}
+
+.hansome-game .title-stage__char-img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: min(62vh, 560px);
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.hansome-game .title-stage__char-img--alpaca {
+  transform-origin: 50% 90%;
+  max-height: min(58vh, 520px);
+  filter: drop-shadow(0 8px 0 rgba(10, 12, 18, 0.28));
+}
+
+.hansome-game .title-stage__fg {
+  position: absolute;
+  bottom: 0;
+  z-index: 5;
+  height: 9%;
+  width: 48%;
+}
+
+.hansome-game .title-stage__fg--alpaca {
+  right: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    #3f8a34 0 6px,
+    #57a844 6px 12px,
+    #2f6a28 12px 18px
+  );
+  opacity: 0.9;
+  -webkit-mask-image: linear-gradient(270deg, #000 60%, transparent);
+  mask-image: linear-gradient(270deg, #000 60%, transparent);
+}
+
+.hansome-game .title-stage__fg-flowers {
+  position: absolute;
+  right: 6%;
+  bottom: 5.5%;
+  z-index: 6;
+  width: 28%;
+  height: 4%;
+  background:
+    radial-gradient(circle at 10% 50%, #f2a0c0 0 2px, transparent 3px),
+    radial-gradient(circle at 28% 40%, #ffe08a 0 2px, transparent 3px),
+    radial-gradient(circle at 46% 60%, #fff8e8 0 2px, transparent 3px),
+    radial-gradient(circle at 64% 45%, #f2a0c0 0 2px, transparent 3px),
+    radial-gradient(circle at 82% 55%, #ffe08a 0 2px, transparent 3px);
+  opacity: 0.85;
+}
+
+.hansome-game .title-stage__rift-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.hansome-game .title-stage__rift-glow {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 120px;
+  height: 100%;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at center, rgba(255, 180, 60, 0.55) 0%, rgba(255, 120, 40, 0.18) 40%, transparent 70%);
+  filter: blur(2px);
+}
+
+.hansome-game .title-stage__rift {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  height: 100%;
+  width: 42px;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 0 22px #f4d06a) drop-shadow(0 0 40px rgba(255, 120, 40, 0.55));
+}
+
+.hansome-game .title-stage__rift-img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+.hansome-game .title-stage__ember {
+  position: absolute;
+  z-index: 7;
+  width: 3px;
+  height: 3px;
+  background: #ffe08a;
+  box-shadow: 0 0 4px #ff8a3a;
+}
+
+.hansome-game .title-stage__mist {
+  position: absolute;
+  z-index: 3;
+  height: 56px;
+  background: linear-gradient(90deg, transparent, rgba(180, 200, 220, 0.22), transparent);
+}
+
+.hansome-game .title-stage__mist--a {
+  left: 0;
+  right: 48%;
+  top: 32%;
+}
+
+.hansome-game .title-stage__mist--b {
+  left: 0;
+  width: 42%;
+  top: 48%;
+  height: 40px;
+  opacity: 0.8;
+}
+
+.hansome-game .title-stage__mist--c {
+  left: 8%;
+  width: 36%;
+  top: 58%;
+  height: 36px;
+  background: linear-gradient(90deg, transparent, rgba(160, 180, 200, 0.16), transparent);
+}
+
+.hansome-game .title-stage__cloud {
+  position: absolute;
+  z-index: 3;
+  height: 12px;
+  width: 88px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.12));
+  box-shadow: 18px 4px 0 -2px rgba(255, 255, 255, 0.22);
+}
+
+.hansome-game .title-stage__cloud--a {
+  top: 8%;
+}
+
+.hansome-game .title-stage__cloud--b {
+  top: 14%;
+  left: 55%;
+  width: 110px;
+}
+
+.hansome-game .title-stage__cloud--c {
+  top: 11%;
+  width: 64px;
+  height: 8px;
+}
+
+.hansome-game .title-stage__cloud--d {
+  top: 18%;
+  left: 62%;
+  width: 96px;
+  opacity: 0.85;
+}
+
+.hansome-game .title-stage__spark {
+  position: absolute;
+  z-index: 3;
+  width: 3px;
+  height: 3px;
+  background: #f0c44a;
+}
+
+.hansome-game .title-stage__badge {
+  position: absolute;
+  z-index: 7;
+  top: 15%;
+  max-width: 11rem;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.62rem;
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+  text-shadow: 2px 2px 0 #0a0c12;
+}
+
+.hansome-game .title-stage__badge span {
+  display: block;
+  margin-top: 0.35rem;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  opacity: 0.9;
+}
+
+.hansome-game .title-stage__badge--right {
+  right: 1.25rem;
+  color: #f5ecc0;
+  text-align: right;
+}
+
+.hansome-game .title-screen__center {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  min-height: calc(100dvh - 3.75rem);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  padding: 1rem 1rem 5.5rem;
+  text-align: center;
+}
+
+.hansome-game .title-screen__demo {
+  margin-bottom: 0.15rem;
+}
+
+.hansome-game .title-screen__menu {
+  display: flex;
+  width: min(100%, 26rem);
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.hansome-game .title-screen__hud {
+  width: min(100%, 26rem);
+  margin-top: 0.15rem;
+  opacity: 0.92;
+}
+
+/* Logo — game title plate */
+.hansome-game .game-logo {
+  position: relative;
+  z-index: 12;
+}
+
+.hansome-game .game-logo__eyebrow {
+  margin-bottom: 0.45rem;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  color: #f0c44a;
+  text-shadow: 2px 2px 0 #0a0c12;
+}
+
+.hansome-game .game-logo__plate {
+  position: relative;
+  padding: 0.85rem 1.35rem 0.95rem;
+  border: 4px solid #1a1208;
+  background:
+    linear-gradient(180deg, rgba(40, 48, 68, 0.96) 0%, rgba(18, 22, 34, 0.96) 100%);
+  box-shadow:
+    0 0 0 3px #c9a24a,
+    0 0 0 6px #1a1208,
+    6px 6px 0 0 #0a0c12,
+    0 0 28px rgba(240, 196, 74, 0.28);
+}
+
+.hansome-game .game-logo__plate-shine {
+  position: absolute;
+  inset: 6px 6px auto;
+  height: 8px;
+  background: linear-gradient(180deg, rgba(255, 248, 220, 0.18), transparent);
+  pointer-events: none;
+}
+
+.hansome-game .game-logo__jewel {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #f0c44a;
+  box-shadow: 2px 2px 0 #0a0c12;
+}
+
+.hansome-game .game-logo__jewel--tl { top: 8px; left: 8px; }
+.hansome-game .game-logo__jewel--tr { top: 8px; right: 8px; background: #ffe08a; }
+.hansome-game .game-logo__jewel--bl { bottom: 8px; left: 8px; background: #9a6a12; }
+.hansome-game .game-logo__jewel--br { bottom: 8px; right: 8px; background: #9a6a12; }
+
+.hansome-game .game-logo__mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  margin-bottom: 0.4rem;
+}
+
+.hansome-game .game-logo__crest-img {
+  width: 3.75rem;
+  height: auto;
+  image-rendering: pixelated;
+}
+
+.hansome-game .game-logo__paw,
+.hansome-game .game-logo__wool {
+  width: 10px;
+  height: 10px;
+  box-shadow: 2px 2px 0 #0a0c12;
+}
+
+.hansome-game .game-logo__paw {
+  background: #c4894a;
+}
+
+.hansome-game .game-logo__wool {
+  background: #e8f0d8;
+  border-radius: 1px;
+}
+
+.hansome-game .game-logo__title {
+  margin: 0;
+  line-height: 0.92;
+}
+
+.hansome-game .game-logo__line {
+  position: relative;
+  display: block;
+  font-family: var(--font-anton), monospace;
+  letter-spacing: 0.08em;
+  color: #fff8e8;
+  text-shadow:
+    5px 5px 0 #0a0c12,
+    3px 3px 0 #3a2410,
+    -2px 0 0 #5a4030,
+    0 -2px 0 #5a4030,
+    0 0 20px rgba(240, 196, 74, 0.4);
+}
+
+.hansome-game .game-logo__line--top {
+  font-size: clamp(2.15rem, 6.4vw, 3.85rem);
+}
+
+.hansome-game .game-logo__line--bottom {
+  margin-top: 0.15rem;
+  font-size: clamp(1.7rem, 5.1vw, 3rem);
+  color: #f0c44a;
+  text-shadow:
+    5px 5px 0 #0a0c12,
+    3px 3px 0 #3a2410,
+    -2px 0 0 #7a5010,
+    0 -2px 0 #7a5010,
+    0 0 22px rgba(240, 196, 74, 0.5);
+}
+
+.hansome-game .game-logo__divider {
+  width: min(100%, 14rem);
+  height: 4px;
+  margin: 0.55rem auto 0.45rem;
+  background:
+    linear-gradient(90deg, transparent, #f0c44a 15%, #ffe08a 50%, #f0c44a 85%, transparent);
+  box-shadow: 0 2px 0 #0a0c12;
+}
+
+.hansome-game .game-logo__sub {
+  margin: 0;
+  font-family: var(--font-anton), monospace;
+  font-size: clamp(0.64rem, 1.7vw, 0.9rem);
+  letter-spacing: 0.14em;
+  color: #e8f0ff;
+  text-shadow: 2px 2px 0 #0a0c12;
+}
+
+/* RPG menu buttons */
+.hansome-game .rpg-menu-btn {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.95rem 1.1rem;
+  border: 4px solid #1a1208;
+  box-shadow:
+    0 0 0 2px #c9a24a,
+    5px 5px 0 0 #0a0c12;
+  font-family: var(--font-anton), monospace;
+  text-align: left;
+  transition:
+    transform 70ms steps(2),
+    box-shadow 70ms steps(2),
+    filter 120ms ease;
+}
+
+.hansome-game .rpg-menu-btn:hover {
+  filter: brightness(1.08);
+  box-shadow:
+    0 0 0 2px #f0c44a,
+    0 0 16px rgba(240, 196, 74, 0.45),
+    5px 5px 0 0 #0a0c12;
+}
+
+.hansome-game .rpg-menu-btn:active {
+  transform: translate(3px, 3px);
+  box-shadow:
+    0 0 0 2px #c9a24a,
+    1px 1px 0 0 #0a0c12;
+}
+
+.hansome-game .rpg-menu-btn--gold {
+  background: linear-gradient(180deg, #f0c44a 0%, #d49a28 100%);
+  color: #1a1520;
+}
+
+.hansome-game .rpg-menu-btn--green {
+  background: linear-gradient(180deg, #55b85f 0%, #2f7d38 100%);
+  color: #f3ebe0;
+  box-shadow:
+    0 0 0 2px #8fd898,
+    5px 5px 0 0 #0a0c12;
+}
+
+.hansome-game .rpg-menu-btn--green:hover {
+  box-shadow:
+    0 0 0 2px #b6f0bc,
+    0 0 16px rgba(85, 184, 95, 0.4),
+    5px 5px 0 0 #0a0c12;
+}
+
+.hansome-game .rpg-menu-btn__icon {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  place-items: center;
+  border: 3px solid #1a1208;
+  background: rgba(10, 12, 18, 0.25);
+}
+
+.hansome-game .rpg-menu-btn__text {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.hansome-game .rpg-menu-btn__label {
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.hansome-game .rpg-menu-btn__sub {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0;
+  opacity: 0.85;
+  text-transform: none;
+}
+
+/* Compact HUD — secondary, low visual weight */
+.hansome-game .compact-hud {
+  width: min(100%, 26rem);
+  padding: 0.4rem 0.7rem;
+  border: 2px solid rgba(90, 100, 120, 0.55);
+  background: rgba(12, 16, 28, 0.55);
+  box-shadow: 2px 2px 0 rgba(10, 12, 18, 0.45);
+}
+
+.hansome-game .compact-hud__row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.hansome-game .compact-hud__row > div {
+  min-width: 0;
+}
+
+.hansome-game .compact-hud__label {
+  font-size: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(154, 163, 181, 0.85);
+}
+
+.hansome-game .compact-hud__value {
+  margin-top: 0.1rem;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.72rem;
+  color: #e8c45a;
+  text-shadow: 1px 1px 0 #0a0c12;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hansome-game .compact-hud__value--sm {
+  font-size: 0.62rem;
+  letter-spacing: 0.02em;
+  color: #d8d0c4;
+}
+
+.hansome-game .compact-hud__phase {
+  margin-top: 0.1rem;
+  transform: scale(0.9);
+  transform-origin: left center;
+}
+
+/* Territory corner HUDs — readable faction panels */
+.hansome-game .territory-hud {
+  position: absolute;
+  z-index: 8;
+  top: 11%;
+  width: min(13rem, 24vw);
+  padding: 0.65rem 0.75rem;
+  border: 3px solid #0d1018;
+  background: rgba(10, 14, 24, 0.9);
+  box-shadow:
+    0 0 0 2px rgba(240, 196, 74, 0.35),
+    3px 3px 0 #0a0c12;
+  text-align: left;
+  backdrop-filter: none;
+}
+
+.hansome-game .territory-hud--cougar {
+  left: 0.75rem;
+  border-color: #6a4a30;
+  box-shadow:
+    0 0 0 2px #c4894a,
+    3px 3px 0 #0a0c12;
+}
+
+.hansome-game .territory-hud--alpaca {
+  right: 0.75rem;
+  border-color: #3a6a40;
+  box-shadow:
+    0 0 0 2px #6fb86a,
+    3px 3px 0 #0a0c12;
+}
+
+.hansome-game .territory-hud__head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.45rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid rgba(243, 235, 224, 0.15);
+}
+
+.hansome-game .territory-hud__faction {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  box-shadow: 1px 1px 0 #0a0c12;
+}
+
+.hansome-game .territory-hud--cougar .territory-hud__faction {
+  background: #c4894a;
+}
+
+.hansome-game .territory-hud--alpaca .territory-hud__faction {
+  background: #8fd898;
+}
+
+.hansome-game .territory-hud__title {
+  margin: 0;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: #fff4d4;
+  text-shadow: 2px 2px 0 #0a0c12;
+}
+
+.hansome-game .territory-hud ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hansome-game .territory-hud li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.28rem;
+  font-size: 0.72rem;
+  color: #c8d0e0;
+}
+
+.hansome-game .territory-hud strong {
+  font-family: var(--font-anton), monospace;
+  font-weight: 600;
+  color: #fff8e8;
+  font-size: 0.72rem;
+  text-align: right;
+  text-shadow: 1px 1px 0 #0a0c12;
+}
+
+.hansome-game .territory-hud--cougar strong {
+  color: #f0c44a;
+}
+
+.hansome-game .territory-hud--alpaca strong {
+  color: #b6f0bc;
+}
+
+.hansome-game .territory-hud__mock {
+  margin: 0.4rem 0 0;
+  font-size: 0.55rem;
+  color: #8a8070;
+}
+
+/* Game nav polish */
+.hansome-game .game-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 4px solid #0d1018;
+  background: rgba(10, 14, 24, 0.94);
+}
+
+.hansome-game .game-nav__inner {
+  display: flex;
+  max-width: 80rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 auto;
+  padding: 0.55rem 1rem;
+}
+
+.hansome-game .game-nav__brand {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.85rem;
+  line-height: 1.1;
+  color: #f0c44a;
+  text-shadow: 2px 2px 0 #0a0c12;
+  letter-spacing: 0.06em;
+}
+
+.hansome-game .game-nav__brand span {
+  font-size: 0.5rem;
+  color: #9aa3b5;
+  letter-spacing: 0.16em;
+}
+
+.hansome-game .game-nav__links {
+  display: none;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+@media (min-width: 1024px) {
+  .hansome-game .game-nav__links {
+    display: flex;
+  }
+}
+
+.hansome-game .game-nav__link {
+  padding: 0.55rem 0.7rem;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+  color: #e8e4d8;
+  border: 2px solid transparent;
+}
+
+.hansome-game .game-nav__link:hover {
+  border-color: #3a455c;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.hansome-game .game-nav__link--active {
+  color: #1a1520;
+  background: #e8b03a;
+  border-color: #9a6a12;
+  box-shadow: 2px 2px 0 #0a0c12;
+}
+
+.hansome-game .game-nav__tools {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hansome-game .game-nav__drawer {
+  display: grid;
+  gap: 0.35rem;
+  border-top: 2px solid #0d1018;
+  background: #0e121c;
+  padding: 0.75rem;
+}
+
+.hansome-game .game-nav__mobile-link {
+  padding: 0.8rem 0.9rem;
+  border: 2px solid #2a3348;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.65rem;
+  color: #f3ebe0;
+  text-align: left;
+}
+
+.hansome-game .game-nav__mobile-link.is-active {
+  background: #e8b03a;
+  color: #1a1520;
+  border-color: #9a6a12;
+}
+
+@media (max-width: 900px) {
+  .hansome-game .cougar-scene,
+  .hansome-game .alpaca-scene {
+    width: 52%;
+  }
+
+  .hansome-game .cougar-scene__hero,
+  .hansome-game .alpaca-scene__hero {
+    bottom: 18%;
+    height: 50%;
+  }
+
+  .hansome-game .cougar-scene__hero {
+    left: 8%;
+    right: 10%;
+  }
+
+  .hansome-game .alpaca-scene__hero {
+    left: 10%;
+    right: 8%;
+  }
+
+  .hansome-game .cougar-scene__plate-img {
+    object-position: 40% 42%;
+  }
+
+  .hansome-game .alpaca-scene__plate-img {
+    object-position: 50% 40%;
+  }
+
+  .hansome-game .cougar-scene__label,
+  .hansome-game .alpaca-scene__label {
+    top: 10%;
+    font-size: 0.48rem;
+    max-width: 5.5rem;
+  }
+
+  .hansome-game .cougar-scene__label span,
+  .hansome-game .alpaca-scene__label span {
+    display: none;
+  }
+
+  .hansome-game .title-stage__rift {
+    width: 28px;
+  }
+
+  .hansome-game .title-stage__rift-glow {
+    width: 72px;
+  }
+
+  .hansome-game .title-stage__badge {
+    top: 9%;
+    font-size: 0.48rem;
+    max-width: 5.5rem;
+  }
+
+  .hansome-game .title-stage__badge span {
+    display: none;
+  }
+
+  .hansome-game .territory-hud {
+    top: 8%;
+    bottom: auto;
+    width: min(10.5rem, 42vw);
+    padding: 0.45rem 0.5rem;
+  }
+
+  .hansome-game .territory-hud__title {
+    font-size: 0.55rem;
+  }
+
+  .hansome-game .territory-hud li,
+  .hansome-game .territory-hud strong {
+    font-size: 0.6rem;
+  }
+
+  .hansome-game .compact-hud__row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.35rem 0.65rem;
+  }
+
+  .hansome-game .title-screen__center {
+    padding-bottom: 5.5rem;
+    padding-top: 3rem;
+    justify-content: center;
+    gap: 0.7rem;
+  }
+
+  .hansome-game .title-screen__menu {
+    width: min(100%, 22rem);
+    padding: 0.35rem;
+    background: rgba(12, 16, 28, 0.45);
+  }
+
+  .hansome-game .title-screen__center .game-logo,
+  .hansome-game .title-screen__menu,
+  .hansome-game .title-screen__hud,
+  .hansome-game .title-screen__demo {
+    position: relative;
+    z-index: 12;
+  }
+
+  .hansome-game .game-logo__plate {
+    padding: 0.65rem 0.9rem 0.75rem;
+  }
+
+  .hansome-game .game-logo__line--top {
+    font-size: 1.85rem;
+  }
+
+  .hansome-game .game-logo__line--bottom {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .hansome-game .cougar-scene__hero,
+  .hansome-game .alpaca-scene__hero {
+    bottom: 22%;
+    height: 44%;
+  }
+
+  .hansome-game .cougar-scene__hero {
+    left: 6%;
+    right: 8%;
+  }
+
+  .hansome-game .alpaca-scene__hero {
+    left: 8%;
+    right: 6%;
+  }
+
+  .hansome-game .cougar-scene__plate-img {
+    object-position: 38% 40%;
+  }
+
+  .hansome-game .alpaca-scene__plate-img {
+    object-position: 52% 38%;
+  }
+
+  .hansome-game .title-screen__hud {
+    max-width: 18rem;
+    margin-inline: auto;
+  }
+
+  .hansome-game .cougar-scene__fg,
+  .hansome-game .alpaca-scene__fg {
+    height: 16%;
+  }
+
+  .hansome-game .cougar-scene__fg-bush--a {
+    width: 2.75rem;
+  }
+
+  .hansome-game .cougar-scene__fg-bush--b {
+    width: 2.25rem;
+    left: 24%;
+  }
+
+  .hansome-game .title-screen__center {
+    justify-content: flex-start;
+    padding-top: 2.4rem;
+    padding-bottom: 6.25rem;
+    gap: 0.55rem;
+  }
+
+  .hansome-game .territory-hud {
+    display: none; /* badges already label territories; avoid dock collision */
+  }
+
+  .hansome-game .game-logo__mark {
+    display: none;
+  }
+
+  .hansome-game .title-screen__hud {
+    opacity: 0.8;
+  }
+
+  .hansome-game .compact-hud {
+    padding: 0.3rem 0.55rem;
+    background: rgba(12, 16, 28, 0.42);
+  }
+}

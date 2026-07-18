@@ -1,0 +1,39 @@
+{
+  "name": "HANSOME Genesis #23 — The Charm Bearer",
+  "description": "Carries the herd's good luck the way others carry a lantern — quietly, and for everyone.",
+  "image": "ipfs://__IMAGE_CID__/23.png",
+  "edition": 23,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Lucky"
+    },
+    {
+      "trait_type": "Background",
+      "value": "lucky"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Puff"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Clover"
+    }
+  ],
+  "hansome": {
+    "type": "Legendary",
+    "gameplayClass": "Lucky",
+    "ability": "20% chance to fully avoid the day's hunting penalty",
+    "specialBackground": "lucky",
+    "baseArchetype": "puff",
+    "role": "The Charm Bearer",
+    "specialId": "SP-14",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

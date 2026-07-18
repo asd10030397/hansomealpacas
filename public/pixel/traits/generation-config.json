@@ -68,21 +68,54 @@
       "assignment": "reserved-explicit",
       "generation": "manual",
       "excludeFromRandomPool": true,
-      "notes": "Exactly 20 Legendary NFTs, each individually hand-designed with its own identity. They are NOT random trait combinations. Their token IDs are pinned in legendaryAssignments before any random generation runs.",
-      "legendaryAssignments": []
+      "notes": "Exactly 20 Legendary NFTs, each individually hand-designed with its own identity. They are NOT random trait combinations. Token IDs 11-30 are pinned to Legendary and removed from the candidate id set before any random generation runs. Their artwork is authored by hand later; Phase 3 emits reserved metadata placeholders only.",
+      "legendaryAssignments": [
+        { "tokenId": 11, "label": "Legendary #1", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 12, "label": "Legendary #2", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 13, "label": "Legendary #3", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 14, "label": "Legendary #4", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 15, "label": "Legendary #5", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 16, "label": "Legendary #6", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 17, "label": "Legendary #7", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 18, "label": "Legendary #8", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 19, "label": "Legendary #9", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 20, "label": "Legendary #10", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 21, "label": "Legendary #11", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 22, "label": "Legendary #12", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 23, "label": "Legendary #13", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 24, "label": "Legendary #14", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 25, "label": "Legendary #15", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 26, "label": "Legendary #16", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 27, "label": "Legendary #17", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 28, "label": "Legendary #18", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 29, "label": "Legendary #19", "generation": "manual", "artwork": "pending-hand-design" },
+        { "tokenId": 30, "label": "Legendary #20", "generation": "manual", "artwork": "pending-hand-design" }
+      ]
     },
     "reservedTokenIds": {
       "count": 10,
       "includesFounder": true,
-      "purposes": ["founder-#001", "team", "community-events", "partnerships", "future-ecosystem-rewards"],
+      "type": "Reserved Special Alpacas (NOT Commons)",
       "excludeFromRandomPool": true,
-      "notes": "10 reserved NFTs held back from the public generation pool — INCLUDING Founder #001 as one of the ten. Their IDs are set aside up front so they can never land in the public 470. 470 public + 20 legendary + 10 reserved = 500.",
-      "reservedAssignments": [{ "tokenId": 1, "role": "founder" }]
+      "notes": "Token IDs 1-10 are Reserved Special Alpacas. Reserved = ownership allocation only. Gameplay abilities come only from Gameplay Class. Class map locked in reserved-special-allocation.json / special-21-allocation.json v1.1. Existing Special staging art is reused by class (no redesign).",
+      "reservedAssignments": [
+        { "tokenId": 1, "gameplayClass": "King", "role": "founder", "usesMascotAppearance": true, "background": "king" },
+        { "tokenId": 2, "gameplayClass": "Guardian", "background": "guardian" },
+        { "tokenId": 3, "gameplayClass": "Guardian", "background": "guardian" },
+        { "tokenId": 4, "gameplayClass": "Farmer", "background": "farmer" },
+        { "tokenId": 5, "gameplayClass": "Farmer", "background": "farmer" },
+        { "tokenId": 6, "gameplayClass": "Lucky", "background": "lucky" },
+        { "tokenId": 7, "gameplayClass": "Lucky", "background": "lucky" },
+        { "tokenId": 8, "gameplayClass": "Runner", "background": "runner" },
+        { "tokenId": 9, "gameplayClass": "Runner", "background": "runner" },
+        { "tokenId": 10, "gameplayClass": "Runner", "background": "runner" }
+      ]
     }
   },
   "randomPool": {
     "size": 470,
-    "notes": "Only these 470 are procedurally generated from the trait system. Legendary (20) and Reserved (10, which includes Founder #001) IDs are removed from the candidate id set before generation. The mascot is not a token and is never in the pool.",
+    "publicIdRange": { "startId": 31, "endId": 500 },
+    "notes": "Only these 470 (token IDs 31-500) are procedurally generated from the trait system. Reserved (1-10, incl. Founder #001) and Legendary (11-30) IDs are removed from the candidate id set before generation. The mascot is not a token and is never in the pool.",
     "seed": 20260717,
     "deterministic": true
   },
@@ -159,9 +192,9 @@
     ]
   },
   "status": {
-    "phase": "trait-fitting",
-    "reviewBatchOnly": true,
-    "completed": ["base archetype family (8)", "anatomy anchors (crown/ear/eye/neck/chest/mouth)", "hats (5, anchor-fitted)", "neck accessories (5, anchor-fitted)", "glasses (5, anchor-fitted)", "clothing (2 kept: Cozy Wool Scarf + Festival Ribbon Outfit, archetype-aware parametric fit — 16/16 clean; Farmer Overalls / Farm Vest / Explorer Cape removed as too human/RPG-like)", "mouth (5, dedicated-anchor fit — 40/40 clean)"],
-    "notes": "Anchor-driven trait-fitting in progress. Order: hats, neck accessories, glasses, clothing, mouth (done). Clothing uses a parametric per-archetype fitter (adaptive-scarf.mjs + adaptive-clothing.mjs) verified for clipping/floating/silhouette/face/legs. Mouth uses a DEDICATED per-archetype mouth anchor (hand-verified bite position, independent of eyes; MOUTH_ANCHORS in detect-base-anchors.mjs) with explicit rotation control (default 0 deg = horizontal bite); 5 cozy nature sprigs verified 40/40 clean (0 floating, 0 eye-cover, 0 OOB). Ear accessories and effects follow next. Full library, metadata, Legendary, Founder #001 artwork, and the 500-piece generation remain on hold pending approval."
+    "phase": "phase-3-generated-public-awaiting-final-approval",
+    "reviewBatchOnly": false,
+    "completed": ["base archetype family (8)", "anatomy anchors (crown/ear/eye/neck/chest/mouth)", "hats (5, anchor-fitted)", "neck accessories (5, anchor-fitted)", "glasses (5, anchor-fitted)", "clothing (2 kept: Cozy Wool Scarf + Festival Ribbon Outfit)", "mouth (5, dedicated-anchor fit — 40/40 clean)", "ear accessories (5, anchor-fitted — 40/40 clean)", "effects (5, periphery-safe — 40/40 clean)", "Phase 2 trait-system validation (2 sims, balancing applied)", "Phase 3 generation: 470 Public artwork + metadata generated deterministically (seed 20260717); 20 Legendary + 10 Reserved metadata placeholders (artwork pending hand-design); all 13 validation checks PASS"],
+    "notes": "PHASE 3 COMPLETE (pending final approval). 470 Public NFTs (IDs 31-500) rendered to public/pixel/genesis/{id}.png with metadata in public/pixel/genesis/metadata/{id}.json — deterministic, 470/470 unique, 0 compatibility violations. Reserved (IDs 1-10, incl. Founder #001) and Legendary (IDs 11-30) are hand-authored one-of-ones: metadata + labelled placeholder tiles emitted, real artwork still pending manual design. Reports in reports/genesis/final/. NOT minted, no blockchain assets. Generators: scripts-nft/genesis/generate-collection.mjs + build-reports.mjs."
   }
 }

@@ -1,0 +1,24 @@
+{
+  "name": "HANSOME Genesis #10",
+  "description": "Reserved HANSOME Genesis NFT (future-ecosystem-rewards). Hand-designed one-of-one, held back from the public pool.",
+  "image": "genesis/10.png",
+  "edition": 10,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Reserved"
+    },
+    {
+      "trait_type": "Role",
+      "value": "future-ecosystem-rewards"
+    }
+  ],
+  "hansome": {
+    "type": "Reserved",
+    "role": "future-ecosystem-rewards",
+    "generation": "manual",
+    "artwork": "pending-hand-design",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

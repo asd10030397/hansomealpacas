@@ -1,0 +1,39 @@
+{
+  "name": "HANSOME Genesis #17 — The Harvest Warden",
+  "description": "Keeps the rhythm of the seasons — sowing, tending, gathering — and never rushes a single one.",
+  "image": "ipfs://__IMAGE_CID__/17.png",
+  "edition": 17,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Farmer"
+    },
+    {
+      "trait_type": "Background",
+      "value": "farmer"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Bramble"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Wheat Sprig"
+    }
+  ],
+  "hansome": {
+    "type": "Legendary",
+    "gameplayClass": "Farmer",
+    "ability": "Effective location reward weight ×1.20 (normalized)",
+    "specialBackground": "farmer",
+    "baseArchetype": "bramble",
+    "role": "The Harvest Warden",
+    "specialId": "SP-08",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

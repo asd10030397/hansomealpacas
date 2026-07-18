@@ -10,7 +10,7 @@
     "sitYpx": 272,
     "widthFactor": 1.7,
     "sink": 0.02,
-    "offsets": {}
+    "offsets": { "sleek": { "dy": 20 } }
   },
   "wool-beanie": {
     "name": "Wool Beanie",

@@ -1,0 +1,29 @@
+{
+  "name": "HANSOME Cougar #17",
+  "description": "One of the 50 HANSOME Cougars — the predators of Alpacas vs Cougars. All 50 Cougars are identical: no rarity, no special abilities, one shared official design. Strength comes only from where you choose to hunt each day.",
+  "image": "ipfs://__IMAGE_CID__/cougar.png",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "HANSOME Cougars"
+    },
+    {
+      "trait_type": "Class",
+      "value": "Cougar"
+    },
+    {
+      "trait_type": "Edition Size",
+      "value": 50
+    }
+  ],
+  "hansome": {
+    "side": "Cougar",
+    "class": "Cougar",
+    "identical": true,
+    "rarity": "none",
+    "specialAbilities": "none",
+    "weight": 1,
+    "gds": "v1.1 §4.2/§11/§12.3 (uniform w^C=1)"
+  },
+  "edition": 17
+}

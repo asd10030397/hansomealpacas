@@ -1,0 +1,24 @@
+{
+  "name": "HANSOME Genesis #5",
+  "description": "Reserved HANSOME Genesis NFT (community-events). Hand-designed one-of-one, held back from the public pool.",
+  "image": "genesis/5.png",
+  "edition": 5,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Reserved"
+    },
+    {
+      "trait_type": "Role",
+      "value": "community-events"
+    }
+  ],
+  "hansome": {
+    "type": "Reserved",
+    "role": "community-events",
+    "generation": "manual",
+    "artwork": "pending-hand-design",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

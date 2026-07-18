@@ -1,0 +1,39 @@
+{
+  "name": "HANSOME Genesis #30 — The Swift",
+  "description": "So quick that the herd only ever sees where The Swift just was. Holds every unofficial record and remembers none of them.",
+  "image": "ipfs://__IMAGE_CID__/30.png",
+  "edition": 30,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Runner"
+    },
+    {
+      "trait_type": "Background",
+      "value": "runner"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Topknot"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Motion Streaks"
+    }
+  ],
+  "hansome": {
+    "type": "Legendary",
+    "gameplayClass": "Runner",
+    "ability": "30% chance to escape hunting (penalty = 0)",
+    "specialBackground": "runner",
+    "baseArchetype": "topknot",
+    "role": "The Swift",
+    "specialId": "SP-21",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

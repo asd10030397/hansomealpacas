@@ -1,0 +1,26 @@
+{
+  "collection": "HANSOME Cougars",
+  "officialBase": "cougar/cougar-official-base.png",
+  "source": "public/pixel/cougar-base.png",
+  "canvas": {
+    "width": 1024,
+    "height": 1024,
+    "resampling": "nearest",
+    "smoothing": false,
+    "frame": "full-bleed, same as Alpaca Genesis"
+  },
+  "supply": 50,
+  "rules": {
+    "identical": true,
+    "rarity": "none",
+    "specialAbilities": "none",
+    "classes": 1,
+    "note": "All 50 Cougar NFTs use this exact same official base artwork. No per-token variation, no traits, no rarity tiers. Rules per HANSOME GDS v1.1 §4.2 / §11 / §12.3 (uniform weight w^C=1)."
+  },
+  "fit": {
+    "method": "cover",
+    "anchor": "bottom",
+    "reason": "trim only empty sky from the top; never crop ears or paws; no redesign / no smoothing"
+  },
+  "status": "official-base-ready"
+}

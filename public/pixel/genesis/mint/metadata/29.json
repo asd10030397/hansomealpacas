@@ -1,0 +1,39 @@
+{
+  "name": "HANSOME Genesis #29 — Messenger of the Meadow",
+  "description": "Carries news between the far barns faster than the wind carries the smell of rain. Never late, never lost.",
+  "image": "ipfs://__IMAGE_CID__/29.png",
+  "edition": 29,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Runner"
+    },
+    {
+      "trait_type": "Background",
+      "value": "runner"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Curly"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Motion Streaks"
+    }
+  ],
+  "hansome": {
+    "type": "Legendary",
+    "gameplayClass": "Runner",
+    "ability": "30% chance to escape hunting (penalty = 0)",
+    "specialBackground": "runner",
+    "baseArchetype": "curly",
+    "role": "Messenger of the Meadow",
+    "specialId": "SP-20",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

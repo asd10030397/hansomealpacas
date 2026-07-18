@@ -1,0 +1,194 @@
+{
+  "note": "staging metadata for the Special 21 — artwork generated, awaiting final collection assembly",
+  "specials": [
+    {
+      "tokenId": 1,
+      "specialId": "SP-01",
+      "gameplayClass": "King",
+      "background": "king",
+      "baseArchetype": "mascot (Founder-exclusive iconic appearance)",
+      "roleName": "The Founder King — HANSOME, First of the Herd",
+      "image": "special/001.png"
+    },
+    {
+      "tokenId": 11,
+      "specialId": "SP-02",
+      "gameplayClass": "Guardian",
+      "background": "guardian",
+      "baseArchetype": "elder",
+      "roleName": "Warden of the Old Stones",
+      "image": "special/011.png"
+    },
+    {
+      "tokenId": 12,
+      "specialId": "SP-03",
+      "gameplayClass": "Guardian",
+      "background": "guardian",
+      "baseArchetype": "bramble",
+      "roleName": "Shield of the Meadow",
+      "image": "special/012.png"
+    },
+    {
+      "tokenId": 13,
+      "specialId": "SP-04",
+      "gameplayClass": "Guardian",
+      "background": "guardian",
+      "baseArchetype": "scruffy",
+      "roleName": "Sentinel of the North Gate",
+      "image": "special/013.png"
+    },
+    {
+      "tokenId": 14,
+      "specialId": "SP-05",
+      "gameplayClass": "Guardian",
+      "background": "guardian",
+      "baseArchetype": "topknot",
+      "roleName": "Keeper of the Herd",
+      "image": "special/014.png"
+    },
+    {
+      "tokenId": 15,
+      "specialId": "SP-06",
+      "gameplayClass": "Guardian",
+      "background": "guardian",
+      "baseArchetype": "sleek",
+      "roleName": "Watcher of Dawn",
+      "image": "special/015.png"
+    },
+    {
+      "tokenId": 16,
+      "specialId": "SP-07",
+      "gameplayClass": "Farmer",
+      "background": "farmer",
+      "baseArchetype": "puff",
+      "roleName": "Keeper of the Golden Fields",
+      "image": "special/016.png"
+    },
+    {
+      "tokenId": 17,
+      "specialId": "SP-08",
+      "gameplayClass": "Farmer",
+      "background": "farmer",
+      "baseArchetype": "bramble",
+      "roleName": "The Harvest Warden",
+      "image": "special/017.png"
+    },
+    {
+      "tokenId": 18,
+      "specialId": "SP-09",
+      "gameplayClass": "Farmer",
+      "background": "farmer",
+      "baseArchetype": "curly",
+      "roleName": "Master of the Orchard",
+      "image": "special/018.png"
+    },
+    {
+      "tokenId": 19,
+      "specialId": "SP-10",
+      "gameplayClass": "Farmer",
+      "background": "farmer",
+      "baseArchetype": "elder",
+      "roleName": "The Old Sower",
+      "image": "special/019.png"
+    },
+    {
+      "tokenId": 20,
+      "specialId": "SP-11",
+      "gameplayClass": "Farmer",
+      "background": "farmer",
+      "baseArchetype": "scruffy",
+      "roleName": "Shepherd of the Vale",
+      "image": "special/020.png"
+    },
+    {
+      "tokenId": 21,
+      "specialId": "SP-12",
+      "gameplayClass": "Lucky",
+      "background": "lucky",
+      "baseArchetype": "cria",
+      "roleName": "The Clover Child",
+      "image": "special/021.png"
+    },
+    {
+      "tokenId": 22,
+      "specialId": "SP-13",
+      "gameplayClass": "Lucky",
+      "background": "lucky",
+      "baseArchetype": "curly",
+      "roleName": "Fortune's Favorite",
+      "image": "special/022.png"
+    },
+    {
+      "tokenId": 23,
+      "specialId": "SP-14",
+      "gameplayClass": "Lucky",
+      "background": "lucky",
+      "baseArchetype": "puff",
+      "roleName": "The Charm Bearer",
+      "image": "special/023.png"
+    },
+    {
+      "tokenId": 24,
+      "specialId": "SP-15",
+      "gameplayClass": "Lucky",
+      "background": "lucky",
+      "baseArchetype": "sleek",
+      "roleName": "Wanderer of Wishes",
+      "image": "special/024.png"
+    },
+    {
+      "tokenId": 25,
+      "specialId": "SP-16",
+      "gameplayClass": "Lucky",
+      "background": "lucky",
+      "baseArchetype": "topknot",
+      "roleName": "The Lucky Star",
+      "image": "special/025.png"
+    },
+    {
+      "tokenId": 26,
+      "specialId": "SP-17",
+      "gameplayClass": "Runner",
+      "background": "runner",
+      "baseArchetype": "sleek",
+      "roleName": "The Dawn Runner",
+      "image": "special/026.png"
+    },
+    {
+      "tokenId": 27,
+      "specialId": "SP-18",
+      "gameplayClass": "Runner",
+      "background": "runner",
+      "baseArchetype": "cria",
+      "roleName": "Windfoot",
+      "image": "special/027.png"
+    },
+    {
+      "tokenId": 28,
+      "specialId": "SP-19",
+      "gameplayClass": "Runner",
+      "background": "runner",
+      "baseArchetype": "scruffy",
+      "roleName": "The Trailblazer",
+      "image": "special/028.png"
+    },
+    {
+      "tokenId": 29,
+      "specialId": "SP-20",
+      "gameplayClass": "Runner",
+      "background": "runner",
+      "baseArchetype": "curly",
+      "roleName": "Messenger of the Meadow",
+      "image": "special/029.png"
+    },
+    {
+      "tokenId": 30,
+      "specialId": "SP-21",
+      "gameplayClass": "Runner",
+      "background": "runner",
+      "baseArchetype": "topknot",
+      "roleName": "The Swift",
+      "image": "special/030.png"
+    }
+  ]
+}

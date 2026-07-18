@@ -1,0 +1,39 @@
+{
+  "name": "HANSOME Genesis #27 — Windfoot",
+  "description": "The fastest little one in the meadow. Small enough to slip through any gap, quick enough that the gap never notices.",
+  "image": "ipfs://__IMAGE_CID__/27.png",
+  "edition": 27,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Runner"
+    },
+    {
+      "trait_type": "Background",
+      "value": "runner"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Cria"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Motion Streaks"
+    }
+  ],
+  "hansome": {
+    "type": "Legendary",
+    "gameplayClass": "Runner",
+    "ability": "30% chance to escape hunting (penalty = 0)",
+    "specialBackground": "runner",
+    "baseArchetype": "cria",
+    "role": "Windfoot",
+    "specialId": "SP-18",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

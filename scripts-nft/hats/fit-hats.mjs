@@ -40,17 +40,36 @@ async function headMetrics(name) {
   return res;
 }
 
+// Global fit adjustments (per review):
+//  - SIZE_MULT: shrink every hat to 50% of its previous fitted size.
+//  - LEFT_SHIFT_FRAC: nudge every hat slightly left (fraction of head width), EXCEPT cria.
+//  - flower-crown is additionally clamped so its width never exceeds the ear span.
+const SIZE_MULT = 0.5;
+const LEFT_SHIFT_FRAC = 0.05;
+// puff + sleek get an extra nudge left (fraction of head width, on top of the base shift).
+const EXTRA_LEFT_FRAC = { puff: 0.06, sleek: 0.06, elder: 0.03 };
+// every hat is enlarged 20% EXCEPT the straw hat.
+const HAT_SIZE_MULT = { "straw-hat": 1.0 };
+
 // Fully anchor-driven placement. Optional documented offsets live in
 // meta[hatId].offsets[archetype] = { dx, dy } and default to zero.
 async function computePlacement(name, hatId) {
   const m = meta[hatId];
   const a = anchors[name];
   const { headW, headTopY } = await headMetrics(name);
-  const scale = (headW * m.widthFactor) / m.pngW;
+  let scale = (headW * m.widthFactor * SIZE_MULT * (HAT_SIZE_MULT[hatId] ?? 1.2)) / m.pngW;
+  // Flower crown must not extend past the ears: clamp so the crown art width <= ear span.
+  if (hatId === "flower-crown") {
+    const box = await hatArtBox(hatId);
+    const artW = box.x1 - box.x0 + 1;
+    const earSpan = Math.abs(a.ear.right.x - a.ear.left.x);
+    scale = Math.min(scale, earSpan / artW);
+  }
   const drawW = Math.max(1, Math.round(m.pngW * scale));
   const drawH = Math.max(1, Math.round(m.pngH * scale));
   const off = (m.offsets && m.offsets[name]) || { dx: 0, dy: 0 };
-  const left = Math.round(a.crown.x - m.centerXpx * scale) + (off.dx || 0);
+  const leftShift = name === "cria" ? 0 : Math.round(headW * (LEFT_SHIFT_FRAC + (EXTRA_LEFT_FRAC[name] || 0)));
+  const left = Math.round(a.crown.x - m.centerXpx * scale) + (off.dx || 0) - leftShift;
   const top = Math.round(headTopY + a.bbox.h * m.sink - m.sitYpx * scale) + (off.dy || 0);
   return { left, top, drawW, drawH, scale, headW, headTopY };
 }

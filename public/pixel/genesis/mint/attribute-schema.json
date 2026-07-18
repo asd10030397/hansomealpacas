@@ -1,0 +1,72 @@
+{
+  "standard": "ERC-721 Metadata (OpenSea-compatible) + `hansome` extension block",
+  "imageScheme": "ipfs://<IMAGE_CID>/<tokenId>.png (placeholder until pin)",
+  "types": {
+    "Public": "31-500 (470)",
+    "Legendary": "11-30 (20)",
+    "Reserved": "1-10 (10, incl. Founder #001)"
+  },
+  "gameplayClasses": [
+    "King",
+    "Guardian",
+    "Farmer",
+    "Lucky",
+    "Runner",
+    "Common"
+  ],
+  "attributes": {
+    "common_to_all": [
+      "Type",
+      "Gameplay Class"
+    ],
+    "public": [
+      "Background",
+      "Archetype",
+      "Wool",
+      "Clothing",
+      "Neck Accessory",
+      "Mouth",
+      "Ear Accessory",
+      "Glasses",
+      "Hat",
+      "Effect"
+    ],
+    "special": [
+      "Background",
+      "Archetype",
+      "Class Accent"
+    ],
+    "reserved_common": [
+      "Role"
+    ]
+  },
+  "hansomeBlock": {
+    "all": [
+      "type",
+      "gameplayClass",
+      "ability"
+    ],
+    "public": [
+      "archetype",
+      "comboHash",
+      "rarityRank",
+      "rarityScore",
+      "rarityOutOf"
+    ],
+    "special": [
+      "specialBackground",
+      "baseArchetype",
+      "role",
+      "specialId",
+      "excludedFromRarity",
+      "usesMascotAppearance"
+    ],
+    "reserved": [
+      "role",
+      "generation",
+      "artwork",
+      "excludedFromRarity"
+    ]
+  },
+  "notes": "Only Public tokens carry a rarity model (rarityRank/Score). Legendary + Reserved are hand-authored one-of-ones, excluded from rarity. Gameplay Class ability text mirrors GDS v1.1 §4.1."
+}

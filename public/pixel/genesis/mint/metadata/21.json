@@ -1,0 +1,39 @@
+{
+  "name": "HANSOME Genesis #21 — The Clover Child",
+  "description": "Born under a four-leaf clover, this little cria has never once tripped, never once lost a game, and never once stopped smiling.",
+  "image": "ipfs://__IMAGE_CID__/21.png",
+  "edition": 21,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Lucky"
+    },
+    {
+      "trait_type": "Background",
+      "value": "lucky"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Cria"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Clover"
+    }
+  ],
+  "hansome": {
+    "type": "Legendary",
+    "gameplayClass": "Lucky",
+    "ability": "20% chance to fully avoid the day's hunting penalty",
+    "specialBackground": "lucky",
+    "baseArchetype": "cria",
+    "role": "The Clover Child",
+    "specialId": "SP-12",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

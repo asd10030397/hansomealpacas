@@ -66,7 +66,24 @@
         { "id": "sunset-pasture", "name": "Sunset Pasture", "file": "backgrounds/sunset-pasture.png", "tier": "uncommon", "status": "ready" },
         { "id": "barn-wood", "name": "Barn Wood", "file": "backgrounds/barn-wood.png", "tier": "rare", "status": "ready" },
         { "id": "starry-night", "name": "Starry Night", "file": "backgrounds/starry-night.png", "tier": "epic", "status": "ready" }
-      ]
+      ],
+      "specialBackgrounds": {
+        "description": "Rarity/identity backdrops reserved for the Special 21 (Founder #001 + 20 Legendary). Same HANSOME pixel style; the alpaca stays the focus (composited on top; auras glow around the silhouette). NOT part of the public 470 random pool — they carry status 'special-reserved' so the generator never selects them.",
+        "excludeFromRandomPool": true,
+        "usedBy": "special-21",
+        "classLock": {
+          "enforced": true,
+          "rule": "Each special background is LOCKED to one Gameplay Class. A Special-21 alpaca may only wear the background whose gameplayClass matches its own class. Common/Public alpacas (which have no gameplayClass) can never use a special background. See compatibility.json > specialBackgroundClassLock.",
+          "map": { "King": "king", "Guardian": "guardian", "Farmer": "farmer", "Lucky": "lucky", "Runner": "runner" }
+        },
+        "items": [
+          { "id": "king", "name": "King", "file": "backgrounds/king.png", "tier": "legendary", "status": "special-reserved", "gameplayClass": "King", "lockedToClass": true, "identity": "regal — royal purple, gold sunburst aura, sparkles (the crown is worn by the alpaca as its class accent, so the sky has no crown emblem — avoids a double crown)" },
+          { "id": "guardian", "name": "Guardian", "file": "backgrounds/guardian.png", "tier": "legendary", "status": "special-reserved", "gameplayClass": "Guardian", "lockedToClass": true, "identity": "protector — steel-blue temple, stone pillars, shield emblem" },
+          { "id": "farmer", "name": "Farmer", "file": "backgrounds/farmer.png", "tier": "legendary", "status": "special-reserved", "gameplayClass": "Farmer", "lockedToClass": true, "identity": "cozy homestead — golden-hour field, barn, wheat" },
+          { "id": "lucky", "name": "Lucky", "file": "backgrounds/lucky.png", "tier": "legendary", "status": "special-reserved", "gameplayClass": "Lucky", "lockedToClass": true, "identity": "fortune — green meadow, gold shimmer, four-leaf clovers" },
+          { "id": "runner", "name": "Runner", "file": "backgrounds/runner.png", "tier": "legendary", "status": "special-reserved", "gameplayClass": "Runner", "lockedToClass": true, "identity": "motion — dawn sky, speed streaks, receding track" }
+        ]
+      }
     },
     "fur": {
       "folder": "fur",
@@ -171,13 +188,17 @@
       "required": false,
       "planned": 5,
       "noneAllowed": true,
-      "description": "Ear Accessories — small decorations on the ear. Added folder (not in the original list) so the described Ear Accessories have a home.",
+      "description": "Ear Accessories — small handcrafted pieces resting on the viewer-left ear (never covering the whole ear). Cozy countryside/farm feel; no human jewelry. Placed via the ear anchor pushed outward+up toward the outer ear tip, scaled by the ear-span head proxy (see ears/_ears-meta.json, scripts-nft/ears/fit-ears.mjs).",
+      "fitSystem": "anchor-fitted (ear anchor → outer-upper ear, ear-span scale)",
+      "metaFile": "ears/_ears-meta.json",
+      "reviewBatch": 5,
+      "manualOffsets": "none — all 5 ear accessories fit all 8 archetypes fully anchor-driven (verified 40/40: 0 floating, 0 eye-cover, 0 out-of-bounds)",
       "items": [
-        { "id": "daisy-flower", "name": "Daisy Flower", "tier": "uncommon", "status": "planned" },
-        { "id": "sunflower", "name": "Sunflower", "tier": "rare", "status": "planned" },
-        { "id": "small-ribbon", "name": "Small Ribbon", "tier": "common", "status": "planned" },
-        { "id": "leaf-decoration", "name": "Leaf Decoration", "tier": "common", "status": "planned" },
-        { "id": "tiny-bell", "name": "Tiny Bell", "tier": "uncommon", "status": "planned" }
+        { "id": "small-flower", "name": "Small Flower", "file": "ears/small-flower.png", "tier": "common", "status": "ready" },
+        { "id": "leaf-clip", "name": "Leaf Clip", "file": "ears/leaf-clip.png", "tier": "common", "status": "ready" },
+        { "id": "tiny-bell", "name": "Tiny Bell", "file": "ears/tiny-bell.png", "tier": "rare", "status": "ready" },
+        { "id": "feather", "name": "Feather", "file": "ears/feather.png", "tier": "rare", "status": "ready" },
+        { "id": "golden-ear-tag", "name": "Golden Ear Tag", "file": "ears/golden-ear-tag.png", "tier": "epic", "status": "ready" }
       ]
     },
     "glasses": {
@@ -224,13 +245,16 @@
       "required": false,
       "planned": 15,
       "noneAllowed": true,
-      "description": "Nature Accessories & ambient overlays — butterfly, bee, falling leaf, floating clover, vine, gentle sparkles. Drawn on top.",
+      "description": "Ambient atmosphere overlays composited LAST (full-canvas). Particles live in the periphery outside a central face/body keep-out corridor; glows are edge-weighted with a clear centre so the alpaca stays fully visible (see effects/_effects-meta.json, scripts-nft/effects/fit-effects.mjs).",
+      "fitSystem": "full-canvas ambient layer (periphery-safe; verified 40/40: 0 face obstruction, max silhouette coverage 0.6%, 0 edge-cut)",
+      "metaFile": "effects/_effects-meta.json",
+      "reviewBatch": 5,
       "items": [
-        { "id": "vine", "name": "Vine", "tier": "uncommon", "status": "planned" },
-        { "id": "small-butterfly", "name": "Small Butterfly", "tier": "rare", "status": "planned" },
-        { "id": "falling-leaf", "name": "Falling Leaf", "tier": "common", "status": "planned" },
-        { "id": "tiny-bee", "name": "Tiny Bee", "tier": "rare", "status": "planned" },
-        { "id": "floating-clover", "name": "Floating Clover", "tier": "uncommon", "status": "planned" }
+        { "id": "small-sparkles", "name": "Small Sparkles", "file": "effects/small-sparkles.png", "tier": "rare", "status": "ready" },
+        { "id": "falling-leaves", "name": "Falling Leaves", "file": "effects/falling-leaves.png", "tier": "rare", "status": "ready" },
+        { "id": "fireflies", "name": "Small Fireflies", "file": "effects/fireflies.png", "tier": "rare", "status": "ready" },
+        { "id": "snowflakes", "name": "Soft Snowflakes", "file": "effects/snowflakes.png", "tier": "rare", "status": "ready" },
+        { "id": "golden-glow", "name": "Golden Glow", "file": "effects/golden-glow.png", "tier": "legendary", "status": "ready" }
       ]
     },
     "legendary": {

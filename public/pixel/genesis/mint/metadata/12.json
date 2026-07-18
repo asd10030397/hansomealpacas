@@ -1,0 +1,39 @@
+{
+  "name": "HANSOME Genesis #12 — Shield of the Meadow",
+  "description": "Slow to rise, impossible to move once planted. When storms roll over the vale, the little ones shelter behind Bramble's broad, patient wool.",
+  "image": "ipfs://__IMAGE_CID__/12.png",
+  "edition": 12,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Guardian"
+    },
+    {
+      "trait_type": "Background",
+      "value": "guardian"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Bramble"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Guardian Insignia Pin"
+    }
+  ],
+  "hansome": {
+    "type": "Legendary",
+    "gameplayClass": "Guardian",
+    "ability": "Hunting penalty rate ×0.5",
+    "specialBackground": "guardian",
+    "baseArchetype": "bramble",
+    "role": "Shield of the Meadow",
+    "specialId": "SP-03",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "name": "HANSOME Genesis #20 — Shepherd of the Vale",
+  "description": "Roams the low pastures at sundown, gathering strays with nothing but patience and a soft call.",
+  "image": "ipfs://__IMAGE_CID__/20.png",
+  "edition": 20,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Farmer"
+    },
+    {
+      "trait_type": "Background",
+      "value": "farmer"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Scruffy"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Wheat Sprig"
+    }
+  ],
+  "hansome": {
+    "type": "Legendary",
+    "gameplayClass": "Farmer",
+    "ability": "Effective location reward weight ×1.20 (normalized)",
+    "specialBackground": "farmer",
+    "baseArchetype": "scruffy",
+    "role": "Shepherd of the Vale",
+    "specialId": "SP-11",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

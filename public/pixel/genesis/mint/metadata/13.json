@@ -1,0 +1,39 @@
+{
+  "name": "HANSOME Genesis #13 — Sentinel of the North Gate",
+  "description": "The sharp-eyed watcher who takes the coldest post at the northern fence line, trading a warm barn for a clear horizon.",
+  "image": "ipfs://__IMAGE_CID__/13.png",
+  "edition": 13,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Guardian"
+    },
+    {
+      "trait_type": "Background",
+      "value": "guardian"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Scruffy"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Guardian Insignia Pin"
+    }
+  ],
+  "hansome": {
+    "type": "Legendary",
+    "gameplayClass": "Guardian",
+    "ability": "Hunting penalty rate ×0.5",
+    "specialBackground": "guardian",
+    "baseArchetype": "scruffy",
+    "role": "Sentinel of the North Gate",
+    "specialId": "SP-04",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

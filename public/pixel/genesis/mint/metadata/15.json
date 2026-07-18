@@ -1,0 +1,39 @@
+{
+  "name": "HANSOME Genesis #15 — Watcher of Dawn",
+  "description": "First awake, last to sleep. Stands the dawn watch on the ridge so the herd can rest a little longer.",
+  "image": "ipfs://__IMAGE_CID__/15.png",
+  "edition": 15,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Guardian"
+    },
+    {
+      "trait_type": "Background",
+      "value": "guardian"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Sleek"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Guardian Insignia Pin"
+    }
+  ],
+  "hansome": {
+    "type": "Legendary",
+    "gameplayClass": "Guardian",
+    "ability": "Hunting penalty rate ×0.5",
+    "specialBackground": "guardian",
+    "baseArchetype": "sleek",
+    "role": "Watcher of Dawn",
+    "specialId": "SP-06",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

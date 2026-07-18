@@ -1,0 +1,8 @@
+{
+  "collection": "HANSOME Genesis NFT",
+  "status": "obsolete-for-sale-topology",
+  "note": "Retracted: separate Cougar 40/5/5 mint buckets. Under the locked single mixed Genesis mint, all 50 Cougars sit in the Genesis Whitelist+Public random pool (see docs/HANSOME_Genesis_Mint_Spec_v1.0.md). Reserved #001-#010 are Special Alpacas only — no reserved Cougars.",
+  "cougarSupply": 50,
+  "identical": true,
+  "royaltyBps": 500
+}

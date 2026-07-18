@@ -1,0 +1,39 @@
+{
+  "name": "HANSOME Genesis #19 — The Old Sower",
+  "description": "Has planted more seasons than anyone can count and still kneels to press each seed in by hoof.",
+  "image": "ipfs://__IMAGE_CID__/19.png",
+  "edition": 19,
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Gameplay Class",
+      "value": "Farmer"
+    },
+    {
+      "trait_type": "Background",
+      "value": "farmer"
+    },
+    {
+      "trait_type": "Archetype",
+      "value": "Elder"
+    },
+    {
+      "trait_type": "Class Accent",
+      "value": "Wheat Sprig"
+    }
+  ],
+  "hansome": {
+    "type": "Legendary",
+    "gameplayClass": "Farmer",
+    "ability": "Effective location reward weight ×1.20 (normalized)",
+    "specialBackground": "farmer",
+    "baseArchetype": "elder",
+    "role": "The Old Sower",
+    "specialId": "SP-10",
+    "excludedFromRarity": true,
+    "usesMascotAppearance": false
+  }
+}

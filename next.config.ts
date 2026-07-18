@@ -30,6 +30,10 @@ const nextConfig: NextConfig = {
       headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
     },
     {
+      source: "/assets/:path*",
+      headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+    },
+    {
       source: "/token-list/:path*",
       headers: [{ key: "Cache-Control", value: "public, max-age=3600" }],
     },
