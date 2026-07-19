@@ -3,10 +3,9 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { useGameHref } from "@/hooks/game/useGameHref";
+import { gameHref } from "@/lib/game/paths";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { useWalletUi } from "@/hooks/game/useWalletUi";
-import { MARKETING_HOME } from "@/lib/game/paths";
 import { AudioSettings } from "./AudioSettings";
 import { GameLanguageToggle } from "./GameLanguageToggle";
 import { WalletRequiredModal } from "./WalletRequiredModal";
@@ -20,20 +19,9 @@ function navClass(active: boolean) {
   return `game-nav__link ${active ? "game-nav__link--active" : ""}`;
 }
 
-function isExternalHref(href: string): boolean {
-  return /^https?:\/\//i.test(href);
-}
-
-/** Active tab for in-app routes only. HOME (marketing) is never "active" inside /game. */
-function isActivePath(pathname: string, href: string): boolean {
-  if (isExternalHref(href) || href === "/" || href === MARKETING_HOME) return false;
-  return pathname === href || pathname.startsWith(`${href}/`);
-}
-
 export function GameNav() {
   const pathname = usePathname();
   const router = useRouter();
-  const gameHref = useGameHref();
   const { t } = useGameI18n();
   const { wallet, connectMock, disconnectMock } = useWalletUi();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -58,40 +46,27 @@ export function GameNav() {
       { href: gameHref.leaderboard, label: t.nav.leaderboard, kind: "link" },
       { href: gameHref.docs, label: t.nav.docs, kind: "link" },
     ],
-    [t, gameHref],
+    [t],
   );
 
   const renderItem = (l: NavLink, mobile = false) => {
     if (l.kind === "link") {
-      const active = isActivePath(pathname, l.href);
-      const className = mobile
-        ? `game-nav__mobile-link ${active ? "is-active" : ""}`
-        : navClass(active);
-      if (isExternalHref(l.href)) {
-        return (
-          <a
-            key={`${l.kind}-${l.href}`}
-            href={l.href}
-            className={className}
-            onClick={() => setMenuOpen(false)}
-          >
-            {l.label}
-          </a>
-        );
-      }
+      const active =
+        pathname === l.href || (l.href !== gameHref.home && pathname.startsWith(l.href));
       return (
         <Link
           key={`${l.kind}-${l.href}`}
           href={l.href}
           onClick={() => setMenuOpen(false)}
-          className={className}
+          className={mobile ? `game-nav__mobile-link ${active ? "is-active" : ""}` : navClass(active)}
         >
           {l.label}
         </Link>
       );
     }
 
-    const active = isActivePath(pathname, l.href);
+    const active =
+      pathname === l.href || (l.href !== gameHref.home && pathname.startsWith(l.href));
     return (
       <button
         key={`wallet-${l.href}`}
@@ -115,17 +90,10 @@ export function GameNav() {
   return (
     <header className="game-nav">
       <div className="game-nav__inner">
-        {isExternalHref(gameHref.home) ? (
-          <a href={gameHref.home} className="game-nav__brand">
-            {t.nav.brand}
-            <span>{t.nav.brandSub}</span>
-          </a>
-        ) : (
-          <Link href={gameHref.home} className="game-nav__brand">
-            {t.nav.brand}
-            <span>{t.nav.brandSub}</span>
-          </Link>
-        )}
+        <Link href={gameHref.home} className="game-nav__brand">
+          {t.nav.brand}
+          <span>{t.nav.brandSub}</span>
+        </Link>
 
         <nav className="game-nav__links" aria-label={t.nav.aria}>
           {links.map((l) => renderItem(l))}
