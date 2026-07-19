@@ -1,0 +1,620 @@
+/* Season 1 Priority 3 — shared UX polish (presentation only) */
+
+.hansome-game {
+  --hg-radius: 0;
+  --hg-space-1: 0.35rem;
+  --hg-space-2: 0.65rem;
+  --hg-space-3: 1rem;
+  --hg-space-4: 1.35rem;
+  --hg-shadow: 4px 4px 0 0 #0a0c12;
+  --hg-shadow-sm: 3px 3px 0 0 #0a0c12;
+  --hg-border: 3px solid #0d1018;
+  --hg-border-soft: 2px solid #2a3348;
+  --hg-surface: #121826;
+  --hg-surface-raised: #1a2030;
+}
+
+/* ── Feedback banner ─────────────────────────────────── */
+.hg-feedback {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: var(--hg-space-2);
+  padding: 0.65rem 0.8rem;
+  border: var(--hg-border-soft);
+  background: var(--hg-surface);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.hg-feedback__label {
+  margin: 0;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hg-feedback__body {
+  margin: 0;
+  color: var(--hg-cream);
+  opacity: 0.92;
+}
+
+.hg-feedback__meta {
+  margin: 0;
+  word-break: break-all;
+  font-size: 0.65rem;
+  color: var(--hg-muted);
+}
+
+.hg-feedback--pending {
+  border-color: #9a6a12;
+  background: rgba(232, 176, 58, 0.1);
+}
+
+.hg-feedback--pending .hg-feedback__label {
+  color: #f0c44a;
+}
+
+.hg-feedback--success {
+  border-color: #24632c;
+  background: rgba(63, 158, 74, 0.12);
+}
+
+.hg-feedback--success .hg-feedback__label {
+  color: #6fcf7a;
+}
+
+.hg-feedback--error {
+  border-color: #7a281c;
+  background: rgba(196, 75, 58, 0.12);
+}
+
+.hg-feedback--error .hg-feedback__label {
+  color: #e07060;
+}
+
+.hg-feedback--info {
+  border-color: #2a3348;
+  background: rgba(110, 184, 224, 0.08);
+}
+
+.hg-feedback--info .hg-feedback__label {
+  color: #8ec8e8;
+}
+
+/* ── Empty / unavailable ─────────────────────────────── */
+.hg-empty {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem 0.85rem;
+  border: var(--hg-border-soft);
+  background: rgba(14, 18, 28, 0.65);
+  text-align: left;
+}
+
+.hg-empty__title {
+  margin: 0;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  color: #f0c44a;
+}
+
+.hg-empty__body {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--hg-muted);
+}
+
+/* ── Skeleton placeholders ───────────────────────────── */
+.hg-skeleton {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.hg-skeleton__line {
+  height: 0.7rem;
+  border: 1px solid #2a3348;
+  background: linear-gradient(
+    90deg,
+    #161c28 0%,
+    #243044 45%,
+    #161c28 100%
+  );
+  background-size: 200% 100%;
+  animation: hg-skeleton-shimmer 1.2s ease-in-out infinite;
+}
+
+.hg-skeleton__line--lg {
+  height: 1.15rem;
+  width: 55%;
+}
+
+.hg-skeleton__line--md {
+  width: 78%;
+}
+
+.hg-skeleton__line--sm {
+  width: 42%;
+}
+
+.hg-skeleton__card {
+  height: 4.5rem;
+  border: var(--hg-border-soft);
+  background: linear-gradient(
+    90deg,
+    #121826 0%,
+    #1e2838 45%,
+    #121826 100%
+  );
+  background-size: 200% 100%;
+  animation: hg-skeleton-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes hg-skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hg-skeleton__line,
+  .hg-skeleton__card {
+    animation: none;
+    background: #161c28;
+  }
+}
+
+/* ── Phase change beacon ─────────────────────────────── */
+.hg-phase-beacon {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: start center;
+  padding-top: 4.5rem;
+}
+
+.hg-phase-beacon__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.9rem;
+  border: 3px solid #0d1018;
+  background: rgba(18, 24, 38, 0.96);
+  box-shadow: var(--hg-shadow);
+  animation: hg-phase-chip 1.15s ease both;
+}
+
+.hg-phase-beacon__label {
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hg-muted);
+}
+
+.hg-phase-beacon__flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(240, 196, 74, 0.18) 0%,
+    transparent 55%
+  );
+  animation: hg-phase-flash 1.15s ease both;
+}
+
+@keyframes hg-phase-chip {
+  0% {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.96);
+  }
+  18% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  72% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes hg-phase-flash {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hg-phase-beacon__chip,
+  .hg-phase-beacon__flash {
+    animation: none;
+  }
+
+  .hg-phase-beacon__chip {
+    opacity: 1;
+  }
+
+  .hg-phase-beacon__flash {
+    opacity: 0;
+  }
+}
+
+/* ── Countdown polish ────────────────────────────────── */
+.hg-countdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.hg-countdown__label {
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hg-muted);
+}
+
+.hg-countdown__digits {
+  font-family: var(--font-anton), monospace;
+  font-size: clamp(0.95rem, 2.6vw, 1.15rem);
+  letter-spacing: 0.08em;
+  color: #f0c44a;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 1px 1px 0 #0a0c12;
+}
+
+.hg-countdown__digits--urgent {
+  color: #ff8a6a;
+  animation: hg-countdown-pulse 1s ease-in-out infinite;
+}
+
+.hg-countdown__digits--ended {
+  color: var(--hg-muted);
+}
+
+@keyframes hg-countdown-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.72;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hg-countdown__digits--urgent {
+    animation: none;
+  }
+}
+
+/* ── Settlement result cards ─────────────────────────── */
+.hg-settle-list {
+  display: grid;
+  gap: 0.75rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.hg-settle-card {
+  position: relative;
+  overflow: hidden;
+  border: var(--hg-border-soft);
+  background: linear-gradient(180deg, #161c28 0%, #121826 100%);
+  padding: 0.85rem 0.9rem;
+  box-shadow: var(--hg-shadow-sm);
+  animation: hg-settle-in 0.45s ease both;
+}
+
+.hg-settle-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.hg-settle-card__id {
+  font-family: var(--font-anton), monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: #f0c44a;
+}
+
+.hg-settle-card__source {
+  margin-left: 0.4rem;
+  font-size: 0.55rem;
+  color: var(--hg-muted);
+}
+
+.hg-settle-card__reward {
+  font-family: var(--font-anton), monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  color: #6fcf7a;
+}
+
+.hg-settle-card__meta {
+  display: grid;
+  gap: 0.28rem;
+  margin-top: 0.55rem;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.hg-settle-card__row {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 0.35rem;
+}
+
+.hg-settle-card__row dt {
+  margin: 0;
+  color: var(--hg-muted);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.hg-settle-card__row dd {
+  margin: 0;
+  color: var(--hg-cream);
+}
+
+.hg-settle-card__ability {
+  margin-top: 0.55rem;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid rgba(240, 196, 74, 0.35);
+  background: rgba(240, 196, 74, 0.08);
+  font-size: 0.72rem;
+}
+
+.hg-settle-card__ability-label {
+  display: block;
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f0c44a;
+  margin-bottom: 0.15rem;
+}
+
+@keyframes hg-settle-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hg-settle-card {
+    animation: none;
+  }
+}
+
+/* ── Action grid ─────────────────────────────────────── */
+.dash-cmd__secondary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+@media (min-width: 640px) {
+  .dash-cmd__secondary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.dash-cmd__secondary > * {
+  width: 100%;
+  min-width: 0;
+}
+
+.dash-cmd__secondary .pixel-title {
+  min-width: 0;
+  width: 100%;
+}
+
+/* Phase-tinted prompt border */
+.dash-cmd__prompt--COMMIT {
+  border-color: #9a6a12;
+  box-shadow:
+    0 0 0 1px rgba(232, 176, 58, 0.35),
+    var(--hg-shadow);
+}
+
+.dash-cmd__prompt--REVEAL {
+  border-color: #3a6a9a;
+  box-shadow:
+    0 0 0 1px rgba(110, 184, 224, 0.3),
+    var(--hg-shadow);
+}
+
+.dash-cmd__prompt--SETTLEMENT {
+  border-color: #8a3a2a;
+  box-shadow:
+    0 0 0 1px rgba(196, 75, 58, 0.35),
+    var(--hg-shadow);
+}
+
+.dash-cmd__prompt--CLAIM {
+  border-color: #24632c;
+  box-shadow:
+    0 0 0 1px rgba(63, 158, 74, 0.35),
+    var(--hg-shadow);
+}
+
+.dash-cmd__phase-pulse {
+  animation: hg-phase-prompt 0.7s ease both;
+}
+
+@keyframes hg-phase-prompt {
+  0% {
+    transform: scale(0.99);
+    filter: brightness(1.15);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dash-cmd__phase-pulse {
+    animation: none;
+  }
+}
+
+/* List row polish (commit / reveal / rewards) */
+.hg-list-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  border: var(--hg-border-soft);
+  background: var(--hg-surface);
+  padding: 0.7rem 0.8rem;
+  font-size: 0.85rem;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.hg-list-row:focus-within {
+  border-color: #9a6a12;
+  background: #161c28;
+}
+
+@media (max-width: 639px) {
+  .hg-list-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hg-list-row .pixel-title,
+  .hg-list-row button {
+    width: 100%;
+  }
+}
+
+/* Commit page — player-facing NFT rows */
+.commit-location-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid #9a6a12;
+  background: linear-gradient(180deg, #2a2214 0%, #1a1610 100%);
+  color: #f0c44a;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.commit-nft-list {
+  margin-top: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  list-style: none;
+  padding: 0;
+}
+
+.commit-nft-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  border: 1px solid #2a3348;
+  background: #141a26;
+  padding: 0.85rem 0.95rem;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+
+.commit-nft-row:focus-within {
+  border-color: #9a6a12;
+  background: #161c28;
+}
+
+.commit-nft-row--done {
+  border-color: #2f5c36;
+  background: linear-gradient(180deg, #152418 0%, #121a22 100%);
+}
+
+.commit-nft-row__body {
+  flex: 1 1 12rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.commit-nft-row__title {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 650;
+  color: #e8dfd2;
+  letter-spacing: 0.01em;
+}
+
+.commit-nft-row__status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+}
+
+.commit-nft-row__submitted {
+  color: #5fbf6a;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.commit-nft-row__location {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #6a5218;
+  background: #221c10;
+  color: #f0c44a;
+  padding: 0.15rem 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.commit-nft-row__action {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 7.25rem;
+}
+
+@media (max-width: 639px) {
+  .commit-nft-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .commit-nft-row__action {
+    width: 100%;
+  }
+}

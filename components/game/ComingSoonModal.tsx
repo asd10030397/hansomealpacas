@@ -4,6 +4,7 @@ import { useEffect, useId, useRef } from "react";
 import { PixelButton } from "@/components/ui/pixel";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { OFFICIAL_TELEGRAM_URL, OFFICIAL_X_URL } from "@/lib/links";
+import { lockBodyScroll, unlockBodyScroll } from "@/lib/ui/bodyScrollLock";
 
 export type ComingSoonModalProps = {
   open: boolean;
@@ -28,14 +29,12 @@ export function ComingSoonModal({ open, onClose, feature }: ComingSoonModalProps
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKey);
-
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    panelRef.current?.focus();
+    lockBodyScroll();
+    panelRef.current?.focus({ preventScroll: true });
 
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
+      unlockBodyScroll();
     };
   }, [open, onClose]);
 

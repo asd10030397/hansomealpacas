@@ -240,6 +240,24 @@ export type GameMessages = {
   commit: {
     heading: string;
     blurb: string;
+    locationTitle: string;
+    locationEyebrow: string;
+    noLocation: string;
+    openMap: string;
+    selectNftTitle: string;
+    submitted: string;
+    sealed: string;
+    commitAction: string;
+    committing: string;
+    pickLocationFirst: string;
+    phaseClosed: string;
+    cougarHomeBlocked: string;
+    commitSuccess: string;
+    committedCount: string;
+    connectWallet: string;
+    loadingInventory: string;
+    emptyInventory: string;
+    phaseCommitOnly: string;
   };
   reveal: {
     heading: string;

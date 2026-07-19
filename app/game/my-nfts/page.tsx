@@ -44,7 +44,7 @@ export default function MyNftsPage() {
           Genesis NFT address is not configured.
         </p>
       ) : !isConnected ? (
-        <div className="mt-6 space-y-3">
+        <div className="my-nfts-wallet-panel mt-6 space-y-3 rounded border border-[#2a3348] bg-[#141a26] px-3 py-4">
           <p className="text-sm text-[var(--hg-muted)]">
             Connect a wallet on Robinhood Testnet to load your live inventory.
           </p>

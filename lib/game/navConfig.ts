@@ -23,7 +23,8 @@ export const GAME_NAV_ITEMS: readonly GameNavItemDef[] = [
   { id: "home", hrefKey: "home", labelKey: "home" },
   { id: "play", hrefKey: "dashboard", labelKey: "play" },
   { id: "mint", hrefKey: "mint", labelKey: "mint" },
-  { id: "myNfts", hrefKey: "myNfts", labelKey: "myNfts", requiresWallet: true },
+  /** Always route to the page — it owns the connect/empty states (no modal gate). */
+  { id: "myNfts", hrefKey: "myNfts", labelKey: "myNfts" },
   { id: "rewards", hrefKey: "rewards", labelKey: "rewards" },
   { id: "leaderboard", hrefKey: "leaderboard", labelKey: "leaderboard" },
   { id: "docs", hrefKey: "docs", labelKey: "docs" },

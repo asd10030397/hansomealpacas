@@ -20,22 +20,34 @@ import {
 import { isHansomeGameConfigured } from "@/lib/game/hansomeGame";
 import type { LocationId } from "@/types/game";
 
+function locationDisplay(locationId: LocationId): string {
+  const loc = GAME_LOCATIONS[locationId];
+  return `${loc.name} · W${loc.weight}`;
+}
+
 export default function CommitPage() {
   const { t } = useGameI18n();
   const gameHref = useGameHref();
   const { day, now, phaseEndsAt, phase, isMock } = useGameState();
-  const { commitNft, configured, isPending, lastError } = useHansomeCommit();
+  const { commitNft, isPending, lastError } = useHansomeCommit();
   const owned = useOwnedGenesisNfts();
+  const gameConfigured = isHansomeGameConfigured();
+  /** Preview inventory when chain is live but wallet is not connected. */
+  const usingDemoInventory = !gameConfigured || !owned.isConnected;
 
-  const playable = isHansomeGameConfigured()
-    ? owned.nfts.filter((n) => n.revealed)
-    : MOCK_NFTS.filter((n) => n.revealed);
+  const playable = usingDemoInventory
+    ? MOCK_NFTS.filter((n) => n.revealed)
+    : owned.nfts.filter((n) => n.revealed);
   const [locationId, setLocationId] = useState<LocationId | null>(null);
   const [selectedToken, setSelectedToken] = useState<number | null>(null);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const [sealedToday, setSealedToday] = useState(() =>
     listCommitSecretsForDay(day.day),
   );
+
+  useEffect(() => {
+    setSealedToday(listCommitSecretsForDay(day.day));
+  }, [day.day]);
 
   useEffect(() => {
     const fromQuery = new URLSearchParams(window.location.search).get("location");
@@ -51,22 +63,32 @@ export default function CommitPage() {
 
   const locationLabel = useMemo(() => {
     if (locationId == null) return null;
-    const loc = GAME_LOCATIONS[locationId];
-    return `${loc.name} · W${loc.weight}`;
+    return locationDisplay(locationId);
   }, [locationId]);
+
+  const committedCount = new Set(
+    sealedToday
+      .filter((s) => s.status === "submitted" || s.status === "revealed")
+      .map((s) => s.tokenId),
+  ).size;
 
   const onCommit = async (tokenId: number) => {
     if (locationId == null) {
-      setStatusMsg("Pick a location on DEPLOY first.");
+      setStatusMsg(t.commit.pickLocationFirst);
       return;
     }
     if (phase !== "COMMIT") {
-      setStatusMsg(`Commit window closed (phase is ${phase}).`);
+      setStatusMsg(t.commit.phaseClosed);
       return;
     }
     const nft = playable.find((n) => n.tokenId === tokenId);
     if (nft?.side === "Cougar" && locationId === 0) {
-      setStatusMsg("Cougars cannot commit to Home.");
+      setStatusMsg(t.commit.cougarHomeBlocked);
+      return;
+    }
+
+    if (gameConfigured && !owned.isConnected) {
+      setStatusMsg(t.commit.connectWallet);
       return;
     }
 
@@ -83,104 +105,119 @@ export default function CommitPage() {
       return;
     }
 
-    if (result.mode === "chain") {
-      setStatusMsg(
-        `Committed #${tokenId} on-chain. Keep this device — salt is stored for Reveal.`,
-      );
-    } else {
-      setStatusMsg(
-        `Sealed #${tokenId} locally for day ${day.day} → ${locationLabel}. ` +
-          (isHansomeGameConfigured()
-            ? "Wallet required for on-chain submit."
-            : "Game contract not deployed yet — secret saved for Reveal when chain is live."),
-      );
-    }
+    setStatusMsg(
+      t.commit.commitSuccess
+        .replace("{tokenId}", String(tokenId))
+        .replace("{location}", locationDisplay(locationId)),
+    );
   };
 
   return (
     <div className="mx-auto max-w-3xl px-3 py-6">
       {isMock ? <p className="mock-chip mb-3">{t.common.demoBanner}</p> : null}
       <h1 className="pixel-title text-lg text-[#f0c44a]">{t.commit.heading}</h1>
-      <p className="mt-2 text-sm text-[var(--hg-muted)]">{t.commit.blurb}</p>
+      <p className="mt-2 max-w-xl text-sm leading-relaxed text-[var(--hg-muted)]">
+        {t.commit.blurb}
+      </p>
       <div className="mt-4">
         <GameStatusPanel day={day} now={now} phaseEndsAt={phaseEndsAt} />
       </div>
 
       <PixelPanel
         className="mt-4"
-        title="LOCATION"
-        eyebrow={configured ? "CHAIN READY WHEN CONNECTED" : "LOCAL SEAL · AWAITING GAME DEPLOY"}
+        title={t.commit.locationTitle}
+        eyebrow={t.commit.locationEyebrow}
       >
         {locationLabel ? (
-          <p className="text-sm text-[#f0c44a]">{locationLabel}</p>
+          <p className="commit-location-pill">{locationLabel}</p>
         ) : (
-          <p className="text-sm text-[var(--hg-muted)]">
-            No location selected. Choose one on the Deploy map.
-          </p>
+          <p className="text-sm text-[var(--hg-muted)]">{t.commit.noLocation}</p>
         )}
         <PixelButton href={gameHref.explore} variant="green" className="mt-3" size="sm">
-          OPEN MAP
+          {t.commit.openMap}
         </PixelButton>
       </PixelPanel>
 
-      <PixelPanel className="mt-4" title="SELECT NFT" eyebrow={`DAY ${day.day}`}>
+      <PixelPanel
+        className="mt-4"
+        title={t.commit.selectNftTitle}
+        eyebrow={`DAY ${day.day}`}
+      >
         {phase !== "COMMIT" ? (
           <GameFeedback tone="info" label={t.common.phaseChanged}>
-            Current phase is {phase}. Commit only seals during COMMIT.
+            {t.commit.phaseCommitOnly.replace("{phase}", phase)}
           </GameFeedback>
         ) : null}
-        {isHansomeGameConfigured() && !owned.isConnected ? (
+        {usingDemoInventory ? (
           <GameFeedback tone="info" label="Wallet">
-            Connect your wallet to load owned Genesis NFTs.
+            {gameConfigured ? t.commit.connectWallet : t.common.demoBanner}
           </GameFeedback>
         ) : null}
-        {isHansomeGameConfigured() && owned.isLoading ? (
-          <p className="mt-2 text-sm text-[var(--hg-muted)]">Loading inventory…</p>
+        {gameConfigured && owned.isConnected && owned.isLoading ? (
+          <p className="mt-2 text-sm text-[var(--hg-muted)]">
+            {t.commit.loadingInventory}
+          </p>
         ) : null}
-        {isHansomeGameConfigured() &&
+        {gameConfigured &&
         owned.isConnected &&
         !owned.isLoading &&
         playable.length === 0 ? (
           <GameFeedback tone="info" label="Inventory">
-            No revealed Genesis NFTs in this wallet.
+            {t.commit.emptyInventory}
           </GameFeedback>
         ) : null}
-        <ul className="mt-2 space-y-2">
+
+        <ul className="commit-nft-list">
           {playable.map((nft) => {
             const sealed = getCommitSecret(nft.tokenId, day.day);
+            const isDone =
+              sealed?.status === "submitted" || sealed?.status === "revealed";
             const busy = selectedToken === nft.tokenId && isPending;
             const disabled =
               isPending ||
               locationId == null ||
               phase !== "COMMIT" ||
-              sealed?.status === "submitted" ||
-              sealed?.status === "revealed" ||
+              isDone ||
+              (gameConfigured && !owned.isConnected) ||
               (nft.side === "Cougar" && locationId === 0);
 
+            const sealedLocation =
+              sealed != null ? locationDisplay(sealed.locationId) : null;
+
             return (
-              <li key={nft.tokenId} className="hg-list-row">
-                <span>
-                  #{nft.tokenId} · {nft.side}
-                  {nft.side === "Alpaca" ? ` · ${nft.gameplayClass}` : " · W=1"}
-                  {sealed ? (
-                    <span className="ml-2 text-[0.65rem] text-[#3f9e4a]">
-                      · {sealed.status.toUpperCase()} · L{sealed.locationId}
-                    </span>
+              <li
+                key={nft.tokenId}
+                className={`commit-nft-row${isDone ? " commit-nft-row--done" : ""}`}
+              >
+                <div className="commit-nft-row__body">
+                  <p className="commit-nft-row__title">
+                    #{nft.tokenId} · {nft.side}
+                    {nft.side === "Alpaca" ? ` · ${nft.gameplayClass}` : " · W=1"}
+                  </p>
+                  {isDone && sealedLocation ? (
+                    <div className="commit-nft-row__status" aria-label={`${t.commit.submitted}, ${sealedLocation}`}>
+                      <span className="commit-nft-row__submitted">
+                        ✓ {t.commit.submitted}
+                      </span>
+                      <span className="commit-nft-row__location">
+                        📍 {sealedLocation}
+                      </span>
+                    </div>
                   ) : null}
-                </span>
+                </div>
                 <PixelButton
-                  variant="gold"
+                  variant={isDone ? "ghost" : "gold"}
                   size="sm"
-                  className="w-auto min-w-[7rem]"
+                  className="commit-nft-row__action"
                   disabled={disabled}
                   aria-busy={busy || undefined}
                   onClick={() => void onCommit(nft.tokenId)}
                 >
                   {busy
-                    ? "COMMITTING…"
-                    : sealed?.status === "submitted"
-                      ? "SEALED"
-                      : "COMMIT"}
+                    ? t.commit.committing
+                    : isDone
+                      ? t.commit.sealed
+                      : t.commit.commitAction}
                 </PixelButton>
               </li>
             );
@@ -195,12 +232,12 @@ export default function CommitPage() {
         {statusMsg && !lastError ? (
           <GameFeedback
             tone={
-              /closed|cannot|pick a location|fail|error/i.test(statusMsg)
+              /closed|cannot|pick a location|fail|error|blocked/i.test(statusMsg)
                 ? "error"
                 : "success"
             }
             label={
-              /closed|cannot|pick a location|fail|error/i.test(statusMsg)
+              /closed|cannot|pick a location|fail|error|blocked/i.test(statusMsg)
                 ? t.common.txError
                 : t.common.txSuccess
             }
@@ -214,10 +251,11 @@ export default function CommitPage() {
           </GameFeedback>
         ) : null}
 
-        {sealedToday.length > 0 ? (
+        {committedCount > 0 ? (
           <p className="mt-3 text-xs text-[var(--hg-muted)]">
-            {sealedToday.length} secret(s) stored for day {day.day}. Reveal will read salt from
-            this browser.
+            {t.commit.committedCount
+              .replace("{count}", String(committedCount))
+              .replace("{day}", String(day.day))}
           </p>
         ) : null}
       </PixelPanel>

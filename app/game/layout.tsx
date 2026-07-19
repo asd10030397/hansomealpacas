@@ -5,6 +5,7 @@ import { GameShell } from "@/components/game/GameShell";
 import { GameHrefProvider } from "@/context/GameHrefContext";
 import { getGameHref } from "@/lib/game/paths";
 import "@/styles/game.css";
+import "@/styles/game-polish.css";
 
 export const metadata: Metadata = {
   title: "HANSOME: Alpacas vs Cougars",

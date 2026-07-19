@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
-import { useWalletUi } from "@/hooks/game/useWalletUi";
 import {
   GAME_DOCK_MORE,
   GAME_DOCK_PRIMARY,
@@ -15,7 +14,6 @@ import {
 import { isNavActive } from "@/lib/game/navActive";
 import { AudioSettings } from "./AudioSettings";
 import { GameLanguageToggle } from "./GameLanguageToggle";
-import { WalletRequiredModal } from "./WalletRequiredModal";
 
 function dockLabel(
   id: GameNavId,
@@ -43,11 +41,8 @@ function dockLabel(
 
 export function MobileGameDock() {
   const pathname = usePathname();
-  const router = useRouter();
   const gameHref = useGameHref();
   const { t } = useGameI18n();
-  const { wallet, connectMock } = useWalletUi();
-  const [walletOpen, setWalletOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
 
   useEffect(() => {
@@ -65,18 +60,6 @@ export function MobileGameDock() {
     return `mobile-dock__item ${active ? "is-active" : ""}`;
   };
 
-  const go = (id: GameNavId) => {
-    const item = navItemById(id);
-    const href = gameHref[item.hrefKey];
-    if (item.requiresWallet && !wallet.connected) {
-      setWalletOpen(true);
-      setMoreOpen(false);
-      return;
-    }
-    router.push(href);
-    setMoreOpen(false);
-  };
-
   return (
     <>
       {moreOpen ? (
@@ -90,15 +73,15 @@ export function MobileGameDock() {
                 const href = gameHref[item.hrefKey];
                 const active = isNavActive(pathname, href, gameHref.home);
                 return (
-                  <button
+                  <Link
                     key={id}
-                    type="button"
+                    href={href}
                     data-nav-id={id}
                     className={`mobile-dock__sheet-link ${active ? "is-active" : ""}`}
-                    onClick={() => go(id)}
+                    onClick={() => setMoreOpen(false)}
                   >
                     {dockLabel(id, t)}
-                  </button>
+                  </Link>
                 );
               })}
             </div>
@@ -116,21 +99,13 @@ export function MobileGameDock() {
           const href = gameHref[item.hrefKey];
           const label = dockLabel(id, t);
 
-          if (item.requiresWallet) {
-            return (
-              <button
-                key={id}
-                type="button"
-                className={itemClass(href)}
-                onClick={() => go(id)}
-              >
-                {label}
-              </button>
-            );
-          }
-
           return (
-            <Link key={id} href={href} className={itemClass(href)} onClick={() => setMoreOpen(false)}>
+            <Link
+              key={id}
+              href={href}
+              className={itemClass(href)}
+              onClick={() => setMoreOpen(false)}
+            >
               {label}
             </Link>
           );
@@ -144,16 +119,6 @@ export function MobileGameDock() {
           {t.dock.more}
         </button>
       </nav>
-
-      <WalletRequiredModal
-        open={walletOpen}
-        onClose={() => setWalletOpen(false)}
-        onConnect={() => {
-          connectMock();
-          router.push(gameHref.myNfts);
-        }}
-        feature={t.nav.featureMyNfts}
-      />
     </>
   );
 }

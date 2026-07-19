@@ -30,14 +30,13 @@
   --font-body: var(--font-noto-sans-tc);
 }
 
+/*
+ * Keep document scroll instant. Smooth scrolling on <html> makes App Router
+ * scroll-to-top on mobile feel like the page "jumps" (iOS Safari / WebViews).
+ * In-page anchors that want smooth motion should call scrollIntoView({ behavior: "smooth" }).
+ */
 html {
-  scroll-behavior: smooth;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+  scroll-behavior: auto;
 }
 
 body {

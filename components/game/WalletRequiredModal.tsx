@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef } from "react";
 import { PixelButton } from "@/components/ui/pixel";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
+import { lockBodyScroll, unlockBodyScroll } from "@/lib/ui/bodyScrollLock";
 
 export type WalletRequiredModalProps = {
   open: boolean;
@@ -32,13 +33,13 @@ export function WalletRequiredModal({
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    panelRef.current?.focus();
+    lockBodyScroll();
+    // preventScroll avoids iOS Safari jumping the page under the fixed sheet.
+    panelRef.current?.focus({ preventScroll: true });
 
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prev;
+      unlockBodyScroll();
     };
   }, [open, onClose]);
 
