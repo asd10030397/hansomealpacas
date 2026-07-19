@@ -1,0 +1,341 @@
+{
+  "base": "http://localhost:3000",
+  "results": [
+    {
+      "width": 320,
+      "pass": true,
+      "closed": {
+        "overflow": false,
+        "langInHeader": false,
+        "hasInjectedStack": false,
+        "hasMenu": true,
+        "hasTwoRows": true
+      },
+      "menu": {
+        "ids": [
+          "home",
+          "play",
+          "mint",
+          "myNfts",
+          "rewards",
+          "leaderboard",
+          "docs"
+        ],
+        "hasLeaderboard": true,
+        "hasDocs": true,
+        "hasMint": true,
+        "count": 7
+      },
+      "dock": {
+        "items": [
+          "HOME",
+          "PLAY",
+          "MINT",
+          "NFTS",
+          "MORE"
+        ],
+        "visible": true
+      },
+      "more": {
+        "ids": [
+          "rewards",
+          "leaderboard",
+          "docs"
+        ],
+        "hasLeaderboard": true,
+        "hasDocs": true,
+        "hasRewards": true
+      },
+      "lbPath": "/game/leaderboard",
+      "docsPath": "/game/docs"
+    },
+    {
+      "width": 360,
+      "pass": true,
+      "closed": {
+        "overflow": false,
+        "langInHeader": false,
+        "hasInjectedStack": false,
+        "hasMenu": true,
+        "hasTwoRows": true
+      },
+      "menu": {
+        "ids": [
+          "home",
+          "play",
+          "mint",
+          "myNfts",
+          "rewards",
+          "leaderboard",
+          "docs"
+        ],
+        "hasLeaderboard": true,
+        "hasDocs": true,
+        "hasMint": true,
+        "count": 7
+      },
+      "dock": {
+        "items": [
+          "HOME",
+          "PLAY",
+          "MINT",
+          "NFTS",
+          "MORE"
+        ],
+        "visible": true
+      },
+      "more": {
+        "ids": [
+          "rewards",
+          "leaderboard",
+          "docs"
+        ],
+        "hasLeaderboard": true,
+        "hasDocs": true,
+        "hasRewards": true
+      },
+      "lbPath": "/game/leaderboard",
+      "docsPath": "/game/docs"
+    },
+    {
+      "width": 375,
+      "pass": true,
+      "closed": {
+        "overflow": false,
+        "langInHeader": false,
+        "hasInjectedStack": false,
+        "hasMenu": true,
+        "hasTwoRows": true
+      },
+      "menu": {
+        "ids": [
+          "home",
+          "play",
+          "mint",
+          "myNfts",
+          "rewards",
+          "leaderboard",
+          "docs"
+        ],
+        "hasLeaderboard": true,
+        "hasDocs": true,
+        "hasMint": true,
+        "count": 7
+      },
+      "dock": {
+        "items": [
+          "HOME",
+          "PLAY",
+          "MINT",
+          "NFTS",
+          "MORE"
+        ],
+        "visible": true
+      },
+      "more": {
+        "ids": [
+          "rewards",
+          "leaderboard",
+          "docs"
+        ],
+        "hasLeaderboard": true,
+        "hasDocs": true,
+        "hasRewards": true
+      },
+      "lbPath": "/game/leaderboard",
+      "docsPath": "/game/docs"
+    },
+    {
+      "width": 390,
+      "pass": true,
+      "closed": {
+        "overflow": false,
+        "langInHeader": false,
+        "hasInjectedStack": false,
+        "hasMenu": true,
+        "hasTwoRows": true
+      },
+      "menu": {
+        "ids": [
+          "home",
+          "play",
+          "mint",
+          "myNfts",
+          "rewards",
+          "leaderboard",
+          "docs"
+        ],
+        "hasLeaderboard": true,
+        "hasDocs": true,
+        "hasMint": true,
+        "count": 7
+      },
+      "dock": {
+        "items": [
+          "HOME",
+          "PLAY",
+          "MINT",
+          "NFTS",
+          "MORE"
+        ],
+        "visible": true
+      },
+      "more": {
+        "ids": [
+          "rewards",
+          "leaderboard",
+          "docs"
+        ],
+        "hasLeaderboard": true,
+        "hasDocs": true,
+        "hasRewards": true
+      },
+      "lbPath": "/game/leaderboard",
+      "docsPath": "/game/docs"
+    },
+    {
+      "width": 393,
+      "pass": true,
+      "closed": {
+        "overflow": false,
+        "langInHeader": false,
+        "hasInjectedStack": false,
+        "hasMenu": true,
+        "hasTwoRows": true
+      },
+      "menu": {
+        "ids": [
+          "home",
+          "play",
+          "mint",
+          "myNfts",
+          "rewards",
+          "leaderboard",
+          "docs"
+        ],
+        "hasLeaderboard": true,
+        "hasDocs": true,
+        "hasMint": true,
+        "count": 7
+      },
+      "dock": {
+        "items": [
+          "HOME",
+          "PLAY",
+          "MINT",
+          "NFTS",
+          "MORE"
+        ],
+        "visible": true
+      },
+      "more": {
+        "ids": [
+          "rewards",
+          "leaderboard",
+          "docs"
+        ],
+        "hasLeaderboard": true,
+        "hasDocs": true,
+        "hasRewards": true
+      },
+      "lbPath": "/game/leaderboard",
+      "docsPath": "/game/docs"
+    },
+    {
+      "width": 412,
+      "pass": true,
+      "closed": {
+        "overflow": false,
+        "langInHeader": false,
+        "hasInjectedStack": false,
+        "hasMenu": true,
+        "hasTwoRows": true
+      },
+      "menu": {
+        "ids": [
+          "home",
+          "play",
+          "mint",
+          "myNfts",
+          "rewards",
+          "leaderboard",
+          "docs"
+        ],
+        "hasLeaderboard": true,
+        "hasDocs": true,
+        "hasMint": true,
+        "count": 7
+      },
+      "dock": {
+        "items": [
+          "HOME",
+          "PLAY",
+          "MINT",
+          "NFTS",
+          "MORE"
+        ],
+        "visible": true
+      },
+      "more": {
+        "ids": [
+          "rewards",
+          "leaderboard",
+          "docs"
+        ],
+        "hasLeaderboard": true,
+        "hasDocs": true,
+        "hasRewards": true
+      },
+      "lbPath": "/game/leaderboard",
+      "docsPath": "/game/docs"
+    },
+    {
+      "width": 430,
+      "pass": true,
+      "closed": {
+        "overflow": false,
+        "langInHeader": false,
+        "hasInjectedStack": false,
+        "hasMenu": true,
+        "hasTwoRows": true
+      },
+      "menu": {
+        "ids": [
+          "home",
+          "play",
+          "mint",
+          "myNfts",
+          "rewards",
+          "leaderboard",
+          "docs"
+        ],
+        "hasLeaderboard": true,
+        "hasDocs": true,
+        "hasMint": true,
+        "count": 7
+      },
+      "dock": {
+        "items": [
+          "HOME",
+          "PLAY",
+          "MINT",
+          "NFTS",
+          "MORE"
+        ],
+        "visible": true
+      },
+      "more": {
+        "ids": [
+          "rewards",
+          "leaderboard",
+          "docs"
+        ],
+        "hasLeaderboard": true,
+        "hasDocs": true,
+        "hasRewards": true
+      },
+      "lbPath": "/game/leaderboard",
+      "docsPath": "/game/docs"
+    }
+  ]
+}

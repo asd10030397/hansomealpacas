@@ -2,23 +2,16 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { useWalletUi } from "@/hooks/game/useWalletUi";
+import { GAME_NAV_ITEMS, type GameNavItemDef } from "@/lib/game/navConfig";
 import { isNavActive } from "@/lib/game/navActive";
 import { AudioSettings } from "./AudioSettings";
 import { GameLanguageToggle } from "./GameLanguageToggle";
 import { WalletRequiredModal } from "./WalletRequiredModal";
 import { PixelBadge, PixelButton, WalletButton } from "@/components/ui/pixel";
-
-type NavLink =
-  | { href: string; label: string; kind: "link" }
-  | { href: string; label: string; kind: "wallet"; feature: string };
-
-function navClass(active: boolean) {
-  return `game-nav__link ${active ? "game-nav__link--active" : ""}`;
-}
 
 export function GameNav() {
   const pathname = usePathname();
@@ -33,99 +26,156 @@ export function GameNav() {
     href?: string;
   }>({ open: false, feature: "" });
 
-  const links: NavLink[] = useMemo(
-    () => [
-      { href: gameHref.home, label: t.nav.home, kind: "link" },
-      { href: gameHref.dashboard, label: t.nav.play, kind: "link" },
-      { href: gameHref.mint, label: t.nav.mint, kind: "link" },
-      {
-        href: gameHref.myNfts,
-        label: t.nav.myNfts,
-        kind: "wallet",
-        feature: t.nav.featureMyNfts,
-      },
-      { href: gameHref.rewards, label: t.nav.rewards, kind: "link" },
-      { href: gameHref.leaderboard, label: t.nav.leaderboard, kind: "link" },
-      { href: gameHref.docs, label: t.nav.docs, kind: "link" },
-    ],
+  const links = useMemo(
+    () =>
+      GAME_NAV_ITEMS.map((item) => ({
+        ...item,
+        href: gameHref[item.hrefKey],
+        label: t.nav[item.labelKey],
+        feature:
+          item.id === "myNfts"
+            ? t.nav.featureMyNfts
+            : item.id === "rewards"
+              ? t.nav.featureRewards
+              : item.id === "leaderboard"
+                ? t.nav.featureLeaderboard
+                : "",
+      })),
     [t, gameHref],
   );
 
-  const renderItem = (l: NavLink, mobile = false) => {
-    if (l.kind === "link") {
-      const active = isNavActive(pathname, l.href, gameHref.home);
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
+
+  const activate = (item: GameNavItemDef & { href: string; feature: string }) => {
+    if (item.requiresWallet && !wallet.connected) {
+      setWalletModal({ open: true, feature: item.feature || t.nav.featureMyNfts, href: item.href });
+      setMenuOpen(false);
+      return;
+    }
+    router.push(item.href);
+    setMenuOpen(false);
+  };
+
+  const renderDesktopLink = (item: (typeof links)[number]) => {
+    const active = isNavActive(pathname, item.href, gameHref.home);
+    if (item.requiresWallet) {
       return (
-        <Link
-          key={`${l.kind}-${l.href}`}
-          href={l.href}
-          onClick={() => setMenuOpen(false)}
-          className={mobile ? `game-nav__mobile-link ${active ? "is-active" : ""}` : navClass(active)}
+        <button
+          key={item.id}
+          type="button"
+          className={`game-nav__link ${active ? "game-nav__link--active" : ""}`}
+          onClick={() => activate(item)}
         >
-          {l.label}
-        </Link>
+          {item.label}
+        </button>
       );
     }
-
-    const active = isNavActive(pathname, l.href, gameHref.home);
     return (
-      <button
-        key={`wallet-${l.href}`}
-        type="button"
-        className={mobile ? `game-nav__mobile-link ${active ? "is-active" : ""}` : navClass(active)}
-        onClick={() => {
-          if (wallet.connected) {
-            router.push(l.href);
-            setMenuOpen(false);
-          } else {
-            setWalletModal({ open: true, feature: l.feature, href: l.href });
-            setMenuOpen(false);
-          }
-        }}
+      <Link
+        key={item.id}
+        href={item.href}
+        className={`game-nav__link ${active ? "game-nav__link--active" : ""}`}
       >
-        {l.label}
-      </button>
+        {item.label}
+      </Link>
     );
   };
 
   return (
     <header className="game-nav">
-      <div className="game-nav__inner">
+      {/* Desktop / tablet wide */}
+      <div className="game-nav__inner game-nav__inner--desktop">
         <Link href={gameHref.home} className="game-nav__brand">
           {t.nav.brand}
           <span>{t.nav.brandSub}</span>
         </Link>
 
         <nav className="game-nav__links" aria-label={t.nav.aria}>
-          {links.map((l) => renderItem(l))}
+          {links.map(renderDesktopLink)}
         </nav>
 
         <div className="game-nav__tools">
-          <span className="hidden sm:inline-flex">
+          <span className="hidden xl:inline-flex">
             <PixelBadge tone="blue">{t.common.chainBadge}</PixelBadge>
           </span>
-          <div className="hidden sm:block">
-            <AudioSettings />
-          </div>
-          <WalletButton wallet={wallet} onConnect={connectMock} onDisconnect={disconnectMock} />
+          <AudioSettings />
+          <WalletButton wallet={wallet} onConnect={connectMock} onDisconnect={disconnectMock} compact />
+          <GameLanguageToggle />
+        </div>
+      </div>
+
+      {/* Mobile header */}
+      <div className="game-nav__mobile">
+        <div className="game-nav__mobile-row game-nav__mobile-row--top">
+          <Link href={gameHref.home} className="game-nav__brand" onClick={() => setMenuOpen(false)}>
+            {t.nav.brand}
+            <span>{t.nav.brandSub}</span>
+          </Link>
           <PixelButton
             size="sm"
-            variant="ghost"
-            className="lg:hidden"
+            variant={menuOpen ? "gold" : "ghost"}
+            className="game-nav__menu-btn"
             onClick={() => setMenuOpen((v) => !v)}
             aria-expanded={menuOpen}
             aria-controls="game-mobile-nav"
           >
-            {t.common.menu}
+            {menuOpen ? t.common.close : t.common.menu}
           </PixelButton>
-          <GameLanguageToggle />
+        </div>
+        <div className="game-nav__mobile-row game-nav__mobile-row--actions">
+          <WalletButton
+            wallet={wallet}
+            onConnect={connectMock}
+            onDisconnect={disconnectMock}
+            compact
+          />
+          <AudioSettings />
         </div>
       </div>
 
       {menuOpen ? (
         <nav id="game-mobile-nav" className="game-nav__drawer" aria-label={t.nav.mobileAria}>
-          {links.map((l) => renderItem(l, true))}
-          <div className="flex items-center justify-end gap-2 pt-2">
-            <AudioSettings />
+          <div className="game-nav__drawer-scroll">
+            {links.map((item) => {
+              const active = isNavActive(pathname, item.href, gameHref.home);
+              if (item.requiresWallet) {
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    data-nav-id={item.id}
+                    className={`game-nav__mobile-link ${active ? "is-active" : ""}`}
+                    onClick={() => activate(item)}
+                  >
+                    {item.label}
+                  </button>
+                );
+              }
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  data-nav-id={item.id}
+                  className={`game-nav__mobile-link ${active ? "is-active" : ""}`}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
+          <div className="game-nav__drawer-tools">
             <GameLanguageToggle />
           </div>
         </nav>

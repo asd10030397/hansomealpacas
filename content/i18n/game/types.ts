@@ -72,9 +72,10 @@ export type GameMessages = {
     aria: string;
     home: string;
     play: string;
-    deploy: string;
+    mint: string;
     nfts: string;
-    loot: string;
+    rewards: string;
+    more: string;
   };
   title: {
     eyebrow: string;

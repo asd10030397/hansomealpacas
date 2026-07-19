@@ -71,9 +71,10 @@ export const gameZh: GameMessages = {
     aria: "快捷遊戲操作",
     home: "首頁",
     play: "遊玩",
-    deploy: "部署",
+    mint: "鑄造",
     nfts: "NFT",
-    loot: "獎勵",
+    rewards: "獎勵",
+    more: "更多",
   },
   title: {
     eyebrow: "像素 RPG · ROBINHOOD CHAIN",

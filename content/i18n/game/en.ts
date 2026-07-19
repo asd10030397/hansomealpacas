@@ -70,9 +70,10 @@ export const gameEn: GameMessages = {
     aria: "Quick game actions",
     home: "HOME",
     play: "PLAY",
-    deploy: "DEPLOY",
+    mint: "MINT",
     nfts: "NFTS",
-    loot: "REWARDS",
+    rewards: "REWARDS",
+    more: "MORE",
   },
   title: {
     eyebrow: "PIXEL RPG · ROBINHOOD CHAIN",
