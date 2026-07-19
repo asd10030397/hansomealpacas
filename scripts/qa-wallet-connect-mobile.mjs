@@ -34,7 +34,14 @@ async function sheetOverlayPresent(page) {
 
 async function tapConnectAndExpectHelp(page, selector, label) {
   const btn = page.locator(selector).first();
-  await btn.waitFor({ state: "visible", timeout: 15000 });
+  await btn.waitFor({ state: "visible", timeout: 20000 });
+  await btn.scrollIntoViewIfNeeded().catch(() => {});
+  // Avoid hydration races on production CDN.
+  await page.waitForTimeout(400);
+
+  const disabled = await btn.isDisabled().catch(() => false);
+  if (disabled) throw new Error(`${label}: connect button is disabled`);
+
   const box = await btn.boundingBox();
   if (!box) throw new Error(`${label}: no bounding box`);
 
@@ -52,19 +59,39 @@ async function tapConnectAndExpectHelp(page, selector, label) {
     { x: box.x + box.width / 2, y: box.y + box.height / 2 },
   );
 
-  await btn.click({ timeout: 5000 });
+  await btn.click({ timeout: 8000 });
   const help = page.locator('[data-wallet-help-modal="open"]');
-  await help.waitFor({ state: "visible", timeout: 5000 });
+  try {
+    await help.waitFor({ state: "visible", timeout: 10000 });
+  } catch (e) {
+    const diag = await page.evaluate(() => ({
+      ethereum: typeof window.ethereum,
+      helpOpen: Boolean(document.querySelector('[data-wallet-help-modal="open"]')),
+      alerts: Array.from(document.querySelectorAll("[role='alert']")).map((n) =>
+        (n.textContent || "").slice(0, 80),
+      ),
+      bodyPos: document.body.style.position,
+      overlay: Boolean(document.querySelector(".mobile-dock__sheet, .game-nav__drawer")),
+    }));
+    throw new Error(
+      `${label}: help modal did not open. hit=${JSON.stringify(hit)} diag=${JSON.stringify(diag)}`,
+    );
+  }
   const alertText = await help.locator("[role='alert']").innerText();
   if (!/Unable to open wallet connection|無法開啟錢包連接/i.test(alertText)) {
     throw new Error(`${label}: unexpected help text: ${alertText}`);
   }
 
-  // Close help
-  await help.getByRole("button", { name: /Close|關閉|X/i }).first().click();
-  await help.waitFor({ state: "hidden", timeout: 5000 }).catch(async () => {
-    await page.locator('[data-wallet-help-modal="open"]').waitFor({ state: "detached", timeout: 5000 });
-  });
+  // Close help (prefer primary Close over the X control)
+  const closeBtn = help.getByRole("button", { name: /^Close$|^關閉$/i });
+  if (await closeBtn.count()) {
+    await closeBtn.first().click();
+  } else {
+    await help.getByRole("button", { name: /^X$/i }).first().click();
+  }
+  await page
+    .locator('[data-wallet-help-modal="open"]')
+    .waitFor({ state: "detached", timeout: 8000 });
 
   const lock = await bodyLockState(page);
   if (lock.position === "fixed") {
