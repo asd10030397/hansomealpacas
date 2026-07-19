@@ -270,6 +270,7 @@ export type GameMessages = {
     moreTitle: string;
     playerGuide: string;
     playerGuidePdf: string;
+    playerGuidePdfNote: string;
     fullRulesNote: string;
   };
   actions: {

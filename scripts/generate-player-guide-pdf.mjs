@@ -19,7 +19,10 @@ const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 const R = (p) => path.join(rootDir, p);
 const OUT_DIR = R("public/docs");
 fs.mkdirSync(OUT_DIR, { recursive: true });
-const OUT_PDF = path.join(OUT_DIR, "HANSOME_Alpacas_Player_Guide_Bilingual.pdf");
+/** Versioned filename — busts CDN/browser cache after cover-page fixes. */
+const OUT_PDF = path.join(OUT_DIR, "hansome-player-guide-v1.1.pdf");
+/** Legacy alias kept so old bookmarks still resolve to the fixed file. */
+const OUT_PDF_LEGACY = path.join(OUT_DIR, "HANSOME_Alpacas_Player_Guide_Bilingual.pdf");
 
 const dataUri = (buf, mime = "image/png") => `data:${mime};base64,${buf.toString("base64")}`;
 const fileUri = (p) => dataUri(fs.readFileSync(R(p)));
@@ -116,31 +119,38 @@ async function build() {
     .page{padding:26px 30px;} 
     .break{break-before:page;}
 
-    /* Cover */
-    .cover{min-height:1040px; padding:0; position:relative; overflow:hidden;
-      background:radial-gradient(1200px 600px at 80% -10%, rgba(183,156,255,.20), transparent 60%),
-                 radial-gradient(1000px 700px at -10% 110%, rgba(127,192,138,.18), transparent 60%),
-                 linear-gradient(160deg,#0c0f14 0%, #121a26 60%, #0d141d 100%);}
-    .cover-inner{padding:64px 60px;}
-    .brandline{display:flex;align-items:center;gap:14px;margin-bottom:40px;}
-    .brandline img{height:52px;width:auto;image-rendering:pixelated;filter:drop-shadow(0 4px 10px rgba(0,0,0,.4));}
-    .brandline .bn{font-weight:800;letter-spacing:.14em;font-size:15px;color:var(--gold);}
-    .cover h1{font-size:56px;font-weight:900;letter-spacing:-.5px;
-      background:linear-gradient(92deg,#fff 0%, var(--gold) 60%, var(--goldD) 100%);
-      -webkit-background-clip:text;background-clip:text;color:transparent;}
-    .cover .vs{font-size:23px;font-weight:800;color:var(--cyan);margin-top:8px;letter-spacing:.06em;}
-    .cover .guide{font-size:19px;color:var(--mut);margin-top:22px;font-weight:700;letter-spacing:.05em;}
+    /* Cover — PDF-safe (no background-clip:text; no absolute footer overlay) */
+    .cover{
+      width:794px; height:1123px; max-height:1123px; box-sizing:border-box;
+      padding:48px 48px 36px; position:relative; overflow:hidden;
+      display:flex; flex-direction:column;
+      background:radial-gradient(900px 480px at 80% -8%, rgba(183,156,255,.18), transparent 62%),
+                 radial-gradient(800px 520px at -8% 110%, rgba(127,192,138,.16), transparent 62%),
+                 linear-gradient(160deg,#0c0f14 0%, #121a26 60%, #0d141d 100%);
+    }
+    .cover-inner{flex:1 1 auto; min-height:0; display:flex; flex-direction:column; padding:0;}
+    .brandline{display:flex;align-items:center;gap:14px;margin-bottom:28px;}
+    .brandline img{height:48px;width:auto;image-rendering:pixelated;filter:drop-shadow(0 4px 10px rgba(0,0,0,.4));}
+    .brandline .bn{font-weight:800;letter-spacing:.14em;font-size:14px;color:var(--gold);}
+    /* Solid gold title — Chromium PDF often paints background-clip:text as a cream rectangle */
+    .cover h1{
+      font-size:48px;font-weight:900;letter-spacing:-.4px;line-height:1.12;
+      color:var(--gold); background:none; -webkit-background-clip:border-box; background-clip:border-box;
+      -webkit-text-fill-color:var(--gold);
+    }
+    .cover .vs{font-size:20px;font-weight:800;color:var(--cyan);margin-top:10px;letter-spacing:.05em;}
+    .cover .guide{font-size:17px;color:var(--mut);margin-top:16px;font-weight:700;letter-spacing:.04em;}
     .cover .guide b{color:var(--ink);}
-    .hero{margin-top:40px;display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+    .hero{margin-top:28px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
     .hero figure{margin:0;background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
-      border-radius:14px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.35);}
-    .hero img{width:100%;display:block;image-rendering:pixelated;}
-    .hero figcaption{font-size:10.5px;text-align:center;padding:6px 2px;color:var(--mut);font-weight:700;}
-    .cover-foot{position:absolute;bottom:34px;left:60px;right:60px;display:flex;justify-content:space-between;
-      color:#6f8095;font-size:10.5px;border-top:1px solid var(--line);padding-top:12px;}
-    .tagband{margin-top:34px;display:flex;gap:10px;flex-wrap:wrap;}
+      border-radius:12px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.35);}
+    .hero img{width:100%;aspect-ratio:1;object-fit:cover;display:block;image-rendering:pixelated;}
+    .hero figcaption{font-size:10px;text-align:center;padding:5px 2px;color:var(--mut);font-weight:700;}
+    .cover-foot{flex:0 0 auto; margin-top:28px; display:flex;justify-content:space-between;gap:12px;
+      color:#6f8095;font-size:10px;border-top:1px solid var(--line);padding-top:12px;}
+    .tagband{margin-top:22px;display:flex;gap:8px;flex-wrap:wrap;}
     .tagband span{background:rgba(233,196,106,.10);border:1px solid rgba(233,196,106,.35);color:var(--gold);
-      padding:6px 12px;border-radius:999px;font-size:11px;font-weight:700;}
+      padding:5px 10px;border-radius:999px;font-size:10.5px;font-weight:700;}
 
     /* Sections */
     .sec-head{display:flex;align-items:center;gap:14px;margin:6px 0 14px;}
@@ -239,20 +249,20 @@ async function build() {
   <!-- COVER -->
   <section class="cover">
     <div class="cover-inner">
-      <div class="brandline"><img src="${IMG.logo}"/><span class="bn">HANSOME ALPACAS</span></div>
+      <div class="brandline"><img src="${IMG.logo}" alt=""/><span class="bn">HANSOME ALPACAS</span></div>
       <h1>HANSOME Alpacas</h1>
       <div class="vs">Alpacas vs Cougars · 羊駝 對 美洲獅</div>
       <div class="guide"><b>Player Guide</b> / 玩家指南</div>
       <div class="tagband"><span>Blockchain Strategy Survival</span><span>區塊鏈策略生存</span><span>500 Genesis Alpacas</span><span>Robinhood Chain</span></div>
       <div class="hero">
-        <figure><img src="${IMG.king}"/><figcaption>👑 King</figcaption></figure>
-        <figure><img src="${IMG.guardian}"/><figcaption>🛡️ Guardian</figcaption></figure>
-        <figure><img src="${IMG.farmer}"/><figcaption>🌾 Farmer</figcaption></figure>
-        <figure><img src="${IMG.lucky}"/><figcaption>🍀 Lucky</figcaption></figure>
-        <figure><img src="${IMG.runner}"/><figcaption>🏃 Runner</figcaption></figure>
+        <figure><img src="${IMG.king}" alt="King"/><figcaption>King</figcaption></figure>
+        <figure><img src="${IMG.guardian}" alt="Guardian"/><figcaption>Guardian</figcaption></figure>
+        <figure><img src="${IMG.farmer}" alt="Farmer"/><figcaption>Farmer</figcaption></figure>
+        <figure><img src="${IMG.lucky}" alt="Lucky"/><figcaption>Lucky</figcaption></figure>
+        <figure><img src="${IMG.runner}" alt="Runner"/><figcaption>Runner</figcaption></figure>
       </div>
     </div>
-    <div class="cover-foot"><span>NFT Collector & Player Guide · 收藏者與玩家指南</span><span>Consistent with HANSOME GDS v1.1</span></div>
+    <div class="cover-foot"><span>NFT Collector &amp; Player Guide · 收藏者與玩家指南</span><span>Consistent with HANSOME GDS v1.1</span></div>
   </section>
 
   <!-- 1 -->
@@ -426,7 +436,15 @@ async function build() {
   await page.setContent(html, { waitUntil: "load" });
   await page.waitForTimeout(400);
   await page.emulateMedia({ media: "print" });
-  await page.pdf({ path: OUT_PDF, format: "A4", printBackground: true, margin: { top: "0mm", bottom: "0mm", left: "0mm", right: "0mm" } });
+  await page.pdf({
+    path: OUT_PDF,
+    width: "210mm",
+    height: "297mm",
+    printBackground: true,
+    preferCSSPageSize: false,
+    margin: { top: "0mm", bottom: "0mm", left: "0mm", right: "0mm" },
+  });
+  fs.copyFileSync(OUT_PDF, OUT_PDF_LEGACY);
 
   // per-page PNGs (one <section> == one page in this layout)
   const PNG_DIR = path.join(OUT_DIR, "player-guide-png");
@@ -437,13 +455,19 @@ async function build() {
     await sections[i].screenshot({ path: p });
     console.log(`Wrote ${p}`);
   }
+  // Always export cover QA crop for visual regression
+  const coverQa = path.join(OUT_DIR, "player-guide-cover-qa.png");
+  await sections[0].screenshot({ path: coverQa });
+  console.log(`Wrote ${coverQa}`);
   if (process.env.QA) {
     await page.setViewportSize({ width: 900, height: 1200 });
     await page.screenshot({ path: R("tmp-player-guide-QA.png"), fullPage: true });
     console.log("Wrote tmp-player-guide-QA.png (QA only)");
   }
   await browser.close();
-  console.log(`Wrote ${OUT_PDF}`);
+  const stat = fs.statSync(OUT_PDF);
+  console.log(`Wrote ${OUT_PDF} (${sections.length} pages, ${(stat.size / 1024).toFixed(1)} KB)`);
+  console.log(`Wrote legacy alias ${OUT_PDF_LEGACY}`);
 }
 
 build().catch((e) => { console.error(e); process.exitCode = 1; });

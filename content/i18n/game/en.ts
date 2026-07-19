@@ -368,8 +368,10 @@ export const gameEn: GameMessages = {
     locationsBody:
       "Home · Mountain · Grassland · Forest · River — weights 1 / 2 / 3 / 5 / 8. Higher weight, higher share narrative and higher hunt-risk narrative. Cougars cannot choose Home.",
     moreTitle: "MORE",
-    playerGuide: "Open Player Guide",
-    playerGuidePdf: "Download PDF",
+    playerGuide: "OPEN PLAYER GUIDE",
+    playerGuidePdf: "DOWNLOAD PDF",
+    playerGuidePdfNote:
+      "For the best mobile reading experience, use the HTML Player Guide.",
     fullRulesNote:
       "Player Guide covers classes, locations, and pool overview. Settlement formulas, trait resolution order (King → Runner → Lucky → Guardian → …), and edge cases are defined in HANSOME GDS v1.1 — not in the Player Guide.",
   },

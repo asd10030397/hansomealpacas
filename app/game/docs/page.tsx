@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PixelPanel } from "@/components/ui/pixel";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
+import { PLAYER_GUIDE_PDF_HREF } from "@/lib/game/playerGuidePdf";
 
 export default function GameDocsPage() {
   const { t } = useGameI18n();
@@ -93,21 +94,19 @@ export default function GameDocsPage() {
 
       <PixelPanel title={d.moreTitle}>
         <p className="text-sm text-[var(--hg-muted)]">
-          <Link href={gameHref.playerGuide} className="text-[#f0c44a] underline">
+          <Link href={gameHref.playerGuide} className="text-[#f0c44a] underline font-semibold">
             {d.playerGuide}
           </Link>
           {" · "}
-          <Link
-            href="/docs/HANSOME_Alpacas_Player_Guide_Bilingual.pdf"
-            className="text-[#f0c44a] underline"
-          >
+          <a href={PLAYER_GUIDE_PDF_HREF} download className="text-[#f0c44a] underline">
             {d.playerGuidePdf}
-          </Link>
+          </a>
           {" · "}
           <Link href={gameHref.home} className="text-[#f0c44a] underline">
             {t.nav.home}
           </Link>
         </p>
+        <p className="mt-2 text-xs text-[var(--hg-muted)]">{d.playerGuidePdfNote}</p>
         <p className="mt-2 text-xs text-[var(--hg-muted)]">{d.fullRulesNote}</p>
       </PixelPanel>
     </div>

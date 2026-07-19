@@ -15,9 +15,8 @@ import {
   type GuidePhase,
 } from "@/content/game/playerGuide";
 import { useGameHref } from "@/hooks/game/useGameHref";
+import { PLAYER_GUIDE_PDF_HREF } from "@/lib/game/playerGuidePdf";
 import "@/styles/player-guide.css";
-
-const PDF_HREF = "/docs/HANSOME_Alpacas_Player_Guide_Bilingual.pdf";
 
 function Bi({ text }: { text: BiText }) {
   return (
@@ -148,7 +147,7 @@ export function PlayerGuide() {
       <div className="player-guide__toolbar">
         <Link href={gameHref.docs}>← Docs</Link>
         <span className="player-guide__toolbar-title">Player Guide · 玩家指南</span>
-        <a href={PDF_HREF} download>
+        <a href={PLAYER_GUIDE_PDF_HREF} download>
           PDF
         </a>
       </div>

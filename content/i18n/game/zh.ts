@@ -363,6 +363,7 @@ export const gameZh: GameMessages = {
     moreTitle: "更多",
     playerGuide: "開啟玩家指南",
     playerGuidePdf: "下載 PDF",
+    playerGuidePdfNote: "手機閱讀建議使用 HTML 玩家指南，以獲得最佳顯示效果。",
     fullRulesNote:
       "玩家指南涵蓋特質、地點與獎池概覽。結算公式、特質結算順序（King → Runner → Lucky → Guardian → …）與邊界情況定義於 HANSOME GDS v1.1，不在玩家指南內。",
   },
