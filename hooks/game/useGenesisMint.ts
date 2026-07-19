@@ -1,9 +1,11 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
-import { zeroAddress } from "viem";
+import { useCallback, useMemo, useState } from "react";
+import { BaseError, ContractFunctionRevertedError, zeroAddress } from "viem";
 import {
   useAccount,
+  useChainId,
+  usePublicClient,
   useReadContracts,
   useWaitForTransactionReceipt,
   useWriteContract,
@@ -15,6 +17,16 @@ import {
   GENESIS_SUPPLY,
   isGenesisConfigured,
 } from "@/lib/game/genesis";
+import {
+  assertMintEnvironment,
+  assertMintValueMatches,
+  assertSaneMintNetworkFee,
+  buildSafeMintFees,
+  computeMintValue,
+  formatMintError,
+  logMintRequest,
+  type PreparedMintRequest,
+} from "@/lib/game/mintTx";
 import {
   buildMintSaleState,
   lookupWhitelistProof,
@@ -29,11 +41,26 @@ type UseGenesisMintOptions = {
   whitelistProofs?: WhitelistProofMap | null;
 };
 
+function decodeSimulateError(error: unknown): string {
+  if (error instanceof BaseError) {
+    const reverted = error.walk(
+      (e) => e instanceof ContractFunctionRevertedError,
+    ) as ContractFunctionRevertedError | null;
+    if (reverted?.data?.errorName) {
+      return `Contract reverted: ${reverted.data.errorName}`;
+    }
+  }
+  return formatMintError(error);
+}
+
 export function useGenesisMint(options: UseGenesisMintOptions = {}) {
   const { address, isConnected } = useAccount();
+  const walletChainId = useChainId();
+  const publicClient = usePublicClient({ chainId: GENESIS_CHAIN_ID });
   const configured = isGenesisConfigured() && GENESIS_NFT_ADDRESS != null;
   const nft = GENESIS_NFT_ADDRESS;
   const reader = address ?? zeroAddress;
+  const [prepareError, setPrepareError] = useState<string | null>(null);
 
   const reads = useReadContracts({
     contracts: [
@@ -179,41 +206,141 @@ export function useGenesisMint(options: UseGenesisMintOptions = {}) {
       ? Number(reads.data[9].result)
       : 0;
 
-  const { writeContract, data: txHash, isPending, error: writeError, reset } =
+  const { writeContractAsync, data: txHash, isPending, error: writeError, reset } =
     useWriteContract();
   const receipt = useWaitForTransactionReceipt({
     hash: txHash,
     chainId: GENESIS_CHAIN_ID,
   });
 
-  const mintPublic = useCallback(
-    (quantity: number) => {
+  const prepareAndSend = useCallback(
+    async (input: {
+      functionName: "publicMint" | "whitelistMint";
+      args: readonly unknown[];
+      quantity: number;
+      value: bigint;
+    }) => {
+      setPrepareError(null);
       if (!nft) throw new Error("Genesis NFT not configured");
-      const value = mintPrice * BigInt(quantity);
-      writeContract({
-        address: nft,
+      assertMintEnvironment({
+        walletChainId,
+        contractAddress: nft,
+      });
+      if (!publicClient) {
+        throw new Error("RPC client unavailable for mint simulation.");
+      }
+      if (!isConnected || !address) {
+        throw new Error("Connect wallet to mint.");
+      }
+
+      const contract = nft;
+      assertMintValueMatches(input.value, mintPrice, input.quantity);
+
+      try {
+        await publicClient.simulateContract({
+          address: contract,
+          abi,
+          functionName: input.functionName,
+          args: input.args as never,
+          value: input.value,
+          account: address,
+          chain: publicClient.chain,
+        });
+      } catch (e) {
+        throw new Error(decodeSimulateError(e));
+      }
+
+      const gas = await publicClient.estimateContractGas({
+        address: contract,
         abi,
-        functionName: "publicMint",
-        args: [BigInt(quantity)],
-        value,
+        functionName: input.functionName,
+        args: input.args as never,
+        value: input.value,
+        account: address,
+      });
+
+      // Robinhood eth_gasPrice is sane (~0.01 gwei). MetaMask's own EIP-1559
+      // feeHistory prediction on this chain is not — pin fees from RPC.
+      const gasPrice = await publicClient.getGasPrice();
+      const safeFees = buildSafeMintFees(gasPrice);
+      const estimatedNetworkFee = assertSaneMintNetworkFee(gas, safeFees.maxFeePerGas);
+
+      const prepared: PreparedMintRequest = {
         chainId: GENESIS_CHAIN_ID,
+        address: contract,
+        functionName: input.functionName,
+        args: input.args,
+        value: input.value,
+        quantity: input.quantity,
+        mintPrice,
+        gas,
+        maxFeePerGas: safeFees.maxFeePerGas,
+        maxPriorityFeePerGas: safeFees.maxPriorityFeePerGas,
+        estimatedNetworkFee,
+      };
+      logMintRequest(prepared, address);
+
+      // Do NOT pass gas/gasLimit — only EIP-1559 fee caps so MetaMask
+      // skips its broken Robinhood feeHistory prediction.
+      await writeContractAsync({
+        address: contract,
+        abi,
+        functionName: input.functionName,
+        args: input.args as never,
+        value: input.value,
+        chainId: GENESIS_CHAIN_ID,
+        maxFeePerGas: safeFees.maxFeePerGas,
+        maxPriorityFeePerGas: safeFees.maxPriorityFeePerGas,
       });
     },
-    [mintPrice, nft, writeContract],
+    [
+      address,
+      isConnected,
+      mintPrice,
+      nft,
+      publicClient,
+      walletChainId,
+      writeContractAsync,
+    ],
   );
 
-  const mintWhitelist = useCallback(() => {
-    if (!nft) throw new Error("Genesis NFT not configured");
-    if (!proof) throw new Error("No whitelist proof for this wallet");
-    writeContract({
-      address: nft,
-      abi,
-      functionName: "whitelistMint",
-      args: [proof],
-      value: mintPrice,
-      chainId: GENESIS_CHAIN_ID,
-    });
-  }, [mintPrice, nft, proof, writeContract]);
+  const mintPublic = useCallback(
+    async (quantity: number) => {
+      try {
+        if (!nft) throw new Error("Genesis NFT not configured");
+        const value = computeMintValue(mintPrice, quantity);
+        await prepareAndSend({
+          functionName: "publicMint",
+          args: [BigInt(quantity)],
+          quantity,
+          value,
+        });
+      } catch (e) {
+        const message = formatMintError(e);
+        setPrepareError(message);
+        throw e;
+      }
+    },
+    [mintPrice, nft, prepareAndSend],
+  );
+
+  const mintWhitelist = useCallback(async () => {
+    try {
+      if (!nft) throw new Error("Genesis NFT not configured");
+      if (!proof) throw new Error("No whitelist proof for this wallet");
+      const value = computeMintValue(mintPrice, 1);
+      await prepareAndSend({
+        functionName: "whitelistMint",
+        args: [proof],
+        quantity: 1,
+        value,
+      });
+    } catch (e) {
+      const message = formatMintError(e);
+      setPrepareError(message);
+      throw e;
+    }
+  }, [mintPrice, nft, prepareAndSend, proof]);
 
   const maxPublicQty = Math.max(
     0,
@@ -222,6 +349,11 @@ export function useGenesisMint(options: UseGenesisMintOptions = {}) {
       GENESIS_SUPPLY.combinedWalletMax - wlMintedWallet - publicMintedWallet,
     ),
   );
+
+  const resetTx = useCallback(() => {
+    setPrepareError(null);
+    reset();
+  }, [reset]);
 
   return {
     configured,
@@ -240,7 +372,8 @@ export function useGenesisMint(options: UseGenesisMintOptions = {}) {
     isConfirming: receipt.isLoading,
     isSuccess: receipt.isSuccess,
     writeError,
+    prepareError,
     receiptError: receipt.error,
-    resetTx: reset,
+    resetTx,
   };
 }

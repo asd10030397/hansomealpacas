@@ -81,6 +81,7 @@ export function MintPanel() {
 
   const busy = mint.isPending || mint.isConfirming || walletPending;
   const errMsg =
+    mint.prepareError ??
     mint.writeError?.message ??
     mint.receiptError?.message ??
     mint.readError?.message ??
@@ -202,7 +203,9 @@ export function MintPanel() {
               disabled={!canMintWl || busy}
               onClick={() => {
                 mint.resetTx();
-                mint.mintWhitelist();
+                void mint.mintWhitelist().catch(() => {
+                  /* prepareError surfaced below */
+                });
               }}
             >
               {busy ? t.mint.minting : t.mint.mintWhitelist}
@@ -254,7 +257,9 @@ export function MintPanel() {
               disabled={!canMintPublic || busy}
               onClick={() => {
                 mint.resetTx();
-                mint.mintPublic(qty);
+                void mint.mintPublic(qty).catch(() => {
+                  /* prepareError surfaced below */
+                });
               }}
             >
               {busy ? t.mint.minting : t.mint.mintPublic}
