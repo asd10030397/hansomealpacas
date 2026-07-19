@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { formatEther, type Address, type Log, zeroHash } from "viem";
 import {
   useAccount,
@@ -143,7 +143,11 @@ export function useSettlementView() {
     functionName: "dayState",
     args: game ? [BigInt(day.day)] : undefined,
     chainId: GAME_CHAIN_ID,
-    query: { enabled: live && !!game },
+    query: {
+      enabled: live && !!game,
+      // Detect RevealClosed quickly so battle can resolve without a long idle gap.
+      refetchInterval: 4_000,
+    },
   });
 
   const settledRead = useReadContract({
@@ -152,7 +156,10 @@ export function useSettlementView() {
     functionName: "isSettled",
     args: game ? [BigInt(day.day)] : undefined,
     chainId: GAME_CHAIN_ID,
-    query: { enabled: live && !!game },
+    query: {
+      enabled: live && !!game,
+      refetchInterval: 4_000,
+    },
   });
 
   const distributorRead = useReadContract({
@@ -184,8 +191,17 @@ export function useSettlementView() {
     functionName: "hasDaySeed",
     args: randomnessAddress ? [BigInt(day.day)] : undefined,
     chainId: GAME_CHAIN_ID,
-    query: { enabled: live && !!randomnessAddress },
+    query: {
+      enabled: live && !!randomnessAddress,
+      refetchInterval: 4_000,
+    },
   });
+
+  /** One auto-settle attempt per day after Reveal closes (retry after seed arrives). */
+  const autoSettleArmedRef = useRef(true);
+  useEffect(() => {
+    autoSettleArmedRef.current = true;
+  }, [day.day]);
 
   const {
     writeContractAsync,
@@ -578,6 +594,32 @@ export function useSettlementView() {
     }
   }, [settleReceipt.isSuccess]);
 
+  // Re-arm auto-settle when seed becomes the blocker (retry once seed is ready).
+  useEffect(() => {
+    if (status === "waiting_seed") {
+      autoSettleArmedRef.current = true;
+    }
+  }, [status]);
+
+  /**
+   * After Reveal closes + seed ready: run settleDay automatically.
+   * Timing windows stay unchanged — this only removes the extra manual wait.
+   */
+  useEffect(() => {
+    if (status !== "available") return;
+    if (!autoSettleArmedRef.current) return;
+    if (settleWriting || settleReceipt.isLoading) return;
+    if (settled) return;
+    autoSettleArmedRef.current = false;
+    void runSettle();
+  }, [
+    status,
+    settleWriting,
+    settleReceipt.isLoading,
+    settled,
+    runSettle,
+  ]);
+
   /** Surface SeedMissing as waiting_seed, not a generic error banner. */
   const displayError =
     status === "waiting_seed" || isSeedMissingError(chainError)
@@ -601,6 +643,13 @@ export function useSettlementView() {
     settleHash,
     error: displayError,
     waitingSeed: status === "waiting_seed",
+    /** True while revealed and still waiting for RevealClosed / settle / seed. */
+    battlePending:
+      !settled &&
+      (status === "pending" ||
+        status === "available" ||
+        status === "waiting_seed" ||
+        status === "processing"),
     runSettle,
     refreshLocal: () => setLocalTick((n) => n + 1),
   };

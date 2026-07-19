@@ -1,0 +1,418 @@
+/* King Alpaca promotional trailer — 16:9 / 9:16 */
+
+.king-promo {
+  --kp-gold: #f0c44a;
+  --kp-gold-soft: #ffe9a0;
+  --kp-ink: #0a0c12;
+  --kp-cream: #f3ebe0;
+  --kp-muted: #9aa3b5;
+  --kp-night: #0e121c;
+
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background: var(--kp-night);
+  color: var(--kp-cream);
+  font-family: var(--font-body), system-ui, sans-serif;
+  overflow: hidden;
+}
+
+.king-promo__frame {
+  position: relative;
+  width: min(100vw, 1920px);
+  height: min(100vh, 1080px);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #0a0c12;
+  box-shadow: 0 0 0 2px #1a2030;
+}
+
+.king-promo[data-aspect="9:16"] .king-promo__frame {
+  width: min(100vw, 608px);
+  height: min(100vh, 1080px);
+  aspect-ratio: 9 / 16;
+}
+
+.king-promo__bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  image-rendering: pixelated;
+  transform: scale(1.04);
+  transition: opacity 0.55s ease, filter 0.55s ease, transform 6s ease-out;
+  opacity: 0;
+}
+
+.king-promo__bg--on {
+  opacity: 1;
+}
+
+.king-promo__bg--royal {
+  filter: saturate(1.15) contrast(1.05);
+}
+
+.king-promo__bg--hunt {
+  filter: saturate(0.85) brightness(0.72) contrast(1.1);
+}
+
+.king-promo__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 40%, transparent 35%, rgba(0, 0, 0, 0.55) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, transparent 28%, transparent 62%, rgba(0, 0, 0, 0.55) 100%);
+  z-index: 2;
+}
+
+.king-promo__gold-wash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0;
+  background: radial-gradient(
+    ellipse at 50% 35%,
+    rgba(240, 196, 74, 0.35) 0%,
+    rgba(240, 196, 74, 0.08) 42%,
+    transparent 70%
+  );
+  transition: opacity 0.6s ease;
+}
+
+.king-promo__gold-wash--on {
+  opacity: 1;
+}
+
+.king-promo__stage {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  padding: 4% 6%;
+}
+
+.king-promo__cast {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(0.5rem, 2vw, 1.75rem);
+  width: 100%;
+  max-width: 92%;
+  min-height: 58%;
+}
+
+.king-promo__char {
+  position: relative;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 10px 0 rgba(0, 0, 0, 0.35));
+  opacity: 0;
+  transform: translateY(18px) scale(0.96);
+  transition:
+    opacity 0.55s ease,
+    transform 0.65s cubic-bezier(0.22, 1.15, 0.36, 1),
+    filter 0.45s ease;
+}
+
+.king-promo__char--in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.king-promo__char--king {
+  width: min(52vw, 560px);
+  max-width: 58%;
+  z-index: 3;
+}
+
+.king-promo[data-aspect="9:16"] .king-promo__char--king {
+  width: min(82vw, 460px);
+  max-width: 88%;
+}
+
+.king-promo__char--cougar {
+  width: min(40vw, 420px);
+  max-width: 44%;
+  z-index: 2;
+}
+
+.king-promo__char--prey {
+  width: min(22vw, 200px);
+  max-width: 22%;
+  opacity: 0;
+  filter: drop-shadow(0 6px 0 rgba(0, 0, 0, 0.3)) brightness(0.85);
+}
+
+.king-promo__char--prey.king-promo__char--in {
+  opacity: 0.92;
+}
+
+.king-promo__char--flee-left {
+  transform: translateX(-8%) translateY(8px) scale(0.92);
+}
+
+.king-promo__char--flee-left.king-promo__char--in {
+  animation: kp-flee-left 4.2s ease-in-out both;
+}
+
+.king-promo__char--flee-right {
+  transform: translateX(8%) translateY(8px) scale(0.92);
+}
+
+.king-promo__char--flee-right.king-promo__char--in {
+  animation: kp-flee-right 4.2s ease-in-out both;
+}
+
+.king-promo__char--cougar-stalk.king-promo__char--in {
+  animation: kp-stalk 4.4s ease-in-out both;
+}
+
+.king-promo__char--king-proud.king-promo__char--in {
+  animation: kp-proud 5s ease-in-out both;
+}
+
+.king-promo__char--king-stand.king-promo__char--in {
+  animation: kp-stand 5s ease-out both;
+}
+
+.king-promo__fx {
+  position: absolute;
+  inset: -8% -4% 8%;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.king-promo__fx--on {
+  opacity: 1;
+}
+
+/* Hide in-game “activated” banner — promo copy carries the message */
+.king-promo__fx .hg-ability-fx__banner {
+  display: none !important;
+}
+
+.king-promo__copy {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 7%;
+  z-index: 6;
+  text-align: center;
+  padding: 0 6%;
+  pointer-events: none;
+}
+
+.king-promo__line {
+  margin: 0;
+  font-family: var(--font-anton), "Press Start 2P", monospace;
+  font-size: clamp(1.05rem, 2.6vw, 2.15rem);
+  letter-spacing: 0.04em;
+  line-height: 1.35;
+  color: var(--kp-cream);
+  text-shadow:
+    0 0 18px rgba(240, 196, 74, 0.35),
+    3px 3px 0 var(--kp-ink);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.45s ease, transform 0.5s ease;
+}
+
+.king-promo__line--on {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.king-promo__line--gold {
+  color: var(--kp-gold);
+}
+
+.king-promo__line--stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.king-promo__line--stack span {
+  display: block;
+}
+
+.king-promo__ending {
+  position: relative;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  text-align: center;
+  padding: 2rem;
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.22, 1.1, 0.36, 1);
+}
+
+.king-promo__ending--on {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.king-promo__ending-hero {
+  width: min(44vw, 440px);
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 28px rgba(240, 196, 74, 0.45));
+  margin-bottom: 0.25rem;
+}
+
+.king-promo[data-aspect="9:16"] .king-promo__ending-hero {
+  width: min(70vw, 380px);
+}
+
+.king-promo__ending-logo {
+  width: clamp(72px, 10vw, 112px);
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(2px 2px 0 #0a0c12);
+}
+
+.king-promo__ending-title {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-anton), monospace;
+  font-size: clamp(1.2rem, 2.8vw, 2.2rem);
+  letter-spacing: 0.06em;
+  color: var(--kp-gold);
+  text-shadow: 3px 3px 0 var(--kp-ink);
+}
+
+.king-promo__ending-tag {
+  margin: 0;
+  font-family: var(--font-anton), monospace;
+  font-size: clamp(0.85rem, 1.8vw, 1.25rem);
+  letter-spacing: 0.08em;
+  color: var(--kp-cream);
+  text-shadow: 2px 2px 0 var(--kp-ink);
+}
+
+.king-promo__ending-rule {
+  margin: 0.15rem 0 0;
+  font-size: clamp(0.7rem, 1.3vw, 0.95rem);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--kp-muted);
+}
+
+.king-promo__boot {
+  position: relative;
+  z-index: 6;
+  font-family: var(--font-anton), monospace;
+  letter-spacing: 0.12em;
+  color: var(--kp-muted);
+  font-size: 0.85rem;
+}
+
+.king-promo__start {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  border: 2px solid var(--kp-gold);
+  background: #2a2410;
+  color: var(--kp-gold);
+  font-family: var(--font-anton), monospace;
+  letter-spacing: 0.08em;
+  padding: 0.65rem 1.25rem;
+  cursor: pointer;
+}
+
+.king-promo__preload {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes kp-flee-left {
+  0% {
+    transform: translateX(0) translateY(0) scale(0.95);
+  }
+  30% {
+    transform: translateX(-6%) translateY(-4px) scale(0.95);
+  }
+  100% {
+    transform: translateX(-22%) translateY(10px) scale(0.88);
+    opacity: 0.35;
+  }
+}
+
+@keyframes kp-flee-right {
+  0% {
+    transform: translateX(0) translateY(0) scale(0.95);
+  }
+  30% {
+    transform: translateX(6%) translateY(-4px) scale(0.95);
+  }
+  100% {
+    transform: translateX(22%) translateY(10px) scale(0.88);
+    opacity: 0.35;
+  }
+}
+
+@keyframes kp-stalk {
+  0% {
+    transform: translateX(18%) translateY(8px) scale(0.92);
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0) translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes kp-proud {
+  0% {
+    transform: translateY(14px) scale(0.94);
+  }
+  40% {
+    transform: translateY(0) scale(1.02);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes kp-stand {
+  0% {
+    transform: translateY(8px) scale(0.98);
+    filter: drop-shadow(0 10px 0 rgba(0, 0, 0, 0.35)) brightness(1);
+  }
+  35% {
+    transform: translateY(0) scale(1.04);
+    filter: drop-shadow(0 0 22px rgba(240, 196, 74, 0.55)) brightness(1.08);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    filter: drop-shadow(0 0 18px rgba(240, 196, 74, 0.4)) brightness(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .king-promo__char--flee-left.king-promo__char--in,
+  .king-promo__char--flee-right.king-promo__char--in,
+  .king-promo__char--cougar-stalk.king-promo__char--in,
+  .king-promo__char--king-proud.king-promo__char--in,
+  .king-promo__char--king-stand.king-promo__char--in {
+    animation: none;
+  }
+}

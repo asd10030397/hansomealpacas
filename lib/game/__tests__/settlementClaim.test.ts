@@ -122,7 +122,8 @@ describe("canSubmitClaim — duplicate prevention", () => {
 
 describe("settlementStatusLabel", () => {
   it("returns stable labels", () => {
-    expect(settlementStatusLabel("available")).toMatch(/Available/i);
+    expect(settlementStatusLabel("available")).toMatch(/settling|Reveal closed/i);
+    expect(settlementStatusLabel("pending")).toMatch(/arena|revealed/i);
     expect(settlementStatusLabel("completed")).toMatch(/Completed/i);
   });
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AbilityEffectOverlay } from "@/components/game/ability-effects/AbilityEffectOverlay";
 import { ResultEffectOverlay } from "@/components/game/result-effects/ResultEffectOverlay";
 import { GameStatusPanel } from "@/components/game/GameStatusPanel";
@@ -21,6 +21,7 @@ import { useSettlementPresentationQueue } from "@/hooks/game/useSettlementPresen
 import { useSettlementView } from "@/hooks/game/useSettlementView";
 import { parseAbilityEffectId } from "@/lib/game/abilityEffects";
 import { listCommitSecretsForDay } from "@/lib/game/commitSecret";
+import { formatCountdown } from "@/lib/game/phaseStatus";
 import { parseSettlementResultSfxId } from "@/lib/game/settlementResults";
 import { resultSubstep } from "@/lib/game/uiLoopPhase";
 
@@ -46,6 +47,7 @@ export default function ResultPhasePage() {
 
   const settleView = useSettlementView();
   const claim = useClaimRewards();
+  const battleRef = useRef<HTMLDivElement | null>(null);
 
   const showPresentationFx =
     settleView.status === "completed" &&
@@ -66,6 +68,28 @@ export default function ResultPhasePage() {
     showPresentationFx,
   );
 
+  const pending = queue.filter(
+    (r) => r.status === "submitted" || r.status === "prepared",
+  );
+  const done = queue.filter((r) => r.status === "revealed");
+  const hasRevealed = done.length > 0;
+  const allRevealed = pending.length === 0 && done.length > 0;
+
+  const settleMsLeft = Math.max(0, phaseEndsAt - now);
+  const settleCountdown = formatCountdown(settleMsLeft);
+  const showPostRevealStaging =
+    hasRevealed &&
+    (phase === "REVEAL" ||
+      settleView.status === "pending" ||
+      settleView.status === "available" ||
+      settleView.status === "waiting_seed" ||
+      settleView.status === "processing");
+
+  const settleStatusLabel =
+    settleView.status === "waiting_seed"
+      ? t.settlement.waitingSeedTitle
+      : settleView.statusLabel;
+
   const onReveal = async (tokenId: number) => {
     if (phase !== "REVEAL") {
       setStatusMsg(t.result.revealClosedHint);
@@ -74,6 +98,7 @@ export default function ResultPhasePage() {
     setBusyId(tokenId);
     const result = await revealNft({ tokenId, day: day.day });
     setQueue(listCommitSecretsForDay(day.day));
+    settleView.refreshLocal();
     setBusyId(null);
 
     if (!result.ok) {
@@ -87,17 +112,17 @@ export default function ResultPhasePage() {
         ? `Reveal Move #${tokenId} on-chain → ${loc}.`
         : `Reveal Move #${tokenId} locally → ${loc}.`,
     );
+
+    // Reveal opens the result — jump straight to the arena staging.
+    window.requestAnimationFrame(() => {
+      battleRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   };
 
-  const pending = queue.filter(
-    (r) => r.status === "submitted" || r.status === "prepared",
-  );
-  const done = queue.filter((r) => r.status === "revealed");
-
-  const settleStatusLabel =
-    settleView.status === "waiting_seed"
-      ? t.settlement.waitingSeedTitle
-      : settleView.statusLabel;
+  // Keep local queue in sync when day rolls.
+  useEffect(() => {
+    setQueue(listCommitSecretsForDay(day.day));
+  }, [day.day]);
 
   return (
     <div className="relative mx-auto max-w-3xl px-3 py-6 sm:px-4">
@@ -216,6 +241,19 @@ export default function ResultPhasePage() {
         ) : null}
       </PixelPanel>
 
+      {/* Post-reveal arena staging — keep player on Result, not a dead wait */}
+      {showPostRevealStaging ? (
+        <div className="mt-4" data-testid="result-post-reveal-staging">
+          <GameFeedback tone="pending" label={t.result.afterRevealTitle}>
+            {phase === "REVEAL"
+              ? t.result.afterRevealBody(settleCountdown)
+              : settleView.status === "waiting_seed"
+                ? t.settlement.waitingSeedBody
+                : t.result.autoSettleHint}
+          </GameFeedback>
+        </div>
+      ) : null}
+
       {/* 2 · Settlement status */}
       <PixelPanel
         className="mt-4"
@@ -225,7 +263,16 @@ export default function ResultPhasePage() {
         <p className="pixel-title text-sm text-[#f0c44a]">{settleStatusLabel}</p>
         <p className="mt-2 text-xs text-[var(--hg-muted)]">
           Day {settleView.day} · {settleView.phase}
+          {phase === "REVEAL" && hasRevealed
+            ? ` · ${settleCountdown}`
+            : null}
         </p>
+
+        {allRevealed && phase === "REVEAL" ? (
+          <p className="mt-2 text-xs text-[var(--hg-muted)]">
+            {t.result.afterRevealBody(settleCountdown)}
+          </p>
+        ) : null}
 
         {settleView.status === "loading" ? (
           <div className="mt-3">
@@ -245,7 +292,8 @@ export default function ResultPhasePage() {
           </GameFeedback>
         ) : null}
 
-        {settleView.canSettle ? (
+        {/* Manual settle remains as fallback if auto-settle was rejected / failed */}
+        {settleView.canSettle && settleView.status === "available" ? (
           <PixelButton
             className="mt-4"
             variant="gold"
@@ -270,52 +318,58 @@ export default function ResultPhasePage() {
       </PixelPanel>
 
       {/* 3 · Battle results + FX */}
-      <PixelPanel
-        className="mt-4"
-        title={t.result.battleSectionTitle}
-        eyebrow={`DAY ${settleView.day}`}
-      >
-        {settleView.empty ? (
-          <GameEmptyState title={t.common.emptyTitle}>
-            {settleView.live
-              ? t.settlement.emptyBodyLive
-              : t.settlement.emptyBodyMock}
-          </GameEmptyState>
-        ) : (
-          <ul className="hg-settle-list">
-            {settleView.rows.map((row, index) => (
-              <SettlementResultCard
-                key={row.tokenId}
-                row={{
-                  ...row,
-                  outcome: resolveOutcomeLabel(row.outcome, t),
-                }}
-                index={index}
-                overlays={
-                  <>
-                    {resultCue?.tokenId === row.tokenId ? (
-                      <ResultEffectOverlay
-                        key={`result-${resultCue.tokenId}-${resultCue.resultId}`}
-                        resultId={resultCue.resultId}
-                        active
-                        onComplete={advancePresentation}
-                      />
-                    ) : null}
-                    {abilityCue?.tokenId === row.tokenId ? (
-                      <AbilityEffectOverlay
-                        key={`ability-${abilityCue.tokenId}-${abilityCue.abilityId}`}
-                        abilityId={abilityCue.abilityId}
-                        active
-                        onComplete={advancePresentation}
-                      />
-                    ) : null}
-                  </>
-                }
-              />
-            ))}
-          </ul>
-        )}
-      </PixelPanel>
+      <div ref={battleRef}>
+        <PixelPanel
+          className="mt-4"
+          title={t.result.battleSectionTitle}
+          eyebrow={
+            showPostRevealStaging
+              ? t.result.arenaEyebrow
+              : `DAY ${settleView.day}`
+          }
+        >
+          {settleView.empty ? (
+            <GameEmptyState title={t.common.emptyTitle}>
+              {settleView.live
+                ? t.settlement.emptyBodyLive
+                : t.settlement.emptyBodyMock}
+            </GameEmptyState>
+          ) : (
+            <ul className="hg-settle-list">
+              {settleView.rows.map((row, index) => (
+                <SettlementResultCard
+                  key={row.tokenId}
+                  row={{
+                    ...row,
+                    outcome: resolveOutcomeLabel(row.outcome, t),
+                  }}
+                  index={index}
+                  overlays={
+                    <>
+                      {resultCue?.tokenId === row.tokenId ? (
+                        <ResultEffectOverlay
+                          key={`result-${resultCue.tokenId}-${resultCue.resultId}`}
+                          resultId={resultCue.resultId}
+                          active
+                          onComplete={advancePresentation}
+                        />
+                      ) : null}
+                      {abilityCue?.tokenId === row.tokenId ? (
+                        <AbilityEffectOverlay
+                          key={`ability-${abilityCue.tokenId}-${abilityCue.abilityId}`}
+                          abilityId={abilityCue.abilityId}
+                          active
+                          onComplete={advancePresentation}
+                        />
+                      ) : null}
+                    </>
+                  }
+                />
+              ))}
+            </ul>
+          )}
+        </PixelPanel>
+      </div>
 
       {/* 4 · Claim */}
       <PixelPanel

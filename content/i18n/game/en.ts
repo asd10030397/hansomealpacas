@@ -394,19 +394,28 @@ export const gameEn: GameMessages = {
     runSettleMock: "RUN LOCAL MOCK SETTLEMENT",
     settlePendingBody: "Settlement transaction in progress. Please wait…",
     unavailableBody: "Settlement is not available for this day yet.",
-    emptyBodyLive: "Reveal on-chain first, then wait for settleDay.",
-    emptyBodyMock: "Commit + Reveal on this device, then run local settlement.",
+    emptyBodyLive:
+      "Reveal your move above — your NFT then enters the arena on this page.",
+    emptyBodyMock:
+      "Commit + Reveal on this device. After Reveal, the arena stages here; settlement runs when the window ends.",
     goClaim: "GO TO CLAIM",
     goReveal: "REVEAL MOVE",
-    awaitingReveal: "Committed — reveal before the Reveal window closes.",
-    awaitingSettlement: "Revealed — awaiting settlement",
+    awaitingReveal: "Committed — tap Reveal Move before the window closes.",
+    awaitingSettlement: "In the arena — waiting for battle resolution",
     rewardZero: "0",
   },
   result: {
     heading: "RESULT PHASE",
     blurb:
-      "Reveal your sealed move, watch settlement and battle effects, then claim rewards. Come back each Result Phase to see how the round played out.",
-    comeBackFeel: "Come back for Result Phase to see the battle.",
+      "Reveal opens the result. Your move locks into the arena, then settlement, battle FX, and claim all happen here — no separate waiting room.",
+    comeBackFeel:
+      "Stay on Result after Reveal Move — the battle resolves on this page.",
+    afterRevealTitle: "Move revealed — you are in the arena",
+    afterRevealBody: (countdown) =>
+      `Battle resolves when the Reveal window ends (${countdown}). Settlement and FX run automatically — keep this page open.`,
+    autoSettleHint:
+      "Reveal window closed. Settling the day automatically so battle results can appear…",
+    arenaEyebrow: "ARENA · POST-REVEAL",
     revealSectionTitle: "1 · REVEAL MOVE",
     settleSectionTitle: "2 · SETTLEMENT",
     battleSectionTitle: "3 · BATTLE RESULTS",

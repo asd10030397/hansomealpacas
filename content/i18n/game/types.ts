@@ -319,6 +319,11 @@ export type GameMessages = {
     heading: string;
     blurb: string;
     comeBackFeel: string;
+    /** After Reveal Move succeeds — player stays on Result for the battle. */
+    afterRevealTitle: string;
+    afterRevealBody: (countdown: string) => string;
+    autoSettleHint: string;
+    arenaEyebrow: string;
     revealSectionTitle: string;
     settleSectionTitle: string;
     battleSectionTitle: string;

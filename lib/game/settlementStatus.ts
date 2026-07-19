@@ -62,9 +62,9 @@ export function settlementStatusLabel(status: SettlementUiStatus): string {
     case "loading":
       return "Loading…";
     case "pending":
-      return "Pending — waiting for Reveal to close";
+      return "Move revealed — battle resolves when Reveal ends";
     case "available":
-      return "Available — settlement can run";
+      return "Reveal closed — settling battle now";
     case "waiting_seed":
       return "Waiting for settlement randomness.";
     case "processing":
