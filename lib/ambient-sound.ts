@@ -13,6 +13,24 @@ let unlockAttached = false;
 let visibilityAttached = false;
 let ambientTracked = false;
 let mountCount = 0;
+/** When true, marketing ambient must stay silent (Game section owns audio). */
+let suppressedForGame = false;
+
+function publishAudioDebug() {
+  if (typeof window === "undefined") return;
+  const prev = (window as Window & { __HANSOME_AUDIO__?: Record<string, unknown> })
+    .__HANSOME_AUDIO__;
+  (window as Window & { __HANSOME_AUDIO__?: Record<string, unknown> }).__HANSOME_AUDIO__ = {
+    ...prev,
+    ambient: {
+      suppressed: suppressedForGame,
+      paused: audio?.paused ?? true,
+      volume: audio?.volume ?? 0,
+      src: audio?.src ?? "",
+      unlockAttached,
+    },
+  };
+}
 
 function getAudio(): HTMLAudioElement | null {
   if (typeof window === "undefined") return null;
@@ -75,11 +93,15 @@ function detachUnlockListeners() {
 }
 
 function handleUnlock() {
+  if (suppressedForGame) {
+    detachUnlockListeners();
+    return;
+  }
   void startPlayback();
 }
 
 function attachUnlockListeners() {
-  if (unlockAttached) return;
+  if (suppressedForGame || unlockAttached) return;
   unlockAttached = true;
   document.addEventListener("click", handleUnlock, true);
   document.addEventListener("touchstart", handleUnlock, true);
@@ -87,7 +109,7 @@ function attachUnlockListeners() {
 }
 
 function onVisibilityChange() {
-  if (!hasStarted) return;
+  if (suppressedForGame || !hasStarted) return;
 
   const instance = getAudio();
   if (!instance || instance.paused) return;
@@ -108,6 +130,11 @@ function attachVisibilityListener() {
 }
 
 async function startPlayback(): Promise<boolean> {
+  if (suppressedForGame) {
+    detachUnlockListeners();
+    return false;
+  }
+
   const instance = getAudio();
   if (!instance) return false;
 
@@ -146,6 +173,10 @@ export function hasAmbientStarted(): boolean {
   return hasStarted;
 }
 
+export function isAmbientSuppressedForGame(): boolean {
+  return suppressedForGame;
+}
+
 /** Fade site ambient toward silence (used when entering /game). */
 export function fadeOutAmbientSound(durationMs = FADE_OUT_MS): void {
   const instance = getAudio();
@@ -166,14 +197,35 @@ export function pauseAmbientSound(): void {
   }, FADE_OUT_MS + 40);
 }
 
+/**
+ * Fully stop marketing ambient for the Game section.
+ * Detaches unlock listeners so clicks cannot restart homepage BGM.
+ */
+export function stopAmbientSoundHard(): void {
+  suppressedForGame = true;
+  detachUnlockListeners();
+  const instance = getAudio();
+  if (!instance) {
+    publishAudioDebug();
+    return;
+  }
+  cancelFade();
+  instance.volume = 0;
+  if (!instance.paused) {
+    instance.pause();
+  }
+  publishAudioDebug();
+}
+
 export function mountAmbientSound(): () => void {
   if (typeof window === "undefined") return () => {};
 
+  suppressedForGame = false;
   mountCount += 1;
   const instance = getAudio();
   if (!instance) return () => {};
 
-  void startPlayback();
+  void startPlayback().finally(() => publishAudioDebug());
 
   return () => {
     mountCount -= 1;
@@ -181,6 +233,7 @@ export function mountAmbientSound(): () => void {
       detachUnlockListeners();
       // Leaving marketing pages — keep element warm but quiet if game takes over.
       fadeOutAmbientSound(FADE_OUT_MS);
+      publishAudioDebug();
     }
   };
 }

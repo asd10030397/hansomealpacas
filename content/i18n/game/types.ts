@@ -44,6 +44,7 @@ export type GameMessages = {
     musicToggleTitle: string;
     sfxToggleTitle: string;
     sfxToggleAria: string;
+    tapToEnableAudio: string;
     phaseChanged: string;
     txPending: string;
     txSuccess: string;

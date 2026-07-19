@@ -1,9 +1,27 @@
-import { GAME_HOSTS } from "@/lib/game/paths";
+import { isGameHostHostname } from "@/lib/game/paths";
+
+export { isGameHostHostname } from "@/lib/game/paths";
 
 /** Internal Next routes that always use the game shell. */
 export function isGameInternalPath(pathname: string | null | undefined): boolean {
   if (!pathname) return false;
   return pathname === "/game" || pathname.startsWith("/game/");
+}
+
+/**
+ * True for any surface that must use gameplay BGM (Alpaca Warpath)
+ * and must never play marketing ambient.
+ *
+ * - www: `/game` and `/game/*`
+ * - game.hansomealpacas.xyz: entire host (pretty URLs like `/`, `/dashboard`)
+ */
+export function isGameAudioRoute(
+  pathname: string | null | undefined,
+  hostname?: string | null,
+): boolean {
+  if (isGameInternalPath(pathname)) return true;
+  if (isGameHostHostname(hostname)) return true;
+  return false;
 }
 
 /**
@@ -21,13 +39,9 @@ const GAME_HOST_PRETTY = new Set([
   "/dashboard",
   "/commit",
   "/reveal",
+  "/settlement",
   "/game",
 ]);
-
-export function isGameHostHostname(hostname: string): boolean {
-  const host = hostname.split(":")[0]?.toLowerCase() ?? "";
-  return GAME_HOSTS.has(host);
-}
 
 /** True when the marketing LanguageToggle must not render. */
 export function shouldHideMarketingLanguageToggle(

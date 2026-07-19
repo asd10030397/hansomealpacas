@@ -43,6 +43,7 @@ export const gameZh: GameMessages = {
     musicToggleTitle: "音樂 — Alpaca Warpath",
     sfxToggleTitle: "音效 — 按鈕與遊戲提示音",
     sfxToggleAria: "切換音效",
+    tapToEnableAudio: "點一下以啟用遊戲音樂",
     phaseChanged: "階段",
     txPending: "處理中",
     txSuccess: "成功",

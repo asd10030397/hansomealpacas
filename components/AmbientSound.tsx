@@ -3,22 +3,31 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import {
-  fadeOutAmbientSound,
   mountAmbientSound,
+  stopAmbientSoundHard,
 } from "@/lib/ambient-sound";
+import { isGameAudioRoute } from "@/lib/game/isGameChrome";
 
+/**
+ * Marketing-site ambient only.
+ * On any Game surface (www `/game/*` or game.hansomealpacas.xyz), hard-stop
+ * homepage BGM so it can never overlap Alpaca Warpath.
+ */
 export function AmbientSound() {
   const pathname = usePathname();
-  const isGame = pathname === "/game" || pathname.startsWith("/game/");
+  const isDevPreview = pathname === "/dev" || pathname.startsWith("/dev/");
 
   useEffect(() => {
-    if (isGame) {
-      // Hand off to gameplay battle theme (GameShell / GameplayMusic).
-      fadeOutAmbientSound(1200);
+    const host = typeof window !== "undefined" ? window.location.hostname : null;
+    const inGame = isGameAudioRoute(pathname, host) || isDevPreview;
+
+    if (inGame) {
+      stopAmbientSoundHard();
       return;
     }
+
     return mountAmbientSound();
-  }, [isGame]);
+  }, [pathname, isDevPreview]);
 
   return null;
 }

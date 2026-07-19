@@ -42,6 +42,7 @@ export const gameEn: GameMessages = {
     musicToggleTitle: "Music — Alpaca Warpath",
     sfxToggleTitle: "Sound effects — UI clicks and game cues",
     sfxToggleAria: "Toggle sound effects",
+    tapToEnableAudio: "Tap to enable game audio",
     phaseChanged: "Phase",
     txPending: "Pending",
     txSuccess: "Success",

@@ -5,8 +5,8 @@
  * - music → gameplay battle-theme BGM only (`setGameplayMusicEnabled`)
  * - sfx   → all one-shots / UI / phase cues via `playSfx()` — never BGM
  *
- * UI click SFX uses `music/UI.wav` → `/audio/game/ui-click.*`.
- * Future: commit/reveal/claim/hunt/escape/shield/lucky/phase-impact.
+ * Defaults for new users (no saved prefs): Music ON, SFX ON.
+ * Existing localStorage preferences are never overwritten on load.
  */
 
 import { setGameplayMusicEnabled } from "@/lib/game/gameplay-music";
@@ -24,8 +24,7 @@ export interface AudioPreferences {
 const STORAGE_KEY = "hansome-game-audio";
 
 const DEFAULTS: AudioPreferences = {
-  musicEnabled: false,
-  /** On by default so button SFX are audible once the player interacts. */
+  musicEnabled: true,
   sfxEnabled: true,
 };
 
@@ -33,17 +32,24 @@ export function loadAudioPreferences(): AudioPreferences {
   if (typeof window === "undefined") return DEFAULTS;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULTS;
-    return { ...DEFAULTS, ...JSON.parse(raw) };
+    if (!raw) return { ...DEFAULTS };
+    const parsed = JSON.parse(raw) as Partial<AudioPreferences>;
+    return {
+      musicEnabled:
+        typeof parsed.musicEnabled === "boolean"
+          ? parsed.musicEnabled
+          : DEFAULTS.musicEnabled,
+      sfxEnabled:
+        typeof parsed.sfxEnabled === "boolean" ? parsed.sfxEnabled : DEFAULTS.sfxEnabled,
+    };
   } catch {
-    return DEFAULTS;
+    return { ...DEFAULTS };
   }
 }
 
 export function saveAudioPreferences(prefs: AudioPreferences): void {
   if (typeof window === "undefined") return;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
-  // Music only — never start SFX from preference save.
   setGameplayMusicEnabled(prefs.musicEnabled);
 }
 

@@ -1,12 +1,10 @@
 /**
  * Gameplay BGM — Alpaca Warpath (game section only).
  * Does not replace /audio/ambient.wav (marketing site music).
+ * Never falls back to homepage ambient.
  */
 
-import {
-  fadeOutAmbientSound,
-  pauseAmbientSound,
-} from "@/lib/ambient-sound";
+import { stopAmbientSoundHard } from "@/lib/ambient-sound";
 
 /** Bump when replacing theme files so browsers skip stale CDN/cache copies. */
 const THEME_CACHE_VER = "warpath-1";
@@ -27,6 +25,26 @@ let fadeFrame: number | null = null;
 let mountCount = 0;
 let unlockAttached = false;
 let desiredPlaying = false;
+let themeStarted = false;
+let waitingForUnlock = false;
+const unlockListeners = new Set<() => void>();
+
+function publishAudioDebug() {
+  if (typeof window === "undefined") return;
+  const prev = (window as Window & { __HANSOME_AUDIO__?: Record<string, unknown> })
+    .__HANSOME_AUDIO__;
+  (window as Window & { __HANSOME_AUDIO__?: Record<string, unknown> }).__HANSOME_AUDIO__ = {
+    ...prev,
+    game: {
+      desired: desiredPlaying,
+      paused: theme?.paused ?? true,
+      volume: theme?.volume ?? 0,
+      src: theme?.src ?? "",
+      awaiting: waitingForUnlock,
+      started: themeStarted,
+    },
+  };
+}
 
 function cancelFade() {
   if (fadeFrame !== null) {
@@ -76,6 +94,16 @@ function getTheme(): HTMLAudioElement | null {
   return theme;
 }
 
+function notifyUnlockListeners() {
+  for (const fn of unlockListeners) {
+    try {
+      fn();
+    } catch {
+      /* ignore */
+    }
+  }
+}
+
 function detachUnlock() {
   if (!unlockAttached) return;
   unlockAttached = false;
@@ -91,6 +119,8 @@ function handleUnlock() {
 function attachUnlock() {
   if (unlockAttached) return;
   unlockAttached = true;
+  waitingForUnlock = true;
+  notifyUnlockListeners();
   document.addEventListener("click", handleUnlock, true);
   document.addEventListener("touchstart", handleUnlock, true);
   document.addEventListener("keydown", handleUnlock, true);
@@ -100,20 +130,24 @@ async function startThemePlayback(): Promise<boolean> {
   const el = getTheme();
   if (!el || !desiredPlaying) return false;
 
-  // Hand off from marketing ambient.
-  fadeOutAmbientSound(FADE_OUT_MS);
-  pauseAmbientSound();
+  // Hard-stop marketing ambient — never use it as a Game fallback.
+  stopAmbientSoundHard();
 
   try {
     if (el.paused) {
       el.volume = 0;
       await el.play();
     }
+    themeStarted = true;
+    waitingForUnlock = false;
     detachUnlock();
+    notifyUnlockListeners();
     fadeVolume(el, document.hidden ? 0 : TARGET_VOLUME, FADE_IN_MS);
+    publishAudioDebug();
     return true;
   } catch {
     attachUnlock();
+    publishAudioDebug();
     return false;
   }
 }
@@ -121,6 +155,8 @@ async function startThemePlayback(): Promise<boolean> {
 function stopThemePlayback() {
   const el = getTheme();
   if (!el) return;
+  waitingForUnlock = false;
+  notifyUnlockListeners();
   fadeVolume(el, 0, FADE_OUT_MS, () => {
     if (!desiredPlaying) {
       el.pause();
@@ -135,8 +171,11 @@ export function setGameplayMusicEnabled(enabled: boolean): void {
     void startThemePlayback();
   } else {
     detachUnlock();
+    waitingForUnlock = false;
+    notifyUnlockListeners();
     stopThemePlayback();
   }
+  publishAudioDebug();
 }
 
 /**
@@ -151,23 +190,43 @@ export function playPhaseImpact(phase: string): void {
 /**
  * Mount gameplay music session while /game is active.
  * Callers control playback via `setGameplayMusicEnabled`.
+ * Does not restart the track on remount while still desired+playing.
  */
 export function mountGameplayMusic(): () => void {
   if (typeof window === "undefined") return () => {};
 
   mountCount += 1;
-  fadeOutAmbientSound(FADE_OUT_MS);
+  stopAmbientSoundHard();
 
   return () => {
     mountCount -= 1;
     if (mountCount <= 0) {
       desiredPlaying = false;
+      waitingForUnlock = false;
       detachUnlock();
       stopThemePlayback();
+      notifyUnlockListeners();
     }
   };
 }
 
 export function isGameplayMusicDesired(): boolean {
   return desiredPlaying;
+}
+
+/** True when Music is ON but the browser blocked autoplay (awaiting tap). */
+export function isGameplayMusicAwaitingUnlock(): boolean {
+  return desiredPlaying && waitingForUnlock && !isGameplayThemePlaying();
+}
+
+export function isGameplayThemePlaying(): boolean {
+  return !!theme && !theme.paused && themeStarted && desiredPlaying;
+}
+
+/** Subscribe to unlock / play-state changes (for optional UI prompt). */
+export function subscribeGameplayMusicUnlock(listener: () => void): () => void {
+  unlockListeners.add(listener);
+  return () => {
+    unlockListeners.delete(listener);
+  };
 }
