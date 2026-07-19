@@ -1,15 +1,13 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
-import { getGameHref, type GameHrefMap } from "@/lib/game/paths";
+import { useGameHrefContext } from "@/context/GameHrefContext";
+import type { GameHrefMap } from "@/lib/game/paths";
 
-const subscribe = () => () => {};
-
-/** Host-aware links for game.hansomealpacas.xyz vs www /game/* — does not change marketing `/`. */
+/**
+ * Host-aware game links.
+ * On game.hansomealpacas.xyz: HOME=`/`, PLAY=`/dashboard` (from GameHrefProvider + Host header).
+ * On www `/game/*`: HOME=`/game`, PLAY=`/game/dashboard` — marketing `/` unchanged.
+ */
 export function useGameHref(): GameHrefMap {
-  return useSyncExternalStore(
-    subscribe,
-    () => getGameHref(window.location.hostname),
-    () => getGameHref(null),
-  );
+  return useGameHrefContext();
 }

@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
 import { Web3Provider } from "@/components/Web3Provider";
 import { GameShell } from "@/components/game/GameShell";
+import { GameHrefProvider } from "@/context/GameHrefContext";
+import { getGameHref } from "@/lib/game/paths";
 import "@/styles/game.css";
 
 export const metadata: Metadata = {
@@ -17,10 +20,15 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function GameLayout({ children }: { children: React.ReactNode }) {
+export default async function GameLayout({ children }: { children: React.ReactNode }) {
+  const host = (await headers()).get("host");
+  const hrefs = getGameHref(host);
+
   return (
     <Web3Provider>
-      <GameShell>{children}</GameShell>
+      <GameHrefProvider value={hrefs}>
+        <GameShell>{children}</GameShell>
+      </GameHrefProvider>
     </Web3Provider>
   );
 }
