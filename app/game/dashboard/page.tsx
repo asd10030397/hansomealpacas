@@ -44,7 +44,7 @@ export default function GameDashboardPage() {
           eyebrow={t.dashboard.demoPhaseEyebrow}
         >
           <div
-            className="grid grid-cols-2 gap-2"
+            className="grid grid-cols-2 gap-2 sm:grid-cols-4"
             role="group"
             aria-label={t.dashboard.demoPhaseTitle}
           >
@@ -55,20 +55,38 @@ export default function GameDashboardPage() {
               aria-pressed={phase === "COMMIT"}
               onClick={() => setDemoPhase("COMMIT")}
             >
-              {t.phases.COMMIT}
+              {t.phases.COMMIT_SHORT}
             </PixelButton>
             <PixelButton
               size="sm"
-              variant={phase !== "COMMIT" ? "gold" : "slate"}
+              variant={phase === "REVEAL" ? "gold" : "slate"}
               className="w-full"
-              aria-pressed={phase !== "COMMIT"}
+              aria-pressed={phase === "REVEAL"}
               onClick={() => setDemoPhase("REVEAL")}
             >
-              {t.phases.RESULT}
+              {t.phases.REVEAL_SHORT}
+            </PixelButton>
+            <PixelButton
+              size="sm"
+              variant={phase === "SETTLEMENT" ? "gold" : "slate"}
+              className="w-full"
+              aria-pressed={phase === "SETTLEMENT"}
+              onClick={() => setDemoPhase("SETTLEMENT")}
+            >
+              {t.phases.BATTLE}
+            </PixelButton>
+            <PixelButton
+              size="sm"
+              variant={phase === "CLAIM" ? "gold" : "slate"}
+              className="w-full"
+              aria-pressed={phase === "CLAIM"}
+              onClick={() => setDemoPhase("CLAIM")}
+            >
+              {t.phases.CLAIM_SHORT}
             </PixelButton>
           </div>
           <p className="mt-2 text-[0.65rem] text-[var(--hg-muted)]">
-            Result demo opens Reveal window (manual reveal still required).
+            Demo: Commit → Reveal → Battle → Claim (manual reveal still required).
           </p>
         </PixelPanel>
       ) : null}

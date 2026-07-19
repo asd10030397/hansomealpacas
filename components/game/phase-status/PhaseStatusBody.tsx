@@ -6,7 +6,7 @@ import {
   buildPhaseStatusView,
   formatCountdown,
 } from "@/lib/game/phaseStatus";
-import { toUiLoopPhase } from "@/lib/game/uiLoopPhase";
+import { toUiLoopPhase, type UiLoopPhase } from "@/lib/game/uiLoopPhase";
 import type { GameDayState, GamePhase } from "@/types/game";
 import { PhaseTimeline } from "./PhaseTimeline";
 
@@ -25,7 +25,7 @@ export type PhaseStatusCopy = {
   timelineAria: string;
   help: Record<GamePhase, string>;
   phaseName: (phase: GamePhase) => string;
-  resultPhaseName: string;
+  loopPhaseName: (phase: UiLoopPhase) => string;
 };
 
 /** Shared timing meaning for Desktop + Mobile shells. */
@@ -64,7 +64,8 @@ export function PhaseStatusBody({
         ? copy.settlementDone
         : settle;
 
-  const showPhaseCountdown = phase === "COMMIT" || phase === "REVEAL";
+  const showPhaseCountdown =
+    phase === "COMMIT" || phase === "REVEAL" || phase === "SETTLEMENT";
 
   return (
     <div className={root} data-phase={loop} data-wire-phase={phase}>
@@ -101,11 +102,7 @@ export function PhaseStatusBody({
         <div className="phase-status__cell">
           <p className="phase-status__label">{copy.nextPhaseLabel}</p>
           <p className="phase-status__value">
-            {view.nextPhase === "RESULT"
-              ? copy.resultPhaseName
-              : view.nextPhase === "COMMIT"
-                ? copy.phaseName("COMMIT")
-                : "—"}
+            {view.nextPhase ? copy.loopPhaseName(view.nextPhase) : "—"}
           </p>
         </div>
         <div className="phase-status__cell phase-status__cell--wide">

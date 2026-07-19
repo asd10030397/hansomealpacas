@@ -17,6 +17,7 @@ export const MOCK_BANNER = "DEMO DATA — not live blockchain state";
 export function createMockDayState(now = Date.now()): GameDayState {
   const commitMs = 20 * 60 * 60 * 1000;
   const revealMs = 4 * 60 * 60 * 1000;
+  const battleMs = 0;
   // Demo: mid-commit window so Commit is active on first load
   const dayStart = now - 2 * 60 * 60 * 1000;
   return {
@@ -25,6 +26,7 @@ export function createMockDayState(now = Date.now()): GameDayState {
     phaseEndsAt: dayStart + commitMs,
     commitEndsAt: dayStart + commitMs,
     revealEndsAt: dayStart + commitMs + revealMs,
+    dayEndsAt: dayStart + commitMs + revealMs + battleMs,
     settled: false,
     settlementStatus: "Pending",
   };

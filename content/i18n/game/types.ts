@@ -14,7 +14,13 @@ export type GameMessages = {
     REVEAL: string;
     SETTLEMENT: string;
     CLAIM: string;
-    /** Player-facing loop label (Reveal + Settle + Claim). */
+    /** Player-facing Battle step (wire SETTLEMENT). */
+    BATTLE: string;
+    /** Short timeline labels. */
+    COMMIT_SHORT: string;
+    REVEAL_SHORT: string;
+    CLAIM_SHORT: string;
+    /** Result page heading (Reveal + Battle + Claim surface). */
     RESULT: string;
   };
   common: {
@@ -343,6 +349,7 @@ export type GameMessages = {
     noClaimable: string;
     substepReveal: string;
     substepSettle: string;
+    substepBattle: string;
     substepClaim: string;
   };
   docs: {

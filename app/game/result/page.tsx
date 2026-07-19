@@ -142,8 +142,8 @@ export default function ResultPhasePage() {
       <p className="mt-3 text-xs text-[var(--hg-muted)]" data-substep={sub}>
         {sub === "reveal"
           ? t.result.substepReveal
-          : sub === "settle"
-            ? t.result.substepSettle
+          : sub === "battle"
+            ? t.result.substepBattle
             : t.result.substepClaim}
       </p>
 

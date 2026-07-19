@@ -19,8 +19,10 @@ export function PhaseTimeline({
     variant === "desktop" ? "phase-tl phase-tl--desktop" : "phase-tl phase-tl--mobile";
 
   const labels: Record<UiLoopPhase, string> = {
-    COMMIT: variant === "mobile" ? "Commit" : t.phases.COMMIT,
-    RESULT: variant === "mobile" ? "Result" : t.phases.RESULT,
+    COMMIT: t.phases.COMMIT_SHORT,
+    REVEAL: t.phases.REVEAL_SHORT,
+    BATTLE: t.phases.BATTLE,
+    CLAIM: t.phases.CLAIM_SHORT,
   };
 
   return (

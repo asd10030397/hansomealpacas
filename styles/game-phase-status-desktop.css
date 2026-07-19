@@ -8,33 +8,31 @@
 }
 
 .phase-status--desktop .phase-tl {
-  display: flex;
-  flex-wrap: nowrap;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: center;
-  justify-content: space-between;
-  gap: 0.15rem;
+  column-gap: 0.2rem;
   margin: 0;
   padding: 0.55rem 0.65rem;
   list-style: none;
   border: 2px solid #0d1018;
   background: #0f1420;
-  overflow-x: auto;
 }
 
 .phase-status--desktop .phase-tl__step {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  flex: 1 1 auto;
+  justify-content: center;
+  gap: 0.25rem;
   min-width: 0;
   white-space: nowrap;
 }
 
 .phase-status--desktop .phase-tl__connector {
   display: inline-block;
-  width: 0.85rem;
+  width: 0.55rem;
   height: 2px;
-  margin-right: 0.2rem;
+  margin-right: 0.15rem;
   background: #3a455c;
   flex-shrink: 0;
 }

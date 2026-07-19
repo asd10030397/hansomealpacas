@@ -126,21 +126,23 @@ export function useGameState() {
     // Prefer on-chain immutables (Testnet fast timing); fall back to env/GDS constants.
     const dayLen = Number(dayLengthRead.data ?? DAY_LENGTH_SEC);
     const commitDur = Number(commitDurationRead.data ?? COMMIT_DURATION_SEC);
-    const revealDur =
-      dayLen > commitDur ? dayLen - commitDur : REVEAL_DURATION_SEC;
+    // Prefer on-chain revealDuration so a Battle pad (day - commit - reveal) stays intact.
+    const revealDur = Number(revealDurationRead.data ?? REVEAL_DURATION_SEC);
     const startSec = dayZero + day * dayLen;
     const commitEndsAt = (startSec + commitDur) * 1000;
     const revealEndsAt = (startSec + commitDur + revealDur) * 1000;
+    const dayEndsAt = (startSec + dayLen) * 1000;
     const phase = phaseFromDayState(state, settled);
     let phaseEndsAt = commitEndsAt;
     if (phase === "REVEAL") phaseEndsAt = revealEndsAt;
-    if (phase === "SETTLEMENT" || phase === "CLAIM") phaseEndsAt = revealEndsAt;
+    if (phase === "SETTLEMENT" || phase === "CLAIM") phaseEndsAt = dayEndsAt;
     return {
       day,
       phase,
       phaseEndsAt,
       commitEndsAt,
       revealEndsAt,
+      dayEndsAt,
       settled,
       settlementStatus: settled
         ? "Complete"
@@ -153,6 +155,7 @@ export function useGameState() {
     dayZeroRead.data,
     dayLengthRead.data,
     commitDurationRead.data,
+    revealDurationRead.data,
     currentDayRead.data,
     dayStateRead.data,
     settledRead.data,
@@ -169,6 +172,7 @@ export function useGameState() {
           phaseEndsAt: now + 60_000,
           commitEndsAt: now + 60_000,
           revealEndsAt: now + 120_000,
+          dayEndsAt: now + 180_000,
           settled: false,
           settlementStatus: "Pending",
         }
@@ -178,13 +182,14 @@ export function useGameState() {
   const phaseEndsAt = useMemo(() => {
     if (phase === "COMMIT") return day.commitEndsAt;
     if (phase === "REVEAL") return day.revealEndsAt;
-    return day.phaseEndsAt;
+    return day.dayEndsAt ?? day.phaseEndsAt;
   }, [phase, day]);
 
   const setDemoPhase = useCallback(
     (next: GamePhase) => {
       if (live) return; // live chain clock is authoritative
       const t = Date.now();
+      const battlePadMs = 2 * 60 * 1000;
       setMockDay((prev) => {
         if (next === "COMMIT") {
           return {
@@ -194,6 +199,7 @@ export function useGameState() {
             settlementStatus: "Pending",
             commitEndsAt: t + 60 * 60 * 1000,
             revealEndsAt: t + 2 * 60 * 60 * 1000,
+            dayEndsAt: t + 2 * 60 * 60 * 1000 + battlePadMs,
             phaseEndsAt: t + 60 * 60 * 1000,
           };
         }
@@ -205,6 +211,7 @@ export function useGameState() {
             settlementStatus: "Pending",
             commitEndsAt: t - 1000,
             revealEndsAt: t + 60 * 60 * 1000,
+            dayEndsAt: t + 60 * 60 * 1000 + battlePadMs,
             phaseEndsAt: t + 60 * 60 * 1000,
           };
         }
@@ -216,7 +223,8 @@ export function useGameState() {
             settlementStatus: "Ready",
             commitEndsAt: t - 2000,
             revealEndsAt: t - 1000,
-            phaseEndsAt: t,
+            dayEndsAt: t + battlePadMs,
+            phaseEndsAt: t + battlePadMs,
           };
         }
         return {
@@ -226,7 +234,8 @@ export function useGameState() {
           settlementStatus: "Complete",
           commitEndsAt: t - 3000,
           revealEndsAt: t - 2000,
-          phaseEndsAt: t,
+          dayEndsAt: t + battlePadMs,
+          phaseEndsAt: t + battlePadMs,
         };
       });
       setNow(Date.now());

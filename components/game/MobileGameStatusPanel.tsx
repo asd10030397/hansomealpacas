@@ -21,7 +21,12 @@ function usePhaseStatusCopy(): PhaseStatusCopy {
     timelineAria: t.phaseStatus.timelineAria,
     help: t.phaseStatus.help,
     phaseName: (p) => t.phases[p],
-    resultPhaseName: t.phases.RESULT,
+    loopPhaseName: (loop) => {
+      if (loop === "BATTLE") return t.phases.BATTLE;
+      if (loop === "COMMIT") return t.phases.COMMIT_SHORT;
+      if (loop === "REVEAL") return t.phases.REVEAL_SHORT;
+      return t.phases.CLAIM_SHORT;
+    },
   };
 }
 
