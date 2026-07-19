@@ -59,6 +59,10 @@
   padding-left: 0.45rem;
   padding-right: 0.45rem;
   font-size: 0.95rem;
+  /* Mobile keeps compact arrow; gold still readable */
+  background: #e8b03a;
+  border-color: #9a6a12;
+  color: #1a1520;
 }
 
 .hansome-game .game-nav__drawer {

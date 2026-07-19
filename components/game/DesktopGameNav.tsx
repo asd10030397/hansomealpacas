@@ -45,11 +45,11 @@ export function DesktopGameNav() {
     <header className="game-nav game-nav--desktop" data-game-chrome="desktop">
       <div className="game-nav__inner game-nav__inner--desktop">
         <div className="game-nav__brand-cluster">
-          <GameBackButton />
           <Link href={gameHref.home} className="game-nav__brand">
             {t.nav.brand}
             <span>{t.nav.brandSub}</span>
           </Link>
+          <GameBackButton className="game-nav__back--desktop" />
         </div>
 
         <nav className="game-nav__links" aria-label={t.nav.aria}>
