@@ -29,6 +29,29 @@ describe("settlementActivation", () => {
     expect(prePenaltyBps(1, 1, 1)).toBeGreaterThan(0);
   });
 
+  it("cougar: Hunt miss when no alpacas at location (Ad(L)=0)", () => {
+    const miss = deriveSettlementActivation({
+      side: "Cougar",
+      gameplayClass: "Common",
+      locationId: 2, // Grassland
+      adL: 0,
+      cdL: 1,
+      alpacaParticipantCount: 3,
+    });
+    expect(miss.outcome).toMatch(/Hunt miss/i);
+    expect(miss.abilityLabel).toMatch(/Empty/i);
+
+    const hit = deriveSettlementActivation({
+      side: "Cougar",
+      gameplayClass: "Common",
+      locationId: 2,
+      adL: 1,
+      cdL: 1,
+      alpacaParticipantCount: 3,
+    });
+    expect(hit.outcome).toBe("Hunt success");
+  });
+
   it("farmer weight only influences with ≥2 alpacas", () => {
     expect(farmerWeightInfluenced(1)).toBe(false);
     expect(farmerWeightInfluenced(2)).toBe(true);

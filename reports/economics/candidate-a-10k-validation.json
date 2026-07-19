@@ -1,0 +1,49 @@
+{
+  "ladder": "Candidate A",
+  "pi0Bps": [
+    0,
+    1500,
+    2500,
+    3500,
+    4500
+  ],
+  "pi0Pct": [
+    0,
+    15,
+    25,
+    35,
+    45
+  ],
+  "days": 10000,
+  "pools": "80/10/10",
+  "Rd": 400000,
+  "commonAvg": 374.41,
+  "cougarAvg": 1600,
+  "ratio": 4.273,
+  "ratioInBand3to5": true,
+  "traits": {
+    "Common": 374.41,
+    "Guardian": 505.54,
+    "Farmer": 450.71,
+    "Lucky": 426.89,
+    "Runner": 452.95,
+    "King": 634.58
+  },
+  "premiumsVsCommonPct": {
+    "Common": 0,
+    "Guardian": 35,
+    "Farmer": 20.4,
+    "Lucky": 14,
+    "Runner": 21,
+    "King": 69.5
+  },
+  "avgTreasuryPen": 130843.6,
+  "avgHuntDistributed": 40000,
+  "conservationFailures": 0,
+  "emissionInflation": false,
+  "notes": [
+    "Cougar avg sticky near 1600 when Rh fully allocated under full participation.",
+    "Ratio moves via Alpaca net after stronger π₀.",
+    "Specials show clearer premiums vs Common than legacy 10–30% ladder."
+  ]
+}

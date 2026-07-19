@@ -18,8 +18,8 @@ export function useGameNavLinks() {
         feature:
           item.id === "myNfts"
             ? t.nav.featureMyNfts
-            : item.id === "rewards"
-              ? t.nav.featureRewards
+            : item.id === "claim"
+              ? t.nav.featureClaim
               : item.id === "leaderboard"
                 ? t.nav.featureLeaderboard
                 : "",

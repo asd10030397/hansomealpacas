@@ -34,7 +34,15 @@ import {
   HANSOME_GAME_ADDRESS,
   isHansomeGameConfigured,
 } from "@/lib/game/hansomeGame";
-import { onWalletAccountChange } from "@/lib/game/commitSecret";
+import {
+  getCommitSecret,
+  onWalletAccountChange,
+} from "@/lib/game/commitSecret";
+import { useGameState } from "@/hooks/game/useGameState";
+import {
+  deriveOwnedNftDayGameplayState,
+  ZERO_COMMIT_HASH,
+} from "@/lib/game/ownedNftDayGameplay";
 import {
   getOwnedGenesisInventoryRevision,
   getOwnedGenesisMeta,
@@ -53,7 +61,7 @@ import {
   REWARD_DISTRIBUTOR_ADDRESS,
   isRewardDistributorConfigured,
 } from "@/lib/game/rewardDistributor";
-import type { LocationId, MockNft } from "@/types/game";
+import type { MockNft } from "@/types/game";
 
 export type OwnedGenesisNft = MockNft & {
   ability: string;
@@ -106,7 +114,7 @@ async function fetchTokenMeta(
       /* try next */
     }
   }
-  return { image: "/pixel/cougar/mint/image/cougar.png", identity: null };
+  return { image: "", identity: null };
 }
 
 export function useOwnedGenesisNfts() {
@@ -116,6 +124,13 @@ export function useOwnedGenesisNfts() {
   const liveGame = isHansomeGameConfigured();
   const nft = GENESIS_NFT_ADDRESS as Address | undefined;
   const game = HANSOME_GAME_ADDRESS;
+  // Same wall-clock day as the rest of the game UI — never lag behind on
+  // a slow RPC currentDay read (that painted Day N "Committed" on Day N+1).
+  const gameState = useGameState();
+  const gameplayDay =
+    liveGame && !gameState.isLoading ? gameState.day.day : null;
+  const daySettled =
+    liveGame && !gameState.isLoading ? Boolean(gameState.day.settled) : false;
 
   const metaEpoch = useSyncExternalStore(
     subscribeOwnedGenesisMeta,
@@ -152,14 +167,6 @@ export function useOwnedGenesisNfts() {
     args: address ? [address] : undefined,
     chainId: GENESIS_CHAIN_ID,
     query: liveQuery,
-  });
-
-  const currentDay = useReadContract({
-    address: game ?? undefined,
-    abi: hansomeGameAbi,
-    functionName: "currentDay",
-    chainId: GAME_CHAIN_ID,
-    query: { enabled: liveGame && !!game, refetchInterval: isConnected ? 20_000 : false },
   });
 
   const distributorFromGame = useReadContract({
@@ -204,7 +211,8 @@ export function useOwnedGenesisNfts() {
     return out;
   }, [address, ownerReads.data]);
 
-  const day = Number(currentDay.data ?? 0n);
+  const dayReadsEnabled =
+    liveGame && !!game && gameplayDay != null && Number.isInteger(gameplayDay);
 
   const detailReads = useReadContracts({
     contracts: ownedIds.flatMap((tokenId) => {
@@ -239,25 +247,24 @@ export function useOwnedGenesisNfts() {
           chainId: GENESIS_CHAIN_ID,
         },
       ];
-      const gameReads =
-        liveGame && game
-          ? [
-              {
-                address: game,
-                abi: hansomeGameAbi,
-                functionName: "locationOf" as const,
-                args: [id, BigInt(day)] as const,
-                chainId: GAME_CHAIN_ID,
-              },
-              {
-                address: game,
-                abi: hansomeGameAbi,
-                functionName: "commitHashOf" as const,
-                args: [id, BigInt(day)] as const,
-                chainId: GAME_CHAIN_ID,
-              },
-            ]
-          : [];
+      const gameReads = dayReadsEnabled
+        ? [
+            {
+              address: game!,
+              abi: hansomeGameAbi,
+              functionName: "locationOf" as const,
+              args: [id, BigInt(gameplayDay)] as const,
+              chainId: GAME_CHAIN_ID,
+            },
+            {
+              address: game!,
+              abi: hansomeGameAbi,
+              functionName: "commitHashOf" as const,
+              args: [id, BigInt(gameplayDay)] as const,
+              chainId: GAME_CHAIN_ID,
+            },
+          ]
+        : [];
       const claimRead =
         distributor != null
           ? [
@@ -274,11 +281,12 @@ export function useOwnedGenesisNfts() {
     }),
     query: {
       enabled: configured && !!nft && ownedIds.length > 0,
-      refetchInterval: isConnected ? 20_000 : false,
+      // Match game clock cadence so day rollover refreshes commit status quickly.
+      refetchInterval: isConnected ? (dayReadsEnabled ? 4_000 : 20_000) : false,
     },
   });
 
-  const stride = 4 + (liveGame && game ? 2 : 0) + (distributor ? 1 : 0);
+  const stride = 4 + (dayReadsEnabled ? 2 : 0) + (distributor ? 1 : 0);
 
   const sourceKeyByTokenId = useMemo(() => {
     const map = new Map<number, string>();
@@ -306,7 +314,6 @@ export function useOwnedGenesisNfts() {
       balance.refetch?.(),
       ownerReads.refetch?.(),
       detailReads.refetch?.(),
-      currentDay.refetch?.(),
     ]);
   };
 
@@ -446,33 +453,53 @@ export function useOwnedGenesisNfts() {
         metaRevealed ||
         isTestnetGameplayReady({ tokenId, onChainRevealed });
       let locOffset = base + 4;
-      let locationId: LocationId | null = null;
-      let gameStatus: MockNft["gameStatus"] = "Idle";
-      let hash: `0x${string}` | undefined;
+      let hash: `0x${string}` | undefined = ZERO_COMMIT_HASH;
       let onChainLoc = 0;
-      if (liveGame && game) {
+      if (dayReadsEnabled) {
         onChainLoc = Number(detailReads.data?.[locOffset]?.result ?? 0);
-        hash = detailReads.data?.[locOffset + 1]?.result as `0x${string}` | undefined;
+        hash = detailReads.data?.[locOffset + 1]?.result as
+          | `0x${string}`
+          | undefined;
         locOffset += 2;
-        if (hash && hash !== zeroHash) {
-          locationId = onChainLoc as LocationId;
-          // Non-zero location ⇒ revealed move; Home(0) may still be unrevealed commit.
-          gameStatus = onChainLoc !== 0 ? "Revealed" : "Committed";
-        }
       }
+      const secret =
+        gameplayDay != null
+          ? getCommitSecret(tokenId, gameplayDay, address)
+          : null;
+      const { gameStatus, selectedLocationId } = deriveOwnedNftDayGameplayState({
+        gameplayDay,
+        commitHash: hash,
+        locationOf: onChainLoc,
+        secretLocationId: secret?.locationId,
+        secretStatus: secret?.status,
+        daySettled,
+      });
       const claimableWei =
         distributor != null
           ? ((detailReads.data?.[locOffset]?.result as bigint | undefined) ?? 0n)
           : 0n;
-      if (claimableWei > 0n) gameStatus = "Settled";
       const trait = side === "Cougar" ? "Cougar" : gameplayClass;
+      // Prefer metadata art only when metadata side agrees with settlement side.
+      // Testnet FY deck can disagree with pre-reveal Pinata packaging (#16 / #29).
+      const imageFallback =
+        side === "Cougar"
+          ? "/pixel/cougar/mint/image/cougar.png"
+          : "/assets/characters/alpaca-hero-ranch.png";
+      const metaSideOk =
+        !metaIdentity ||
+        metaIdentity.side === "Unknown" ||
+        metaIdentity.side === side;
+      const image =
+        meta?.image && meta.image.length > 0 && metaSideOk
+          ? meta.image
+          : imageFallback;
       return {
         tokenId,
         side,
         gameplayClass,
         revealed,
-        image: meta?.image ?? "/pixel/cougar/mint/image/cougar.png",
-        selectedLocationId: locationId,
+        image,
+        selectedLocationId,
         claimableHansome: Number(formatEther(claimableWei)),
         claimableWei,
         gameStatus,
@@ -486,8 +513,9 @@ export function useOwnedGenesisNfts() {
     detailReads.data,
     ownedIds,
     stride,
-    liveGame,
-    game,
+    dayReadsEnabled,
+    gameplayDay,
+    daySettled,
     distributor,
     metaEpoch,
   ]);
@@ -525,5 +553,3 @@ export function useOwnedGenesisNfts() {
   };
 }
 
-const zeroHash =
-  "0x0000000000000000000000000000000000000000000000000000000000000000" as const;

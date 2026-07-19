@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useReadContract } from "wagmi";
 import { createMockDayState, MOCK_TERRITORY } from "@/data/game/mock";
 import { hansomeGameAbi } from "@/lib/game/abis/hansomeGame";
+import { syncGameplayDayClientState } from "@/lib/game/commitSecret";
 import {
   COMMIT_DURATION_SEC,
   DAY_LENGTH_SEC,
@@ -63,6 +64,7 @@ export function useGameState() {
   const [mockDay, setMockDay] = useState<GameDayState>(() => createMockDayState());
   const [now, setNow] = useState(() => Date.now());
   const territory: TerritoryStats = MOCK_TERRITORY;
+  const lastSyncedDayRef = useRef<number | null>(null);
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 1000);
@@ -215,6 +217,16 @@ export function useGameState() {
         }
       : { ...mockDay, phase: derivePhaseFromMock(mockDay, now) };
   const phase = day.phase;
+
+  // Drop Day N commit secrets / pending location as soon as the clock hits N+1.
+  useEffect(() => {
+    if (live && !chainReady) return;
+    const d = day.day;
+    if (!Number.isInteger(d) || d < 0) return;
+    if (lastSyncedDayRef.current === d) return;
+    lastSyncedDayRef.current = d;
+    syncGameplayDayClientState(d);
+  }, [live, chainReady, day.day]);
 
   const phaseEndsAt = useMemo(() => {
     if (phase === "COMMIT") return day.commitEndsAt;

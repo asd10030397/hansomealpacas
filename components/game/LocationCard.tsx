@@ -2,19 +2,25 @@
 
 import Image from "next/image";
 import type { GameLocation, NftSide } from "@/types/game";
-import { PixelBadge, PixelCard } from "@/components/ui/pixel";
-import { WalletGateButton } from "./WalletGateButton";
+import { PixelBadge, PixelButton, PixelCard } from "@/components/ui/pixel";
 
 export function LocationCard({
   location,
   side,
   selected,
-  onSelect,
+  actionLabel,
+  actionBusy,
+  actionDisabled,
+  onAction,
 }: {
   location: GameLocation;
   side: NftSide;
   selected?: boolean;
-  onSelect?: (id: GameLocation["id"]) => void;
+  /** Primary CTA label (e.g. COMMIT HERE). */
+  actionLabel: string;
+  actionBusy?: boolean;
+  actionDisabled?: boolean;
+  onAction?: (id: GameLocation["id"]) => void;
 }) {
   const allowed =
     side === "Cougar" ? location.cougarAllowed : location.alpacaAllowed;
@@ -48,19 +54,20 @@ export function LocationCard({
       </div>
       <div className="mb-3 flex flex-wrap gap-1">
         <PixelBadge tone={riskTone}>RISK {location.riskLabel}</PixelBadge>
-        <PixelBadge tone="blue">PRESSURE {location.pressure} (demo)</PixelBadge>
+        <PixelBadge tone="blue">HUNT π₀ {location.pressure}%</PixelBadge>
       </div>
       {!allowed ? (
         <p className="text-xs text-[#c44b3a]">Not available for Cougars</p>
       ) : (
-        <WalletGateButton
-          feature={`Select ${location.name}`}
+        <PixelButton
           size="sm"
           variant={selected ? "gold" : "green"}
-          onReady={() => onSelect?.(location.id)}
+          disabled={actionDisabled || actionBusy}
+          aria-busy={actionBusy || undefined}
+          onClick={() => onAction?.(location.id)}
         >
-          {selected ? "SELECTED" : "SELECT"}
-        </WalletGateButton>
+          {actionBusy ? "COMMITTING…" : actionLabel}
+        </PixelButton>
       )}
     </PixelCard>
   );

@@ -173,21 +173,82 @@ export function onWalletAccountChange(address: string | null | undefined): void 
   setPendingLocation(null);
 }
 
-/** Explore → Commit handoff (session). */
-export function setPendingLocation(locationId: LocationId | null): void {
+type PendingLocationRecord = {
+  day: number;
+  locationId: LocationId;
+};
+
+/** Explore → Commit handoff (session), scoped to a game day. */
+export function setPendingLocation(
+  locationId: LocationId | null,
+  day?: number,
+): void {
   if (typeof sessionStorage === "undefined") return;
   if (locationId == null) {
     sessionStorage.removeItem(PENDING_LOCATION_KEY);
     return;
   }
+  if (day != null && Number.isInteger(day) && day >= 0) {
+    const record: PendingLocationRecord = { day, locationId };
+    sessionStorage.setItem(PENDING_LOCATION_KEY, JSON.stringify(record));
+    return;
+  }
+  // Legacy write without day — cleared on next day sync.
   sessionStorage.setItem(PENDING_LOCATION_KEY, String(locationId));
 }
 
-export function getPendingLocation(): LocationId | null {
+/**
+ * Read Explore→Commit handoff. When `day` is provided, only returns a match
+ * for that day (prevents Day N location leaking into Day N+1).
+ */
+export function getPendingLocation(day?: number): LocationId | null {
   if (typeof sessionStorage === "undefined") return null;
   const raw = sessionStorage.getItem(PENDING_LOCATION_KEY);
   if (raw == null) return null;
+
+  try {
+    const parsed = JSON.parse(raw) as PendingLocationRecord;
+    if (
+      parsed &&
+      typeof parsed.day === "number" &&
+      typeof parsed.locationId === "number"
+    ) {
+      if (!Number.isInteger(parsed.locationId) || parsed.locationId < 0 || parsed.locationId > 4) {
+        return null;
+      }
+      if (day != null && parsed.day !== day) return null;
+      return parsed.locationId as LocationId;
+    }
+  } catch {
+    /* legacy plain number */
+  }
+
   const n = Number(raw);
   if (!Number.isInteger(n) || n < 0 || n > 4) return null;
+  // Legacy unscoped value: only honor when caller is not day-checking.
+  if (day != null) return null;
   return n as LocationId;
+}
+
+/** Drop commit secrets that are not for `currentDay`. */
+export function pruneCommitSecretsNotForDay(currentDay: number): number {
+  if (!Number.isInteger(currentDay) || currentDay < 0) return 0;
+  const all = readAll();
+  const kept = all.filter((r) => r.day === currentDay);
+  const removed = all.length - kept.length;
+  if (removed > 0) writeAll(kept);
+  return removed;
+}
+
+/**
+ * Call when the UI clock advances to a new game day.
+ * Clears prior-day commit secrets and Explore→Commit location handoff.
+ */
+export function syncGameplayDayClientState(currentDay: number): void {
+  pruneCommitSecretsNotForDay(currentDay);
+  if (typeof sessionStorage === "undefined") return;
+  // Keep only a pending location that was sealed for this day.
+  if (getPendingLocation(currentDay) == null) {
+    sessionStorage.removeItem(PENDING_LOCATION_KEY);
+  }
 }

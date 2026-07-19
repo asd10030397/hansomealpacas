@@ -1,5 +1,22 @@
 export const rewardDistributorAbi = [
   {
+    type: "event",
+    name: "Credited",
+    inputs: [
+      { name: "tokenId", type: "uint256", indexed: true },
+      { name: "amount", type: "uint256", indexed: false },
+    ],
+  },
+  {
+    type: "event",
+    name: "Claimed",
+    inputs: [
+      { name: "tokenId", type: "uint256", indexed: true },
+      { name: "to", type: "address", indexed: true },
+      { name: "amount", type: "uint256", indexed: false },
+    ],
+  },
+  {
     type: "function",
     name: "claimable",
     stateMutability: "view",

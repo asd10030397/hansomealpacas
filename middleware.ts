@@ -12,7 +12,8 @@ import { GAME_HOSTS } from "@/lib/game/paths";
  * /mint                  → /game/mint
  * /explore               → /game/explore
  * /my-nfts               → /game/my-nfts
- * /rewards               → /game/rewards
+ * /claim                 → /game/claim
+ * /rewards               → /game/claim (legacy)
  * /leaderboard           → /game/leaderboard
  * /docs                  → /game/docs
  * /game/commit|reveal    → same
@@ -51,7 +52,8 @@ export function middleware(request: NextRequest) {
     "/mint": "/game/mint",
     "/explore": "/game/explore",
     "/my-nfts": "/game/my-nfts",
-    "/rewards": "/game/rewards",
+    "/claim": "/game/claim",
+    "/rewards": "/game/claim",
     "/leaderboard": "/game/leaderboard",
     "/docs": "/game/docs",
     "/docs/guide": "/game/docs/guide",

@@ -64,8 +64,12 @@ export function PhaseStatusBody({
         ? copy.settlementDone
         : settle;
 
+  // CLAIM is still Battle Result viewing window — count down to dayEndsAt.
   const showPhaseCountdown =
-    phase === "COMMIT" || phase === "REVEAL" || phase === "SETTLEMENT";
+    phase === "COMMIT" ||
+    phase === "REVEAL" ||
+    phase === "SETTLEMENT" ||
+    phase === "CLAIM";
 
   return (
     <div className={root} data-phase={loop} data-wire-phase={phase}>
@@ -102,7 +106,9 @@ export function PhaseStatusBody({
         <div className="phase-status__cell">
           <p className="phase-status__label">{copy.nextPhaseLabel}</p>
           <p className="phase-status__value">
-            {view.nextPhase ? copy.loopPhaseName(view.nextPhase) : "—"}
+            {view.nextPhase
+              ? copy.loopPhaseName(view.nextPhase)
+              : copy.loopPhaseName("CHOOSE")}
           </p>
         </div>
         <div className="phase-status__cell phase-status__cell--wide">

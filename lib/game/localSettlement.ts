@@ -141,7 +141,7 @@ export function buildMockSettlementRows(
       side,
       gameplayClass,
       locationId: loc,
-      adL: ad[loc] ?? 1,
+      adL: ad[loc] ?? 0,
       cdL: cd[loc] ?? 0,
       alpacaParticipantCount,
       runnerSuccess,
@@ -155,7 +155,7 @@ export function buildMockSettlementRows(
       reward = Math.floor(reward * 0.35);
     } else if (activation.activatedAbility === "lucky") {
       reward = Math.floor(reward * 1.15);
-    } else if (side === "Cougar" && activation.outcome.includes("miss")) {
+    } else if (side === "Cougar" && /hunt miss/i.test(activation.outcome)) {
       reward = Math.floor(reward * 0.2);
     }
 

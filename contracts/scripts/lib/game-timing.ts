@@ -3,7 +3,7 @@
  *
  * Production / Mainnet GDS: Commit 20h + Reveal 4h = Day 24h (no Battle pad).
  * Robinhood Testnet (default):
- *   Commit 5m (Choose Location) + Reveal 5m (Battle Result viewing) = Day 10m.
+ *   Commit 120s (Choose Location) + Reveal 120s (Battle Result viewing) = Day 240s.
  *   Settle is allowed as soon as Reveal opens — viewing timer never delays
  *   settlement. Mainnet keeps GDS commit–reveal security (settle after Reveal).
  *
@@ -19,9 +19,9 @@ export const PROD_COMMIT_DURATION_SEC = 20 * 3600;
 export const PROD_REVEAL_DURATION_SEC = 4 * 3600;
 export const PROD_DAY_LENGTH_SEC = PROD_COMMIT_DURATION_SEC + PROD_REVEAL_DURATION_SEC;
 
-/** Testnet QA: 5 min Choose Location + 5 min Battle presentation (instant resolve). */
-export const TESTNET_COMMIT_DURATION_SEC = 5 * 60;
-export const TESTNET_REVEAL_DURATION_SEC = 5 * 60;
+/** Testnet QA: 120s Choose Location + 120s Battle presentation (instant resolve). */
+export const TESTNET_COMMIT_DURATION_SEC = 120;
+export const TESTNET_REVEAL_DURATION_SEC = 120;
 /** Extra pad after reveal; 0 — Battle presentation IS the reveal window. */
 export const TESTNET_BATTLE_DURATION_SEC = 0;
 export const TESTNET_DAY_LENGTH_SEC =

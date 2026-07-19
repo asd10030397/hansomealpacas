@@ -6,7 +6,7 @@ export type GameNavId =
   | "play"
   | "mint"
   | "myNfts"
-  | "rewards"
+  | "claim"
   | "leaderboard"
   | "docs";
 
@@ -14,7 +14,7 @@ export type GameNavItemDef = {
   id: GameNavId;
   hrefKey: keyof GameHrefMap;
   /** i18n key under `t.nav` */
-  labelKey: "home" | "play" | "mint" | "myNfts" | "rewards" | "leaderboard" | "docs";
+  labelKey: "home" | "play" | "mint" | "myNfts" | "claim" | "leaderboard" | "docs";
   requiresWallet?: boolean;
 };
 
@@ -25,7 +25,7 @@ export const GAME_NAV_ITEMS: readonly GameNavItemDef[] = [
   { id: "mint", hrefKey: "mint", labelKey: "mint" },
   /** Always route to the page — it owns the connect/empty states (no modal gate). */
   { id: "myNfts", hrefKey: "myNfts", labelKey: "myNfts" },
-  { id: "rewards", hrefKey: "rewards", labelKey: "rewards" },
+  { id: "claim", hrefKey: "claim", labelKey: "claim" },
   { id: "leaderboard", hrefKey: "leaderboard", labelKey: "leaderboard" },
   { id: "docs", hrefKey: "docs", labelKey: "docs" },
 ] as const;
@@ -40,7 +40,7 @@ export const GAME_DOCK_PRIMARY: readonly GameNavId[] = [
 
 /** Secondary routes revealed via MORE. */
 export const GAME_DOCK_MORE: readonly GameNavId[] = [
-  "rewards",
+  "claim",
   "leaderboard",
   "docs",
 ] as const;

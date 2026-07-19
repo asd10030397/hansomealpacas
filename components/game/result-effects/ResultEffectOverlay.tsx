@@ -124,7 +124,7 @@ export function ResultEffectOverlay({
                   {
                     left: `${16 + (i % 3) * 26}%`,
                     top: `${20 + Math.floor(i / 3) * 26}%`,
-                    animationDelay: `${60 + i * 35}ms`,
+                    animationDelay: `${90 + i * 52}ms`,
                     ["--dx" as string]: `${18 + i * 6}px`,
                     ["--dy" as string]: `${22 + i * 4}px`,
                   } as CSSProperties
@@ -146,7 +146,7 @@ export function ResultEffectOverlay({
                 {
                   left: `${22 + (i % 3) * 24}%`,
                   top: `${18 + Math.floor(i / 3) * 28}%`,
-                  animationDelay: `${80 + i * 50}ms`,
+                  animationDelay: `${120 + i * 75}ms`,
                   ["--dx" as string]: `${(i % 2 === 0 ? 1 : -1) * (8 + i * 3)}px`,
                   ["--dy" as string]: `${-14 - i * 3}px`,
                 } as CSSProperties

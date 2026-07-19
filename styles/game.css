@@ -142,6 +142,63 @@ html.hansome-game-route body.hansome-game-route {
   background-position: center, center;
 }
 
+/* Navigation page atmospheres */
+.hansome-game[data-bg="navHome"] {
+  --hg-bg-image: url("/game/backgrounds/nav-home.webp");
+  --hg-bg-overlay: linear-gradient(
+    180deg,
+    rgba(10, 12, 20, 0.55) 0%,
+    rgba(12, 14, 22, 0.62) 40%,
+    rgba(8, 10, 16, 0.82) 100%
+  );
+  background-position: center 42%, center 42%;
+}
+
+.hansome-game[data-bg="nfts"] {
+  --hg-bg-image: url("/game/backgrounds/nfts.webp");
+  --hg-bg-overlay: linear-gradient(
+    180deg,
+    rgba(10, 12, 20, 0.7) 0%,
+    rgba(12, 14, 22, 0.78) 50%,
+    rgba(8, 10, 16, 0.9) 100%
+  );
+  background-position: center, center;
+}
+
+.hansome-game[data-bg="rewards"] {
+  --hg-bg-image: url("/game/backgrounds/rewards.webp");
+  --hg-bg-overlay: linear-gradient(
+    180deg,
+    rgba(14, 10, 8, 0.7) 0%,
+    rgba(16, 12, 10, 0.78) 50%,
+    rgba(8, 8, 12, 0.9) 100%
+  );
+  background-position: center, center;
+}
+
+.hansome-game[data-bg="leaderboard"] {
+  --hg-bg-image: url("/game/backgrounds/leaderboard.webp");
+  --hg-bg-overlay: linear-gradient(
+    180deg,
+    rgba(8, 10, 18, 0.72) 0%,
+    rgba(10, 12, 20, 0.8) 50%,
+    rgba(6, 8, 14, 0.9) 100%
+  );
+  background-position: center 40%, center 40%;
+}
+
+.hansome-game[data-bg="docs"] {
+  --hg-bg-image: url("/game/backgrounds/docs.webp");
+  /* Stronger wash — docs need clean reading contrast */
+  --hg-bg-overlay: linear-gradient(
+    180deg,
+    rgba(10, 12, 18, 0.78) 0%,
+    rgba(12, 14, 20, 0.84) 45%,
+    rgba(8, 10, 16, 0.92) 100%
+  );
+  background-position: center, center;
+}
+
 @media (min-width: 1024px) {
   .hansome-game {
     background-attachment: fixed, fixed;
@@ -160,7 +217,12 @@ html.hansome-game-route body.hansome-game-route {
   .hansome-game[data-bg="forest"],
   .hansome-game[data-bg="river"],
   .hansome-game[data-bg="battle"],
-  .hansome-game[data-bg="reward"] {
+  .hansome-game[data-bg="reward"],
+  .hansome-game[data-bg="navHome"],
+  .hansome-game[data-bg="nfts"],
+  .hansome-game[data-bg="rewards"],
+  .hansome-game[data-bg="leaderboard"],
+  .hansome-game[data-bg="docs"] {
     background-position: center center, center center;
   }
 }

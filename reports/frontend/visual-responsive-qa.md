@@ -24,17 +24,18 @@ Formats: WebP only for page shells (no multi‑MB PNG backgrounds). Location **c
 
 ## Theme routing
 
-| Page | Theme |
-|---|---|
-| Home / Title (`/game`) | world (title stage still owns full-bleed art) |
-| Dashboard / Play | world |
-| Explore (none selected) | world |
-| Explore / Commit (location selected) | home / mountain / grassland / forest / river |
-| Battle Result | battle |
-| Rewards / Claim | reward |
-| My NFTs | home |
-| Mint | home (+ hero scenic layer) |
-| Leaderboard / Docs | world |
+| Page | Theme | Asset |
+|---|---|---|
+| Home / Title (`/game`) | navHome | `nav-home.webp` / `home-bg.png` |
+| Dashboard / Play | world | `world.webp` |
+| Explore (none selected) | world | `world.webp` |
+| Explore / Commit (location selected) | home / mountain / grassland / forest / river | location maps |
+| Battle Result | battle | `battle.webp` |
+| Rewards / Claim | rewards | `rewards.webp` / `rewards-bg.png` |
+| My NFTs | nfts | `nfts.webp` / `nfts-bg.png` |
+| Mint | home | village `home.webp` |
+| Leaderboard | leaderboard | `leaderboard.webp` / `leaderboard-bg.png` |
+| Docs | docs | `docs.webp` / `docs-bg.png` |
 
 Hook: `data-bg` on `.hansome-game` via `GameShell` + `lib/game/pageBackground.ts`.
 

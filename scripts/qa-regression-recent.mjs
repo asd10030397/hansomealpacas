@@ -20,7 +20,7 @@ const routes = [
   { name: "dashboard", url: p("/dashboard", "/game/dashboard"), expect: [/DAILY GAME|PLAY|COMMIT|REVEAL|SETTLE/i], forbid: [/MOCK_NFTS/i] },
   { name: "mint", url: p("/mint", "/game/mint"), expect: [/MINT|GENESIS|DEPLOY|TESTNET/i], forbid: [/NOT YET/i, /LIVE TESTNET/i, /testing only/i] },
   { name: "my-nfts", url: p("/my-nfts", "/game/my-nfts"), expect: [/MY NFT|NFT/i], forbid: [/MOCK_NFTS/i, /mock claimable/i] },
-  { name: "rewards", url: p("/rewards", "/game/rewards"), expect: [/REWARD|CLAIM|HANSOME/i], forbid: [/MOCK_NFTS/i] },
+  { name: "claim", url: p("/claim", "/game/claim"), expect: [/CLAIM|HANSOME|領取/i], forbid: [/MOCK_NFTS/i] },
   { name: "leaderboard", url: p("/leaderboard", "/game/leaderboard"), expect: [/LEADERBOARD|SEASON|RANK/i], forbid: [/\bLOOT\b/] },
   { name: "docs", url: p("/docs", "/game/docs"), expect: [/PLAYER DOCS|玩家文件|Player Guide|玩家指南/i], forbid: [] },
   { name: "guide", url: p("/docs/guide", "/game/docs/guide"), expect: [/HANSOME Alpacas/, /Player Guide/], forbid: [] },

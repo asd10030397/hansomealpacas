@@ -68,11 +68,12 @@ describe("SettlementLib unit (GDS)", () => {
 
   describe("U-TRAIT penalties", () => {
     it("U-TRAIT-01 pi0 table", async () => {
+      // Candidate A: 0 / 15 / 25 / 35 / 45
       expect(await lib.pi0Bps(0)).to.equal(0);
-      expect(await lib.pi0Bps(1)).to.equal(1000);
-      expect(await lib.pi0Bps(2)).to.equal(1500);
-      expect(await lib.pi0Bps(3)).to.equal(2200);
-      expect(await lib.pi0Bps(4)).to.equal(3000);
+      expect(await lib.pi0Bps(1)).to.equal(1500);
+      expect(await lib.pi0Bps(2)).to.equal(2500);
+      expect(await lib.pi0Bps(3)).to.equal(3500);
+      expect(await lib.pi0Bps(4)).to.equal(4500);
     });
 
     it("U-TRAIT-02 Home or Cd=0 → pre=0", async () => {

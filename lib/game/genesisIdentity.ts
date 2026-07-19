@@ -48,6 +48,47 @@ export function abilityLabelFor(side: NftSide, cls: GameplayClass): string {
   }
 }
 
+/**
+ * Short gameplay ability blurb (GDS / Player Guide).
+ * Locale: "en" | "zh".
+ */
+export function abilityDescriptionFor(
+  side: NftSide,
+  cls: GameplayClass,
+  locale: "en" | "zh" = "en",
+): string {
+  const zh = locale === "zh";
+  if (side === "Cougar") {
+    return zh
+      ? "參與可狩獵地點；該地有任一羊駝時狩獵成功，可分得 Hunting Pool。"
+      : "Join a huntable location. Succeed when any Alpaca is there — share the Hunting Pool.";
+  }
+  switch (cls) {
+    case "King":
+      return zh ? "永久免疫狩獵傷害。" : "Permanent immunity to hunting penalty.";
+    case "Guardian":
+      return zh ? "狩獵傷害降低 50%。" : "Hunting penalty rate reduced by 50%.";
+    case "Farmer":
+      return zh
+        ? "所在地點收益權重 ×1.20（+20%，需歸一化）。"
+        : "Effective location reward weight ×1.20 (+20%, normalized).";
+    case "Lucky":
+      return zh
+        ? "20% 機率完全避免當日狩獵傷害。"
+        : "20% chance to fully avoid the day's hunting penalty.";
+    case "Runner":
+      return zh
+        ? "30% 機率逃離狩獵（傷害歸零）。"
+        : "30% chance to escape hunting (penalty = 0).";
+    case "Common":
+      return zh
+        ? "沒有特殊能力 — 靠地點策略取勝。"
+        : "No special ability — win with location strategy.";
+    default:
+      return "—";
+  }
+}
+
 /** Production GDS defaults (Mainnet). Testnet overrides via NEXT_PUBLIC_* after sync-game-env. */
 export const PROD_DAY_LENGTH_SEC = 24 * 60 * 60;
 export const PROD_COMMIT_DURATION_SEC = 20 * 60 * 60;

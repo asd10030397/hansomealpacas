@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ActionGrid } from "@/components/game/ActionGrid";
+import { UnclaimedRewardsNotice } from "@/components/game/UnclaimedRewardsNotice";
 import { WalletGateButton } from "@/components/game/WalletGateButton";
 import { GameStatusPanel } from "@/components/game/GameStatusPanel";
 import { PixelPanel } from "@/components/ui/pixel";
-import { useClaimRewards } from "@/hooks/game/useClaimRewards";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { toUiLoopPhase } from "@/lib/game/uiLoopPhase";
@@ -26,14 +26,13 @@ function mainActionForPhase(
       variant: "gold" as const,
     };
   }
-  // Battle Result viewing (resolve ASAP; claim is on the result page).
+  // Battle Result viewing — claiming is on the global Claim page.
   return {
     kind: "link" as const,
     href: hrefs.result,
-    label:
-      phase === "CLAIM" ? t.dashboard.mainClaim : t.dashboard.mainResult,
+    label: t.dashboard.mainResult,
     feature: t.phases.BATTLE_RESULT,
-    variant: phase === "CLAIM" ? ("green" as const) : ("gold" as const),
+    variant: "gold" as const,
   };
 }
 
@@ -50,7 +49,6 @@ export function DashboardCommand({
 }) {
   const { t } = useGameI18n();
   const gameHref = useGameHref();
-  const claim = useClaimRewards();
   const main = mainActionForPhase(phase, t, gameHref);
   const loop = toUiLoopPhase(phase);
   const nextSettlementLabel =
@@ -98,24 +96,12 @@ export function DashboardCommand({
 
         <dl className="dash-cmd__rewards mt-2">
           <div className="dash-cmd__reward-cell">
-            <dt>{t.dashboard.pendingRewards}</dt>
-            <dd>
-              {claim.displayTotal} {claim.live ? "tHANSOME" : "HANSOME"}
-              {!claim.live ? " · MOCK" : ""}
-            </dd>
-          </div>
-          <div className="dash-cmd__reward-cell">
-            <dt>{t.dashboard.claimableRewards}</dt>
-            <dd>
-              {claim.displayTotal} {claim.live ? "tHANSOME" : "HANSOME"}
-              {!claim.live ? " · MOCK" : claim.canClaim ? " · CLAIMABLE" : " · NONE"}
-            </dd>
-          </div>
-          <div className="dash-cmd__reward-cell">
             <dt>{t.dashboard.nextSettlement}</dt>
             <dd>{nextSettlementLabel}</dd>
           </div>
         </dl>
+
+        <UnclaimedRewardsNotice />
       </div>
 
       <PixelPanel title={t.dashboard.alsoAvailable} eyebrow={t.dashboard.phaseScoped}>

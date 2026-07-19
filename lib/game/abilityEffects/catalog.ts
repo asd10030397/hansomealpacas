@@ -10,6 +10,8 @@
  *   npm run generate:ability-sfx
  */
 
+import { scalePresentationMs } from "@/lib/game/presentationTiming";
+
 export const ABILITY_EFFECT_IDS = [
   "guardian",
   "runner",
@@ -39,21 +41,21 @@ export const ABILITY_EFFECT_CATALOG: Record<AbilityEffectId, AbilityEffectDef> =
     sourceFolder: "Guardian",
     publicFolder: "guardian",
     banner: "Guardian activated!",
-    durationMs: 1200,
+    durationMs: scalePresentationMs(1200),
   },
   runner: {
     id: "runner",
     sourceFolder: "Runner",
     publicFolder: "runner",
     banner: "Runner activated!",
-    durationMs: 1200,
+    durationMs: scalePresentationMs(1200),
   },
   lucky: {
     id: "lucky",
     sourceFolder: "Lucky",
     publicFolder: "lucky",
     banner: "Lucky activated!",
-    durationMs: 1300,
+    durationMs: scalePresentationMs(1300),
   },
   farmer: {
     id: "farmer",
@@ -61,7 +63,7 @@ export const ABILITY_EFFECT_CATALOG: Record<AbilityEffectId, AbilityEffectDef> =
     publicFolder: "farmer",
     /** Passive identity — settlement does not treat Farmer as a temporary proc. */
     banner: "Farmer · Harvest Boost",
-    durationMs: 1400,
+    durationMs: scalePresentationMs(1400),
   },
   king: {
     id: "king",
@@ -69,7 +71,7 @@ export const ABILITY_EFFECT_CATALOG: Record<AbilityEffectId, AbilityEffectDef> =
     sourceFolder: "king",
     publicFolder: "king",
     banner: "King activated!",
-    durationMs: 1400,
+    durationMs: scalePresentationMs(1400),
   },
 };
 

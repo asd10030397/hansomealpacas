@@ -7,6 +7,8 @@ import { useGamePageBackground } from "@/components/game/GamePageBackground";
 import { GameplayMusic } from "@/components/game/GameplayMusic";
 import { GameUiSfx } from "@/components/game/GameUiSfx";
 import { GameVisualShell } from "@/components/game/GameVisualShell";
+import { useAutoNavigateToBattle } from "@/hooks/game/useAutoNavigateToBattle";
+import { useAutoNavigateToCommit } from "@/hooks/game/useAutoNavigateToCommit";
 import { AutoRevealProvider } from "@/hooks/game/useAutoReveal";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { forceUnlockBodyScroll } from "@/lib/ui/bodyScrollLock";
@@ -16,6 +18,8 @@ export function GameShell({ children }: { children: React.ReactNode }) {
   const { t } = useGameI18n();
   const pathname = usePathname();
   const pageBg = useGamePageBackground();
+  useAutoNavigateToBattle();
+  useAutoNavigateToCommit();
 
   // Emergency cleanup: never leave body locked after route changes.
   useEffect(() => {

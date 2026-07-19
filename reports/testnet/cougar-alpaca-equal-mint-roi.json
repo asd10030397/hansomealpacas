@@ -1,0 +1,138 @@
+{
+  "recommendation": {
+    "primary": "Keep ~3× Cougar/Common (pools ≈ 80/10/10)",
+    "optional": "Mild nudge to ~4× (75/12.5/12.5) only if Cougar mint demand is soft",
+    "avoid": "6× and above; especially 8–10×",
+    "rationale": "Equal mint means reward ratio = ROI/ETH. 3× already premiums the 10×-rarer hunter without mapping rarity 1:1 into emissions. 10× would give ~9% of NFTs ~45% of daily emission."
+  },
+  "assumptions": {
+    "Rd": 400000,
+    "mintAlpacaEth": 0.015,
+    "mintCougarEth": 0.015,
+    "N_A": 500,
+    "N_C": 50,
+    "piBarFromMc": 0.1685,
+    "commonDailyBaseline": 532.16,
+    "cougarDailyBaseline": 1594.34,
+    "method": "Hold π̄; assume Rh fully allocated; Rc=Rh; solve Ra for target avgC/avgA. No contract changes.",
+    "correction": "Prior analysis wrongly used Cougar mint 0.15 ETH; both are 0.015 ETH."
+  },
+  "focusAnswers": {
+    "is3xReasonableFor10xRarity": "Yes. Rarity ≠ reward. 3× pays for hunter role; scarcity is secondary/status. 1:1 rarity mapping over-concentrates emissions.",
+    "would10xBeOverpowered": "Yes. Equal-mint 10× makes one Cougar match ten Commons in ROI and routes ~45% of Rd to Cougars.",
+    "bestRatio": "3× primary; 4× optional ceiling of healthy band; 5× soft max; avoid 6×+.",
+    "huntPenaltyStrength": "Candidate A adopted: π₀ 0/15/25/35/45 + density. Keep pools 80/10/10. Do not fund higher Cougar ratios via near-wipe penalties."
+  },
+  "models": [
+    {
+      "targetRatio": 3,
+      "pools": { "fa": 0.8004, "fc": 0.0998, "fh": 0.0998 },
+      "avgCommonDaily": 532.4,
+      "avgCougarDaily": 1597.2,
+      "roiPerEthDaily": { "common": 35493, "cougar": 106479 },
+      "rewardConcentration": {
+        "emissionToCougarsPct": 20.0,
+        "emissionToAlpacasNetPct": 66.5,
+        "vsSupplyShare": 2.2
+      },
+      "treasuryPenaltiesApproxDaily": 53944,
+      "impactCommon": "Baseline",
+      "impactSpecial": "Traits matter on contested days",
+      "cougarDominanceRisk": "low",
+      "sustainable": true
+    },
+    {
+      "targetRatio": 4,
+      "pools": { "fa": 0.7504, "fc": 0.1248, "fh": 0.1248 },
+      "avgCommonDaily": 499.2,
+      "avgCougarDaily": 1996.7,
+      "roiPerEthDaily": { "common": 33278, "cougar": 133113 },
+      "rewardConcentration": {
+        "emissionToCougarsPct": 25.0,
+        "emissionToAlpacasNetPct": 62.4,
+        "vsSupplyShare": 2.75
+      },
+      "treasuryPenaltiesApproxDaily": 50578,
+      "impactCommon": "−6% vs baseline",
+      "impactSpecial": "Slightly higher relative insurance value",
+      "cougarDominanceRisk": "low_moderate",
+      "sustainable": true
+    },
+    {
+      "targetRatio": 5,
+      "pools": { "fa": 0.7063, "fc": 0.1468, "fh": 0.1468 },
+      "avgCommonDaily": 469.9,
+      "avgCougarDaily": 2349.3,
+      "roiPerEthDaily": { "common": 31324, "cougar": 156619 },
+      "rewardConcentration": {
+        "emissionToCougarsPct": 29.4,
+        "emissionToAlpacasNetPct": 58.7,
+        "vsSupplyShare": 3.23
+      },
+      "treasuryPenaltiesApproxDaily": 47607,
+      "impactCommon": "−12% vs baseline",
+      "impactSpecial": "Clearer insurance premium",
+      "cougarDominanceRisk": "moderate",
+      "sustainable": "borderline"
+    },
+    {
+      "targetRatio": 6,
+      "pools": { "fa": 0.6672, "fc": 0.1664, "fh": 0.1664 },
+      "avgCommonDaily": 443.8,
+      "avgCougarDaily": 2662.8,
+      "roiPerEthDaily": { "common": 29586, "cougar": 177517 },
+      "rewardConcentration": {
+        "emissionToCougarsPct": 33.3,
+        "emissionToAlpacasNetPct": 55.5,
+        "vsSupplyShare": 3.66
+      },
+      "treasuryPenaltiesApproxDaily": 44966,
+      "impactCommon": "−17% vs baseline",
+      "impactSpecial": "Traits become load-bearing",
+      "cougarDominanceRisk": "elevated",
+      "sustainable": false
+    },
+    {
+      "targetRatio": 8,
+      "pools": { "fa": 0.6005, "fc": 0.1997, "fh": 0.1997 },
+      "avgCommonDaily": 399.5,
+      "avgCougarDaily": 3195.8,
+      "roiPerEthDaily": { "common": 26631, "cougar": 213051 },
+      "rewardConcentration": {
+        "emissionToCougarsPct": 39.9,
+        "emissionToAlpacasNetPct": 49.9,
+        "vsSupplyShare": 4.39
+      },
+      "treasuryPenaltiesApproxDaily": 40476,
+      "impactCommon": "−25% — filler feel",
+      "impactSpecial": "Cannot offset Cougar gap",
+      "cougarDominanceRisk": "high",
+      "sustainable": false
+    },
+    {
+      "targetRatio": 10,
+      "pools": { "fa": 0.546, "fc": 0.227, "fh": 0.227 },
+      "avgCommonDaily": 363.2,
+      "avgCougarDaily": 3632.0,
+      "roiPerEthDaily": { "common": 24213, "cougar": 242133 },
+      "rewardConcentration": {
+        "emissionToCougarsPct": 45.4,
+        "emissionToAlpacasNetPct": 45.4,
+        "vsSupplyShare": 4.99
+      },
+      "treasuryPenaltiesApproxDaily": 36800,
+      "impactCommon": "−32% — weak mass market",
+      "impactSpecial": "Cannot close 10× gap",
+      "cougarDominanceRisk": "extreme",
+      "sustainable": false
+    }
+  ],
+  "traitPremiumsWhenHunted": [
+    { "piPre": 0.1, "kingPct": 11.1, "guardianPct": 5.6, "runnerPct": 3.3, "luckyPct": 2.2 },
+    { "piPre": 0.15, "kingPct": 17.6, "guardianPct": 8.8, "runnerPct": 5.3, "luckyPct": 3.5 },
+    { "piPre": 0.22, "kingPct": 28.2, "guardianPct": 14.1, "runnerPct": 8.5, "luckyPct": 5.6 },
+    { "piPre": 0.3, "kingPct": 42.9, "guardianPct": 21.4, "runnerPct": 12.9, "luckyPct": 8.6 },
+    { "piPre": 0.45, "kingPct": 81.8, "guardianPct": 40.9, "runnerPct": 24.5, "luckyPct": 16.4 },
+    { "piPre": 0.6, "kingPct": 150.0, "guardianPct": 75.0, "runnerPct": 45.0, "luckyPct": 30.0 }
+  ]
+}

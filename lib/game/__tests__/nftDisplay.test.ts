@@ -17,12 +17,16 @@ describe("nftDisplay", () => {
   it("formats status and rewards", () => {
     expect(formatBattleStatus("Escaped hunt")).toBe("Escaped");
     expect(formatBattleStatus("Hunt success")).toBe("Hunting Success");
+    expect(formatBattleStatus("Hunt miss — no Alpacas here")).toBe(
+      "Hunt Failed — Empty Location",
+    );
     expect(formatBattleRewardLabel({ rewardLabel: "10,323 tHANSOME" })).toBe(
       "+10,323 tHANSOME",
     );
     expect(
       formatBattleRewardLabel({ rewardLabel: "0", missedReveal: true }),
     ).toBe("0 HANSOME");
+    expect(formatBattleRewardLabel({ rewardLabel: "Pending" })).toBe("Pending");
   });
 
   it("shortens wallets", () => {

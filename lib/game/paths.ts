@@ -21,7 +21,10 @@ export const GAME_INTERNAL = {
   /** Alias → Result (legacy deep links). */
   settlement: "/game/result",
   myNfts: "/game/my-nfts",
-  rewards: "/game/rewards",
+  /** Global Claim page — permanently claimable HANSOME. */
+  claim: "/game/claim",
+  /** @deprecated Alias → claim (legacy deep links / bookmarks). */
+  rewards: "/game/claim",
   leaderboard: "/game/leaderboard",
   docs: "/game/docs",
   playerGuide: "/game/docs/guide",
@@ -38,7 +41,9 @@ export const GAME_PUBLIC = {
   explore: "/explore",
   settlement: "/result",
   myNfts: "/my-nfts",
-  rewards: "/rewards",
+  claim: "/claim",
+  /** @deprecated Alias → claim. */
+  rewards: "/claim",
   leaderboard: "/leaderboard",
   docs: "/docs",
   playerGuide: "/docs/guide",

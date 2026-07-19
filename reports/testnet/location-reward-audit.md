@@ -1,7 +1,12 @@
 # Location Reward Audit (Testnet QA)
 
+> **Update 2026-07-20:** Candidate A π₀ is live (`0/1500/2500/3500/4500` bps = 0/15/25/35/45%).  
+> Tables below are a historical snapshot of the legacy 10–30% ladder. See  
+> `reports/economics/candidate-a-implementation.md` and re-run  
+> `scripts/audit-location-rewards.ts` for a fresh report.
+
 Generated: 2026-07-19T15:56:36.749Z  
-Source of truth: `SettlementLib.sol` / GDS v1.1 (unchanged).  
+Source of truth: `SettlementLib.sol` / GDS v1.1.  
 Harness: `SettlementLibHarness` (local Hardhat deploy — not a chain write).
 
 ## Current location configuration

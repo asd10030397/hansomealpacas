@@ -79,7 +79,7 @@ await page.evaluate(() => {
 await step("game-home", path("/", "/game"), true);
 await step("dashboard", path("/dashboard", "/game/dashboard"), false);
 await step("my-nfts", path("/my-nfts", "/game/my-nfts"), false);
-await step("rewards", path("/rewards", "/game/rewards"), false);
+await step("claim", path("/claim", "/game/claim"), false);
 await step("docs", path("/docs", "/game/docs"), false);
 await step("guide", path("/docs/guide", "/game/docs/guide"), false);
 

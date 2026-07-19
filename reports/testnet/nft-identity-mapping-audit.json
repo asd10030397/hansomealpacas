@@ -1,0 +1,174 @@
+{
+  "generatedAt": "2026-07-19T16:31:58.564Z",
+  "rows": [
+    {
+      "tokenId": 1,
+      "onChainRevealed": true,
+      "onChain": {
+        "side": "Alpaca",
+        "class": "King"
+      },
+      "testnetDeck": null,
+      "metadata": {
+        "side": "Alpaca",
+        "class": "King",
+        "image": "ipfs://bafybeib577pwjkf5feztkjyf4m5exlodr7mx4zchf7rsmxb46zfeslzn3m/1.png"
+      },
+      "settlementIdentity": {
+        "side": "Alpaca",
+        "class": "King"
+      }
+    },
+    {
+      "tokenId": 11,
+      "onChainRevealed": false,
+      "onChain": {
+        "side": "Unknown",
+        "class": "None"
+      },
+      "testnetDeck": {
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      "metadata": {
+        "side": "Alpaca",
+        "class": "Common",
+        "image": "ipfs://bafybeib577pwjkf5feztkjyf4m5exlodr7mx4zchf7rsmxb46zfeslzn3m/111.png"
+      },
+      "settlementIdentity": {
+        "side": "Alpaca",
+        "class": "Common"
+      }
+    },
+    {
+      "tokenId": 12,
+      "onChainRevealed": false,
+      "onChain": {
+        "side": "Unknown",
+        "class": "None"
+      },
+      "testnetDeck": {
+        "side": "Alpaca",
+        "class": "Guardian"
+      },
+      "metadata": {
+        "side": "Alpaca",
+        "class": "Common",
+        "image": "ipfs://bafybeib577pwjkf5feztkjyf4m5exlodr7mx4zchf7rsmxb46zfeslzn3m/44.png"
+      },
+      "settlementIdentity": {
+        "side": "Alpaca",
+        "class": "Guardian"
+      }
+    },
+    {
+      "tokenId": 13,
+      "onChainRevealed": false,
+      "onChain": {
+        "side": "Unknown",
+        "class": "None"
+      },
+      "testnetDeck": {
+        "side": "Alpaca",
+        "class": "Farmer"
+      },
+      "metadata": {
+        "side": "Alpaca",
+        "class": "Common",
+        "image": "ipfs://bafybeib577pwjkf5feztkjyf4m5exlodr7mx4zchf7rsmxb46zfeslzn3m/93.png"
+      },
+      "settlementIdentity": {
+        "side": "Alpaca",
+        "class": "Farmer"
+      }
+    },
+    {
+      "tokenId": 14,
+      "onChainRevealed": false,
+      "onChain": {
+        "side": "Unknown",
+        "class": "None"
+      },
+      "testnetDeck": {
+        "side": "Alpaca",
+        "class": "Lucky"
+      },
+      "metadata": {
+        "side": "Alpaca",
+        "class": "Lucky",
+        "image": "ipfs://bafybeib577pwjkf5feztkjyf4m5exlodr7mx4zchf7rsmxb46zfeslzn3m/24.png"
+      },
+      "settlementIdentity": {
+        "side": "Alpaca",
+        "class": "Lucky"
+      }
+    },
+    {
+      "tokenId": 15,
+      "onChainRevealed": false,
+      "onChain": {
+        "side": "Unknown",
+        "class": "None"
+      },
+      "testnetDeck": {
+        "side": "Alpaca",
+        "class": "Runner"
+      },
+      "metadata": {
+        "side": "Alpaca",
+        "class": "Common",
+        "image": "ipfs://bafybeib577pwjkf5feztkjyf4m5exlodr7mx4zchf7rsmxb46zfeslzn3m/475.png"
+      },
+      "settlementIdentity": {
+        "side": "Alpaca",
+        "class": "Runner"
+      }
+    },
+    {
+      "tokenId": 16,
+      "onChainRevealed": false,
+      "onChain": {
+        "side": "Unknown",
+        "class": "None"
+      },
+      "testnetDeck": {
+        "side": "Cougar",
+        "class": "None"
+      },
+      "metadata": {
+        "side": "Alpaca",
+        "class": "Common",
+        "image": "ipfs://bafybeib577pwjkf5feztkjyf4m5exlodr7mx4zchf7rsmxb46zfeslzn3m/397.png"
+      },
+      "settlementIdentity": {
+        "side": "Cougar",
+        "class": "None"
+      }
+    },
+    {
+      "tokenId": 29,
+      "onChainRevealed": false,
+      "onChain": {
+        "side": "Unknown",
+        "class": "None"
+      },
+      "testnetDeck": {
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      "metadata": {
+        "side": "Cougar",
+        "class": "None",
+        "image": "ipfs://bafybeib577pwjkf5feztkjyf4m5exlodr7mx4zchf7rsmxb46zfeslzn3m/505.png"
+      },
+      "settlementIdentity": {
+        "side": "Alpaca",
+        "class": "Common"
+      }
+    }
+  ],
+  "bugs": [
+    "#16: METADATA side=Alpaca vs TESTNET DECK side=Cougar — settlement uses deck; image still from metadata (visual mismatch risk)",
+    "#29: METADATA side=Cougar vs TESTNET DECK side=Alpaca — settlement uses deck; image still from metadata (visual mismatch risk)"
+  ]
+}

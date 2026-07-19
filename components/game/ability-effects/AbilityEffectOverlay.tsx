@@ -184,7 +184,7 @@ export function AbilityEffectOverlay({
                       : abilityId === "king"
                         ? `${12 + Math.floor(i / 4) * 28}%`
                         : `${22 + Math.floor(i / 3) * 34}%`,
-                  animationDelay: `${i * (abilityId === "runner" ? 40 : abilityId === "king" ? 50 : 55)}ms`,
+                  animationDelay: `${i * (abilityId === "runner" ? 60 : abilityId === "king" ? 75 : 82)}ms`,
                   ["--dx" as string]:
                     abilityId === "runner"
                       ? `${48 + i * 10}px`

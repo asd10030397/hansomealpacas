@@ -15,6 +15,7 @@ import {
   SETTLEMENT_RESULT_SFX_CATALOG,
   type SettlementResultSfxId,
 } from "@/lib/game/settlementResults";
+import { PRESENTATION_INTER_CUE_GAP_MS } from "@/lib/game/presentationTiming";
 
 export type SettlementPresentationRow = {
   tokenId: number;
@@ -91,6 +92,7 @@ export function useSettlementPresentationQueue(
 ) {
   const [current, setCurrent] = useState<SettlementPresentationCue | null>(null);
   const playingRef = useRef(false);
+  const gapTimerRef = useRef<number | null>(null);
   const rowsRef = useRef(rows);
   rowsRef.current = rows;
 
@@ -136,16 +138,36 @@ export function useSettlementPresentationQueue(
   useEffect(() => {
     if (!enabled) {
       playingRef.current = false;
+      if (gapTimerRef.current != null) {
+        window.clearTimeout(gapTimerRef.current);
+        gapTimerRef.current = null;
+      }
       setCurrent(null);
       return;
     }
     startNext();
   }, [signature, enabled, startNext]);
 
+  useEffect(() => {
+    return () => {
+      if (gapTimerRef.current != null) {
+        window.clearTimeout(gapTimerRef.current);
+        gapTimerRef.current = null;
+      }
+    };
+  }, []);
+
   const advance = useCallback(() => {
     playingRef.current = false;
     setCurrent(null);
-    queueMicrotask(() => startNext());
+    if (gapTimerRef.current != null) {
+      window.clearTimeout(gapTimerRef.current);
+    }
+    // Brief beat between NFT reveals so reward pop-ups do not overlap.
+    gapTimerRef.current = window.setTimeout(() => {
+      gapTimerRef.current = null;
+      startNext();
+    }, PRESENTATION_INTER_CUE_GAP_MS);
   }, [startNext]);
 
   const currentAbility =

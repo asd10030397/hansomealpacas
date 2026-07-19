@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
+import { RewardAmountReveal } from "@/components/game/settlement/RewardAmountReveal";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { isMissedRevealOutcome } from "@/lib/game/missedReveal";
 import {
@@ -10,6 +11,7 @@ import {
   shortAddress,
   speciesClassLabel,
 } from "@/lib/game/nftDisplay";
+import { SETTLEMENT_CARD_STAGGER_MS } from "@/lib/game/presentationTiming";
 import type { GameplayClass, NftSide } from "@/types/game";
 
 export type SettlementResultRow = {
@@ -33,11 +35,14 @@ export function SettlementResultCard({
   index,
   overlays,
   highlightOwn = false,
+  rewardReveal = null,
 }: {
   row: SettlementResultRow;
   index: number;
   overlays?: ReactNode;
   highlightOwn?: boolean;
+  /** When set, slow count-up + float pop for this card's HANSOME reward. */
+  rewardReveal?: { active: boolean; durationMs: number } | null;
 }) {
   const { t } = useGameI18n();
   const missed =
@@ -59,12 +64,18 @@ export function SettlementResultCard({
         ? "/pixel/cougar/mint/image/cougar.png"
         : "/assets/characters/alpaca-hero-ranch.png";
 
+  const revealActive = Boolean(rewardReveal?.active) && !missed;
+
   return (
     <li
       className={`hg-settle-card${missed ? " hg-settle-card--missed" : ""}${
         highlightOwn || row.isOwn ? " hg-settle-card--own" : ""
-      }`}
-      style={{ animationDelay: `${Math.min(index, 8) * 70}ms` } as CSSProperties}
+      }${revealActive ? " hg-settle-card--revealing" : ""}`}
+      style={
+        {
+          animationDelay: `${Math.min(index, 8) * SETTLEMENT_CARD_STAGGER_MS}ms`,
+        } as CSSProperties
+      }
       data-token-id={row.tokenId}
     >
       {overlays}
@@ -141,7 +152,11 @@ export function SettlementResultCard({
 
       <div className="hg-settle-card__reward-block">
         <span className="hg-settle-card__reward-label">{t.result.rewardLabel}</span>
-        <span className="hg-settle-card__reward">{reward}</span>
+        <RewardAmountReveal
+          rewardLabel={reward}
+          active={revealActive}
+          durationMs={rewardReveal?.durationMs ?? 1800}
+        />
       </div>
     </li>
   );

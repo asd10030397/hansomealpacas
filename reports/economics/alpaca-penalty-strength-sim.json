@@ -1,0 +1,1597 @@
+{
+  "assumptions": {
+    "Rd": 400000,
+    "pools": "80/10/10",
+    "NA": 500,
+    "NC": 50,
+    "mintEth": 0.015,
+    "daysPerScenario": 800,
+    "formulas": "SettlementLib.sol prePenaltyBps + resolvePenaltyBps + splitDailyPool",
+    "note": "Read-only sim; no contract changes."
+  },
+  "summary": [
+    {
+      "ladder": "Current",
+      "pi0Bps": [
+        0,
+        1000,
+        1500,
+        2200,
+        3000
+      ],
+      "pi0Pct": [
+        0,
+        10,
+        15,
+        22,
+        30
+      ],
+      "blendScenarios": [
+        "random",
+        "rational",
+        "cougar_even",
+        "cougar_high_risk"
+      ],
+      "common": 476.72,
+      "cougar": 1600,
+      "ratio": 3.356,
+      "traits": {
+        "Common": 476.72,
+        "Guardian": 558.2,
+        "Farmer": 570.58,
+        "Lucky": 508.39,
+        "Runner": 522.66,
+        "King": 630.44
+      },
+      "traitPremiumVsCommon": {
+        "Common": 0,
+        "Guardian": 17.1,
+        "Farmer": 19.7,
+        "Lucky": 6.6,
+        "Runner": 9.6,
+        "King": 32.2
+      },
+      "avgTreasuryPen": 80219.1,
+      "avgHomeShare": 0.177,
+      "avgRiverShare": 0.225,
+      "ratioMinAcrossAll": 3.121,
+      "ratioMaxAcrossAll": 3.43
+    },
+    {
+      "ladder": "A",
+      "pi0Bps": [
+        0,
+        1500,
+        2500,
+        3500,
+        4500
+      ],
+      "pi0Pct": [
+        0,
+        15,
+        25,
+        35,
+        45
+      ],
+      "blendScenarios": [
+        "random",
+        "rational",
+        "cougar_even",
+        "cougar_high_risk"
+      ],
+      "common": 388.92,
+      "cougar": 1600,
+      "ratio": 4.114,
+      "traits": {
+        "Common": 388.92,
+        "Guardian": 511.69,
+        "Farmer": 466.81,
+        "Lucky": 439.45,
+        "Runner": 462.7,
+        "King": 627.42
+      },
+      "traitPremiumVsCommon": {
+        "Common": 0,
+        "Guardian": 31.6,
+        "Farmer": 20,
+        "Lucky": 13,
+        "Runner": 19,
+        "King": 61.3
+      },
+      "avgTreasuryPen": 123675,
+      "avgHomeShare": 0.177,
+      "avgRiverShare": 0.224,
+      "ratioMinAcrossAll": 3.545,
+      "ratioMaxAcrossAll": 4.273
+    },
+    {
+      "ladder": "B",
+      "pi0Bps": [
+        0,
+        2000,
+        3000,
+        4500,
+        6000
+      ],
+      "pi0Pct": [
+        0,
+        20,
+        30,
+        45,
+        60
+      ],
+      "blendScenarios": [
+        "random",
+        "rational",
+        "cougar_even",
+        "cougar_high_risk"
+      ],
+      "common": 312.6,
+      "cougar": 1600,
+      "ratio": 5.118,
+      "traits": {
+        "Common": 312.6,
+        "Guardian": 474,
+        "Farmer": 374.07,
+        "Lucky": 376.92,
+        "Runner": 406.58,
+        "King": 626.11
+      },
+      "traitPremiumVsCommon": {
+        "Common": 0,
+        "Guardian": 51.6,
+        "Farmer": 19.7,
+        "Lucky": 20.6,
+        "Runner": 30.1,
+        "King": 100.3
+      },
+      "avgTreasuryPen": 161482.1,
+      "avgHomeShare": 0.177,
+      "avgRiverShare": 0.225,
+      "ratioMinAcrossAll": 3.793,
+      "ratioMaxAcrossAll": 5.474
+    },
+    {
+      "ladder": "C",
+      "pi0Bps": [
+        0,
+        2500,
+        4000,
+        6000,
+        8000
+      ],
+      "pi0Pct": [
+        0,
+        25,
+        40,
+        60,
+        80
+      ],
+      "blendScenarios": [
+        "random",
+        "rational",
+        "cougar_even",
+        "cougar_high_risk"
+      ],
+      "common": 214.51,
+      "cougar": 1600,
+      "ratio": 7.459,
+      "traits": {
+        "Common": 214.51,
+        "Guardian": 427.18,
+        "Farmer": 258.25,
+        "Lucky": 299.85,
+        "Runner": 341.85,
+        "King": 630.44
+      },
+      "traitPremiumVsCommon": {
+        "Common": 0,
+        "Guardian": 99.1,
+        "Farmer": 20.4,
+        "Lucky": 39.8,
+        "Runner": 59.4,
+        "King": 193.9
+      },
+      "avgTreasuryPen": 209985,
+      "avgHomeShare": 0.177,
+      "avgRiverShare": 0.225,
+      "ratioMinAcrossAll": 4.235,
+      "ratioMaxAcrossAll": 8.931
+    }
+  ],
+  "results": {
+    "Current": {
+      "pi0Bps": [
+        0,
+        1000,
+        1500,
+        2200,
+        3000
+      ],
+      "scenarios": {
+        "random": {
+          "scenario": "random",
+          "days": 800,
+          "common": 483.52,
+          "traits": {
+            "Common": 483.52,
+            "Guardian": 557.84,
+            "Farmer": 580.49,
+            "Lucky": 517.07,
+            "Runner": 522.58,
+            "King": 635.65
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 15.4,
+            "Farmer": 20.1,
+            "Lucky": 6.9,
+            "Runner": 8.1,
+            "King": 31.5
+          },
+          "cougar": 1600,
+          "ratio": 3.309,
+          "avgTreasuryPen": 76866.9,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.201,
+          "avgRiverShare": 0.2,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [],
+          "weakTraits": [],
+          "ladder": "Current"
+        },
+        "rational": {
+          "scenario": "rational",
+          "days": 800,
+          "common": 466.54,
+          "traits": {
+            "Common": 466.54,
+            "Guardian": 552.75,
+            "Farmer": 553.49,
+            "Lucky": 495.13,
+            "Runner": 515.56,
+            "King": 614.64
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 18.5,
+            "Farmer": 18.6,
+            "Lucky": 6.1,
+            "Runner": 10.5,
+            "King": 31.7
+          },
+          "cougar": 1600,
+          "ratio": 3.43,
+          "avgTreasuryPen": 85328.8,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.124,
+          "avgRiverShare": 0.313,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [],
+          "weakTraits": [],
+          "ladder": "Current"
+        },
+        "cougar_high_risk": {
+          "scenario": "cougar_high_risk",
+          "days": 800,
+          "common": 477.76,
+          "traits": {
+            "Common": 477.76,
+            "Guardian": 561.59,
+            "Farmer": 577.36,
+            "Lucky": 508.44,
+            "Runner": 529.93,
+            "King": 621.16
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 17.5,
+            "Farmer": 20.8,
+            "Lucky": 6.4,
+            "Runner": 10.9,
+            "King": 30
+          },
+          "cougar": 1600,
+          "ratio": 3.349,
+          "avgTreasuryPen": 79646.6,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.231,
+          "avgRiverShare": 0.155,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [],
+          "weakTraits": [],
+          "ladder": "Current"
+        },
+        "cougar_even": {
+          "scenario": "cougar_even",
+          "days": 800,
+          "common": 479.08,
+          "traits": {
+            "Common": 479.08,
+            "Guardian": 560.6,
+            "Farmer": 570.97,
+            "Lucky": 512.91,
+            "Runner": 522.59,
+            "King": 650.33
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 17,
+            "Farmer": 19.2,
+            "Lucky": 7.1,
+            "Runner": 9.1,
+            "King": 35.7
+          },
+          "cougar": 1600,
+          "ratio": 3.34,
+          "avgTreasuryPen": 79034.2,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.154,
+          "avgRiverShare": 0.231,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "Current"
+        },
+        "alpaca_home": {
+          "scenario": "alpaca_home",
+          "days": 800,
+          "common": 507.08,
+          "traits": {
+            "Common": 507.08,
+            "Guardian": 573.14,
+            "Farmer": 614.31,
+            "Lucky": 534.57,
+            "Runner": 553.38,
+            "King": 627.38
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 13,
+            "Farmer": 21.1,
+            "Lucky": 5.4,
+            "Runner": 9.1,
+            "King": 23.7
+          },
+          "cougar": 1600,
+          "ratio": 3.155,
+          "avgTreasuryPen": 65102.2,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.75,
+          "avgRiverShare": 0.062,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": true,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [],
+          "weakTraits": [],
+          "ladder": "Current"
+        },
+        "same_owner_split": {
+          "scenario": "same_owner_split",
+          "days": 800,
+          "common": 503.51,
+          "traits": {
+            "Common": 503.51,
+            "Guardian": 579.35,
+            "Farmer": 611.87,
+            "Lucky": 530.22,
+            "Runner": 550.36,
+            "King": 632.92
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 15.1,
+            "Farmer": 21.5,
+            "Lucky": 5.3,
+            "Runner": 9.3,
+            "King": 25.7
+          },
+          "cougar": 1600,
+          "ratio": 3.178,
+          "avgTreasuryPen": 66828,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.549,
+          "avgRiverShare": 0.064,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [],
+          "weakTraits": [],
+          "ladder": "Current"
+        },
+        "home_flight_mild": {
+          "scenario": "home_flight_mild",
+          "days": 800,
+          "common": 498.62,
+          "traits": {
+            "Common": 498.62,
+            "Guardian": 576.52,
+            "Farmer": 593.68,
+            "Lucky": 519,
+            "Runner": 543.81,
+            "King": 640.28
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 15.6,
+            "Farmer": 19.1,
+            "Lucky": 4.1,
+            "Runner": 9.1,
+            "King": 28.4
+          },
+          "cougar": 1600,
+          "ratio": 3.209,
+          "avgTreasuryPen": 69353.4,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.357,
+          "avgRiverShare": 0.071,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [],
+          "weakTraits": [],
+          "ladder": "Current"
+        },
+        "home_flight_strong": {
+          "scenario": "home_flight_strong",
+          "days": 800,
+          "common": 512.65,
+          "traits": {
+            "Common": 512.65,
+            "Guardian": 572.76,
+            "Farmer": 620.21,
+            "Lucky": 530.61,
+            "Runner": 551.05,
+            "King": 619.82
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 11.7,
+            "Farmer": 21,
+            "Lucky": 3.5,
+            "Runner": 7.5,
+            "King": 20.9
+          },
+          "cougar": 1600,
+          "ratio": 3.121,
+          "avgTreasuryPen": 62446.6,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.551,
+          "avgRiverShare": 0.034,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": true,
+          "riverUnattractive": true,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [],
+          "weakTraits": [],
+          "ladder": "Current"
+        }
+      }
+    },
+    "A": {
+      "pi0Bps": [
+        0,
+        1500,
+        2500,
+        3500,
+        4500
+      ],
+      "scenarios": {
+        "random": {
+          "scenario": "random",
+          "days": 800,
+          "common": 399.11,
+          "traits": {
+            "Common": 399.11,
+            "Guardian": 514.96,
+            "Farmer": 477.98,
+            "Lucky": 445.97,
+            "Runner": 480.09,
+            "King": 626.61
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 29,
+            "Farmer": 19.8,
+            "Lucky": 11.7,
+            "Runner": 20.3,
+            "King": 57
+          },
+          "cougar": 1600,
+          "ratio": 4.009,
+          "avgTreasuryPen": 118603.3,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.2,
+          "avgRiverShare": 0.2,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "A"
+        },
+        "rational": {
+          "scenario": "rational",
+          "days": 800,
+          "common": 374.44,
+          "traits": {
+            "Common": 374.44,
+            "Guardian": 504.05,
+            "Farmer": 450.74,
+            "Lucky": 423.25,
+            "Runner": 450.61,
+            "King": 625.51
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 34.6,
+            "Farmer": 20.4,
+            "Lucky": 13,
+            "Runner": 20.3,
+            "King": 67.1
+          },
+          "cougar": 1600,
+          "ratio": 4.273,
+          "avgTreasuryPen": 130875.3,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.125,
+          "avgRiverShare": 0.311,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "A"
+        },
+        "cougar_high_risk": {
+          "scenario": "cougar_high_risk",
+          "days": 800,
+          "common": 389.81,
+          "traits": {
+            "Common": 389.81,
+            "Guardian": 512.16,
+            "Farmer": 468.05,
+            "Lucky": 442.67,
+            "Runner": 458.9,
+            "King": 632.33
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 31.4,
+            "Farmer": 20.1,
+            "Lucky": 13.6,
+            "Runner": 17.7,
+            "King": 62.2
+          },
+          "cougar": 1600,
+          "ratio": 4.105,
+          "avgTreasuryPen": 123237.8,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.232,
+          "avgRiverShare": 0.154,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "A"
+        },
+        "cougar_even": {
+          "scenario": "cougar_even",
+          "days": 800,
+          "common": 392.33,
+          "traits": {
+            "Common": 392.33,
+            "Guardian": 515.61,
+            "Farmer": 470.47,
+            "Lucky": 445.91,
+            "Runner": 461.19,
+            "King": 625.22
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 31.4,
+            "Farmer": 19.9,
+            "Lucky": 13.7,
+            "Runner": 17.6,
+            "King": 59.4
+          },
+          "cougar": 1600,
+          "ratio": 4.078,
+          "avgTreasuryPen": 121983.5,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.153,
+          "avgRiverShare": 0.232,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "A"
+        },
+        "alpaca_home": {
+          "scenario": "alpaca_home",
+          "days": 800,
+          "common": 436.4,
+          "traits": {
+            "Common": 436.4,
+            "Guardian": 537.75,
+            "Farmer": 522.86,
+            "Lucky": 473.9,
+            "Runner": 503.71,
+            "King": 621.9
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 23.2,
+            "Farmer": 19.8,
+            "Lucky": 8.6,
+            "Runner": 15.4,
+            "King": 42.5
+          },
+          "cougar": 1600,
+          "ratio": 3.666,
+          "avgTreasuryPen": 100149.4,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.749,
+          "avgRiverShare": 0.062,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": true,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "A"
+        },
+        "same_owner_split": {
+          "scenario": "same_owner_split",
+          "days": 800,
+          "common": 431.08,
+          "traits": {
+            "Common": 431.08,
+            "Guardian": 538.52,
+            "Farmer": 515.57,
+            "Lucky": 480,
+            "Runner": 489.91,
+            "King": 678.03
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 24.9,
+            "Farmer": 19.6,
+            "Lucky": 11.3,
+            "Runner": 13.6,
+            "King": 57.3
+          },
+          "cougar": 1600,
+          "ratio": 3.712,
+          "avgTreasuryPen": 102715.7,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.55,
+          "avgRiverShare": 0.064,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": true,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "A"
+        },
+        "home_flight_mild": {
+          "scenario": "home_flight_mild",
+          "days": 800,
+          "common": 420.55,
+          "traits": {
+            "Common": 420.55,
+            "Guardian": 529.54,
+            "Farmer": 504.8,
+            "Lucky": 463.19,
+            "Runner": 487.88,
+            "King": 631.16
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 25.9,
+            "Farmer": 20,
+            "Lucky": 10.1,
+            "Runner": 16,
+            "King": 50.1
+          },
+          "cougar": 1600,
+          "ratio": 3.805,
+          "avgTreasuryPen": 107996.5,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.358,
+          "avgRiverShare": 0.071,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "A"
+        },
+        "home_flight_strong": {
+          "scenario": "home_flight_strong",
+          "days": 800,
+          "common": 451.32,
+          "traits": {
+            "Common": 451.32,
+            "Guardian": 547.84,
+            "Farmer": 534.77,
+            "Lucky": 485.85,
+            "Runner": 502.34,
+            "King": 675.21
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 21.4,
+            "Farmer": 18.5,
+            "Lucky": 7.7,
+            "Runner": 11.3,
+            "King": 49.6
+          },
+          "cougar": 1600,
+          "ratio": 3.545,
+          "avgTreasuryPen": 92789.4,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.552,
+          "avgRiverShare": 0.035,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": true,
+          "riverUnattractive": true,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "A"
+        }
+      }
+    },
+    "B": {
+      "pi0Bps": [
+        0,
+        2000,
+        3000,
+        4500,
+        6000
+      ],
+      "scenarios": {
+        "random": {
+          "scenario": "random",
+          "days": 800,
+          "common": 326.18,
+          "traits": {
+            "Common": 326.18,
+            "Guardian": 478.75,
+            "Farmer": 392.08,
+            "Lucky": 385.4,
+            "Runner": 414.68,
+            "King": 631.25
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 46.8,
+            "Farmer": 20.2,
+            "Lucky": 18.2,
+            "Runner": 27.1,
+            "King": 93.5
+          },
+          "cougar": 1600,
+          "ratio": 4.905,
+          "avgTreasuryPen": 154771.8,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.2,
+          "avgRiverShare": 0.199,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "Guardian",
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "B"
+        },
+        "rational": {
+          "scenario": "rational",
+          "days": 800,
+          "common": 292.3,
+          "traits": {
+            "Common": 292.3,
+            "Guardian": 464.4,
+            "Farmer": 350.59,
+            "Lucky": 363.87,
+            "Runner": 392.58,
+            "King": 626.77
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 58.9,
+            "Farmer": 19.9,
+            "Lucky": 24.5,
+            "Runner": 34.3,
+            "King": 114.4
+          },
+          "cougar": 1600,
+          "ratio": 5.474,
+          "avgTreasuryPen": 171504,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.125,
+          "avgRiverShare": 0.313,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": false,
+          "ratioBelow3": false,
+          "ratioAbove5": true,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "Guardian",
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "B"
+        },
+        "cougar_high_risk": {
+          "scenario": "cougar_high_risk",
+          "days": 800,
+          "common": 314.47,
+          "traits": {
+            "Common": 314.47,
+            "Guardian": 475.65,
+            "Farmer": 373.88,
+            "Lucky": 380.42,
+            "Runner": 411.88,
+            "King": 609.96
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 51.3,
+            "Farmer": 18.9,
+            "Lucky": 21,
+            "Runner": 31,
+            "King": 94
+          },
+          "cougar": 1600,
+          "ratio": 5.088,
+          "avgTreasuryPen": 160549.6,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.23,
+          "avgRiverShare": 0.154,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": false,
+          "ratioBelow3": false,
+          "ratioAbove5": true,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "Guardian",
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "B"
+        },
+        "cougar_even": {
+          "scenario": "cougar_even",
+          "days": 800,
+          "common": 317.43,
+          "traits": {
+            "Common": 317.43,
+            "Guardian": 477.19,
+            "Farmer": 379.72,
+            "Lucky": 377.99,
+            "Runner": 407.16,
+            "King": 636.45
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 50.3,
+            "Farmer": 19.6,
+            "Lucky": 19.1,
+            "Runner": 28.3,
+            "King": 100.5
+          },
+          "cougar": 1600,
+          "ratio": 5.04,
+          "avgTreasuryPen": 159103.1,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.155,
+          "avgRiverShare": 0.232,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": false,
+          "ratioBelow3": false,
+          "ratioAbove5": true,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "Guardian",
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "B"
+        },
+        "alpaca_home": {
+          "scenario": "alpaca_home",
+          "days": 800,
+          "common": 385.48,
+          "traits": {
+            "Common": 385.48,
+            "Guardian": 505.5,
+            "Farmer": 461.54,
+            "Lucky": 426.26,
+            "Runner": 451.22,
+            "King": 633.88
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 31.1,
+            "Farmer": 19.7,
+            "Lucky": 10.6,
+            "Runner": 17.1,
+            "King": 64.4
+          },
+          "cougar": 1600,
+          "ratio": 4.151,
+          "avgTreasuryPen": 125498.1,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.75,
+          "avgRiverShare": 0.063,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": true,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "B"
+        },
+        "same_owner_split": {
+          "scenario": "same_owner_split",
+          "days": 800,
+          "common": 382.84,
+          "traits": {
+            "Common": 382.84,
+            "Guardian": 502.97,
+            "Farmer": 462.8,
+            "Lucky": 427.36,
+            "Runner": 459.16,
+            "King": 660.49
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 31.4,
+            "Farmer": 20.9,
+            "Lucky": 11.6,
+            "Runner": 19.9,
+            "King": 72.5
+          },
+          "cougar": 1600,
+          "ratio": 4.179,
+          "avgTreasuryPen": 126697.7,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.551,
+          "avgRiverShare": 0.064,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": true,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "B"
+        },
+        "home_flight_mild": {
+          "scenario": "home_flight_mild",
+          "days": 800,
+          "common": 360.48,
+          "traits": {
+            "Common": 360.48,
+            "Guardian": 499.72,
+            "Farmer": 427.73,
+            "Lucky": 413,
+            "Runner": 438.32,
+            "King": 674.87
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 38.6,
+            "Farmer": 18.7,
+            "Lucky": 14.6,
+            "Runner": 21.6,
+            "King": 87.2
+          },
+          "cougar": 1600,
+          "ratio": 4.438,
+          "avgTreasuryPen": 137759.9,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.357,
+          "avgRiverShare": 0.073,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "Guardian",
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "B"
+        },
+        "home_flight_strong": {
+          "scenario": "home_flight_strong",
+          "days": 800,
+          "common": 421.78,
+          "traits": {
+            "Common": 421.78,
+            "Guardian": 535.96,
+            "Farmer": 503.81,
+            "Lucky": 458.63,
+            "Runner": 490.14,
+            "King": 641.56
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 27.1,
+            "Farmer": 19.4,
+            "Lucky": 8.7,
+            "Runner": 16.2,
+            "King": 52.1
+          },
+          "cougar": 1600,
+          "ratio": 3.793,
+          "avgTreasuryPen": 107382,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.552,
+          "avgRiverShare": 0.034,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": true,
+          "riverUnattractive": true,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "B"
+        }
+      }
+    },
+    "C": {
+      "pi0Bps": [
+        0,
+        2500,
+        4000,
+        6000,
+        8000
+      ],
+      "scenarios": {
+        "random": {
+          "scenario": "random",
+          "days": 800,
+          "common": 225.02,
+          "traits": {
+            "Common": 225.02,
+            "Guardian": 430.38,
+            "Farmer": 268.66,
+            "Lucky": 308.41,
+            "Runner": 345.16,
+            "King": 635.65
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 91.3,
+            "Farmer": 19.4,
+            "Lucky": 37.1,
+            "Runner": 53.4,
+            "King": 182.5
+          },
+          "cougar": 1600,
+          "ratio": 7.11,
+          "avgTreasuryPen": 204816.7,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.201,
+          "avgRiverShare": 0.2,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": false,
+          "ratioBelow3": false,
+          "ratioAbove5": true,
+          "ratioAbove6": true,
+          "overpoweredTraits": [
+            "Guardian",
+            "Lucky",
+            "Runner",
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "C"
+        },
+        "rational": {
+          "scenario": "rational",
+          "days": 800,
+          "common": 179.15,
+          "traits": {
+            "Common": 179.15,
+            "Guardian": 409.44,
+            "Farmer": 216.9,
+            "Lucky": 275.37,
+            "Runner": 317.74,
+            "King": 614.64
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 128.5,
+            "Farmer": 21.1,
+            "Lucky": 53.7,
+            "Runner": 77.4,
+            "King": 243.1
+          },
+          "cougar": 1600,
+          "ratio": 8.931,
+          "avgTreasuryPen": 227476.3,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.124,
+          "avgRiverShare": 0.313,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": false,
+          "ratioBelow3": false,
+          "ratioAbove5": true,
+          "ratioAbove6": true,
+          "overpoweredTraits": [
+            "Guardian",
+            "Lucky",
+            "Runner",
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "C"
+        },
+        "cougar_high_risk": {
+          "scenario": "cougar_high_risk",
+          "days": 800,
+          "common": 242.66,
+          "traits": {
+            "Common": 242.66,
+            "Guardian": 442.79,
+            "Farmer": 293.07,
+            "Lucky": 319.26,
+            "Runner": 366.82,
+            "King": 621.16
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 82.5,
+            "Farmer": 20.8,
+            "Lucky": 31.6,
+            "Runner": 51.2,
+            "King": 156
+          },
+          "cougar": 1600,
+          "ratio": 6.594,
+          "avgTreasuryPen": 196036.5,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.231,
+          "avgRiverShare": 0.155,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": false,
+          "ratioBelow3": false,
+          "ratioAbove5": true,
+          "ratioAbove6": true,
+          "overpoweredTraits": [
+            "Guardian",
+            "Runner",
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "C"
+        },
+        "cougar_even": {
+          "scenario": "cougar_even",
+          "days": 800,
+          "common": 211.2,
+          "traits": {
+            "Common": 211.2,
+            "Guardian": 426.11,
+            "Farmer": 254.39,
+            "Lucky": 296.35,
+            "Runner": 337.67,
+            "King": 650.33
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 101.8,
+            "Farmer": 20.4,
+            "Lucky": 40.3,
+            "Runner": 59.9,
+            "King": 207.9
+          },
+          "cougar": 1600,
+          "ratio": 7.576,
+          "avgTreasuryPen": 211610.6,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.154,
+          "avgRiverShare": 0.231,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": false,
+          "ratioBelow3": false,
+          "ratioAbove5": true,
+          "ratioAbove6": true,
+          "overpoweredTraits": [
+            "Guardian",
+            "Lucky",
+            "Runner",
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "C"
+        },
+        "alpaca_home": {
+          "scenario": "alpaca_home",
+          "days": 800,
+          "common": 352.31,
+          "traits": {
+            "Common": 352.31,
+            "Guardian": 495.76,
+            "Farmer": 424.42,
+            "Lucky": 414.5,
+            "Runner": 439.2,
+            "King": 627.38
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 40.7,
+            "Farmer": 20.5,
+            "Lucky": 17.6,
+            "Runner": 24.7,
+            "King": 78.1
+          },
+          "cougar": 1600,
+          "ratio": 4.541,
+          "avgTreasuryPen": 141744.4,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.75,
+          "avgRiverShare": 0.062,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": true,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "Guardian",
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "C"
+        },
+        "same_owner_split": {
+          "scenario": "same_owner_split",
+          "days": 800,
+          "common": 344.43,
+          "traits": {
+            "Common": 344.43,
+            "Guardian": 496.92,
+            "Farmer": 412.15,
+            "Lucky": 403.09,
+            "Runner": 434.69,
+            "King": 632.92
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 44.3,
+            "Farmer": 19.7,
+            "Lucky": 17,
+            "Runner": 26.2,
+            "King": 83.8
+          },
+          "cougar": 1600,
+          "ratio": 4.645,
+          "avgTreasuryPen": 145650.7,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.549,
+          "avgRiverShare": 0.064,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "Guardian",
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "C"
+        },
+        "home_flight_mild": {
+          "scenario": "home_flight_mild",
+          "days": 800,
+          "common": 306.53,
+          "traits": {
+            "Common": 306.53,
+            "Guardian": 478.04,
+            "Farmer": 367,
+            "Lucky": 363.31,
+            "Runner": 410.71,
+            "King": 640.28
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 56,
+            "Farmer": 19.7,
+            "Lucky": 18.5,
+            "Runner": 34,
+            "King": 108.9
+          },
+          "cougar": 1600,
+          "ratio": 5.22,
+          "avgTreasuryPen": 164437,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.357,
+          "avgRiverShare": 0.071,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": false,
+          "riverUnattractive": false,
+          "ratioInBand3to5": false,
+          "ratioBelow3": false,
+          "ratioAbove5": true,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "Guardian",
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "C"
+        },
+        "home_flight_strong": {
+          "scenario": "home_flight_strong",
+          "days": 800,
+          "common": 377.83,
+          "traits": {
+            "Common": 377.83,
+            "Guardian": 505.61,
+            "Farmer": 454.04,
+            "Lucky": 425.73,
+            "Runner": 457.12,
+            "King": 619.82
+          },
+          "traitPremiumVsCommon": {
+            "Common": 0,
+            "Guardian": 33.8,
+            "Farmer": 20.2,
+            "Lucky": 12.7,
+            "Runner": 21,
+            "King": 64
+          },
+          "cougar": 1600,
+          "ratio": 4.235,
+          "avgTreasuryPen": 129189.2,
+          "avgHuntDistributed": 40000,
+          "avgHuntDust": 0,
+          "huntSuccessDayRate": 1,
+          "avgHomeShare": 0.551,
+          "avgRiverShare": 0.034,
+          "emissionToCougarsPct": 20,
+          "rewardConcentration": 2.2,
+          "homeDominant": true,
+          "riverUnattractive": true,
+          "ratioInBand3to5": true,
+          "ratioBelow3": false,
+          "ratioAbove5": false,
+          "ratioAbove6": false,
+          "overpoweredTraits": [
+            "King"
+          ],
+          "weakTraits": [],
+          "ladder": "C"
+        }
+      }
+    }
+  }
+}

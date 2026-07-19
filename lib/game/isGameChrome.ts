@@ -33,6 +33,7 @@ const GAME_HOST_PRETTY = new Set([
   "/mint",
   "/explore",
   "/my-nfts",
+  "/claim",
   "/rewards",
   "/leaderboard",
   "/docs",

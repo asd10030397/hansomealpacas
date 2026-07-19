@@ -62,4 +62,32 @@ describe("commitSecret wallet scoping", () => {
     ).toEqual([11]);
     expect(listOwnedCommitSecretsForDay(1, walletA, [99])).toEqual([]);
   });
+
+  it("scopes pending location by day and prunes prior-day secrets on sync", async () => {
+    const {
+      upsertCommitSecret,
+      getCommitSecret,
+      setPendingLocation,
+      getPendingLocation,
+      syncGameplayDayClientState,
+      generateSalt,
+    } = await import("@/lib/game/commitSecret");
+
+    const wallet = "0xaaa0000000000000000000000000000000000001";
+    upsertCommitSecret({
+      tokenId: 11,
+      day: 3,
+      locationId: 2,
+      salt: generateSalt(),
+      status: "submitted",
+      wallet,
+    });
+    setPendingLocation(4, 3);
+    expect(getPendingLocation(3)).toBe(4);
+    expect(getPendingLocation(4)).toBeNull();
+
+    syncGameplayDayClientState(4);
+    expect(getCommitSecret(11, 3, wallet)).toBeNull();
+    expect(getPendingLocation(4)).toBeNull();
+  });
 });

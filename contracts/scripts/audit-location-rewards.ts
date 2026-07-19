@@ -11,7 +11,8 @@ import { SettlementLibHarness } from "../typechain-types";
 const LOC = ["Home", "Mountain", "Grassland", "Forest", "River"] as const;
 const Class = { Common: 1 } as const;
 
-const UI_PRESSURE = [0, 22, 41, 63, 88] as const;
+/** Mirrors Candidate A π₀ % shown in data/game/locations.ts */
+const UI_PRESSURE = [0, 15, 25, 35, 45] as const;
 const RISK_LABEL = ["None", "Low", "Medium", "High", "Extreme"] as const;
 
 function fmt(wei: bigint): string {
@@ -174,7 +175,7 @@ async function main() {
   }
   // UI pressure is presentation-only — flag if someone confuses it with pi0
   inconsistencies.push(
-    "NOTE (not a bug): UI `pressure` in data/game/locations.ts (0/22/41/63/88) is presentation-only and is NOT the on-chain π₀ (0/1000/1500/2200/3000 bps).",
+    "NOTE: UI `pressure` in data/game/locations.ts mirrors Candidate A π₀ % (0/15/25/35/45); on-chain bps are 0/1500/2500/3500/4500.",
   );
 
   const md = `# Location Reward Audit (Testnet QA)
@@ -267,7 +268,7 @@ ${LOC.map((n, i) => `| ${n} | ${huntedPenBps[i]} | ${fmt(huntedNets[i])} |`).joi
 | Check | Result |
 |---|---|
 | Weights 1/2/3/5/8 | ${weights.join("/") === "1/2/3/5/8" ? "PASS" : "FAIL"} |
-| π₀ 0/1000/1500/2200/3000 | ${pi0.join("/") === "0/1000/1500/2200/3000" ? "PASS" : "FAIL"} |
+| π₀ 0/1500/2500/3500/4500 | ${pi0.join("/") === "0/1500/2500/3500/4500" ? "PASS" : "FAIL"} |
 | Higher risk → higher π₀ / hunted penalty | ${huntedPenBps[1] < huntedPenBps[2] && huntedPenBps[2] < huntedPenBps[3] && huntedPenBps[3] < huntedPenBps[4] ? "PASS" : "FAIL"} |
 | Home π=0 always | ${huntedPenBps[0] === 0 && pi0[0] === 0 ? "PASS" : "FAIL"} |
 | Alone no-hunt: all locs = Ra | ${aloneNets.every((n) => n === ra) ? "PASS" : "FAIL"} |

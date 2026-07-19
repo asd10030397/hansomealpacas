@@ -57,6 +57,8 @@ export function formatBattleRewardLabel(input: {
   if (input.missedReveal) return "0 HANSOME";
   const raw = input.rewardLabel.trim();
   if (!raw || raw === "—" || raw === "0 / unread") return raw || "—";
+  // Pre-settlement: do not dress leftover claimable as "+N HANSOME".
+  if (/^pending$/i.test(raw)) return "Pending";
   if (raw.startsWith("+")) return raw;
   // Already unit-suffixed from settlement view
   if (/hansome/i.test(raw)) {
@@ -73,6 +75,7 @@ export function formatBattleStatus(outcome: string): string {
   if (!o) return "—";
   if (/escaped/i.test(o)) return "Escaped";
   if (/hunt success/i.test(o)) return "Hunting Success";
+  if (/no alpacas here/i.test(o)) return "Hunt Failed — Empty Location";
   if (/hunt miss/i.test(o)) return "Hunt Failed";
   if (/hunted/i.test(o)) return "Hunted";
   if (/safe/i.test(o)) return "Safe";
@@ -140,15 +143,19 @@ export async function enrichNftDisplayImage(
     if (!json.image) return base;
     const image = ipfsToHttps(json.image);
     const identity = parseGenesisMetadataIdentity(json);
+    // Never let Pinata Side override settlement / Testnet deck identity
+    // (e.g. #16 deck=Cougar while pre-reveal metadata still says Alpaca).
+    const metaSideOk =
+      !identity ||
+      !base.side ||
+      base.side === "Unknown" ||
+      identity.side === "Unknown" ||
+      identity.side === base.side;
+    if (!metaSideOk) return base;
     return {
       ...base,
       image,
-      side: identity?.side ?? base.side,
-      gameplayClass: identity?.gameplayClass ?? base.gameplayClass,
-      title: speciesClassLabel(
-        identity?.side ?? base.side,
-        identity?.gameplayClass ?? base.gameplayClass,
-      ),
+      title: speciesClassLabel(base.side, base.gameplayClass),
     };
   } catch {
     return base;

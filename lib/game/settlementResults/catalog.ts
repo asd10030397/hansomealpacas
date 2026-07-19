@@ -8,6 +8,8 @@
  *   npm run generate:settlement-result-sfx
  */
 
+import { scalePresentationMs } from "@/lib/game/presentationTiming";
+
 export const SETTLEMENT_RESULT_SFX_IDS = [
   "alpaca-hunted",
   "alpaca-safe",
@@ -39,28 +41,28 @@ export const SETTLEMENT_RESULT_SFX_CATALOG: Record<
     id: "alpaca-hunted",
     sourceFolder: "AlpacaHunted",
     publicFolder: "alpaca-hunted",
-    durationMs: 1200,
+    durationMs: scalePresentationMs(1200),
     banner: "Hunted!",
   },
   "alpaca-safe": {
     id: "alpaca-safe",
     sourceFolder: "AlpacaSafe",
     publicFolder: "alpaca-safe",
-    durationMs: 1250,
+    durationMs: scalePresentationMs(1250),
     banner: "Safe!",
   },
   "cougar-hunt-success": {
     id: "cougar-hunt-success",
     sourceFolder: "CougarHuntSuccess",
     publicFolder: "cougar-hunt-success",
-    durationMs: 1300,
+    durationMs: scalePresentationMs(1300),
     banner: "Hunt Success!",
   },
   "cougar-hunt-failed": {
     id: "cougar-hunt-failed",
     sourceFolder: "CougarHuntFailed",
     publicFolder: "cougar-hunt-failed",
-    durationMs: 1350,
+    durationMs: scalePresentationMs(1350),
     banner: "Hunt Failed",
   },
 };

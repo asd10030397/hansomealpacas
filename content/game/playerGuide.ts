@@ -165,14 +165,20 @@ export const GUIDE_LOCATIONS: GuideLocation[] = [
     name: { en: "Mountain", zh: "山區" },
     weight: 2,
     risk: 1,
-    desc: { en: "Low risk, modest reward.", zh: "低風險，收益偏低。" },
+    desc: {
+      en: "Low risk (base hunt penalty 15%), modest reward.",
+      zh: "低風險（基礎狩獵懲罰 15%），收益偏低。",
+    },
   },
   {
     emoji: "🌿",
     name: { en: "Grassland", zh: "草原" },
     weight: 3,
     risk: 2,
-    desc: { en: "Balanced medium risk and reward.", zh: "中等風險與收益。" },
+    desc: {
+      en: "Balanced medium risk (base hunt penalty 25%) and reward.",
+      zh: "中等風險（基礎狩獵懲罰 25%）與收益。",
+    },
   },
   {
     emoji: "🌲",
@@ -180,8 +186,8 @@ export const GUIDE_LOCATIONS: GuideLocation[] = [
     weight: 5,
     risk: 3,
     desc: {
-      en: "Higher reward with increased hunting risk.",
-      zh: "較高收益，同時提高狩獵風險。",
+      en: "Higher reward with increased hunting risk (base hunt penalty 35%).",
+      zh: "較高收益，狩獵風險提高（基礎狩獵懲罰 35%）。",
     },
   },
   {
@@ -190,8 +196,8 @@ export const GUIDE_LOCATIONS: GuideLocation[] = [
     weight: 8,
     risk: 4,
     desc: {
-      en: "Highest reward. Highest hunting risk.",
-      zh: "最高收益。最高狩獵風險。",
+      en: "Highest reward. Highest hunting risk (base hunt penalty 45%).",
+      zh: "最高收益。最高狩獵風險（基礎狩獵懲罰 45%）。",
     },
   },
 ];

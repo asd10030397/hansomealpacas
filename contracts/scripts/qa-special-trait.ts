@@ -56,7 +56,7 @@ async function post(url: string, body: unknown) {
 
 function prePenaltyBps(locationId: number, adL: number, cdL: number): number {
   if (locationId === 0 || cdL === 0) return 0;
-  const pi0 = 1500; // Grassland
+  const pi0 = 2500; // Candidate A Grassland π₀
   return Math.min(Math.floor((pi0 * (adL + cdL)) / (adL + 1)), 9000);
 }
 

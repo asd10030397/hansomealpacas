@@ -11,7 +11,8 @@ import {
   GameSkeleton,
 } from "@/components/game/ui/GameFeedback";
 import { PixelButton, PixelPanel } from "@/components/ui/pixel";
-import { useClaimRewards } from "@/hooks/game/useClaimRewards";
+import { useAccount } from "wagmi";
+import { UnclaimedRewardsNotice } from "@/components/game/UnclaimedRewardsNotice";
 import { useAutoReveal } from "@/hooks/game/useAutoReveal";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
@@ -20,7 +21,19 @@ import { useNftDisplayMap } from "@/hooks/game/useNftDisplayMap";
 import { useSettlementPresentationQueue } from "@/hooks/game/useSettlementPresentationQueue";
 import { useSettlementView } from "@/hooks/game/useSettlementView";
 import { parseAbilityEffectId } from "@/lib/game/abilityEffects";
+import {
+  markAutoNavigateScrollDone,
+  shouldScrollAfterAutoNavigate,
+} from "@/lib/game/autoNavigateToBattle";
+import {
+  markBattlePresentationComplete,
+  setBattlePresentationBusy,
+} from "@/lib/game/battlePresentationGate";
 import { formatCountdown } from "@/lib/game/phaseStatus";
+import {
+  GAME_SECTION_IDS,
+  scrollToGameSectionWithRetry,
+} from "@/lib/game/scrollToGameSection";
 import { parseSettlementResultSfxId } from "@/lib/game/settlementResults";
 import { resultSubstep } from "@/lib/game/uiLoopPhase";
 import { isTestnetGaslessResolveEnabled } from "@/lib/game/testnetGaslessResolve";
@@ -39,12 +52,12 @@ function resolveOutcomeLabel(
 export default function ResultPhasePage() {
   const { t } = useGameI18n();
   const gameHref = useGameHref();
+  const { address } = useAccount();
   const { day, now, phaseEndsAt, phase, isMock } = useGameState();
   const autoReveal = useAutoReveal();
   const settleView = useSettlementView();
-  const claim = useClaimRewards();
-  const battleRef = useRef<HTMLDivElement | null>(null);
   const scrolledRef = useRef(false);
+  const walletKey = address ?? "anon";
 
   const sub = resultSubstep(phase, {
     settled: settleView.status === "completed",
@@ -63,11 +76,39 @@ export default function ResultPhasePage() {
     currentAbility: abilityCue,
     currentResult: resultCue,
     advance: advancePresentation,
+    queueStatus,
   } = useSettlementPresentationQueue(
     settleView.day,
     settleView.rows,
     showPresentationFx,
   );
+
+  // Gate auto-nav back to Commit until settle + reward reveal cues finish.
+  useEffect(() => {
+    const preparing =
+      settleView.status !== "completed" &&
+      (settleView.status === "pending" ||
+        settleView.status === "available" ||
+        settleView.status === "waiting_seed" ||
+        settleView.status === "processing" ||
+        autoReveal.revealing);
+    const fxBusy = showPresentationFx && queueStatus !== "idle";
+    const busy = preparing || fxBusy;
+    setBattlePresentationBusy(busy);
+    if (settleView.status === "completed" && !fxBusy) {
+      markBattlePresentationComplete(walletKey, settleView.day);
+    }
+    return () => {
+      setBattlePresentationBusy(false);
+    };
+  }, [
+    settleView.status,
+    settleView.day,
+    showPresentationFx,
+    queueStatus,
+    autoReveal.revealing,
+    walletKey,
+  ]);
 
   const settleMsLeft = Math.max(0, phaseEndsAt - now);
   const settleCountdown = formatCountdown(settleMsLeft);
@@ -108,15 +149,14 @@ export default function ResultPhasePage() {
 
   const displayMap = useNftDisplayMap(displaySeeds);
 
-  // After auto-reveal / settle advances, scroll once to battle results.
+  // COMMIT → Battle: scroll once to Auto Reveal (mobile-safe sticky offset + retry).
   useEffect(() => {
     if (scrolledRef.current) return;
-    if (settleView.status !== "completed" && autoReveal.revealedCount === 0) return;
+    if (!shouldScrollAfterAutoNavigate(walletKey, day.day)) return;
     scrolledRef.current = true;
-    window.requestAnimationFrame(() => {
-      battleRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-  }, [settleView.status, autoReveal.revealedCount]);
+    markAutoNavigateScrollDone(walletKey, day.day);
+    return scrollToGameSectionWithRetry(GAME_SECTION_IDS.autoReveal);
+  }, [walletKey, day.day, phase]);
 
   useEffect(() => {
     scrolledRef.current = false;
@@ -146,6 +186,10 @@ export default function ResultPhasePage() {
       </p>
 
       {/* Resolve status — gasless relayer or legacy local auto-reveal */}
+      <div
+        id={GAME_SECTION_IDS.autoReveal}
+        className="scroll-mt-[calc(env(safe-area-inset-top,0px)+4.5rem)]"
+      >
       <PixelPanel
         className="mt-4"
         title={t.result.revealSectionTitle}
@@ -231,6 +275,7 @@ export default function ResultPhasePage() {
           </GameFeedback>
         ) : null}
       </PixelPanel>
+      </div>
 
       {showPreparing ? (
         <div className="mt-4" data-testid="result-post-reveal-staging">
@@ -299,7 +344,10 @@ export default function ResultPhasePage() {
         ) : null}
       </PixelPanel>
 
-      <div ref={battleRef}>
+      <div
+        id={GAME_SECTION_IDS.battleResults}
+        className="scroll-mt-[calc(env(safe-area-inset-top,0px)+4.5rem)]"
+      >
         <PixelPanel
           className="mt-4"
           title={t.result.battleSectionTitle}
@@ -336,13 +384,22 @@ export default function ResultPhasePage() {
                         highlightOwn
                         row={{
                           ...row,
+                          // Settlement / owned inventory Side wins over metadata art enrichment.
                           image: display?.image ?? row.image,
-                          side: display?.side ?? row.side,
+                          side: row.side ?? display?.side ?? null,
                           gameplayClass:
-                            display?.gameplayClass ?? row.gameplayClass,
+                            row.gameplayClass ?? display?.gameplayClass ?? null,
                           outcome: resolveOutcomeLabel(row.outcome, t),
                         }}
                         index={index}
+                        rewardReveal={
+                          resultCue?.tokenId === row.tokenId
+                            ? {
+                                active: true,
+                                durationMs: resultCue.durationMs,
+                              }
+                            : null
+                        }
                         overlays={
                           <>
                             {resultCue?.tokenId === row.tokenId ? (
@@ -387,7 +444,7 @@ export default function ResultPhasePage() {
                           key={`other-${p.tokenId}`}
                           row={{
                             tokenId: p.tokenId,
-                            side: display?.side ?? p.side,
+                            side: p.side ?? display?.side ?? null,
                             gameplayClass: display?.gameplayClass ?? null,
                             image: display?.image ?? null,
                             ownerAddress: null,
@@ -411,71 +468,19 @@ export default function ResultPhasePage() {
         </PixelPanel>
       </div>
 
-      <PixelPanel
-        className="mt-4"
-        title={t.result.claimSectionTitle}
-        eyebrow={claim.live ? "ON-CHAIN" : "MOCK / LOCAL"}
-      >
-        {claim.isLoading ? (
-          <GameSkeleton rows={2} />
-        ) : (
-          <dl className="grid grid-cols-2 gap-3 text-sm">
-            <div className="hg-list-row flex-col !items-start gap-1">
-              <dt className="text-[var(--hg-muted)]">{t.result.claimTotal}</dt>
-              <dd className="pixel-title text-[#f0c44a]">
-                {claim.displayTotal}{" "}
-                {claim.live ? "tHANSOME" : "HANSOME"}
-              </dd>
-            </div>
-            <div className="hg-list-row flex-col !items-start gap-1">
-              <dt className="text-[var(--hg-muted)]">Day</dt>
-              <dd>{claim.day}</dd>
-            </div>
-          </dl>
-        )}
-
-        <div className="mt-4 flex flex-wrap gap-2">
-          <PixelButton
-            variant="green"
-            size="sm"
-            className="w-auto min-w-[8rem]"
-            disabled={!claim.canClaim || claim.uiState === "pending"}
-            onClick={() => void claim.claimAll()}
-          >
-            {claim.uiState === "pending" || claim.uiState === "confirm"
-              ? t.result.claiming
-              : t.result.claimAction}
+      <div className="mt-4 w-full">
+        <UnclaimedRewardsNotice className="mb-3" showAction={false} />
+        <nav className="result-footer-nav" aria-label={t.dashboard.alsoAvailable}>
+          <PixelButton href={gameHref.commit} variant="slate" size="sm">
+            {t.result.goCommit}
           </PixelButton>
-          <PixelButton
-            href={gameHref.rewards}
-            variant="slate"
-            size="sm"
-            className="w-auto min-w-[8rem]"
-          >
-            {t.actions.rewards}
+          <PixelButton href={gameHref.dashboard} variant="slate" size="sm">
+            {t.nav.play}
           </PixelButton>
-        </div>
-
-        {!claim.canClaim && !claim.isLoading ? (
-          <p className="mt-2 text-xs text-[var(--hg-muted)]">
-            {t.result.noClaimable}
-          </p>
-        ) : null}
-
-        {claim.error ? (
-          <GameFeedback tone="error" label={t.common.txError}>
-            {claim.error}
-          </GameFeedback>
-        ) : null}
-      </PixelPanel>
-
-      <div className="mt-4 flex flex-wrap gap-2">
-        <PixelButton href={gameHref.commit} variant="slate" size="sm" className="w-auto">
-          {t.result.goCommit}
-        </PixelButton>
-        <PixelButton href={gameHref.dashboard} variant="slate" size="sm" className="w-auto">
-          {t.nav.play}
-        </PixelButton>
+          <PixelButton href={gameHref.claim} variant="green" size="sm">
+            {t.dashboard.goToClaim}
+          </PixelButton>
+        </nav>
       </div>
     </div>
   );

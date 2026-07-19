@@ -77,12 +77,15 @@ export type GameMessages = {
     play: string;
     mint: string;
     myNfts: string;
+    claim: string;
+    /** @deprecated Prefer `claim` — kept for legacy copy references. */
     rewards: string;
     leaderboard: string;
     docs: string;
     aria: string;
     mobileAria: string;
     featureMyNfts: string;
+    featureClaim: string;
     featureRewards: string;
     featureLeaderboard: string;
     /** Header control — go to previous page. */
@@ -143,6 +146,8 @@ export type GameMessages = {
     demoPhaseTitle: string;
     demoPhaseEyebrow: string;
   };
+    unclaimedNotice: string;
+    goToClaim: string;
   phaseStatus: {
     gameStatus: string;
     eyebrow: string;
@@ -241,6 +246,23 @@ export type GameMessages = {
     cougarView: string;
     cougarHomeNote: string;
   };
+    selectNftTitle: string;
+    selectNftHint: string;
+    selectNftAction: string;
+    nftSelected: string;
+    sealed: string;
+    commitHere: string;
+    committingHint: string;
+    committingAs: string;
+    pickNftFirst: string;
+    phaseClosed: string;
+    alreadyCommitted: string;
+    connectWallet: string;
+    loadingInventory: string;
+    emptyInventory: string;
+    commitSuccess: string;
+    committedBadge: string;
+    committedCount: string;
   myNfts: {
     heading: string;
     blurb: string;
@@ -249,7 +271,17 @@ export type GameMessages = {
     heading: string;
     blurb: string;
   };
-  leaderboard: {
+    totalClaimable: string;
+    lifetimeClaimed: string;
+    pendingSettlement: string;
+    pendingSettlementYes: string;
+    pendingSettlementNo: string;
+    claimHistory: string;
+    claimHistoryEmpty: string;
+    noDeadlineNote: string;
+    perNftTitle: string;
+    goBattleResult: string;
+  };
     heading: string;
     blurb: string;
     walletNote: string;

@@ -13,10 +13,16 @@ export type PageBgTheme =
   | "forest"
   | "river"
   | "battle"
-  | "reward";
+  | "reward"
+  | "navHome"
+  | "nfts"
+  | "rewards"
+  | "leaderboard"
+  | "docs";
 
 export const PAGE_BG_EVENT = "hansome:page-bg";
 
+/** Primary URLs — WebP for performance. PNG siblings exist for authoring. */
 export const PAGE_BG_URLS: Record<PageBgTheme, string> = {
   world: "/game/backgrounds/world.webp",
   home: "/game/backgrounds/home.webp",
@@ -26,6 +32,11 @@ export const PAGE_BG_URLS: Record<PageBgTheme, string> = {
   river: "/game/backgrounds/river.webp",
   battle: "/game/backgrounds/battle.webp",
   reward: "/game/backgrounds/reward.webp",
+  navHome: "/game/backgrounds/nav-home.webp",
+  nfts: "/game/backgrounds/nfts.webp",
+  rewards: "/game/backgrounds/rewards.webp",
+  leaderboard: "/game/backgrounds/leaderboard.webp",
+  docs: "/game/backgrounds/docs.webp",
 };
 
 const LOCATION_THEME: Record<LocationId, PageBgTheme> = {
@@ -59,17 +70,17 @@ export function resolvePageBackground(
   if (path === "/result" || path === "/reveal" || path === "/settlement") {
     return "battle";
   }
-  if (path === "/rewards") return "reward";
+  if (path === "/claim" || path === "/rewards") return "rewards";
+  if (path === "/my-nfts") return "nfts";
+  if (path === "/leaderboard") return "leaderboard";
+  if (path === "/docs" || path.startsWith("/docs/")) return "docs";
   if (path === "/mint") return "home";
-  if (path === "/my-nfts") return "home";
   if (path === "/explore" || path === "/commit") {
     return locTheme ?? "world";
   }
   if (path === "/dashboard") return "world";
-  if (path === "/" || path === "") return "world";
-  if (path === "/leaderboard" || path === "/docs" || path.startsWith("/docs/")) {
-    return "world";
-  }
+  // Title / HOME menu
+  if (path === "/" || path === "") return "navHome";
   return "world";
 }
 

@@ -467,10 +467,10 @@ Base penalty coefficient \(\pi^{0}(L)\):
 | \(L\) | \(\pi^{0}(L)\) |
 |------|------|
 | Home | 0 |
-| Mountain | 0.10 |
-| Grassland | 0.15 |
-| Forest | 0.22 |
-| River | 0.30 |
+| Mountain | 0.15 |
+| Grassland | 0.25 |
+| Forest | 0.35 |
+| River | 0.45 |
 
 Pressure adjustment: if \(L\in\mathcal{L}^{H}\) and \(C_d(L)\ge 1\):
 
@@ -743,7 +743,7 @@ R_d^{A}+R_d^{C}+R_d^{H}=R_d
 | Step \(R\) | 400k / 280k / 160k / 80k |
 | \(W^{C}_{\mathrm{all}}\) | 50 |
 | Location weights | 1, 2, 3, 5, 8 |
-| \(\pi^{0}\) | 0, 0.10, 0.15, 0.22, 0.30 |
+| \(\pi^{0}\) | 0, 0.15, 0.25, 0.35, 0.45 |
 | \(m_F,p_L,p_R\) | 1.20, 0.20, 0.30 |
 
 ---

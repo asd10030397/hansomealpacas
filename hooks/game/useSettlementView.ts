@@ -61,7 +61,23 @@ import {
   MISSED_REVEAL_OUTCOME,
   SEED_MISSING_UI_MESSAGE,
 } from "@/lib/game/missedReveal";
+import {
+  getTestnetGameplayIdentity,
+  isTestnetGameplayTraitsEnabled,
+} from "@/lib/game/testnetGameplayTraits";
+import { resolveBattleLocationId } from "@/lib/game/resolveBattleLocation";
+import { fetchDaySettlementCredits } from "@/lib/game/daySettlementCredits";
 import type { AbilityEffectId } from "@/lib/game/abilityEffects/catalog";
+import {
+  alpacaCountAt,
+  cougarCountAt,
+  emptyCohort,
+  mergeOwnedRevealsIntoCohort,
+  parseRevealCohort,
+  type BattleParticipantView,
+  type CohortCounts,
+  type RevealLogLike,
+} from "@/lib/game/revealCohort";
 import { useGameState } from "@/hooks/game/useGameState";
 import type { GameplayClass, LocationId, NftSide } from "@/types/game";
 
@@ -87,71 +103,7 @@ export type SettlementRowView = {
   missedReveal: boolean;
 };
 
-/** Day-global reveal participants (presentation only — no reward math). */
-export type BattleParticipantView = {
-  tokenId: number;
-  locationId: LocationId;
-  locationName: string;
-  side: NftSide | null;
-};
-
-type CohortCounts = {
-  ad: number[];
-  cd: number[];
-  alpacaParticipantCount: number;
-  revealedTokenIds: Set<number>;
-  participants: BattleParticipantView[];
-};
-
-function emptyCohort(): CohortCounts {
-  return {
-    ad: [0, 0, 0, 0, 0],
-    cd: [0, 0, 0, 0, 0],
-    alpacaParticipantCount: 0,
-    revealedTokenIds: new Set(),
-    participants: [],
-  };
-}
-
-function sideFromEnum(side: number): NftSide | null {
-  if (side === 1) return "Alpaca";
-  if (side === 2) return "Cougar";
-  return null;
-}
-
-function parseRevealCohort(logs: Log[]): CohortCounts {
-  const cohort = emptyCohort();
-  const seen = new Set<number>();
-  for (const log of logs) {
-    const args = (
-      log as {
-        args?: { tokenId?: bigint; locationId?: number; side?: number };
-      }
-    ).args;
-    if (!args) continue;
-    const tokenId = Number(args.tokenId ?? 0);
-    const loc = Number(args.locationId ?? 0);
-    const side = sideFromEnum(Number(args.side ?? 0));
-    if (tokenId > 0) cohort.revealedTokenIds.add(tokenId);
-    if (loc < 0 || loc > 4) continue;
-    if (side === "Alpaca") {
-      cohort.ad[loc] += 1;
-      cohort.alpacaParticipantCount += 1;
-    } else if (side === "Cougar") {
-      cohort.cd[loc] += 1;
-    }
-    if (tokenId > 0 && !seen.has(tokenId)) {
-      seen.add(tokenId);
-      cohort.participants.push({
-        tokenId,
-        locationId: loc as LocationId,
-        locationName: GAME_LOCATIONS[loc as LocationId]?.name ?? `L${loc}`,
-        side,
-      });
-    }
-  }
-  return cohort;
-}
+export type { BattleParticipantView };
 
 export function useSettlementView() {
   const { day, phase } = useGameState();
@@ -171,6 +123,11 @@ export function useSettlementView() {
   const [rollByToken, setRollByToken] = useState<
     Record<number, { runnerSuccess: boolean; luckySuccess: boolean }>
   >({});
+  /** Per-token credits from this day's DaySettled tx (not cumulative claimable). */
+  const [dayCreditsByToken, setDayCreditsByToken] = useState<
+    Record<number, bigint>
+  >({});
+  const [dayCreditsLoaded, setDayCreditsLoaded] = useState(false);
 
   // Drop previous wallet / day battle UI (prevents stale SeedAlreadySet errors).
   useEffect(() => {
@@ -180,6 +137,8 @@ export function useSettlementView() {
     setGaslessSettlePending(false);
     setCohort(emptyCohort());
     setRollByToken({});
+    setDayCreditsByToken({});
+    setDayCreditsLoaded(false);
   }, [address, day.day]);
 
   const dayStateRead = useReadContract({
@@ -265,13 +224,12 @@ export function useSettlementView() {
     () => owned.nfts.map((n) => n.tokenId),
     [owned.nfts],
   );
-  // Legacy path: wallet-scoped localStorage secrets for this day.
+  // Client commit secrets (location + salt). Still written on gasless commit;
+  // resolve itself uses the server vault, but Battle Result needs local
+  // locationId before reveal because on-chain locationOf defaults to 0 (Home).
   const secrets = useMemo(
-    () =>
-      gasless
-        ? []
-        : listOwnedCommitSecretsForDay(day.day, address, ownedTokenIds),
-    [gasless, day.day, address, ownedTokenIds, localTick],
+    () => listOwnedCommitSecretsForDay(day.day, address, ownedTokenIds),
+    [day.day, address, ownedTokenIds, localTick],
   );
 
   // Read today's commit hashes for every owned NFT, then keep only participants.
@@ -319,7 +277,11 @@ export function useSettlementView() {
       args: [BigInt(tokenId), BigInt(day.day)] as const,
       chainId: GAME_CHAIN_ID,
     })),
-    query: { enabled: live && !!game && tokenIds.length > 0 },
+    query: {
+      enabled: live && !!game && tokenIds.length > 0,
+      // Reveal writes locationOf — must not keep the pre-reveal default 0 (Home).
+      refetchInterval: isConnected ? 4_000 : false,
+    },
   });
 
   const commitHashContracts = useReadContracts({
@@ -355,6 +317,49 @@ export function useSettlementView() {
     settled,
   });
 
+  // Load this day's Credited amounts from the settle tx (UI reward = day reward).
+  useEffect(() => {
+    if (!live || !game || !publicClient || !distributorAddress || !settled) {
+      setDayCreditsByToken({});
+      setDayCreditsLoaded(false);
+      return;
+    }
+    let cancelled = false;
+    setDayCreditsLoaded(false);
+    void (async () => {
+      try {
+        const { credits } = await fetchDaySettlementCredits({
+          publicClient,
+          game,
+          distributor: distributorAddress,
+          day: day.day,
+          fromBlock: REVEAL_LOG_FROM_BLOCK,
+        });
+        if (cancelled) return;
+        const next: Record<number, bigint> = {};
+        for (const [tokenId, amount] of credits) next[tokenId] = amount;
+        setDayCreditsByToken(next);
+        setDayCreditsLoaded(true);
+      } catch {
+        if (!cancelled) {
+          setDayCreditsByToken({});
+          setDayCreditsLoaded(false);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    live,
+    game,
+    publicClient,
+    distributorAddress,
+    settled,
+    day.day,
+    localTick,
+  ]);
+
   // Index Revealed(day) once Reveal is closed (missed-reveal + activation cohort).
   useEffect(() => {
     if (!live || !game || !publicClient || !revealClosed) {
@@ -384,7 +389,7 @@ export function useSettlementView() {
           toBlock: "latest",
         });
         if (cancelled) return;
-        const nextCohort = parseRevealCohort(logs as Log[]);
+        const nextCohort = parseRevealCohort(logs as unknown as RevealLogLike[]);
         setCohort(nextCohort);
 
         if (!settled || !randomnessAddress || tokenIds.length === 0) {
@@ -511,21 +516,53 @@ export function useSettlementView() {
       return [];
     }
 
+    // Effective cohort: chain Revealed logs + any owned reveals missing from RPC.
+    const ownedRevealSeed = tokenIds.map((tokenId) => {
+      const secret = secrets.find((s) => s.tokenId === tokenId);
+      const nft = owned.nfts.find((n) => n.tokenId === tokenId);
+      const testnetId = isTestnetGameplayTraitsEnabled()
+        ? getTestnetGameplayIdentity(tokenId)
+        : null;
+      const side: NftSide | null =
+        testnetId?.side ?? nft?.side ?? null;
+      const cohortLocationId =
+        cohort.participants.find((p) => p.tokenId === tokenId)?.locationId ??
+        null;
+      const loc =
+        cohortLocationId ??
+        (secret &&
+        (secret.status === "revealed" || secret.status === "submitted")
+          ? secret.locationId
+          : null);
+      return {
+        tokenId,
+        locationId: loc ?? -1,
+        side,
+      };
+    }).filter((r) => r.locationId >= 0);
+    const effectiveCohort = mergeOwnedRevealsIntoCohort(cohort, ownedRevealSeed);
+
     return tokenIds.map((tokenId, i) => {
       const secret = secrets.find((s) => s.tokenId === tokenId);
       const locRaw = locationContracts.data?.[i]?.result;
-      const locationId =
-        locRaw !== undefined
-          ? (Number(locRaw) as LocationId)
-          : (secret?.locationId ?? null);
       const claimRaw = claimableContracts.data?.[i]?.result;
       const rewardWei = claimRaw !== undefined ? (claimRaw as bigint) : null;
       const hashRaw = commitHashContracts.data?.[i]?.result as
         | `0x${string}`
         | undefined;
       const nft = owned.nfts.find((n) => n.tokenId === tokenId);
-      const side = nft?.side ?? null;
-      const gameplayClass: GameplayClass = nft?.gameplayClass ?? "Common";
+      const testnetId = isTestnetGameplayTraitsEnabled()
+        ? getTestnetGameplayIdentity(tokenId)
+        : null;
+      // Prefer Testnet FY deck over stale metadata Side (#16 Cougar / #29 Alpaca).
+      const side: NftSide | null =
+        testnetId?.side ?? nft?.side ?? null;
+      const gameplayClass: GameplayClass =
+        testnetId?.gameplayClass ?? nft?.gameplayClass ?? "Common";
+      const image =
+        side === "Cougar" && nft?.side !== "Cougar"
+          ? "/pixel/cougar/mint/image/cougar.png"
+          : (nft?.image ?? null);
 
       const committedOnChain = Boolean(hashRaw && hashRaw !== zeroHash);
       const committed =
@@ -535,6 +572,20 @@ export function useSettlementView() {
         secret?.status === "revealed";
       const revealed =
         cohort.revealedTokenIds.has(tokenId) || secret?.status === "revealed";
+      const cohortLocationId =
+        cohort.participants.find((p) => p.tokenId === tokenId)?.locationId ??
+        null;
+
+      // Prefer Revealed logs / same-day secret over stale locationOf===0 (Home).
+      const locationId = resolveBattleLocationId({
+        committed,
+        revealed,
+        settled,
+        locationOf: locRaw !== undefined ? Number(locRaw) : null,
+        secretLocationId: secret?.locationId,
+        cohortLocationId,
+        side,
+      });
 
       const interpretation = interpretLiveSettlementRow({
         phase,
@@ -561,15 +612,16 @@ export function useSettlementView() {
       } else if (!interpretation.suppressActivation) {
         const loc = locationId;
         const rolls = rollByToken[tokenId];
+        // adL/cdL from day-global cohort (0 is valid — empty location = hunt miss).
         const activation = deriveSettlementActivation({
           side,
           gameplayClass,
           locationId: loc,
-          adL: Math.max(1, cohort.ad[loc] ?? 1),
-          cdL: cohort.cd[loc] ?? 0,
+          adL: alpacaCountAt(effectiveCohort, loc),
+          cdL: cougarCountAt(effectiveCohort, loc),
           alpacaParticipantCount: Math.max(
             side === "Alpaca" ? 1 : 0,
-            cohort.alpacaParticipantCount,
+            effectiveCohort.alpacaParticipantCount,
           ),
           runnerSuccess: rolls?.runnerSuccess,
           luckySuccess: rolls?.luckySuccess,
@@ -581,14 +633,24 @@ export function useSettlementView() {
         outcome = "Settled on-chain (detail fields not exposed by contract)";
       }
 
+      // Battle Reward = this day's Credited amount (not cumulative claimable).
+      const dayRewardWei = missedReveal
+        ? 0n
+        : !settled
+          ? null
+          : dayCreditsLoaded
+            ? (dayCreditsByToken[tokenId] ?? 0n)
+            : null;
+
       const rewardLabel = missedReveal
         ? "0"
-        : rewardWei != null
-          ? `${formatHansome(rewardWei)} tHANSOME`
-          : settled
-            ? "0 / unread"
-            : "—";
+        : !settled
+          ? "Pending"
+          : dayRewardWei != null
+            ? `${formatHansome(dayRewardWei)} tHANSOME`
+            : "…";
 
+      // Claim row still reflects pull-claim balance (may include prior days).
       const claimStatus = missedReveal
         ? "No claim"
         : !settled
@@ -605,8 +667,8 @@ export function useSettlementView() {
             ? "—"
             : (GAME_LOCATIONS[locationId]?.name ?? `L${locationId}`),
         side,
-        gameplayClass: nft?.gameplayClass ?? gameplayClass,
-        image: nft?.image ?? null,
+        gameplayClass,
+        image,
         ownerAddress: address ?? null,
         isOwn: true,
         claimStatus,
@@ -614,7 +676,7 @@ export function useSettlementView() {
         ability,
         activatedAbility,
         rewardLabel,
-        rewardWei: missedReveal ? 0n : rewardWei,
+        rewardWei: dayRewardWei,
         source: "chain" as const,
         missedReveal,
       };
@@ -636,6 +698,8 @@ export function useSettlementView() {
     owned.nfts,
     cohort,
     rollByToken,
+    dayCreditsByToken,
+    dayCreditsLoaded,
   ]);
 
   const runSettle = useCallback(async () => {
@@ -686,6 +750,8 @@ export function useSettlementView() {
         }
         void dayStateRead.refetch?.();
         void settledRead.refetch?.();
+        void locationContracts.refetch?.();
+        void commitHashContracts.refetch?.();
         void claimableContracts.refetch?.();
         void hasDaySeedRead.refetch?.();
         void owned.refetch?.();
@@ -744,6 +810,8 @@ export function useSettlementView() {
     writeContractAsync,
     dayStateRead,
     settledRead,
+    locationContracts,
+    commitHashContracts,
     claimableContracts,
     hasDaySeedRead,
   ]);

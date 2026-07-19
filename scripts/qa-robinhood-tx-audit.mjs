@@ -48,7 +48,7 @@ const ENTRY_POINTS = [
   {
     tx: "Claim Rewards",
     hook: "useClaimRewards.ts",
-    ui: ["app/game/rewards/page.tsx"],
+    ui: ["app/game/claim/page.tsx"],
     label: "hansome-claim",
     fn: "claimMany",
   },

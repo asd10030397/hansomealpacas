@@ -45,12 +45,13 @@ library SettlementLib {
         revert InvalidLocation();
     }
 
+    /// @dev Candidate A ladder (bps): Home 0 / Mountain 15% / Grassland 25% / Forest 35% / River 45%.
     function pi0Bps(uint8 locationId) internal pure returns (uint256) {
         if (locationId == GameTypes.LOC_HOME) return 0;
-        if (locationId == GameTypes.LOC_MOUNTAIN) return 1_000;
-        if (locationId == GameTypes.LOC_GRASSLAND) return 1_500;
-        if (locationId == GameTypes.LOC_FOREST) return 2_200;
-        if (locationId == GameTypes.LOC_RIVER) return 3_000;
+        if (locationId == GameTypes.LOC_MOUNTAIN) return 1_500;
+        if (locationId == GameTypes.LOC_GRASSLAND) return 2_500;
+        if (locationId == GameTypes.LOC_FOREST) return 3_500;
+        if (locationId == GameTypes.LOC_RIVER) return 4_500;
         revert InvalidLocation();
     }
 

@@ -14,7 +14,7 @@ const BASE = (process.env.BASE_URL || "http://localhost:3000").replace(/\/$/, ""
 const HOME = BASE.includes("game.") && !BASE.includes("localhost") ? "/" : "/game";
 const MINT = BASE.includes("game.") && !BASE.includes("localhost") ? "/mint" : "/game/mint";
 const REWARDS =
-  BASE.includes("game.") && !BASE.includes("localhost") ? "/rewards" : "/game/rewards";
+  BASE.includes("game.") && !BASE.includes("localhost") ? "/claim" : "/game/claim";
 /** Title/standoff hides the dock — MORE lifecycle starts on a dock-visible page. */
 const START = MINT;
 
@@ -183,16 +183,16 @@ async function runMobileLifecycle(browser) {
     await changeLanguageInMore(page);
     checks.push({ step: "after-language", ...(await assertOpenSingle(page, "mobile:after-language")) });
 
-    // 6) Navigate via MORE link (Rewards is in MORE, not primary dock)
+    // 6) Navigate via MORE link (Claim is in MORE, not primary dock)
     await page
-      .locator('[data-more-panel="true"] a[data-nav-id="rewards"], .mobile-dock__sheet-link[data-nav-id="rewards"]')
+      .locator('[data-more-panel="true"] a[data-nav-id="claim"], .mobile-dock__sheet-link[data-nav-id="claim"]')
       .first()
       .click({ timeout: 8000 });
-    await page.waitForURL(/\/rewards/, { timeout: 15000 });
+    await page.waitForURL(/\/claim/, { timeout: 15000 });
     await page.waitForTimeout(400);
     checks.push({
-      step: "after-navigate-rewards",
-      ...(await assertClosedClean(page, "mobile:after-navigate-rewards")),
+      step: "after-navigate-claim",
+      ...(await assertClosedClean(page, "mobile:after-navigate-claim")),
     });
 
     // 7) Return to previous page (MINT) via primary dock

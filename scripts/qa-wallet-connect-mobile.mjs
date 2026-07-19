@@ -13,7 +13,7 @@ const PATHS = {
   home: BASE.includes("game.") && !BASE.includes("localhost") ? "/" : "/game",
   mint: BASE.includes("game.") && !BASE.includes("localhost") ? "/mint" : "/game/mint",
   myNfts: BASE.includes("game.") && !BASE.includes("localhost") ? "/my-nfts" : "/game/my-nfts",
-  rewards: BASE.includes("game.") && !BASE.includes("localhost") ? "/rewards" : "/game/rewards",
+  rewards: BASE.includes("game.") && !BASE.includes("localhost") ? "/claim" : "/game/claim",
 };
 
 function gamePath(key) {

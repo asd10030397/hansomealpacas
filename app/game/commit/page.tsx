@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useAccount } from "wagmi";
 import { GameStatusPanel } from "@/components/game/GameStatusPanel";
 import { GameFeedback } from "@/components/game/ui/GameFeedback";
 import { PixelButton, PixelPanel } from "@/components/ui/pixel";
@@ -12,12 +14,25 @@ import { useGameState } from "@/hooks/game/useGameState";
 import { useHansomeCommit } from "@/hooks/game/useHansomeCommit";
 import { useOwnedGenesisNfts } from "@/hooks/game/useOwnedGenesisNfts";
 import {
+  markAutoNavigateToCommitScrollDone,
+  shouldScrollAfterAutoNavigateToCommit,
+} from "@/lib/game/autoNavigateToCommit";
+import {
+  GAME_SECTION_IDS,
+  scrollToGameSectionWithRetry,
+} from "@/lib/game/scrollToGameSection";
+import {
   getCommitSecret,
   getPendingLocation,
   listCommitSecretsForDay,
   setPendingLocation,
 } from "@/lib/game/commitSecret";
+import {
+  abilityDescriptionFor,
+  abilityLabelFor,
+} from "@/lib/game/genesisIdentity";
 import { isHansomeGameConfigured } from "@/lib/game/hansomeGame";
+import { resolveNftDisplaySync, speciesClassLabel } from "@/lib/game/nftDisplay";
 import { dispatchPageBackgroundLocation } from "@/lib/game/pageBackground";
 import type { LocationId } from "@/types/game";
 
@@ -27,12 +42,16 @@ function locationDisplay(locationId: LocationId): string {
 }
 
 export default function CommitPage() {
-  const { t } = useGameI18n();
+  const { t, locale } = useGameI18n();
   const gameHref = useGameHref();
+  const { address } = useAccount();
   const { day, now, phaseEndsAt, phase, isMock } = useGameState();
   const { commitNft, isPending, lastError } = useHansomeCommit();
   const owned = useOwnedGenesisNfts();
   const gameConfigured = isHansomeGameConfigured();
+  const chooseLocationRef = useRef<HTMLDivElement | null>(null);
+  const scrolledRef = useRef(false);
+  const walletKey = address ?? "anon";
   /**
    * Live inventory matches My NFTs (`useOwnedGenesisNfts`) whenever Genesis is
    * configured and the wallet is connected. Demo MOCK_NFTS only when that
@@ -56,23 +75,37 @@ export default function CommitPage() {
     setSealedToday(listCommitSecretsForDay(day.day, owned.address));
     setSelectedToken(null);
     setStatusMsg(null);
-  }, [day.day, owned.address]);
-
-  useEffect(() => {
+    // New day: drop prior location selection unless URL still requests one.
     const fromQuery = new URLSearchParams(window.location.search).get("location");
     const q = fromQuery != null ? Number(fromQuery) : NaN;
     if (Number.isInteger(q) && q >= 0 && q <= 4) {
       setLocationId(q as LocationId);
-      setPendingLocation(q as LocationId);
+      setPendingLocation(q as LocationId, day.day);
       dispatchPageBackgroundLocation(q);
       return;
     }
-    const pending = getPendingLocation();
+    const pending = getPendingLocation(day.day);
     if (pending != null) {
       setLocationId(pending);
       dispatchPageBackgroundLocation(pending);
+    } else {
+      setLocationId(null);
+      dispatchPageBackgroundLocation(null);
     }
-  }, []);
+  }, [day.day, owned.address]);
+
+  // Battle→next COMMIT auto-nav: smooth-scroll once to Choose Location panel.
+  useEffect(() => {
+    if (scrolledRef.current) return;
+    if (!shouldScrollAfterAutoNavigateToCommit(walletKey, day.day)) return;
+    scrolledRef.current = true;
+    markAutoNavigateToCommitScrollDone(walletKey, day.day);
+    return scrollToGameSectionWithRetry(GAME_SECTION_IDS.commit);
+  }, [walletKey, day.day, phase]);
+
+  useEffect(() => {
+    scrolledRef.current = false;
+  }, [day.day]);
 
   const locationLabel = useMemo(() => {
     if (locationId == null) return null;
@@ -136,6 +169,11 @@ export default function CommitPage() {
         <GameStatusPanel day={day} now={now} phaseEndsAt={phaseEndsAt} phase={phase} />
       </div>
 
+      <div
+        id={GAME_SECTION_IDS.commit}
+        ref={chooseLocationRef}
+        className="scroll-mt-[calc(env(safe-area-inset-top,0px)+4.5rem)]"
+      >
       <PixelPanel
         className="mt-4"
         title={t.commit.locationTitle}
@@ -194,15 +232,52 @@ export default function CommitPage() {
             const sealedLocation =
               sealed != null ? locationDisplay(sealed.locationId) : null;
 
+            const display = resolveNftDisplaySync({
+              tokenId: nft.tokenId,
+              side: nft.side,
+              gameplayClass: nft.gameplayClass,
+              image: nft.image,
+            });
+            const title = speciesClassLabel(display.side, display.gameplayClass);
+            const abilityName = abilityLabelFor(
+              display.side ?? "Unknown",
+              display.gameplayClass ?? "Common",
+            );
+            const abilityBlurb = abilityDescriptionFor(
+              display.side ?? "Unknown",
+              display.gameplayClass ?? "Common",
+              locale,
+            );
+
             return (
               <li
                 key={nft.tokenId}
                 className={`commit-nft-row${isDone ? " commit-nft-row--done" : ""}`}
               >
+                <div className="commit-nft-row__media">
+                  <div className="commit-nft-row__art">
+                    <Image
+                      src={display.image}
+                      alt={`#${nft.tokenId} ${title}`}
+                      fill
+                      className="object-contain p-1"
+                      sizes="72px"
+                      unoptimized
+                    />
+                  </div>
+                </div>
                 <div className="commit-nft-row__body">
                   <p className="commit-nft-row__title">
-                    #{nft.tokenId} · {nft.side}
-                    {nft.side === "Alpaca" ? ` · ${nft.gameplayClass}` : " · W=1"}
+                    #{nft.tokenId} · {title}
+                    {display.side === "Cougar" ? " · W=1" : null}
+                  </p>
+                  <p className="commit-nft-row__ability">
+                    <span className="commit-nft-row__ability-name">
+                      {t.settlement.abilityLabel}: {abilityName}
+                    </span>
+                    <span className="commit-nft-row__ability-blurb">
+                      {abilityBlurb}
+                    </span>
                   </p>
                   {isDone && sealedLocation ? (
                     <div className="commit-nft-row__status" aria-label={`${t.commit.submitted}, ${sealedLocation}`}>
@@ -269,6 +344,7 @@ export default function CommitPage() {
           </p>
         ) : null}
       </PixelPanel>
+      </div>
     </div>
   );
 }

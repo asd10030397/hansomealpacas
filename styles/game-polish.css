@@ -356,9 +356,13 @@
   );
   padding: 0.85rem 0.9rem;
   box-shadow: var(--hg-shadow-sm);
-  animation: hg-settle-in 0.45s ease both;
+  animation: hg-settle-in 0.68s ease both;
   display: grid;
   gap: 0.55rem;
+}
+
+.hg-settle-card--revealing {
+  border-color: rgba(240, 196, 74, 0.75);
 }
 
 .hg-settle-card--own {
@@ -430,6 +434,7 @@
 }
 
 .hg-settle-card__reward-block {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -437,6 +442,7 @@
   gap: 0.35rem;
   padding-top: 0.35rem;
   border-top: 1px solid rgba(90, 100, 120, 0.35);
+  overflow: visible;
 }
 
 .hg-settle-card__reward-label {
@@ -446,11 +452,57 @@
   color: var(--hg-muted);
 }
 
+.hg-settle-card__reward-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  min-height: 1.2em;
+}
+
 .hg-settle-card__reward {
   font-family: var(--font-anton), monospace;
   font-size: 0.85rem;
   letter-spacing: 0.03em;
   color: #6fcf7a;
+}
+
+.hg-settle-card__reward--revealing {
+  color: #8fe89a;
+}
+
+.hg-settle-card__reward-float {
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  margin-bottom: 0.15rem;
+  white-space: nowrap;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  color: #f0c44a;
+  text-shadow: 0 1px 0 #0d1018;
+  pointer-events: none;
+  animation: hg-reward-float 1.8s cubic-bezier(0.22, 0.82, 0.28, 1) both;
+}
+
+@keyframes hg-reward-float {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.92);
+  }
+  18% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.04);
+  }
+  72% {
+    opacity: 1;
+    transform: translateY(-14px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-22px) scale(0.98);
+  }
 }
 
 .hg-settle-card__meta {
@@ -584,6 +636,11 @@
   .hg-settle-card {
     animation: none;
   }
+
+  .hg-settle-card__reward-float {
+    animation: none;
+    opacity: 0;
+  }
 }
 
 /* ── Action grid ─────────────────────────────────────── */
@@ -712,7 +769,7 @@
 .commit-nft-row {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 0.75rem 1rem;
   border: 1px solid #2a3348;
@@ -731,6 +788,19 @@
   background: linear-gradient(180deg, #152418 0%, #121a22 100%);
 }
 
+.commit-nft-row__media {
+  flex: 0 0 auto;
+}
+
+.commit-nft-row__art {
+  position: relative;
+  width: 4.5rem;
+  height: 4.5rem;
+  border: 1px solid #2a3348;
+  background: #0d1018;
+  overflow: hidden;
+}
+
 .commit-nft-row__body {
   flex: 1 1 12rem;
   min-width: 0;
@@ -745,6 +815,27 @@
   font-weight: 650;
   color: #e8dfd2;
   letter-spacing: 0.01em;
+}
+
+.commit-nft-row__ability {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.commit-nft-row__ability-name {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #f0c44a;
+}
+
+.commit-nft-row__ability-blurb {
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: var(--hg-muted);
 }
 
 .commit-nft-row__status {
@@ -779,10 +870,44 @@
   min-width: 7.25rem;
 }
 
+/* Result page footer — equal-width actions on desktop */
+.result-footer-nav {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .result-footer-nav {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.65rem;
+    align-items: stretch;
+  }
+}
+
+.result-footer-nav > a.pixel-title,
+.result-footer-nav > button.pixel-title {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.unclaimed-rewards-notice {
+  width: 100%;
+  justify-content: flex-start;
+}
+
 @media (max-width: 639px) {
   .commit-nft-row {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .commit-nft-row__body {
+    flex: 1 1 calc(100% - 5.5rem);
   }
 
   .commit-nft-row__action {

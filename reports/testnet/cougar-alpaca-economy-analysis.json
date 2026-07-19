@@ -1,0 +1,238 @@
+﻿{
+  "assumptions": {
+    "Rd": 400000,
+    "band": "R0 full emission (G >= 70% G0)",
+    "seasonDays": 90,
+    "yearDays": 365,
+    "mintAlpacaEth": 0.015,
+    "mintCougarEth": 0.15,
+    "strategy": "Monte Carlo location mix (alpaca home-leaning, cougar huntable mix)",
+    "note": "Formulas match SettlementLib; no formula changes."
+  },
+  "section1_controlled": [
+    {
+      "location": "Home",
+      "weight": 1,
+      "pi0_pct": 0,
+      "pi_ad1_cd1_pct": 0,
+      "normalReward": 320000,
+      "huntedReward": 320000,
+      "difference": 0,
+      "penaltyPct": 0,
+      "cougarIfPresent": null
+    },
+    {
+      "location": "Mountain",
+      "weight": 2,
+      "pi0_pct": 10,
+      "pi_ad1_cd1_pct": 10,
+      "normalReward": 320000,
+      "huntedReward": 288000,
+      "difference": 32000,
+      "penaltyPct": 10,
+      "cougarIfPresent": 80000
+    },
+    {
+      "location": "Grassland",
+      "weight": 3,
+      "pi0_pct": 15,
+      "pi_ad1_cd1_pct": 15,
+      "normalReward": 320000,
+      "huntedReward": 272000,
+      "difference": 48000,
+      "penaltyPct": 15,
+      "cougarIfPresent": 80000
+    },
+    {
+      "location": "Forest",
+      "weight": 5,
+      "pi0_pct": 22,
+      "pi_ad1_cd1_pct": 22,
+      "normalReward": 320000,
+      "huntedReward": 249600,
+      "difference": 70400,
+      "penaltyPct": 22,
+      "cougarIfPresent": 80000
+    },
+    {
+      "location": "River",
+      "weight": 8,
+      "pi0_pct": 30,
+      "pi_ad1_cd1_pct": 30,
+      "normalReward": 320000,
+      "huntedReward": 224000,
+      "difference": 96000,
+      "penaltyPct": 30,
+      "cougarIfPresent": 80000
+    }
+  ],
+  "section1_piDensity": [
+    {
+      "location": "Mountain",
+      "pi_1_1": 10,
+      "pi_10_1": 10,
+      "pi_10_2": 10.9,
+      "pi_3_2": 12.5
+    },
+    {
+      "location": "Grassland",
+      "pi_1_1": 15,
+      "pi_10_1": 15,
+      "pi_10_2": 16.36,
+      "pi_3_2": 18.75
+    },
+    {
+      "location": "Forest",
+      "pi_1_1": 22,
+      "pi_10_1": 22,
+      "pi_10_2": 24,
+      "pi_3_2": 27.5
+    },
+    {
+      "location": "River",
+      "pi_1_1": 30,
+      "pi_10_1": 30,
+      "pi_10_2": 32.72,
+      "pi_3_2": 37.5
+    }
+  ],
+  "scenarios_allGrassland": [
+    {
+      "name": "A",
+      "nA": 10,
+      "nC": 0,
+      "loc": "Grassland",
+      "avgAlpaca": 32000,
+      "avgCougar": 0,
+      "pen": 0,
+      "huntDust": 0,
+      "rhDistributed": 0,
+      "pi_pct": 0,
+      "totalAlpaca": 320000,
+      "totalCougar": 0
+    },
+    {
+      "name": "B",
+      "nA": 10,
+      "nC": 1,
+      "loc": "Grassland",
+      "avgAlpaca": 27200,
+      "avgCougar": 80000,
+      "pen": 48000,
+      "huntDust": 0,
+      "rhDistributed": 40000,
+      "pi_pct": 15,
+      "totalAlpaca": 272000,
+      "totalCougar": 80000
+    },
+    {
+      "name": "C",
+      "nA": 10,
+      "nC": 2,
+      "loc": "Grassland",
+      "avgAlpaca": 26764.8,
+      "avgCougar": 40000,
+      "pen": 52352,
+      "huntDust": 0,
+      "rhDistributed": 40000,
+      "pi_pct": 16.36,
+      "totalAlpaca": 267647.99999999994,
+      "totalCougar": 80000
+    },
+    {
+      "name": "D",
+      "nA": 20,
+      "nC": 5,
+      "loc": "Grassland",
+      "avgAlpaca": 13144,
+      "avgCougar": 16000,
+      "pen": 57120,
+      "huntDust": 0,
+      "rhDistributed": 40000,
+      "pi_pct": 17.85,
+      "totalAlpaca": 262880,
+      "totalCougar": 80000
+    },
+    {
+      "name": "E",
+      "nA": 500,
+      "nC": 50,
+      "loc": "Grassland",
+      "avgAlpaca": 534.656,
+      "avgCougar": 1600,
+      "pen": 52672,
+      "huntDust": 0,
+      "rhDistributed": 40000,
+      "pi_pct": 16.46,
+      "totalAlpaca": 267327.9999999977,
+      "totalCougar": 80000
+    }
+  ],
+  "monteCarlo_genesis": {
+    "days": 3000,
+    "alpaca": {
+      "mean": 532.1604261467702,
+      "std": 289.29916464718275,
+      "p10": 282.6855123674911,
+      "p50": 501.52212389380526,
+      "p90": 1024.4155844155844
+    },
+    "cougar": {
+      "mean": 1594.3408692995058,
+      "std": 395.10896150104935,
+      "p10": 1020.1834862385322,
+      "p50": 1672.3043372910104,
+      "p90": 2068.765133171913
+    },
+    "avgPen": 55425.746482353934,
+    "avgHuntDust": 0,
+    "huntSuccessDayRate": 1
+  },
+  "monteCarlo_noCougar": {
+    "days": 1500,
+    "alpaca": {
+      "mean": 642.820775003713,
+      "std": 470.45983970825836,
+      "p10": 283.1858407079646,
+      "p50": 565.8709106984969,
+      "p90": 1396.1605584642234
+    },
+    "cougar": null,
+    "avgPen": 0,
+    "avgHuntDust": 0,
+    "huntSuccessDayRate": null
+  },
+  "strategyProfiles": {
+    "alwaysHome": {
+      "aMean": 289.9986076543138,
+      "aStd": 9.603506506981788,
+      "cMean": 1682.9550305401478,
+      "cStd": 98.17449513990712
+    },
+    "alwaysGrassland": {
+      "aMean": 717.4955588824004,
+      "aStd": 23.66266659712508,
+      "cMean": 1685.3426811617508,
+      "cStd": 97.902115732004
+    },
+    "alwaysRiver": {
+      "aMean": 1372.6242232509194,
+      "aStd": 93.94495448178775,
+      "cMean": 1008.4491943202231,
+      "cStd": 46.108729463807045
+    }
+  },
+  "roi": {
+    "alpacaDaily": 532.1604261467702,
+    "cougarDaily": 1594.3408692995058,
+    "alpacaAnnual": 194238.55554357113,
+    "cougarAnnual": 581934.4172943196,
+    "alpacaPerEthDaily": 35477.36174311802,
+    "cougarPerEthDaily": 10628.939128663373,
+    "alpacaPerEthAnnual": 12949237.036238076,
+    "cougarPerEthAnnual": 3879562.7819621307,
+    "cougarVsAlpacaDailyRatio": 2.9959778874271,
+    "cougarVsAlpacaPerEthRatio": 0.29959778874271,
+    "priceRatio": 10
+  }
+}

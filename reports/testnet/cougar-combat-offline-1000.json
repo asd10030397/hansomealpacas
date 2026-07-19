@@ -1,0 +1,90 @@
+{
+  "nPerCase": 1000,
+  "location": "Grassland",
+  "locationId": 2,
+  "rd": "100000",
+  "note": "GDS: hunt applies location penalty π to Alpaca Ra share (not kill-to-zero). Cougars earn Rc + Rh when Ad≥1 at huntable loc.",
+  "1_cougar_vs_many_alpacas": {
+    "battles": 1000,
+    "alpacaCount": 6,
+    "cougarCount": 1,
+    "prePenaltyBps": 1500,
+    "huntPressureRate": "100% when Cd≥1 at Grassland (deterministic GDS — no separate hunt RNG)",
+    "alpacaEscapeOrImmuneRate": 0.25,
+    "avgAlpacaReward": "11978.494623655913978495",
+    "avgCougarReward": "20000.0",
+    "avgPenPerBattle": "8129.032258064516129029",
+    "huntRhAssignedBattles": 1000,
+    "huntRhDustBattles": 0,
+    "byClass": {
+      "Common": {
+        "avgPenBps": 1500,
+        "avgNet": "10967.741935483870967742"
+      },
+      "King": {
+        "avgPenBps": 0,
+        "avgNet": "12903.225806451612903225"
+      },
+      "Guardian": {
+        "avgPenBps": 750,
+        "avgNet": "11935.483870967741935484"
+      },
+      "Runner": {
+        "avgPenBps": 1029,
+        "avgNet": "11575.483870967741935483"
+      },
+      "Lucky": {
+        "avgPenBps": 1221,
+        "avgNet": "11327.741935483870967741"
+      },
+      "Farmer": {
+        "avgPenBps": 1500,
+        "avgNet": "13161.290322580645161294"
+      }
+    }
+  },
+  "multi_cougar_vs_multi_alpaca": {
+    "battles": 1000,
+    "alpacaCount": 6,
+    "cougarCount": 3,
+    "prePenaltyBps": 1928,
+    "huntPressureRate": "100% when Cd≥1 at Grassland (deterministic GDS — no separate hunt RNG)",
+    "alpacaEscapeOrImmuneRate": 0.2445,
+    "avgAlpacaReward": "11578.231397849462365591",
+    "avgCougarReward": "6666.666666666666666666",
+    "avgPenPerBattle": "10530.611612903225806448",
+    "huntRhAssignedBattles": 1000,
+    "huntRhDustBattles": 0,
+    "byClass": {
+      "Common": {
+        "avgPenBps": 1928,
+        "avgNet": "10415.483870967741935484"
+      },
+      "King": {
+        "avgPenBps": 0,
+        "avgNet": "12903.225806451612903225"
+      },
+      "Guardian": {
+        "avgPenBps": 964,
+        "avgNet": "11659.354838709677419355"
+      },
+      "Runner": {
+        "avgPenBps": 1407.44,
+        "avgNet": "11087.174193548387096774"
+      },
+      "Lucky": {
+        "avgPenBps": 1548.184,
+        "avgNet": "10905.569032258064516128"
+      },
+      "Farmer": {
+        "avgPenBps": 1928,
+        "avgNet": "12498.580645161290322584"
+      }
+    }
+  },
+  "controlNoCougar": {
+    "totalAlpacaNet": "80000.0",
+    "pen": "0.0",
+    "note": "pen must be 0; Rc+Rh unallocated"
+  }
+}

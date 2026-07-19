@@ -12,12 +12,13 @@ import type { AbilityEffectId } from "@/lib/game/abilityEffects/catalog";
 
 const MAX_PRE_PENALTY_BPS = 9_000;
 
+/** Candidate A π₀ ladder (bps) — must match SettlementLib.pi0Bps. */
 const PI0_BPS: Record<number, number> = {
   0: 0,
-  1: 1_000,
-  2: 1_500,
-  3: 2_200,
-  4: 3_000,
+  1: 1_500,
+  2: 2_500,
+  3: 3_500,
+  4: 4_500,
 };
 
 /** Permanent passive card copy — not an activation banner. */
@@ -121,11 +122,13 @@ export function deriveSettlementActivation(
   facts: SettlementActivationFacts,
 ): SettlementActivationResult {
   if (facts.side === "Cougar") {
+    // GDS: success iff huntable L and Ad(L) ≥ 1 (any Alpaca — not owner-scoped).
+    // adL must be the real count (0 allowed). Never invent Ad(L)=1.
     const huntOk = facts.locationId !== 0 && facts.adL >= 1;
     return {
-      outcome: huntOk ? "Hunt success" : "Hunt miss",
+      outcome: huntOk ? "Hunt success" : "Hunt miss — no Alpacas here",
       activatedAbility: null,
-      abilityLabel: null,
+      abilityLabel: huntOk ? "Hunt landed" : "Empty location",
     };
   }
 

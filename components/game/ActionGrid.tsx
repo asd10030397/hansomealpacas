@@ -17,6 +17,7 @@ type SecondaryAction = {
 /**
  * Phase-scoped secondary actions only.
  * Primary CTA lives in DashboardCommand — this is supporting navigation.
+ * Claim is a top-level nav item — not duplicated here.
  */
 export function ActionGrid({ phase }: { phase: GamePhase }) {
   const { t } = useGameI18n();
@@ -32,10 +33,10 @@ export function ActionGrid({ phase }: { phase: GamePhase }) {
       variant: "slate",
     },
     {
-      key: "rewards",
-      label: t.actions.rewards,
-      feature: t.features.rewards,
-      href: gameHref.rewards,
+      key: "board",
+      label: t.actions.leaderboard,
+      feature: t.features.leaderboard,
+      href: gameHref.leaderboard,
       variant: "slate",
     },
   ];
@@ -46,7 +47,7 @@ export function ActionGrid({ phase }: { phase: GamePhase }) {
       label: t.phases.BATTLE_RESULT,
       feature: t.phases.BATTLE_RESULT,
       href: gameHref.result,
-      variant: phase === "CLAIM" ? "green" : "gold",
+      variant: "gold",
     },
     {
       key: "nfts",

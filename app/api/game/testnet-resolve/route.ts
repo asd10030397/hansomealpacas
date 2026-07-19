@@ -2,12 +2,14 @@ import { NextResponse } from "next/server";
 import {
   createPublicClient,
   createWalletClient,
+  decodeEventLog,
   http,
   isHex,
   keccak256,
   toBytes,
   type Address,
   type Hex,
+  type PublicClient,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { robinhoodTestnetChain, ROBINHOOD_TESTNET_CHAIN_ID } from "@/lib/chain";
@@ -22,6 +24,7 @@ import {
   vaultSecretCountForDay,
 } from "@/lib/game/server/testnetCommitVault";
 import { writeRelayerContract } from "@/lib/game/server/testnetRelayerWrite";
+import { isDefinitelyAlreadyRevealed } from "@/lib/game/homeRevealGuard";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -43,6 +46,37 @@ type Body = {
 // GameTypes.DayState
 const REVEAL_OPEN = 3;
 const REVEAL_CLOSED = 4;
+
+/** Count Revealed events in a reveal tx (Home cannot be verified via locationOf). */
+async function countRevealedInTx(
+  publicClient: PublicClient,
+  game: Address,
+  txHash: Hex,
+  tokenIds: number[],
+): Promise<number> {
+  const want = new Set(tokenIds);
+  const receipt = await publicClient.getTransactionReceipt({ hash: txHash });
+  let n = 0;
+  for (const log of receipt.logs) {
+    if (log.address.toLowerCase() !== game.toLowerCase()) continue;
+    try {
+      const decoded = decodeEventLog({
+        abi: hansomeGameAbi,
+        data: log.data,
+        topics: log.topics,
+      });
+      if (
+        decoded.eventName === "Revealed" &&
+        want.has(Number(decoded.args.tokenId))
+      ) {
+        n += 1;
+      }
+    } catch {
+      /* not Revealed */
+    }
+  }
+  return n;
+}
 
 function relayerPrivateKey(): Hex | null {
   const raw =
@@ -302,7 +336,13 @@ export async function POST(req: Request) {
             args: [BigInt(entry.tokenId), BigInt(day)],
           }),
         );
-        if (loc === entry.locationId) {
+        // locationOf defaults to 0 — same as Home. Never skip Home on that alone.
+        if (
+          isDefinitelyAlreadyRevealed({
+            locationOf: loc,
+            commitLocationId: entry.locationId,
+          })
+        ) {
           revealed += 1;
         } else {
           pending.push(entry);
@@ -324,18 +364,12 @@ export async function POST(req: Request) {
             functionName: "testnetRelayerRevealBatch",
             args: [tokenIds, BigInt(day), locationIds, salts],
           });
-          // Count only tokens whose location matches after the tx.
-          for (const entry of pending) {
-            const loc = Number(
-              await publicClient.readContract({
-                address: game,
-                abi: hansomeGameAbi,
-                functionName: "locationOf",
-                args: [BigInt(entry.tokenId), BigInt(day)],
-              }),
-            );
-            if (loc === entry.locationId) revealed += 1;
-          }
+          revealed += await countRevealedInTx(
+            publicClient,
+            game,
+            revealTxHash,
+            pending.map((p) => p.tokenId),
+          );
         } catch {
           for (const entry of pending) {
             try {
@@ -353,15 +387,12 @@ export async function POST(req: Request) {
                   [entry.salt],
                 ],
               });
-              const loc = Number(
-                await publicClient.readContract({
-                  address: game,
-                  abi: hansomeGameAbi,
-                  functionName: "locationOf",
-                  args: [BigInt(entry.tokenId), BigInt(day)],
-                }),
+              revealed += await countRevealedInTx(
+                publicClient,
+                game,
+                revealTxHash,
+                [entry.tokenId],
               );
-              if (loc === entry.locationId) revealed += 1;
             } catch {
               // skip failed token
             }

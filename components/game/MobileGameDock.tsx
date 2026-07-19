@@ -30,8 +30,8 @@ function dockLabel(
       return t.dock.mint;
     case "myNfts":
       return t.dock.nfts;
-    case "rewards":
-      return t.dock.rewards;
+    case "claim":
+      return t.dock.claim;
     case "leaderboard":
       return t.nav.leaderboard;
     case "docs":
