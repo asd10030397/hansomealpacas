@@ -98,6 +98,8 @@ export type GameMessages = {
     play: string;
     mint: string;
     nfts: string;
+    claim: string;
+    /** @deprecated Prefer `claim` — kept for legacy copy references. */
     rewards: string;
     more: string;
   };
@@ -145,9 +147,9 @@ export type GameMessages = {
     phaseScoped: string;
     demoPhaseTitle: string;
     demoPhaseEyebrow: string;
-  };
     unclaimedNotice: string;
     goToClaim: string;
+  };
   phaseStatus: {
     gameStatus: string;
     eyebrow: string;
@@ -245,7 +247,6 @@ export type GameMessages = {
     alpacaView: string;
     cougarView: string;
     cougarHomeNote: string;
-  };
     selectNftTitle: string;
     selectNftHint: string;
     selectNftAction: string;
@@ -263,6 +264,7 @@ export type GameMessages = {
     commitSuccess: string;
     committedBadge: string;
     committedCount: string;
+  };
   myNfts: {
     heading: string;
     blurb: string;
@@ -270,7 +272,6 @@ export type GameMessages = {
   rewards: {
     heading: string;
     blurb: string;
-  };
     totalClaimable: string;
     lifetimeClaimed: string;
     pendingSettlement: string;
@@ -282,6 +283,7 @@ export type GameMessages = {
     perNftTitle: string;
     goBattleResult: string;
   };
+  leaderboard: {
     heading: string;
     blurb: string;
     walletNote: string;
