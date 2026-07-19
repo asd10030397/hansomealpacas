@@ -3,10 +3,10 @@ import type { ReactNode } from "react";
 type Tone = "default" | "cougar" | "alpaca" | "center";
 
 const tones: Record<Tone, string> = {
-  default: "bg-[#1e2433]/90",
-  cougar: "bg-[#1a2233]/92",
-  alpaca: "bg-[#1a2a30]/88",
-  center: "bg-[#161c28]/95",
+  default: "bg-[#1e2433]/88",
+  cougar: "bg-[#1a2233]/90",
+  alpaca: "bg-[#1a2a30]/86",
+  center: "bg-[#161c28]/92",
 };
 
 export function PixelPanel({

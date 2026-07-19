@@ -5,21 +5,16 @@ import { toUiLoopPhase, type UiLoopPhase } from "@/lib/game/uiLoopPhase";
 import type { GamePhase } from "@/types/game";
 import { PixelBadge } from "./PixelBadge";
 
-const tone: Record<UiLoopPhase, "gold" | "danger" | "green"> = {
+const tone: Record<UiLoopPhase, "gold" | "danger"> = {
   CHOOSE: "gold",
   BATTLE: "danger",
-  CLAIM: "green",
 };
 
-/** Player-facing phase badge — Choose Location / Battle Result / Claim. */
+/** Player-facing phase badge — Choose Location / Battle Result. */
 export function GamePhaseBadge({ phase }: { phase: GamePhase }) {
   const { t } = useGameI18n();
   const loop = toUiLoopPhase(phase);
   const label =
-    loop === "CHOOSE"
-      ? t.phases.CHOOSE
-      : loop === "BATTLE"
-        ? t.phases.BATTLE_RESULT
-        : t.phases.CLAIM;
+    loop === "CHOOSE" ? t.phases.CHOOSE : t.phases.BATTLE_RESULT;
   return <PixelBadge tone={tone[loop]}>{label}</PixelBadge>;
 }

@@ -10,7 +10,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     pressure: 0,
     alpacaAllowed: true,
     cougarAllowed: false,
-    thumbnail: "/assets/backgrounds/loc-home.svg",
+    thumbnail: "/game/maps/home.png",
   },
   {
     id: 1,
@@ -20,7 +20,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     pressure: 22,
     alpacaAllowed: true,
     cougarAllowed: true,
-    thumbnail: "/assets/backgrounds/loc-1.svg",
+    thumbnail: "/game/maps/mountain.png",
   },
   {
     id: 2,
@@ -30,7 +30,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     pressure: 41,
     alpacaAllowed: true,
     cougarAllowed: true,
-    thumbnail: "/assets/backgrounds/loc-2.svg",
+    thumbnail: "/game/maps/grassland.png",
   },
   {
     id: 3,
@@ -40,7 +40,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     pressure: 63,
     alpacaAllowed: true,
     cougarAllowed: true,
-    thumbnail: "/assets/backgrounds/loc-3.svg",
+    thumbnail: "/game/maps/forest.png",
   },
   {
     id: 4,
@@ -50,6 +50,6 @@ export const GAME_LOCATIONS: GameLocation[] = [
     pressure: 88,
     alpacaAllowed: true,
     cougarAllowed: true,
-    thumbnail: "/assets/backgrounds/loc-4.svg",
+    thumbnail: "/game/maps/river.png",
   },
 ];

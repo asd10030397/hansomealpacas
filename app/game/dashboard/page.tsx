@@ -77,7 +77,7 @@ export default function GameDashboardPage() {
             </PixelButton>
           </div>
           <p className="mt-2 text-[0.65rem] text-[var(--hg-muted)]">
-            Demo: Choose Location → Battle Result (auto-reveal) → Claim.
+            Demo: Choose Location → Battle Result (resolve + view / claim).
           </p>
         </PixelPanel>
       ) : null}

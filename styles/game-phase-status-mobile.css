@@ -30,7 +30,7 @@
 
 .phase-status--mobile .phase-tl {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: center;
   column-gap: 0.15rem;
   margin: 0;

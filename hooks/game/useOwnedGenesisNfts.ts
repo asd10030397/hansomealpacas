@@ -25,10 +25,16 @@ import {
   resolveOwnedGenesisRevealFlags,
 } from "@/lib/game/genesisNftReveal";
 import {
+  getTestnetGameplayIdentity,
+  isTestnetGameplayReady,
+  isTestnetGameplayTraitsEnabled,
+} from "@/lib/game/testnetGameplayTraits";
+import {
   GAME_CHAIN_ID,
   HANSOME_GAME_ADDRESS,
   isHansomeGameConfigured,
 } from "@/lib/game/hansomeGame";
+import { onWalletAccountChange } from "@/lib/game/commitSecret";
 import {
   getOwnedGenesisInventoryRevision,
   getOwnedGenesisMeta,
@@ -304,10 +310,11 @@ export function useOwnedGenesisNfts() {
     ]);
   };
 
-  // Account or wallet chain change → drop meta + requery ownership.
+  // Account or wallet chain change → clear commit handoff, drop meta, requery ownership.
   const sessionKey = `${address?.toLowerCase() ?? ""}:${chainId}`;
   const prevSessionKey = useRef<string | null>(null);
   useEffect(() => {
+    onWalletAccountChange(address);
     if (prevSessionKey.current == null) {
       prevSessionKey.current = sessionKey;
       return;
@@ -315,7 +322,7 @@ export function useOwnedGenesisNfts() {
     if (prevSessionKey.current === sessionKey) return;
     prevSessionKey.current = sessionKey;
     refreshOwnedGenesisInventory();
-  }, [sessionKey]);
+  }, [sessionKey, address]);
 
   // Keep latest chain refetch for revision / visibility listeners.
   const refetchChainRef = useRef(refetchChain);
@@ -398,7 +405,8 @@ export function useOwnedGenesisNfts() {
   }, [detailReads.data, ownedIds, stride, sourceKeyByTokenId, metaEpoch]);
 
   const nfts: OwnedGenesisNft[] = useMemo(() => {
-    if (!detailReads.data) return [];
+    // Never show a previous wallet's inventory while disconnected / switching.
+    if (!address || !detailReads.data) return [];
     return ownedIds.map((tokenId, idx) => {
       const base = idx * stride;
       const onChainSide = mapSide(Number(detailReads.data?.[base]?.result ?? 0));
@@ -409,27 +417,47 @@ export function useOwnedGenesisNfts() {
       const uri = (detailReads.data?.[base + 3]?.result as string | undefined) ?? null;
       const meta = getOwnedGenesisMeta(tokenId);
       const metaIdentity = meta?.identity ?? null;
-      const { revealed, useMetaReveal } = resolveOwnedGenesisRevealFlags({
-        onChainRevealed,
-        metaIdentity,
-        immediateNftReveal,
-      });
-      const side = useMetaReveal && metaIdentity ? metaIdentity.side : onChainSide;
-      const gameplayClass =
-        useMetaReveal && metaIdentity
-          ? metaIdentity.gameplayClass
-          : onChainClass;
+      const { revealed: metaRevealed, useMetaReveal } =
+        resolveOwnedGenesisRevealFlags({
+          onChainRevealed,
+          metaIdentity,
+          immediateNftReveal,
+        });
+      const testnetId =
+        isTestnetGameplayTraitsEnabled() && !onChainRevealed
+          ? getTestnetGameplayIdentity(tokenId)
+          : null;
+      // Priority: on-chain reveal → Testnet gameplay deck → metadata reveal → opaque.
+      const side = onChainRevealed
+        ? onChainSide
+        : testnetId
+          ? testnetId.side
+          : useMetaReveal && metaIdentity
+            ? metaIdentity.side
+            : onChainSide;
+      const gameplayClass = onChainRevealed
+        ? onChainClass
+        : testnetId
+          ? testnetId.gameplayClass
+          : useMetaReveal && metaIdentity
+            ? metaIdentity.gameplayClass
+            : onChainClass;
+      const revealed =
+        metaRevealed ||
+        isTestnetGameplayReady({ tokenId, onChainRevealed });
       let locOffset = base + 4;
       let locationId: LocationId | null = null;
       let gameStatus: MockNft["gameStatus"] = "Idle";
       let hash: `0x${string}` | undefined;
+      let onChainLoc = 0;
       if (liveGame && game) {
-        const loc = Number(detailReads.data?.[locOffset]?.result ?? 0);
+        onChainLoc = Number(detailReads.data?.[locOffset]?.result ?? 0);
         hash = detailReads.data?.[locOffset + 1]?.result as `0x${string}` | undefined;
         locOffset += 2;
         if (hash && hash !== zeroHash) {
-          locationId = loc as LocationId;
-          gameStatus = "Revealed";
+          locationId = onChainLoc as LocationId;
+          // Non-zero location ⇒ revealed move; Home(0) may still be unrevealed commit.
+          gameStatus = onChainLoc !== 0 ? "Revealed" : "Committed";
         }
       }
       const claimableWei =
@@ -437,9 +465,6 @@ export function useOwnedGenesisNfts() {
           ? ((detailReads.data?.[locOffset]?.result as bigint | undefined) ?? 0n)
           : 0n;
       if (claimableWei > 0n) gameStatus = "Settled";
-      else if (hash && hash !== zeroHash && locationId === 0) {
-        gameStatus = "Committed";
-      }
       const trait = side === "Cougar" ? "Cougar" : gameplayClass;
       return {
         tokenId,
@@ -457,6 +482,7 @@ export function useOwnedGenesisNfts() {
       };
     });
   }, [
+    address,
     detailReads.data,
     ownedIds,
     stride,
@@ -466,6 +492,10 @@ export function useOwnedGenesisNfts() {
     metaEpoch,
   ]);
 
+  // Testnet gameplay: do not block Commit/Battle on metadata fetch — trait deck is enough.
+  const waitForMeta =
+    !isTestnetGameplayTraitsEnabled() && (metaIncomplete || metaFetching);
+
   const isLoading =
     configured &&
     isConnected &&
@@ -473,8 +503,7 @@ export function useOwnedGenesisNfts() {
       balance.isLoading ||
       ownerReads.isLoading ||
       detailReads.isLoading ||
-      metaIncomplete ||
-      metaFetching);
+      waitForMeta);
 
   return {
     configured,

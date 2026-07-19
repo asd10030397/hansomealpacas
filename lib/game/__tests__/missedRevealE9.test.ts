@@ -23,6 +23,7 @@ function secret(
     locationId: 2,
     salt: "0x01" as Hex,
     commitHash: "0x02" as Hex,
+    wallet: "0xaaa0000000000000000000000000000000000001",
     updatedAt: 1,
     ...partial,
   };

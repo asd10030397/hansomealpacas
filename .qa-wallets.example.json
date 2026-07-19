@@ -1,0 +1,16 @@
+{
+  "wallets": [
+    {
+      "name": "player1",
+      "privateKey": ""
+    },
+    {
+      "name": "player2",
+      "privateKey": ""
+    },
+    {
+      "name": "player3",
+      "privateKey": ""
+    }
+  ]
+}

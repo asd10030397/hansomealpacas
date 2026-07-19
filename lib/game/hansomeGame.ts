@@ -8,7 +8,7 @@ export const GAME_CHAIN_ID = Number(
 
 /** Robinhood testnet HansomeGame (tHANSOME-backed suite). Override via env. */
 const DEFAULT_TESTNET_GAME =
-  "0x8753AAbE7441d65F96735fA16cbce86F394497FD" as const;
+  "0x7b2ce5ECD270Ce55Ac94aCe3BF12d83ef113D0a0" as const;
 
 const rawGame =
   process.env.NEXT_PUBLIC_HANSOME_GAME_ADDRESS?.trim() ||

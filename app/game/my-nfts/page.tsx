@@ -40,11 +40,11 @@ export default function MyNftsPage() {
       <p className="mt-2 text-sm text-[var(--hg-muted)]">{t.myNfts.blurb}</p>
 
       {!configured ? (
-        <p className="mt-6 rounded border border-[#5a4630] bg-[#1a1410] px-3 py-3 text-sm text-[#f0c44a]">
+        <p className="mt-6 rounded border border-[#5a4630] bg-[#1a1410]/90 px-3 py-3 text-sm text-[#f0c44a]">
           Genesis NFT address is not configured.
         </p>
       ) : !isConnected ? (
-        <div className="my-nfts-wallet-panel mt-6 space-y-3 rounded border border-[#2a3348] bg-[#141a26] px-3 py-4">
+        <div className="my-nfts-wallet-panel mt-6 space-y-3 rounded border border-[#2a3348] bg-[#141a26]/88 px-3 py-4">
           <p className="text-sm text-[var(--hg-muted)]">
             Connect a wallet on Robinhood Testnet to load your live inventory.
           </p>

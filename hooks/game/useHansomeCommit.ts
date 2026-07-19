@@ -25,6 +25,10 @@ import {
   formatRobinhoodWriteError,
   sendRobinhoodContractWrite,
 } from "@/lib/game/robinhoodContractWrite";
+import {
+  isTestnetGaslessResolveEnabled,
+  uploadTestnetCommitSecret,
+} from "@/lib/game/testnetGaslessResolve";
 import type { LocationId } from "@/types/game";
 
 export type CommitResult =
@@ -55,7 +59,11 @@ export function useHansomeCommit() {
       setLastError(null);
       reset();
 
-      const existing = getCommitSecret(input.tokenId, input.day);
+      if (!isConnected || !address) {
+        return { ok: false, error: "Connect wallet to commit." };
+      }
+
+      const existing = getCommitSecret(input.tokenId, input.day, address);
       if (existing?.status === "submitted" || existing?.status === "revealed") {
         return {
           ok: false,
@@ -70,19 +78,17 @@ export function useHansomeCommit() {
         locationId: input.locationId,
         salt,
         status: "prepared",
+        wallet: address,
       });
 
       if (!configured || !HANSOME_GAME_ADDRESS) {
         const sealed = upsertCommitSecret({
           ...prepared,
           status: "submitted",
+          wallet: address,
         });
         playSfx("ui-click");
         return { ok: true, mode: "local", record: sealed };
-      }
-
-      if (!isConnected || !address) {
-        return { ok: false, error: "Connect wallet to commit on-chain." };
       }
 
       if (walletChainId !== GAME_CHAIN_ID) {
@@ -138,7 +144,24 @@ export function useHansomeCommit() {
           ...prepared,
           status: "submitted",
           txHash,
+          wallet: address,
         });
+
+        // Testnet gasless: store salt on the server so Battle resolve needs no localStorage.
+        if (isTestnetGaslessResolveEnabled()) {
+          const uploaded = await uploadTestnetCommitSecret({
+            tokenId: sealed.tokenId,
+            day: sealed.day,
+            locationId: sealed.locationId,
+            salt: sealed.salt,
+            commitHash: sealed.commitHash,
+            wallet: address,
+          });
+          if (!uploaded.ok) {
+            console.warn("[hansome-commit] vault upload failed:", uploaded.error);
+          }
+        }
+
         playSfx("ui-click");
         return { ok: true, mode: "chain", record: sealed };
       } catch (e) {

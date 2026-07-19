@@ -6,19 +6,20 @@ import {
   UI_LOOP_FLOW,
 } from "@/lib/game/uiLoopPhase";
 
-describe("uiLoopPhase — Choose Location → Battle Result → Claim", () => {
-  it("maps wire phases to the three player-facing steps", () => {
+describe("uiLoopPhase", () => {
+  it("maps wire phases to Choose Location → Battle Result", () => {
     expect(toUiLoopPhase("COMMIT")).toBe("CHOOSE");
     expect(toUiLoopPhase("REVEAL")).toBe("BATTLE");
     expect(toUiLoopPhase("SETTLEMENT")).toBe("BATTLE");
-    expect(toUiLoopPhase("CLAIM")).toBe("CLAIM");
-    expect([...UI_LOOP_FLOW]).toEqual(["CHOOSE", "BATTLE", "CLAIM"]);
+    expect(toUiLoopPhase("CLAIM")).toBe("BATTLE");
+    expect([...UI_LOOP_FLOW]).toEqual(["CHOOSE", "BATTLE"]);
   });
 
-  it("derives battle-result substeps (reveal is preparing, not a player action)", () => {
+  it("derives battle-result substeps (claim is part of viewing, not a wait)", () => {
     expect(resultSubstep("REVEAL")).toBe("preparing");
+    expect(resultSubstep("REVEAL", { settled: true })).toBe("battle");
     expect(resultSubstep("SETTLEMENT")).toBe("battle");
-    expect(resultSubstep("CLAIM")).toBe("claim");
+    expect(resultSubstep("CLAIM")).toBe("battle");
     expect(isResultPhase("COMMIT")).toBe(false);
     expect(isResultPhase("REVEAL")).toBe(true);
   });

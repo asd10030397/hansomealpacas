@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { AbilityEffectOverlay } from "@/components/game/ability-effects/AbilityEffectOverlay";
 import { ResultEffectOverlay } from "@/components/game/result-effects/ResultEffectOverlay";
 import { GameStatusPanel } from "@/components/game/GameStatusPanel";
@@ -16,6 +16,7 @@ import { useAutoReveal } from "@/hooks/game/useAutoReveal";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { useGameState } from "@/hooks/game/useGameState";
+import { useNftDisplayMap } from "@/hooks/game/useNftDisplayMap";
 import { useSettlementPresentationQueue } from "@/hooks/game/useSettlementPresentationQueue";
 import { useSettlementView } from "@/hooks/game/useSettlementView";
 import { parseAbilityEffectId } from "@/lib/game/abilityEffects";
@@ -23,6 +24,7 @@ import { formatCountdown } from "@/lib/game/phaseStatus";
 import { parseSettlementResultSfxId } from "@/lib/game/settlementResults";
 import { resultSubstep } from "@/lib/game/uiLoopPhase";
 import { isTestnetGaslessResolveEnabled } from "@/lib/game/testnetGaslessResolve";
+import { getTestnetGameplayIdentity } from "@/lib/game/testnetGameplayTraits";
 
 function resolveOutcomeLabel(
   outcome: string,
@@ -38,13 +40,15 @@ export default function ResultPhasePage() {
   const { t } = useGameI18n();
   const gameHref = useGameHref();
   const { day, now, phaseEndsAt, phase, isMock } = useGameState();
-  const sub = resultSubstep(phase);
   const autoReveal = useAutoReveal();
-
   const settleView = useSettlementView();
   const claim = useClaimRewards();
   const battleRef = useRef<HTMLDivElement | null>(null);
   const scrolledRef = useRef(false);
+
+  const sub = resultSubstep(phase, {
+    settled: settleView.status === "completed",
+  });
 
   const showPresentationFx =
     settleView.status === "completed" &&
@@ -67,13 +71,14 @@ export default function ResultPhasePage() {
 
   const settleMsLeft = Math.max(0, phaseEndsAt - now);
   const settleCountdown = formatCountdown(settleMsLeft);
+  // Preparing only while resolve is in flight — not for the full Battle viewing timer.
   const showPreparing =
-    phase === "REVEAL" ||
-    settleView.status === "pending" ||
-    settleView.status === "available" ||
-    settleView.status === "waiting_seed" ||
-    settleView.status === "processing" ||
-    autoReveal.revealing;
+    settleView.status !== "completed" &&
+    (settleView.status === "pending" ||
+      settleView.status === "available" ||
+      settleView.status === "waiting_seed" ||
+      settleView.status === "processing" ||
+      autoReveal.revealing);
 
   const settleStatusLabel =
     settleView.status === "waiting_seed"
@@ -81,6 +86,27 @@ export default function ResultPhasePage() {
       : settleView.statusLabel;
 
   const missedRows = settleView.rows.filter((r) => r.missedReveal);
+
+  const displaySeeds = useMemo(() => {
+    const own = settleView.rows.map((r) => ({
+      tokenId: r.tokenId,
+      side: r.side,
+      gameplayClass: r.gameplayClass,
+      image: r.image,
+    }));
+    const others = settleView.otherParticipants.map((p) => {
+      const tn = getTestnetGameplayIdentity(p.tokenId);
+      return {
+        tokenId: p.tokenId,
+        side: p.side ?? tn?.side ?? null,
+        gameplayClass: tn?.gameplayClass ?? null,
+        image: null as string | null,
+      };
+    });
+    return [...own, ...others];
+  }, [settleView.rows, settleView.otherParticipants]);
+
+  const displayMap = useNftDisplayMap(displaySeeds);
 
   // After auto-reveal / settle advances, scroll once to battle results.
   useEffect(() => {
@@ -119,13 +145,33 @@ export default function ResultPhasePage() {
             : t.result.substepClaim}
       </p>
 
-      {/* Auto-reveal status — no Reveal button */}
+      {/* Resolve status — gasless relayer or legacy local auto-reveal */}
       <PixelPanel
         className="mt-4"
         title={t.result.revealSectionTitle}
-        eyebrow={t.result.revealQueueEyebrow}
+        eyebrow={
+          autoReveal.gasless
+            ? t.result.revealQueueEyebrowGasless
+            : t.result.revealQueueEyebrow
+        }
       >
-        {phase === "REVEAL" && autoReveal.noSecrets ? (
+        {autoReveal.gasless ? (
+          <GameFeedback
+            tone={autoReveal.revealing ? "pending" : "success"}
+            label={t.result.autoRevealTitle}
+          >
+            {autoReveal.revealing
+              ? t.result.autoRevealBodyGasless
+              : t.result.autoRevealWaiting}
+            {autoReveal.lastMessage ? (
+              <p className="mt-2 text-xs text-[var(--hg-muted)]">
+                {autoReveal.lastMessage}
+              </p>
+            ) : null}
+          </GameFeedback>
+        ) : null}
+
+        {!autoReveal.gasless && phase === "REVEAL" && autoReveal.noSecrets ? (
           <GameFeedback tone="error" label={t.result.noSecretsTitle}>
             {t.result.noSecretsBody}
             <div className="mt-3">
@@ -136,7 +182,7 @@ export default function ResultPhasePage() {
           </GameFeedback>
         ) : null}
 
-        {phase === "REVEAL" && !autoReveal.noSecrets ? (
+        {!autoReveal.gasless && phase === "REVEAL" && !autoReveal.noSecrets ? (
           <GameFeedback
             tone={autoReveal.revealing ? "pending" : "success"}
             label={t.result.autoRevealTitle}
@@ -153,7 +199,7 @@ export default function ResultPhasePage() {
           </GameFeedback>
         ) : null}
 
-        {phase !== "REVEAL" && phase !== "COMMIT" ? (
+        {!autoReveal.gasless && phase !== "REVEAL" && phase !== "COMMIT" ? (
           <GameFeedback tone="info" label={t.common.phaseChanged}>
             {t.result.revealClosedHint}
           </GameFeedback>
@@ -161,7 +207,9 @@ export default function ResultPhasePage() {
 
         {missedRows.length > 0 ? (
           <GameFeedback tone="error" label={t.result.missedRevealTitle}>
-            {t.result.missedRevealBody}
+            {autoReveal.gasless
+              ? t.result.missedRevealBodyGasless
+              : t.result.missedRevealBody}
             <ul className="mt-2 space-y-1 text-xs">
               {missedRows.map((r) => (
                 <li key={r.tokenId}>#{r.tokenId}</li>
@@ -175,7 +223,9 @@ export default function ResultPhasePage() {
             {autoReveal.lastError}
           </GameFeedback>
         ) : null}
-        {autoReveal.lastMessage && !autoReveal.lastError ? (
+        {!autoReveal.gasless &&
+        autoReveal.lastMessage &&
+        !autoReveal.lastError ? (
           <GameFeedback tone="success" label={t.common.txSuccess}>
             {autoReveal.lastMessage}
           </GameFeedback>
@@ -264,38 +314,99 @@ export default function ResultPhasePage() {
                 : t.settlement.emptyBodyMock}
             </GameEmptyState>
           ) : (
-            <ul className="hg-settle-list">
-              {settleView.rows.map((row, index) => (
-                <SettlementResultCard
-                  key={row.tokenId}
-                  row={{
-                    ...row,
-                    outcome: resolveOutcomeLabel(row.outcome, t),
-                  }}
-                  index={index}
-                  overlays={
-                    <>
-                      {resultCue?.tokenId === row.tokenId ? (
-                        <ResultEffectOverlay
-                          key={`result-${resultCue.tokenId}-${resultCue.resultId}`}
-                          resultId={resultCue.resultId}
-                          active
-                          onComplete={advancePresentation}
+            <>
+              <div className="hg-settle-section">
+                <h3 className="hg-settle-section__title">
+                  {t.result.yourNftsTitle}
+                </h3>
+                <p className="hg-settle-section__hint">{t.result.yourNftsHint}</p>
+                <ul className="hg-settle-list">
+                  {settleView.rows.map((row, index) => {
+                    const display = displayMap.get(row.tokenId);
+                    const identity = display
+                      ? {
+                          tokenId: display.tokenId,
+                          title: display.title,
+                          image: display.image,
+                        }
+                      : null;
+                    return (
+                      <SettlementResultCard
+                        key={row.tokenId}
+                        highlightOwn
+                        row={{
+                          ...row,
+                          image: display?.image ?? row.image,
+                          side: display?.side ?? row.side,
+                          gameplayClass:
+                            display?.gameplayClass ?? row.gameplayClass,
+                          outcome: resolveOutcomeLabel(row.outcome, t),
+                        }}
+                        index={index}
+                        overlays={
+                          <>
+                            {resultCue?.tokenId === row.tokenId ? (
+                              <ResultEffectOverlay
+                                key={`result-${resultCue.tokenId}-${resultCue.resultId}`}
+                                resultId={resultCue.resultId}
+                                active
+                                identity={identity}
+                                onComplete={advancePresentation}
+                              />
+                            ) : null}
+                            {abilityCue?.tokenId === row.tokenId ? (
+                              <AbilityEffectOverlay
+                                key={`ability-${abilityCue.tokenId}-${abilityCue.abilityId}`}
+                                abilityId={abilityCue.abilityId}
+                                active
+                                identity={identity}
+                                onComplete={advancePresentation}
+                              />
+                            ) : null}
+                          </>
+                        }
+                      />
+                    );
+                  })}
+                </ul>
+              </div>
+
+              {settleView.otherParticipants.length > 0 ? (
+                <div className="hg-settle-section">
+                  <h3 className="hg-settle-section__title">
+                    {t.result.otherParticipantsTitle}
+                  </h3>
+                  <p className="hg-settle-section__hint">
+                    {t.result.otherParticipantsHint}
+                  </p>
+                  <ul className="hg-settle-list hg-settle-list--dense">
+                    {settleView.otherParticipants.map((p, index) => {
+                      const display = displayMap.get(p.tokenId);
+                      return (
+                        <SettlementResultCard
+                          key={`other-${p.tokenId}`}
+                          row={{
+                            tokenId: p.tokenId,
+                            side: display?.side ?? p.side,
+                            gameplayClass: display?.gameplayClass ?? null,
+                            image: display?.image ?? null,
+                            ownerAddress: null,
+                            isOwn: false,
+                            claimStatus: "—",
+                            rewardLabel: "—",
+                            locationName: p.locationName,
+                            outcome: "Participated",
+                            ability: null,
+                            source: "chain",
+                          }}
+                          index={index}
                         />
-                      ) : null}
-                      {abilityCue?.tokenId === row.tokenId ? (
-                        <AbilityEffectOverlay
-                          key={`ability-${abilityCue.tokenId}-${abilityCue.abilityId}`}
-                          abilityId={abilityCue.abilityId}
-                          active
-                          onComplete={advancePresentation}
-                        />
-                      ) : null}
-                    </>
-                  }
-                />
-              ))}
-            </ul>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ) : null}
+            </>
           )}
         </PixelPanel>
       </div>

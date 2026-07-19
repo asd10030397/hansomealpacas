@@ -74,7 +74,7 @@ export function settlementStatusLabel(status: SettlementUiStatus): string {
     case "loading":
       return "Loading…";
     case "pending":
-      return "Move locked in — battle resolves when preparation ends";
+      return "Resolving battle…";
     case "available":
       return "Settling battle now";
     case "waiting_seed":

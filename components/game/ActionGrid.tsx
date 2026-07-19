@@ -40,16 +40,13 @@ export function ActionGrid({ phase }: { phase: GamePhase }) {
     },
   ];
 
-  const phaseActionLabel =
-    loop === "BATTLE" ? t.phases.BATTLE_RESULT : t.phases.CLAIM;
-
   const resultActions: SecondaryAction[] = [
     {
       key: "result",
-      label: phaseActionLabel,
-      feature: phaseActionLabel,
+      label: t.phases.BATTLE_RESULT,
+      feature: t.phases.BATTLE_RESULT,
       href: gameHref.result,
-      variant: loop === "CLAIM" ? "green" : "gold",
+      variant: phase === "CLAIM" ? "green" : "gold",
     },
     {
       key: "nfts",

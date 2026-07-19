@@ -24,6 +24,12 @@
 /public/scale-preview
 .tmp-trust-assets/
 /tmp/
+# Testnet gasless relayer commit vault (salts)
+.data/
+
+# Multi-wallet QA player keys (never commit)
+.qa-wallets.local.json
+**/.qa-wallets.local.json
 
 # debug
 npm-debug.log*

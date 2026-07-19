@@ -47,6 +47,14 @@ export function e9ZeroReward(): 0 {
   return 0;
 }
 
+/** GameRandomness.SeedAlreadySet() — concurrent fulfill is success, not a UI error. */
+export function isSeedAlreadySetError(
+  message: string | null | undefined,
+): boolean {
+  if (!message) return false;
+  return /SeedAlreadySet/i.test(message) || /0xbf136bb2/i.test(message);
+}
+
 export function isSeedMissingError(message: string | null | undefined): boolean {
   if (!message) return false;
   return /SeedMissing|settlement randomness|等待結算隨機數/i.test(message);

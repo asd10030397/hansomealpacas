@@ -5,7 +5,7 @@ import {
   type UiLoopPhase,
 } from "@/lib/game/uiLoopPhase";
 
-/** Player-facing daily loop — Commit → Reveal → Battle → Claim. */
+/** Player-facing daily loop — Choose Location → Battle Result. */
 export const PHASE_FLOW = UI_LOOP_FLOW;
 
 export type PhaseFlowId = UiLoopPhase;
@@ -33,8 +33,7 @@ export type PhaseStatusView = {
 
 function phaseEndsAtFor(day: GameDayState, phase: GamePhase): number {
   if (phase === "COMMIT") return day.commitEndsAt;
-  if (phase === "REVEAL") return day.revealEndsAt;
-  // Battle / Claim: count down the day pad (or stay at reveal end when pad is 0).
+  // Battle viewing time runs until dayEndsAt (reveal window ± pad).
   return day.dayEndsAt ?? day.revealEndsAt;
 }
 

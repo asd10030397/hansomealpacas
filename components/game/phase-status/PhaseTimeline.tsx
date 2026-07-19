@@ -21,7 +21,6 @@ export function PhaseTimeline({
   const labels: Record<UiLoopPhase, string> = {
     CHOOSE: t.phases.CHOOSE_SHORT,
     BATTLE: t.phases.BATTLE_RESULT_SHORT,
-    CLAIM: t.phases.CLAIM_SHORT,
   };
 
   return (

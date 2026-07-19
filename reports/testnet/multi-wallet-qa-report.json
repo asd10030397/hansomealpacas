@@ -1,0 +1,699 @@
+{
+  "at": "2026-07-19T15:21:04.797Z",
+  "network": "robinhoodTestnet",
+  "game": "0x7b2ce5ECD270Ce55Ac94aCe3BF12d83ef113D0a0",
+  "day": 19,
+  "relayer": "0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A",
+  "players": [
+    {
+      "name": "player1",
+      "address": "0x2006CF012842e757f1f79938cD646e8a19d5c389"
+    },
+    {
+      "name": "player2",
+      "address": "0x0bd54aeE53E9603375C27940d74e7c0923573b2a"
+    },
+    {
+      "name": "player3",
+      "address": "0xfEff679d14f7D1a2F343095680430e4c96dE691F"
+    }
+  ],
+  "results": {
+    "api.gaslessResolve": "PASS",
+    "testnetGameplayUnlock": "PASS",
+    "isolation.ownership": "PASS",
+    "inventory.loaded": "PASS",
+    "phase.CommitOpen": "PASS",
+    "loop.commit": "PASS",
+    "loop.vault": "PASS",
+    "resolve.idempotent": "PASS",
+    "loop.settled": "PASS",
+    "loop.revealMatch": "PASS",
+    "isolation.battleReport": "PASS",
+    "isolation.walletSwitch": "PASS",
+    "loop.claim": "PASS",
+    "edge.doubleClaim": "PASS",
+    "gas.noAbsurdFees": "PASS",
+    "class.Alpaca:King": "SKIP",
+    "class.Alpaca:Runner": "SKIP",
+    "class.Alpaca:Lucky": "SKIP",
+    "class.Alpaca:Guardian": "SKIP",
+    "class.Alpaca:Farmer": "SKIP",
+    "class.Alpaca:Common": "PASS",
+    "class.Cougar": "PASS"
+  },
+  "bugs": [],
+  "notes": [
+    "Waited for day 19 CommitOpen (was day 18 Claimable)",
+    "Wallet-switch / refresh UI: verified via on-chain personal commit filter (same rule as Result page). Manual MetaMask switch still recommended.",
+    "isolation.battleReport revalidated: prior FAIL was checksum/lowercase false positive in harness."
+  ],
+  "ownership": [
+    {
+      "player": "player1",
+      "address": "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+      "nfts": [
+        {
+          "tokenId": 17,
+          "label": "Alpaca:Common"
+        },
+        {
+          "tokenId": 18,
+          "label": "Alpaca:Common"
+        },
+        {
+          "tokenId": 19,
+          "label": "Alpaca:Common"
+        },
+        {
+          "tokenId": 20,
+          "label": "Alpaca:Common"
+        },
+        {
+          "tokenId": 21,
+          "label": "Alpaca:Common"
+        }
+      ]
+    },
+    {
+      "player": "player2",
+      "address": "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
+      "nfts": [
+        {
+          "tokenId": 27,
+          "label": "Alpaca:Common"
+        },
+        {
+          "tokenId": 28,
+          "label": "Alpaca:Common"
+        },
+        {
+          "tokenId": 29,
+          "label": "Alpaca:Common"
+        },
+        {
+          "tokenId": 30,
+          "label": "Cougar"
+        }
+      ]
+    },
+    {
+      "player": "player3",
+      "address": "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+      "nfts": [
+        {
+          "tokenId": 22,
+          "label": "Alpaca:Common"
+        },
+        {
+          "tokenId": 23,
+          "label": "Alpaca:Common"
+        },
+        {
+          "tokenId": 24,
+          "label": "Alpaca:Common"
+        },
+        {
+          "tokenId": 25,
+          "label": "Alpaca:Common"
+        },
+        {
+          "tokenId": 26,
+          "label": "Alpaca:Common"
+        }
+      ]
+    }
+  ],
+  "commits": [
+    {
+      "player": "player1",
+      "address": "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+      "tokenId": 17,
+      "label": "Alpaca:Common",
+      "locationId": 2,
+      "commitTx": "0xe34e16016fb23debcaf4d78cfb4be6e21613160e17bca9259fa4cf53ea2e1baf",
+      "vaultOk": true
+    },
+    {
+      "player": "player1",
+      "address": "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+      "tokenId": 18,
+      "label": "Alpaca:Common",
+      "locationId": 3,
+      "commitTx": "0x615a8b41392ffb766e20fcfa00a930b060a6be5489e1d54155bf9dde37c791c3",
+      "vaultOk": true
+    },
+    {
+      "player": "player1",
+      "address": "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+      "tokenId": 19,
+      "label": "Alpaca:Common",
+      "locationId": 1,
+      "commitTx": "0x1345fb1098c4bf4507e1fd541a2ad4f2b249656caefcdb2c677c76a98fd2b847",
+      "vaultOk": true
+    },
+    {
+      "player": "player1",
+      "address": "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+      "tokenId": 20,
+      "label": "Alpaca:Common",
+      "locationId": 4,
+      "commitTx": "0xe353d5ef0821de7f32c61ef62d332264d4d59a843718173cc75d46050a472726",
+      "vaultOk": true
+    },
+    {
+      "player": "player1",
+      "address": "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+      "tokenId": 21,
+      "label": "Alpaca:Common",
+      "locationId": 2,
+      "commitTx": "0x21c975d1ce86e712669dce9cd134d47ae516767d727c76bb6ad5491b1529d539",
+      "vaultOk": true
+    },
+    {
+      "player": "player2",
+      "address": "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
+      "tokenId": 27,
+      "label": "Alpaca:Common",
+      "locationId": 2,
+      "commitTx": "0xc9ea45288e07849d29ff7adc2425713265e60393a6f6dfd49b1b813e932ce3de",
+      "vaultOk": true
+    },
+    {
+      "player": "player2",
+      "address": "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
+      "tokenId": 28,
+      "label": "Alpaca:Common",
+      "locationId": 3,
+      "commitTx": "0x69710d23acc2da946a71d97df67cdb5212610967159e78ae76a46252d0b974e0",
+      "vaultOk": true
+    },
+    {
+      "player": "player2",
+      "address": "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
+      "tokenId": 29,
+      "label": "Alpaca:Common",
+      "locationId": 1,
+      "commitTx": "0xf84798f950043b35fefd29fcb28f222af494f8da649f583ad8444ebde8df459e",
+      "vaultOk": true
+    },
+    {
+      "player": "player2",
+      "address": "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
+      "tokenId": 30,
+      "label": "Cougar",
+      "locationId": 4,
+      "commitTx": "0x551ee303015984318148a8c0d323e386500ba869f645762edf69a00da338113c",
+      "vaultOk": true
+    },
+    {
+      "player": "player3",
+      "address": "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+      "tokenId": 22,
+      "label": "Alpaca:Common",
+      "locationId": 2,
+      "commitTx": "0x8ba147939d7e456c35e53b9e7d8b7d95eacb99ba33d1cf13d14518f3d3807170",
+      "vaultOk": true
+    },
+    {
+      "player": "player3",
+      "address": "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+      "tokenId": 23,
+      "label": "Alpaca:Common",
+      "locationId": 2,
+      "commitTx": "0x28e2b11096cf86aa821b82a98d1e365ccc819626e9d37c008a63baa06bd0458c",
+      "vaultOk": true
+    },
+    {
+      "player": "player3",
+      "address": "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+      "tokenId": 24,
+      "label": "Alpaca:Common",
+      "locationId": 3,
+      "commitTx": "0xa3ee5111c02c1561321b5cdc53a5dd1872522c049422ac13e1bc2f34ffae48e8",
+      "vaultOk": true
+    },
+    {
+      "player": "player3",
+      "address": "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+      "tokenId": 25,
+      "label": "Alpaca:Common",
+      "locationId": 1,
+      "commitTx": "0xef1f6594d026661982d5c623ce4b8767a010dc22b20c9bbb7d2dee7e97a3ac3d",
+      "vaultOk": true
+    },
+    {
+      "player": "player3",
+      "address": "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+      "tokenId": 26,
+      "label": "Alpaca:Common",
+      "locationId": 4,
+      "commitTx": "0xe0b912b333c5cf7c334426fb02b8c88c7d7c230e1106328ec0dd2970e5250c5b",
+      "vaultOk": true
+    }
+  ],
+  "reveal": {
+    "matched": 14,
+    "total": 14
+  },
+  "resolve": {
+    "attempt": 1,
+    "ok": true,
+    "enabled": true,
+    "day": 19,
+    "alreadySettled": false,
+    "seedSkipped": true,
+    "revealed": 14,
+    "revealTxHash": "0x40f3115e9edef5486e61af04245e892019ce68219299f46bc85fe5cf4e311bc5",
+    "seedTxHash": null,
+    "settleTxHash": "0xb0f994b6c0a30539999800e575d04a1744772675bccc76098e357832b4e372b9",
+    "vaultCount": 14
+  },
+  "battlePersonal": [
+    {
+      "player": "player1",
+      "address": "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+      "tokenIds": [
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "leakedFromOthers": []
+    },
+    {
+      "player": "player2",
+      "address": "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
+      "tokenIds": [
+        27,
+        28,
+        29,
+        30
+      ],
+      "leakedFromOthers": []
+    },
+    {
+      "player": "player3",
+      "address": "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+      "tokenIds": [
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "leakedFromOthers": []
+    }
+  ],
+  "claims": [
+    {
+      "player": "player1",
+      "tokenId": 17,
+      "claimableBefore": "3692.307692307692307692",
+      "doubleClaim": "PASS",
+      "claimTx": "0xeccbc24052f4c86ef246df14caf4903b28e8d9800fbe1710400b45c1ba08fa73"
+    },
+    {
+      "player": "player1",
+      "tokenId": 18,
+      "claimableBefore": "6153.846153846153846153",
+      "doubleClaim": "PASS",
+      "claimTx": "0xb0109c3bae724d5ae09b83d98efd10524bb3dc15991ff30f7b84cbb6e113cbd5"
+    },
+    {
+      "player": "player1",
+      "tokenId": 19,
+      "claimableBefore": "2461.538461538461538461",
+      "doubleClaim": "PASS",
+      "claimTx": "0xa3ffef8e0b3263c05a4907e6dd3cc9249b993c65f585e9a4c93161260589662a"
+    },
+    {
+      "player": "player1",
+      "tokenId": 20,
+      "claimableBefore": "6892.307692307692307693",
+      "doubleClaim": "PASS",
+      "claimTx": "0xa0a0d0106b3e7c06b98b67b0b4d32d87ca501a2f9c60e51e7153180809641ab2"
+    },
+    {
+      "player": "player1",
+      "tokenId": 21,
+      "claimableBefore": "3692.307692307692307692",
+      "doubleClaim": "PASS",
+      "claimTx": "0x308b774675b3c3017afc23c1e48f28ae690fb6081916cc82d7881050c9af705a"
+    },
+    {
+      "player": "player2",
+      "tokenId": 27,
+      "claimableBefore": "6739.926739926739926739",
+      "doubleClaim": "PASS",
+      "claimTx": "0xe23b750494ef75e85cf87968c9dc639d85a52d978b8e5209a8462f812b8892df"
+    },
+    {
+      "player": "player2",
+      "tokenId": 28,
+      "claimableBefore": "11537.973137973137973137",
+      "doubleClaim": "PASS",
+      "claimTx": "0xd12473e0b7ca15fd1695b02b33e543d61a830d73ceb16db627e2d24cb0224e5b"
+    },
+    {
+      "player": "player2",
+      "tokenId": 29,
+      "claimableBefore": "2461.538461538461538461",
+      "doubleClaim": "PASS",
+      "claimTx": "0x76add12e36ff7400ba47dae591c28f12b06becdf2afd853aea5af38c25f087d8"
+    },
+    {
+      "player": "player2",
+      "tokenId": 30,
+      "claimableBefore": "24000.0",
+      "doubleClaim": "PASS",
+      "claimTx": "0xfa2ac4b1d4e9c906398e2b6438153a1085c3fdf9fd050ae66d2e68b8c88e754e"
+    },
+    {
+      "player": "player3",
+      "tokenId": 22,
+      "claimableBefore": "3692.307692307692307692",
+      "doubleClaim": "PASS",
+      "claimTx": "0x9403f18252471264d9df7a6a900e318377081f5979df9379b6dafd57b8d22d26"
+    },
+    {
+      "player": "player3",
+      "tokenId": 23,
+      "claimableBefore": "3692.307692307692307692",
+      "doubleClaim": "PASS",
+      "claimTx": "0xb5d92bd6e51faf092376ab1a6842f4edc99291587c9f6438500daaeb598d64fc"
+    },
+    {
+      "player": "player3",
+      "tokenId": 24,
+      "claimableBefore": "6153.846153846153846153",
+      "doubleClaim": "PASS",
+      "claimTx": "0x053c770015cd21d240f833fe59fd4308eac124432c54cfefc9a7902342841405"
+    },
+    {
+      "player": "player3",
+      "tokenId": 25,
+      "claimableBefore": "2461.538461538461538461",
+      "doubleClaim": "PASS",
+      "claimTx": "0x3055dc0fa8f64a6884646319d217bd19ff47d42d03a91129bed1bf4820ab8871"
+    },
+    {
+      "player": "player3",
+      "tokenId": 26,
+      "claimableBefore": "6892.307692307692307697",
+      "doubleClaim": "PASS",
+      "claimTx": "0x05a9e670e816a3299dae1586bc39dd402821edb88c40e9cd94e427efeb4ad753"
+    }
+  ],
+  "gas": [
+    {
+      "wallet": "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+      "role": "player",
+      "action": "commit",
+      "tokenId": 17,
+      "txHash": "0xe34e16016fb23debcaf4d78cfb4be6e21613160e17bca9259fa4cf53ea2e1baf",
+      "gasUsed": "115671",
+      "feeEth": "0.00000115671"
+    },
+    {
+      "wallet": "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+      "role": "player",
+      "action": "commit",
+      "tokenId": 18,
+      "txHash": "0x615a8b41392ffb766e20fcfa00a930b060a6be5489e1d54155bf9dde37c791c3",
+      "gasUsed": "115671",
+      "feeEth": "0.00000115671"
+    },
+    {
+      "wallet": "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+      "role": "player",
+      "action": "commit",
+      "tokenId": 19,
+      "txHash": "0x1345fb1098c4bf4507e1fd541a2ad4f2b249656caefcdb2c677c76a98fd2b847",
+      "gasUsed": "115671",
+      "feeEth": "0.00000115671"
+    },
+    {
+      "wallet": "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+      "role": "player",
+      "action": "commit",
+      "tokenId": 20,
+      "txHash": "0xe353d5ef0821de7f32c61ef62d332264d4d59a843718173cc75d46050a472726",
+      "gasUsed": "115671",
+      "feeEth": "0.00000115671"
+    },
+    {
+      "wallet": "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+      "role": "player",
+      "action": "commit",
+      "tokenId": 21,
+      "txHash": "0x21c975d1ce86e712669dce9cd134d47ae516767d727c76bb6ad5491b1529d539",
+      "gasUsed": "115671",
+      "feeEth": "0.00000115671"
+    },
+    {
+      "wallet": "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
+      "role": "player",
+      "action": "commit",
+      "tokenId": 27,
+      "txHash": "0xc9ea45288e07849d29ff7adc2425713265e60393a6f6dfd49b1b813e932ce3de",
+      "gasUsed": "115671",
+      "feeEth": "0.00000115671"
+    },
+    {
+      "wallet": "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
+      "role": "player",
+      "action": "commit",
+      "tokenId": 28,
+      "txHash": "0x69710d23acc2da946a71d97df67cdb5212610967159e78ae76a46252d0b974e0",
+      "gasUsed": "115671",
+      "feeEth": "0.00000115671"
+    },
+    {
+      "wallet": "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
+      "role": "player",
+      "action": "commit",
+      "tokenId": 29,
+      "txHash": "0xf84798f950043b35fefd29fcb28f222af494f8da649f583ad8444ebde8df459e",
+      "gasUsed": "115671",
+      "feeEth": "0.00000115671"
+    },
+    {
+      "wallet": "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
+      "role": "player",
+      "action": "commit",
+      "tokenId": 30,
+      "txHash": "0x551ee303015984318148a8c0d323e386500ba869f645762edf69a00da338113c",
+      "gasUsed": "115627",
+      "feeEth": "0.00000115627"
+    },
+    {
+      "wallet": "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+      "role": "player",
+      "action": "commit",
+      "tokenId": 22,
+      "txHash": "0x8ba147939d7e456c35e53b9e7d8b7d95eacb99ba33d1cf13d14518f3d3807170",
+      "gasUsed": "115671",
+      "feeEth": "0.00000115671"
+    },
+    {
+      "wallet": "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+      "role": "player",
+      "action": "commit",
+      "tokenId": 23,
+      "txHash": "0x28e2b11096cf86aa821b82a98d1e365ccc819626e9d37c008a63baa06bd0458c",
+      "gasUsed": "115671",
+      "feeEth": "0.00000115671"
+    },
+    {
+      "wallet": "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+      "role": "player",
+      "action": "commit",
+      "tokenId": 24,
+      "txHash": "0xa3ee5111c02c1561321b5cdc53a5dd1872522c049422ac13e1bc2f34ffae48e8",
+      "gasUsed": "115671",
+      "feeEth": "0.00000115671"
+    },
+    {
+      "wallet": "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+      "role": "player",
+      "action": "commit",
+      "tokenId": 25,
+      "txHash": "0xef1f6594d026661982d5c623ce4b8767a010dc22b20c9bbb7d2dee7e97a3ac3d",
+      "gasUsed": "115659",
+      "feeEth": "0.00000115659"
+    },
+    {
+      "wallet": "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+      "role": "player",
+      "action": "commit",
+      "tokenId": 26,
+      "txHash": "0xe0b912b333c5cf7c334426fb02b8c88c7d7c230e1106328ec0dd2970e5250c5b",
+      "gasUsed": "115671",
+      "feeEth": "0.00000115671"
+    },
+    {
+      "wallet": "0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A",
+      "role": "relayer",
+      "action": "revealBatch",
+      "txHash": "0x40f3115e9edef5486e61af04245e892019ce68219299f46bc85fe5cf4e311bc5",
+      "gasUsed": "1281906",
+      "feeEth": "0.00001281906"
+    },
+    {
+      "wallet": "0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A",
+      "role": "relayer",
+      "action": "settleDay",
+      "txHash": "0xb0f994b6c0a30539999800e575d04a1744772675bccc76098e357832b4e372b9",
+      "gasUsed": "559969",
+      "feeEth": "0.00000559969"
+    },
+    {
+      "wallet": "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+      "role": "player",
+      "action": "claim",
+      "tokenId": 17,
+      "txHash": "0xeccbc24052f4c86ef246df14caf4903b28e8d9800fbe1710400b45c1ba08fa73",
+      "gasUsed": "85649",
+      "feeEth": "0.00000085649"
+    },
+    {
+      "wallet": "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+      "role": "player",
+      "action": "claim",
+      "tokenId": 18,
+      "txHash": "0xb0109c3bae724d5ae09b83d98efd10524bb3dc15991ff30f7b84cbb6e113cbd5",
+      "gasUsed": "68549",
+      "feeEth": "0.00000068549"
+    },
+    {
+      "wallet": "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+      "role": "player",
+      "action": "claim",
+      "tokenId": 19,
+      "txHash": "0xa3ffef8e0b3263c05a4907e6dd3cc9249b993c65f585e9a4c93161260589662a",
+      "gasUsed": "68549",
+      "feeEth": "0.00000068549"
+    },
+    {
+      "wallet": "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+      "role": "player",
+      "action": "claim",
+      "tokenId": 20,
+      "txHash": "0xa0a0d0106b3e7c06b98b67b0b4d32d87ca501a2f9c60e51e7153180809641ab2",
+      "gasUsed": "68549",
+      "feeEth": "0.00000068549"
+    },
+    {
+      "wallet": "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+      "role": "player",
+      "action": "claim",
+      "tokenId": 21,
+      "txHash": "0x308b774675b3c3017afc23c1e48f28ae690fb6081916cc82d7881050c9af705a",
+      "gasUsed": "68549",
+      "feeEth": "0.00000068549"
+    },
+    {
+      "wallet": "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
+      "role": "player",
+      "action": "claim",
+      "tokenId": 27,
+      "txHash": "0xe23b750494ef75e85cf87968c9dc639d85a52d978b8e5209a8462f812b8892df",
+      "gasUsed": "85649",
+      "feeEth": "0.00000085649"
+    },
+    {
+      "wallet": "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
+      "role": "player",
+      "action": "claim",
+      "tokenId": 28,
+      "txHash": "0xd12473e0b7ca15fd1695b02b33e543d61a830d73ceb16db627e2d24cb0224e5b",
+      "gasUsed": "68549",
+      "feeEth": "0.00000068549"
+    },
+    {
+      "wallet": "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
+      "role": "player",
+      "action": "claim",
+      "tokenId": 29,
+      "txHash": "0x76add12e36ff7400ba47dae591c28f12b06becdf2afd853aea5af38c25f087d8",
+      "gasUsed": "68549",
+      "feeEth": "0.00000068549"
+    },
+    {
+      "wallet": "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
+      "role": "player",
+      "action": "claim",
+      "tokenId": 30,
+      "txHash": "0xfa2ac4b1d4e9c906398e2b6438153a1085c3fdf9fd050ae66d2e68b8c88e754e",
+      "gasUsed": "68549",
+      "feeEth": "0.00000068549"
+    },
+    {
+      "wallet": "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+      "role": "player",
+      "action": "claim",
+      "tokenId": 22,
+      "txHash": "0x9403f18252471264d9df7a6a900e318377081f5979df9379b6dafd57b8d22d26",
+      "gasUsed": "85649",
+      "feeEth": "0.00000085649"
+    },
+    {
+      "wallet": "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+      "role": "player",
+      "action": "claim",
+      "tokenId": 23,
+      "txHash": "0xb5d92bd6e51faf092376ab1a6842f4edc99291587c9f6438500daaeb598d64fc",
+      "gasUsed": "68549",
+      "feeEth": "0.00000068549"
+    },
+    {
+      "wallet": "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+      "role": "player",
+      "action": "claim",
+      "tokenId": 24,
+      "txHash": "0x053c770015cd21d240f833fe59fd4308eac124432c54cfefc9a7902342841405",
+      "gasUsed": "68549",
+      "feeEth": "0.00000068549"
+    },
+    {
+      "wallet": "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+      "role": "player",
+      "action": "claim",
+      "tokenId": 25,
+      "txHash": "0x3055dc0fa8f64a6884646319d217bd19ff47d42d03a91129bed1bf4820ab8871",
+      "gasUsed": "68549",
+      "feeEth": "0.00000068549"
+    },
+    {
+      "wallet": "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+      "role": "player",
+      "action": "claim",
+      "tokenId": 26,
+      "txHash": "0x05a9e670e816a3299dae1586bc39dd402821edb88c40e9cd94e427efeb4ad753",
+      "gasUsed": "68549",
+      "feeEth": "0.00000068549"
+    }
+  ],
+  "classCoverage": {
+    "Alpaca:Common": [
+      17,
+      18,
+      19,
+      20,
+      21,
+      27,
+      28,
+      29,
+      22,
+      23,
+      24,
+      25,
+      26
+    ],
+    "Cougar": [
+      30
+    ]
+  }
+}

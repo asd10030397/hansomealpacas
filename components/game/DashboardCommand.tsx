@@ -26,21 +26,14 @@ function mainActionForPhase(
       variant: "gold" as const,
     };
   }
-  if (phase === "REVEAL" || phase === "SETTLEMENT") {
-    return {
-      kind: "link" as const,
-      href: hrefs.result,
-      label: t.dashboard.mainSettlement,
-      feature: t.phases.BATTLE_RESULT,
-      variant: "gold" as const,
-    };
-  }
+  // Battle Result viewing (resolve ASAP; claim is on the result page).
   return {
     kind: "link" as const,
     href: hrefs.result,
-    label: t.dashboard.mainClaim,
-    feature: t.phases.CLAIM,
-    variant: "green" as const,
+    label:
+      phase === "CLAIM" ? t.dashboard.mainClaim : t.dashboard.mainResult,
+    feature: t.phases.BATTLE_RESULT,
+    variant: phase === "CLAIM" ? ("green" as const) : ("gold" as const),
   };
 }
 

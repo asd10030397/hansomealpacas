@@ -27,14 +27,19 @@ export function LocationCard({
 
   return (
     <PixelCard className={selected ? "ring-2 ring-[#f0c44a]" : ""}>
-      <div className="relative mb-2 overflow-hidden border-2 border-[#0d1018]">
+      <div className="relative mb-2 aspect-[4/3] overflow-hidden border-2 border-[#0d1018]">
         <Image
           src={location.thumbnail}
-          alt=""
-          width={160}
-          height={96}
-          className="h-24 w-full object-cover"
+          alt={`${location.name} map`}
+          width={640}
+          height={480}
+          className="h-full w-full object-cover [image-rendering:auto]"
+          sizes="(max-width: 640px) 100vw, 280px"
           unoptimized
+        />
+        <div
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0d1018]/55 via-transparent to-[#0d1018]/15"
+          aria-hidden
         />
       </div>
       <div className="mb-2 flex items-start justify-between gap-2">

@@ -24,8 +24,7 @@ function usePhaseStatusCopy(): PhaseStatusCopy {
     phaseName: (phase) => t.phases[phase],
     loopPhaseName: (loop) => {
       if (loop === "CHOOSE") return t.phases.CHOOSE_SHORT;
-      if (loop === "BATTLE") return t.phases.BATTLE_RESULT_SHORT;
-      return t.phases.CLAIM_SHORT;
+      return t.phases.BATTLE_RESULT_SHORT;
     },
   };
 }

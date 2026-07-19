@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState, type CSSProperties } from "react";
 import { useReducedMotion } from "framer-motion";
 import {
@@ -23,6 +24,11 @@ type Props = {
   onComplete?: () => void;
   /** Dev/preview only — force reduced-motion presentation path. */
   forceReducedMotion?: boolean;
+  identity?: {
+    tokenId: number;
+    title: string;
+    image: string;
+  } | null;
 };
 
 const PARTICLE_SLOTS = [0, 1, 2, 3, 4, 5] as const;
@@ -66,6 +72,7 @@ export function AbilityEffectOverlay({
   active,
   onComplete,
   forceReducedMotion = false,
+  identity = null,
 }: Props) {
   const systemReduceMotion = useReducedMotion();
   const reduceMotion = Boolean(forceReducedMotion || systemReduceMotion);
@@ -101,9 +108,31 @@ export function AbilityEffectOverlay({
       className={`hg-ability-fx hg-ability-fx--${abilityId}${reduceMotion ? " hg-ability-fx--static-out" : ""}`}
       role="status"
       aria-live="polite"
-      aria-label={def.banner}
+      aria-label={
+        identity
+          ? `${def.banner}: #${identity.tokenId} ${identity.title}`
+          : def.banner
+      }
       data-testid={`ability-fx-${abilityId}`}
     >
+      {identity ? (
+        <div className="hg-result-fx__identity">
+          <div className="hg-result-fx__identity-art">
+            <Image
+              src={identity.image}
+              alt=""
+              fill
+              className="object-contain p-0.5"
+              sizes="34px"
+              unoptimized
+            />
+          </div>
+          <div className="hg-result-fx__identity-copy">
+            <p className="hg-result-fx__identity-id">#{identity.tokenId}</p>
+            <p className="hg-result-fx__identity-class">{identity.title}</p>
+          </div>
+        </div>
+      ) : null}
       <div className={stageClass}>
         {(abilityId === "guardian" ||
           abilityId === "farmer" ||

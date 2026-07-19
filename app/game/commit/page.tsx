@@ -18,6 +18,7 @@ import {
   setPendingLocation,
 } from "@/lib/game/commitSecret";
 import { isHansomeGameConfigured } from "@/lib/game/hansomeGame";
+import { dispatchPageBackgroundLocation } from "@/lib/game/pageBackground";
 import type { LocationId } from "@/types/game";
 
 function locationDisplay(locationId: LocationId): string {
@@ -39,6 +40,8 @@ export default function CommitPage() {
    */
   const usingDemoInventory = !owned.configured || !owned.isConnected;
 
+  // Live Testnet: `useOwnedGenesisNfts` already marks gameplay-ready sale NFTs as
+  // revealed via the Testnet trait deck (even before collection reveal).
   const playable = usingDemoInventory
     ? MOCK_NFTS.filter((n) => n.revealed)
     : owned.nfts.filter((n) => n.revealed);
@@ -46,12 +49,14 @@ export default function CommitPage() {
   const [selectedToken, setSelectedToken] = useState<number | null>(null);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const [sealedToday, setSealedToday] = useState(() =>
-    listCommitSecretsForDay(day.day),
+    listCommitSecretsForDay(day.day, owned.address),
   );
 
   useEffect(() => {
-    setSealedToday(listCommitSecretsForDay(day.day));
-  }, [day.day]);
+    setSealedToday(listCommitSecretsForDay(day.day, owned.address));
+    setSelectedToken(null);
+    setStatusMsg(null);
+  }, [day.day, owned.address]);
 
   useEffect(() => {
     const fromQuery = new URLSearchParams(window.location.search).get("location");
@@ -59,10 +64,14 @@ export default function CommitPage() {
     if (Number.isInteger(q) && q >= 0 && q <= 4) {
       setLocationId(q as LocationId);
       setPendingLocation(q as LocationId);
+      dispatchPageBackgroundLocation(q);
       return;
     }
     const pending = getPendingLocation();
-    if (pending != null) setLocationId(pending);
+    if (pending != null) {
+      setLocationId(pending);
+      dispatchPageBackgroundLocation(pending);
+    }
   }, []);
 
   const locationLabel = useMemo(() => {
@@ -102,7 +111,7 @@ export default function CommitPage() {
       day: day.day,
       locationId,
     });
-    setSealedToday(listCommitSecretsForDay(day.day));
+    setSealedToday(listCommitSecretsForDay(day.day, owned.address));
 
     if (!result.ok) {
       setStatusMsg(result.error);
@@ -170,7 +179,7 @@ export default function CommitPage() {
 
         <ul className="commit-nft-list">
           {playable.map((nft) => {
-            const sealed = getCommitSecret(nft.tokenId, day.day);
+            const sealed = getCommitSecret(nft.tokenId, day.day, owned.address);
             const isDone =
               sealed?.status === "submitted" || sealed?.status === "revealed";
             const busy = selectedToken === nft.tokenId && isPending;

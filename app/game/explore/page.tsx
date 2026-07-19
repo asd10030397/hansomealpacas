@@ -9,6 +9,7 @@ import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { setPendingLocation } from "@/lib/game/commitSecret";
 import { isHansomeGameConfigured } from "@/lib/game/hansomeGame";
+import { dispatchPageBackgroundLocation } from "@/lib/game/pageBackground";
 import type { LocationId, NftSide } from "@/types/game";
 
 export default function ExplorePage() {
@@ -18,9 +19,15 @@ export default function ExplorePage() {
   const [side, setSide] = useState<NftSide>("Alpaca");
   const [selected, setSelected] = useState<LocationId | null>(null);
 
+  const selectLocation = (id: LocationId) => {
+    setSelected(id);
+    dispatchPageBackgroundLocation(id);
+  };
+
   const continueToCommit = () => {
     if (selected == null) return;
     setPendingLocation(selected);
+    dispatchPageBackgroundLocation(selected);
     router.push(`${gameHref.commit}?location=${selected}`);
   };
 
@@ -38,7 +45,7 @@ export default function ExplorePage() {
           {t.explore.flowSteps.map(([step, hint], i) => (
             <li
               key={step}
-              className="border-2 border-[#0d1018] bg-[#121826] px-2 py-2 text-center"
+              className="border-2 border-[#0d1018] bg-[#121826]/80 px-2 py-2 text-center backdrop-blur-[2px]"
             >
               <p className="pixel-title text-[0.5rem] text-[#f0c44a]">
                 {i + 1}. {step}
@@ -56,6 +63,7 @@ export default function ExplorePage() {
           onClick={() => {
             setSide("Alpaca");
             setSelected(null);
+            dispatchPageBackgroundLocation(null);
           }}
         >
           {t.explore.alpacaView}
@@ -66,6 +74,7 @@ export default function ExplorePage() {
           onClick={() => {
             setSide("Cougar");
             setSelected(null);
+            dispatchPageBackgroundLocation(null);
           }}
         >
           {t.explore.cougarView}
@@ -94,7 +103,7 @@ export default function ExplorePage() {
               location={loc}
               side={side}
               selected={selected === loc.id}
-              onSelect={setSelected}
+              onSelect={selectLocation}
             />
           ))}
         </div>

@@ -115,16 +115,16 @@ export const gameEn: GameMessages = {
     doNowLabel: "What should I do right now?",
     doNow: {
       COMMIT: "Choose where your NFT goes, then submit your move.",
-      REVEAL: "Battle resolving — your move reveals automatically. Stay for the result.",
-      SETTLEMENT: "Watch the battle — hunting, skills, survival, rewards.",
-      CLAIM: "Claim your rewards from this round’s battle.",
+      REVEAL: "Battle Result — the round is resolving. Come back anytime to view and claim.",
+      SETTLEMENT: "Battle Result — view outcomes, history, and claim. Live watching not required.",
+      CLAIM: "Battle Result is ready — claim rewards anytime in the viewing window.",
     },
     phaseLabel: "Current Phase",
     phaseExplain: {
       COMMIT: "Select a location and lock today’s move before the timer ends.",
-      REVEAL: "Battle Result — moves reveal automatically, then settlement runs.",
-      SETTLEMENT: "Battle Result — settlement, FX, and outcomes.",
-      CLAIM: "Claim HANSOME booked to your NFTs.",
+      REVEAL: "Battle Result viewing window — settlement is not delayed for the timer.",
+      SETTLEMENT: "Battle Result — animations, history, and claim.",
+      CLAIM: "Resolved — claim anytime during the viewing window.",
     },
     countdownLabel: "Time left",
     dayLabel: "Day",
@@ -132,17 +132,17 @@ export const gameEn: GameMessages = {
     rankLabel: "Season Rank (demo)",
     mainActionLabel: "Main Action",
     mainCommit: "CHOOSE LOCATION",
-    mainReveal: "WATCH BATTLE",
-    mainSettlement: "WATCH BATTLE",
+    mainReveal: "BATTLE RESULT",
+    mainSettlement: "BATTLE RESULT",
     mainClaim: "CLAIM REWARDS",
-    mainResult: "WATCH BATTLE",
+    mainResult: "BATTLE RESULT",
     settlementStatusLine: (status) => `Status: ${status}`,
     pendingRewards: "Pending Rewards",
     claimableRewards: "Claimable Rewards",
     nextSettlement: "Next Settlement",
     nextSettlementAfterReveal: "After Choose Location",
-    settlementNow: "Battle in progress",
-    settlementDone: "Complete — claim ready",
+    settlementNow: "Battle Result available",
+    settlementDone: "Resolved — claim anytime",
     alsoAvailable: "QUICK LINKS",
     phaseScoped: "THIS PHASE",
     demoPhaseTitle: "DEMO PHASE SWITCH",
@@ -157,20 +157,20 @@ export const gameEn: GameMessages = {
     timeRemainingLabel: "Time Remaining",
     endsInLabel: (phase) => {
       if (phase === "COMMIT") return "Choose Location ends in";
-      if (phase === "REVEAL") return "Battle preparing in";
-      if (phase === "SETTLEMENT") return "Battle ends in";
-      return "Time Remaining";
+      if (phase === "REVEAL") return "Viewing window ends in";
+      if (phase === "SETTLEMENT") return "Viewing window ends in";
+      return "Viewing window ends in";
     },
     nextPhaseLabel: "Next Phase",
     settlementInLabel: "Battle Result in",
-    settlementReady: "Battle live now",
-    settlementDone: "Complete — claim ready",
-    timelineAria: "Daily phase timeline: Choose Location, Battle Result, Claim",
+    settlementReady: "Battle Result available",
+    settlementDone: "Resolved — claim anytime",
+    timelineAria: "Daily phase timeline: Choose Location, Battle Result",
     help: {
-      COMMIT: "Choose where your NFT goes and submit. Come back later for the battle.",
-      REVEAL: "Your move reveals automatically — watch the battle result next.",
-      SETTLEMENT: "Watch settlement, hunting, skills, and outcomes — then claim.",
-      CLAIM: "Claim your earned tHANSOME from this round.",
+      COMMIT: "Choose where your NFT goes and submit. The round resolves automatically.",
+      REVEAL: "Resolving now — you do not need to stay online; return anytime to view and claim.",
+      SETTLEMENT: "Battle Result viewing window — animations, history, and claim.",
+      CLAIM: "Resolved — claim tHANSOME anytime during the viewing window.",
     },
   },
   launch: {
@@ -375,7 +375,7 @@ export const gameEn: GameMessages = {
     committedCount: "{count} NFT(s) committed for day {day}.",
     connectWallet: "Connect your wallet to load owned Genesis NFTs.",
     loadingInventory: "Loading inventory…",
-    emptyInventory: "No revealed Genesis NFTs in this wallet.",
+    emptyInventory: "No playable Genesis NFTs in this wallet.",
     phaseCommitOnly: "Current phase is {phase}. You can only commit during Commit Move.",
   },
   reveal: {
@@ -418,45 +418,60 @@ export const gameEn: GameMessages = {
   result: {
     heading: "BATTLE RESULT",
     blurb:
-      "Choose your location, come back later, watch the battle. Moves reveal automatically — no Reveal button.",
+      "After Choose Location, the round resolves automatically. Come back anytime to view results and claim — you do not need to watch live.",
     comeBackFeel:
-      "Stay on this page during Battle Result — settlement, FX, and claim all happen here.",
-    afterRevealTitle: "Move locked in — preparing battle",
+      "Battle Result is a viewing window: animations, history, and claim. Settlement is not delayed for the timer.",
+    afterRevealTitle: "Resolving battle…",
     afterRevealBody: (countdown) =>
-      `Battle resolves when preparation ends (${countdown}). Settlement and FX run automatically — keep this page open.`,
-    autoSettleHint:
-      "Settling the day automatically so battle results can appear…",
+      `Auto-revealing and settling now. Viewing window ends in ${countdown} — you can leave and return later.`,
+    autoSettleHint: "Resolving hunting, skills, survival, and rewards…",
     arenaEyebrow: "ARENA · BATTLE RESULT",
     revealSectionTitle: "AUTO REVEAL",
     settleSectionTitle: "SETTLEMENT",
     battleSectionTitle: "BATTLE RESULTS",
+    yourNftsTitle: "YOUR NFTS",
+    yourNftsHint:
+      "Your participating NFTs for this day — outcomes, abilities, and claimable rewards.",
+    otherParticipantsTitle: "OTHER PARTICIPANTS",
+    otherParticipantsHint:
+      "Other NFTs revealed in today’s battle. Rewards stay private to each owner.",
+    yourNftBadge: "YOURS",
+    ownerLabel: "Owner",
+    statusLabel: "Status",
+    rewardLabel: "Reward",
+    claimStatusLabel: "Claim",
     claimSectionTitle: "CLAIM REWARDS",
     revealQueueEyebrow: "AUTOMATIC · SALT STAYS ON THIS DEVICE",
+    revealQueueEyebrowGasless: "TESTNET RELAYER · NO LOCAL SALT",
     revealClosedHint:
-      "Preparation window closed. If your move was not revealed from this device, it counts as a missed reveal (0 reward).",
+      "If your move was not revealed from this device, it counts as a missed reveal (0 reward).",
     revealing: "AUTO-REVEALING…",
     revealed: "REVEALED",
     revealAction: "REVEAL MOVE",
     autoRevealTitle: "Revealing your moves",
     autoRevealBody:
-      "Your committed NFTs are revealing automatically. No Reveal button or wallet confirm on Testnet.",
-    autoRevealWaiting: "Waiting for Battle Result…",
+      "Resolving automatically. No Reveal button or wallet confirm on Testnet.",
+    autoRevealBodyGasless:
+      "Testnet relayer is revealing and settling via /api/game/testnet-resolve. No localStorage salt required.",
+    autoRevealWaiting: "Battle Result ready…",
     noSecretsTitle: "No move on this device",
     noSecretsBody:
       "No commit secret found for today on this browser. If you committed elsewhere (or cleared storage), this counts as a missed reveal — reward is 0.",
     missedRevealTitle: "Missed reveal",
     missedRevealBody:
       "This NFT was committed but could not be revealed from this device. Reward is 0 for this round.",
+    missedRevealBodyGasless:
+      "This NFT was committed on-chain but was not revealed before settlement. Relayer vault may be missing the commit salt — recommit on this Testnet build after a fresh Commit.",
     goCommit: "CHOOSE LOCATION",
     claimTotal: "Claimable total",
     claimAction: "CLAIM REWARDS",
     claiming: "CLAIMING…",
     noClaimable: "No claimable rewards yet for this wallet.",
-    substepReveal: "Preparing battle…",
+    substepReveal: "Resolving…",
     substepSettle: "Settlement",
-    substepBattle: "Watch the battle",
-    substepClaim: "Claim ready",
-    substepPreparing: "Preparing battle — auto-revealing your moves…",
+    substepBattle: "Results available — watch, review, or claim",
+    substepClaim: "Results available — claim anytime",
+    substepPreparing: "Resolving battle — reveal, hunt, skills, rewards…",
   },
   docs: {
     heading: "PLAYER DOCS",
@@ -465,8 +480,7 @@ export const gameEn: GameMessages = {
     dailyLoopTitle: "DAILY LOOP",
     dailyLoopSteps: [
       "CHOOSE LOCATION — pick where your NFT goes",
-      "BATTLE RESULT — auto-reveal, settlement, hunting, skills",
-      "CLAIM — pull HANSOME booked to your NFT",
+      "BATTLE RESULT — round resolves, then view / claim anytime in the window",
       "NEXT ROUND — new Choose Location window",
     ],
     poolsTitle: "DAILY POOLS",

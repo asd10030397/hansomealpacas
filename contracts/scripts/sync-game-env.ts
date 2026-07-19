@@ -44,6 +44,8 @@ async function main() {
     NEXT_PUBLIC_GAME_EXPLORER: "https://explorer.testnet.chain.robinhood.com",
     // Client flag: use /api/game/testnet-resolve (server key required separately).
     NEXT_PUBLIC_TESTNET_GASLESS_RESOLVE: "1",
+    // Client: treat sale NFTs as playable via Testnet trait deck (pre-collection reveal).
+    NEXT_PUBLIC_TESTNET_GAMEPLAY_TRAITS: "1",
   };
 
   // Server-only relayer key (never NEXT_PUBLIC_*). Hardhat loads contracts/.env.

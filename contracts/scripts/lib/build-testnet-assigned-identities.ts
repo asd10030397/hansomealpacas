@@ -30,6 +30,35 @@ function simulateSaleRevealShuffle(seed: bigint, saleCap = 540): number[] {
   return out;
 }
 
+/**
+ * Pack: bit7 = Cougar, low nibble = GameplayClass (Alpaca only).
+ * After FY, swap rare classes into early sale slots so minted Testnet
+ * inventory (~#11..#30) can exercise the full ability set.
+ * Preserves overall class counts (swap only).
+ */
+function densifyQaSamples(assigned: Uint8Array): void {
+  const packFor = (want: number): number => {
+    for (let i = 0; i < assigned.length; i++) {
+      if (assigned[i] === want) return i;
+    }
+    throw new Error(`Deck missing packed identity 0x${want.toString(16)}`);
+  };
+  const swapInto = (preferIndex: number, packed: number) => {
+    if (assigned[preferIndex] === packed) return;
+    const from = packFor(packed);
+    const tmp = assigned[preferIndex]!;
+    assigned[preferIndex] = packed;
+    assigned[from] = tmp;
+  };
+  // Sale index = tokenId - 11
+  swapInto(0, 0x01); // #11 Common
+  swapInto(1, 0x02); // #12 Guardian
+  swapInto(2, 0x03); // #13 Farmer
+  swapInto(3, 0x04); // #14 Lucky
+  swapInto(4, 0x05); // #15 Runner
+  swapInto(5, 0x80); // #16 Cougar
+}
+
 export function buildTestnetAssignedIdentities(): {
   assigned: Uint8Array;
   revealSeed: string;
@@ -56,5 +85,6 @@ export function buildTestnetAssignedIdentities(): {
   for (let t = 0; t < 540; t++) {
     assigned[t] = deck[shuffle[t]];
   }
+  densifyQaSamples(assigned);
   return { assigned, revealSeed: manifest.revealSeed };
 }

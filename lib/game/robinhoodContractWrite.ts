@@ -90,7 +90,7 @@ export function logRobinhoodWrite(
 
 const REVERT_HINTS: Record<string, string> = {
   TokenNotRevealed:
-    "TokenNotRevealed — Genesis sale NFT is not collection-revealed on-chain yet (UI artwork ≠ gameplay unlock).",
+    "TokenNotRevealed — Genesis sale NFT is not gameplay-ready yet (Testnet: run activate-testnet-gameplay-identities; Mainnet: wait for collection reveal).",
   InvalidSide:
     "InvalidSide — token has no on-chain Alpaca/Cougar identity (collection reveal incomplete).",
   WrongPhase: "WrongPhase — not in the required day phase for this action.",

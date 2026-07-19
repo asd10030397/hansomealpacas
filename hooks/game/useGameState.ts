@@ -33,11 +33,18 @@ export function computeDayIndex(dayZeroSec: number, dayLengthSec: number, nowMs:
   return Math.floor((nowSec - dayZeroSec) / dayLengthSec);
 }
 
-/** Derive Commit / Reveal / Battle(SETTLEMENT) / Claim from day windows + settled. */
+/**
+ * Derive wire phases from day windows + settled.
+ *
+ * Settlement is never delayed for a viewing timer: once the day is settled,
+ * phase is CLAIM immediately (rewards claimable). The remaining day window is
+ * only a Battle Result viewing period in the UI (countdown / copy).
+ */
 export function derivePhaseFromWindows(input: {
   nowMs: number;
   commitEndsAt: number;
   revealEndsAt: number;
+  dayEndsAt?: number;
   settled: boolean;
 }): GamePhase {
   if (input.settled) return "CLAIM";
@@ -158,11 +165,14 @@ export function useGameState() {
       nowMs: now,
       commitEndsAt,
       revealEndsAt,
+      dayEndsAt,
       settled,
     });
+    // Battle (REVEAL+SETTLEMENT): countdown is the full viewing pad to dayEndsAt.
     let phaseEndsAt = commitEndsAt;
-    if (phase === "REVEAL") phaseEndsAt = revealEndsAt;
-    if (phase === "SETTLEMENT" || phase === "CLAIM") phaseEndsAt = dayEndsAt;
+    if (phase === "REVEAL" || phase === "SETTLEMENT" || phase === "CLAIM") {
+      phaseEndsAt = dayEndsAt;
+    }
 
     return {
       day,
@@ -208,8 +218,8 @@ export function useGameState() {
 
   const phaseEndsAt = useMemo(() => {
     if (phase === "COMMIT") return day.commitEndsAt;
-    if (phase === "REVEAL") return day.revealEndsAt;
-    return day.dayEndsAt ?? day.phaseEndsAt;
+    // Battle viewing pad (reveal window + optional pad) → day end.
+    return day.dayEndsAt ?? day.revealEndsAt ?? day.phaseEndsAt;
   }, [phase, day]);
 
   const setDemoPhase = useCallback(

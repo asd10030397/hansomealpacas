@@ -1,0 +1,259 @@
+{
+  "at": "2026-07-19T15:46:06.304Z",
+  "day": 24,
+  "game": "0x7b2ce5ECD270Ce55Ac94aCe3BF12d83ef113D0a0",
+  "wallet": "0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A",
+  "huntLocation": 2,
+  "cohort": {
+    "adL": 6,
+    "cdL": 1
+  },
+  "resolve": {
+    "ok": true,
+    "enabled": true,
+    "day": 24,
+    "alreadySettled": false,
+    "seedSkipped": false,
+    "revealed": 7,
+    "revealTxHash": "0xece39e567a4666c187c4283c0c12391871281a91498f607f5634c11b023ea86e",
+    "seedTxHash": "0x4891778330e2d9a74717e530689aadba7471bbfc5fbe855935122a049e477da4",
+    "settleTxHash": "0xbe863b43ca7d6cb6933228f0b1e3d9e2b6440ffef664759a89373d1f92860829",
+    "vaultCount": 7
+  },
+  "resolve2": {
+    "ok": true,
+    "alreadySettled": true
+  },
+  "settled": true,
+  "rows": [
+    {
+      "tokenId": 1,
+      "class": "Alpaca:King",
+      "locationId": 2,
+      "hunted": true,
+      "outcome": "King immune",
+      "activatedAbility": "king",
+      "abilityLabel": "King activated!",
+      "runnerSuccess": null,
+      "luckySuccess": null,
+      "penaltyBps": 0,
+      "reward": "10322.58064516129032258",
+      "claimTx": "0xd56de171aaa60b50b79f4819d7346b46690bb5b395bf37f0dfaa839f4185564e"
+    },
+    {
+      "tokenId": 11,
+      "class": "Alpaca:Common",
+      "locationId": 2,
+      "hunted": true,
+      "outcome": "Common hunted",
+      "activatedAbility": null,
+      "abilityLabel": null,
+      "runnerSuccess": null,
+      "luckySuccess": null,
+      "penaltyBps": 1500,
+      "reward": "8774.193548387096774193",
+      "claimTx": "0x82ce9220632f912ee08663c5d24ff7af02079e00226f68bcaed13fcc8a49abd7"
+    },
+    {
+      "tokenId": 12,
+      "class": "Alpaca:Guardian",
+      "locationId": 2,
+      "hunted": true,
+      "outcome": "Guardian protected",
+      "activatedAbility": "guardian",
+      "abilityLabel": "Guardian activated!",
+      "runnerSuccess": null,
+      "luckySuccess": null,
+      "penaltyBps": 750,
+      "reward": "9548.387096774193548387",
+      "claimTx": "0x5baaee4d2a33ec4d091b2cdcad2d9ed90e518ce00f01ca3f751199d53bcaf666"
+    },
+    {
+      "tokenId": 13,
+      "class": "Alpaca:Farmer",
+      "locationId": 2,
+      "hunted": true,
+      "outcome": "Farmer hunted",
+      "activatedAbility": null,
+      "abilityLabel": "Farmer · Harvest Boost",
+      "runnerSuccess": null,
+      "luckySuccess": null,
+      "penaltyBps": 1500,
+      "reward": "10529.032258064516129032",
+      "claimTx": "0x01adba28ec9c5a7b713e3d1817a3c036f384eec698e930cd02d7c95deb9de216"
+    },
+    {
+      "tokenId": 14,
+      "class": "Alpaca:Lucky",
+      "locationId": 2,
+      "hunted": true,
+      "outcome": "Lucky hunted",
+      "activatedAbility": null,
+      "abilityLabel": null,
+      "runnerSuccess": null,
+      "luckySuccess": false,
+      "penaltyBps": 1500,
+      "reward": "8774.193548387096774193",
+      "claimTx": "0xe07cff379de09198e264f51ed61e6374eee4ce0c346fa4e3b25057908af53709"
+    },
+    {
+      "tokenId": 15,
+      "class": "Alpaca:Runner",
+      "locationId": 2,
+      "hunted": true,
+      "outcome": "Runner escaped",
+      "activatedAbility": "runner",
+      "abilityLabel": "Runner activated!",
+      "runnerSuccess": true,
+      "luckySuccess": null,
+      "penaltyBps": 0,
+      "reward": "10322.580645161290322584",
+      "claimTx": "0xaafd53945baafd8f705aaad8896bdbbc693791149017fd1d691889041e77803f"
+    },
+    {
+      "tokenId": 16,
+      "class": "Cougar",
+      "locationId": 2,
+      "hunted": true,
+      "outcome": "Cougar hunting",
+      "activatedAbility": null,
+      "abilityLabel": null,
+      "runnerSuccess": null,
+      "luckySuccess": null,
+      "penaltyBps": 0,
+      "reward": "16000.0",
+      "claimTx": "0xe9f7584eeef61b6e8631924e8391b4c1528e609d291cca2f55e8828e011faa2c"
+    }
+  ],
+  "personalBattleTokenIds": [
+    1,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+  ],
+  "gas": [
+    {
+      "action": "commit",
+      "tokenId": 1,
+      "txHash": "0x6f43ec56efa8b21121e6b152f60c241aaf2f3573775b0887d59fc12995bbe9de",
+      "gasUsed": "114564",
+      "feeEth": "0.00000114564"
+    },
+    {
+      "action": "commit",
+      "tokenId": 11,
+      "txHash": "0x0b64cda111273ce978ad2d328461078527fdd09ab207af84b0426d9e8e6ae688",
+      "gasUsed": "115100",
+      "feeEth": "0.000001151"
+    },
+    {
+      "action": "commit",
+      "tokenId": 12,
+      "txHash": "0x0b6164fa308d2f91b3002384981d9e0755ba5a49c423aa5ec7d8473bc2bda8a9",
+      "gasUsed": "115100",
+      "feeEth": "0.000001151"
+    },
+    {
+      "action": "commit",
+      "tokenId": 13,
+      "txHash": "0x3e6f40f270282b84549ebf65174fe262fba1f5b01dbbb0e34301e601b1ba8227",
+      "gasUsed": "115100",
+      "feeEth": "0.000001151"
+    },
+    {
+      "action": "commit",
+      "tokenId": 14,
+      "txHash": "0xf24c54e113800f79a70e5c25b1af671f0703dc6573f4f987cc8be67767941dc4",
+      "gasUsed": "115100",
+      "feeEth": "0.000001151"
+    },
+    {
+      "action": "commit",
+      "tokenId": 15,
+      "txHash": "0x73fc7ef1c49965e48a0ce1de93d485c797c7e2b88180e962792f4a057229e9d0",
+      "gasUsed": "115100",
+      "feeEth": "0.000001151"
+    },
+    {
+      "action": "commit",
+      "tokenId": 16,
+      "txHash": "0x1f9b1ad447cb314a3db08fb31f256113fb145e944a2dc7e1c21902f96510d5a8",
+      "gasUsed": "115056",
+      "feeEth": "0.00000115056"
+    },
+    {
+      "action": "revealBatch",
+      "txHash": "0xece39e567a4666c187c4283c0c12391871281a91498f607f5634c11b023ea86e",
+      "gasUsed": "686217",
+      "feeEth": "0.00000686217"
+    },
+    {
+      "action": "fulfillDaySeed",
+      "txHash": "0x4891778330e2d9a74717e530689aadba7471bbfc5fbe855935122a049e477da4",
+      "gasUsed": "56009",
+      "feeEth": "0.00000056009"
+    },
+    {
+      "action": "settleDay",
+      "txHash": "0xbe863b43ca7d6cb6933228f0b1e3d9e2b6440ffef664759a89373d1f92860829",
+      "gasUsed": "366180",
+      "feeEth": "0.0000036618"
+    },
+    {
+      "action": "claim",
+      "tokenId": 1,
+      "txHash": "0xd56de171aaa60b50b79f4819d7346b46690bb5b395bf37f0dfaa839f4185564e",
+      "gasUsed": "68167",
+      "feeEth": "0.00000068167"
+    },
+    {
+      "action": "claim",
+      "tokenId": 11,
+      "txHash": "0x82ce9220632f912ee08663c5d24ff7af02079e00226f68bcaed13fcc8a49abd7",
+      "gasUsed": "68167",
+      "feeEth": "0.00000068167"
+    },
+    {
+      "action": "claim",
+      "tokenId": 12,
+      "txHash": "0x5baaee4d2a33ec4d091b2cdcad2d9ed90e518ce00f01ca3f751199d53bcaf666",
+      "gasUsed": "68167",
+      "feeEth": "0.00000068167"
+    },
+    {
+      "action": "claim",
+      "tokenId": 13,
+      "txHash": "0x01adba28ec9c5a7b713e3d1817a3c036f384eec698e930cd02d7c95deb9de216",
+      "gasUsed": "68167",
+      "feeEth": "0.00000068167"
+    },
+    {
+      "action": "claim",
+      "tokenId": 14,
+      "txHash": "0xe07cff379de09198e264f51ed61e6374eee4ce0c346fa4e3b25057908af53709",
+      "gasUsed": "68167",
+      "feeEth": "0.00000068167"
+    },
+    {
+      "action": "claim",
+      "tokenId": 15,
+      "txHash": "0xaafd53945baafd8f705aaad8896bdbbc693791149017fd1d691889041e77803f",
+      "gasUsed": "68167",
+      "feeEth": "0.00000068167"
+    },
+    {
+      "action": "claim",
+      "tokenId": 16,
+      "txHash": "0xe9f7584eeef61b6e8631924e8391b4c1528e609d291cca2f55e8828e011faa2c",
+      "gasUsed": "68167",
+      "feeEth": "0.00000068167"
+    }
+  ],
+  "bugs": [],
+  "notes": [
+    "Duplicate resolve OK (no failed second settle)"
+  ]
+}

@@ -13,41 +13,29 @@ const baseDay = (phase: GameDayState["phase"]): GameDayState => ({
   settlementStatus: phase === "CLAIM" ? "Complete" : "Pending",
 });
 
-describe("buildPhaseStatusView — Choose → Battle → Claim", () => {
+describe("buildPhaseStatusView — Choose → Battle Result", () => {
   it("marks Choose active during COMMIT", () => {
     const view = buildPhaseStatusView(baseDay("COMMIT"), "COMMIT");
     expect(view.timeline.map((s) => `${s.id}:${s.state}`)).toEqual([
       "CHOOSE:active",
       "BATTLE:upcoming",
-      "CLAIM:upcoming",
     ]);
     expect(view.loopPhase).toBe("CHOOSE");
     expect(view.nextPhase).toBe("BATTLE");
   });
 
-  it("collapses REVEAL and SETTLEMENT into Battle Result", () => {
-    for (const phase of ["REVEAL", "SETTLEMENT"] as const) {
+  it("collapses REVEAL, SETTLEMENT, and CLAIM into Battle Result", () => {
+    for (const phase of ["REVEAL", "SETTLEMENT", "CLAIM"] as const) {
       const view = buildPhaseStatusView(baseDay(phase), phase);
       expect(view.loopPhase).toBe("BATTLE");
       expect(view.timeline.map((s) => `${s.id}:${s.state}`)).toEqual([
         "CHOOSE:done",
         "BATTLE:active",
-        "CLAIM:upcoming",
       ]);
     }
   });
 
-  it("marks Claim active when settled", () => {
-    const view = buildPhaseStatusView(baseDay("CLAIM"), "CLAIM");
-    expect(view.loopPhase).toBe("CLAIM");
-    expect(view.timeline.map((s) => `${s.id}:${s.state}`)).toEqual([
-      "CHOOSE:done",
-      "BATTLE:done",
-      "CLAIM:active",
-    ]);
-  });
-
-  it("keeps PHASE_FLOW as Choose → Battle → Claim", () => {
-    expect([...PHASE_FLOW]).toEqual(["CHOOSE", "BATTLE", "CLAIM"]);
+  it("keeps PHASE_FLOW as Choose → Battle", () => {
+    expect([...PHASE_FLOW]).toEqual(["CHOOSE", "BATTLE"]);
   });
 });

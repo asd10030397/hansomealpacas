@@ -21,8 +21,9 @@ import {
 } from "@/lib/game/abis/gameRandomness";
 import { rewardDistributorAbi } from "@/lib/game/abis/rewardDistributor";
 import { GAME_LOCATIONS } from "@/data/game/locations";
+import { MOCK_NFTS } from "@/data/game/mock";
 import { useOwnedGenesisNfts } from "@/hooks/game/useOwnedGenesisNfts";
-import { listCommitSecretsForDay } from "@/lib/game/commitSecret";
+import { listOwnedCommitSecretsForDay } from "@/lib/game/commitSecret";
 import {
   GAME_CHAIN_ID,
   HANSOME_GAME_ADDRESS,
@@ -45,6 +46,7 @@ import {
   isTestnetGaslessResolveEnabled,
   requestTestnetResolve,
 } from "@/lib/game/testnetGaslessResolve";
+import { selectPersonalBattleTokenIds } from "@/lib/game/personalBattleReport";
 import {
   deriveSettlementUiStatus,
   settlementStatusLabel,
@@ -54,6 +56,7 @@ import { deriveSettlementActivation } from "@/lib/game/settlementActivation";
 import { interpretLiveSettlementRow } from "@/lib/game/interpretSettlementRow";
 import {
   isRevealPhaseClosed,
+  isSeedAlreadySetError,
   isSeedMissingError,
   MISSED_REVEAL_OUTCOME,
   SEED_MISSING_UI_MESSAGE,
@@ -70,6 +73,11 @@ export type SettlementRowView = {
   locationId: LocationId | null;
   locationName: string;
   side: NftSide | null;
+  gameplayClass: GameplayClass | null;
+  image: string | null;
+  ownerAddress: string | null;
+  isOwn: boolean;
+  claimStatus: string | null;
   outcome: string;
   ability: string | null;
   activatedAbility: AbilityEffectId | null;
@@ -79,11 +87,20 @@ export type SettlementRowView = {
   missedReveal: boolean;
 };
 
+/** Day-global reveal participants (presentation only — no reward math). */
+export type BattleParticipantView = {
+  tokenId: number;
+  locationId: LocationId;
+  locationName: string;
+  side: NftSide | null;
+};
+
 type CohortCounts = {
   ad: number[];
   cd: number[];
   alpacaParticipantCount: number;
   revealedTokenIds: Set<number>;
+  participants: BattleParticipantView[];
 };
 
 function emptyCohort(): CohortCounts {
@@ -92,6 +109,7 @@ function emptyCohort(): CohortCounts {
     cd: [0, 0, 0, 0, 0],
     alpacaParticipantCount: 0,
     revealedTokenIds: new Set(),
+    participants: [],
   };
 }
 
@@ -103,6 +121,7 @@ function sideFromEnum(side: number): NftSide | null {
 
 function parseRevealCohort(logs: Log[]): CohortCounts {
   const cohort = emptyCohort();
+  const seen = new Set<number>();
   for (const log of logs) {
     const args = (
       log as {
@@ -121,6 +140,15 @@ function parseRevealCohort(logs: Log[]): CohortCounts {
     } else if (side === "Cougar") {
       cohort.cd[loc] += 1;
     }
+    if (tokenId > 0 && !seen.has(tokenId)) {
+      seen.add(tokenId);
+      cohort.participants.push({
+        tokenId,
+        locationId: loc as LocationId,
+        locationName: GAME_LOCATIONS[loc as LocationId]?.name ?? `L${loc}`,
+        side,
+      });
+    }
   }
   return cohort;
 }
@@ -138,10 +166,21 @@ export function useSettlementView() {
   const [localError, setLocalError] = useState<string | null>(null);
   const [gaslessSettlePending, setGaslessSettlePending] = useState(false);
   const gaslessSettleInFlightRef = useRef(false);
+
   const [cohort, setCohort] = useState<CohortCounts>(emptyCohort);
   const [rollByToken, setRollByToken] = useState<
     Record<number, { runnerSuccess: boolean; luckySuccess: boolean }>
   >({});
+
+  // Drop previous wallet / day battle UI (prevents stale SeedAlreadySet errors).
+  useEffect(() => {
+    setLocalError(null);
+    setLocalTick((n) => n + 1);
+    gaslessSettleInFlightRef.current = false;
+    setGaslessSettlePending(false);
+    setCohort(emptyCohort());
+    setRollByToken({});
+  }, [address, day.day]);
 
   const dayStateRead = useReadContract({
     address: game ?? undefined,
@@ -221,12 +260,56 @@ export function useSettlementView() {
     chainId: GAME_CHAIN_ID,
   });
 
-  const secrets = listCommitSecretsForDay(day.day);
-  const tokenIds = useMemo(
-    () => secrets.map((s) => s.tokenId),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- refresh via localTick / day
-    [day.day, localTick, secrets.length],
+  const gasless = isTestnetGaslessResolveEnabled();
+  const ownedTokenIds = useMemo(
+    () => owned.nfts.map((n) => n.tokenId),
+    [owned.nfts],
   );
+  // Legacy path: wallet-scoped localStorage secrets for this day.
+  const secrets = useMemo(
+    () =>
+      gasless
+        ? []
+        : listOwnedCommitSecretsForDay(day.day, address, ownedTokenIds),
+    [gasless, day.day, address, ownedTokenIds, localTick],
+  );
+
+  // Read today's commit hashes for every owned NFT, then keep only participants.
+  // Do NOT use leftover claimableWei / prior-day Settled status (that leaked
+  // unrelated NFTs into Battle Result).
+  const ownedCommitHashContracts = useReadContracts({
+    contracts: ownedTokenIds.map((tokenId) => ({
+      address: game!,
+      abi: hansomeGameAbi,
+      functionName: "commitHashOf" as const,
+      args: [BigInt(tokenId), BigInt(day.day)] as const,
+      chainId: GAME_CHAIN_ID,
+    })),
+    query: {
+      enabled: live && !!game && ownedTokenIds.length > 0 && !!address,
+      refetchInterval: isConnected ? 4_000 : false,
+    },
+  });
+
+  const tokenIds = useMemo(() => {
+    if (!address) return [] as number[];
+    const commitHashes = ownedTokenIds.map(
+      (_, i) =>
+        ownedCommitHashContracts.data?.[i]?.result as
+          | `0x${string}`
+          | undefined,
+    );
+    return selectPersonalBattleTokenIds({
+      ownedTokenIds,
+      commitHashes,
+      secretTokenIds: secrets.map((s) => s.tokenId),
+    });
+  }, [
+    address,
+    ownedTokenIds,
+    ownedCommitHashContracts.data,
+    secrets,
+  ]);
 
   const locationContracts = useReadContracts({
     contracts: tokenIds.map((tokenId) => ({
@@ -390,11 +473,18 @@ export function useSettlementView() {
     ? formatRobinhoodWriteError(settleWriteError, "settleDay failed")
     : null;
 
-  const chainError =
+  const rawChainError =
     dayStateRead.error?.message ||
     settledRead.error?.message ||
     settleFormattedError ||
     localError;
+  // Never surface SeedAlreadySet / already-settled as a settlement Error panel.
+  const chainError =
+    rawChainError &&
+    !isSeedAlreadySetError(rawChainError) &&
+    !/AlreadySettled/i.test(rawChainError)
+      ? rawChainError
+      : null;
 
   const hasDaySeed =
     hasDaySeedRead.data !== undefined ? Boolean(hasDaySeedRead.data) : null;
@@ -416,7 +506,7 @@ export function useSettlementView() {
     if (!live) {
       const local = getLocalSettlement(day.day);
       if (local?.status === "completed") {
-        return local.rows.map(mapLocalRow);
+        return local.rows.map((r) => mapLocalRow(r, address ?? null));
       }
       return [];
     }
@@ -499,6 +589,14 @@ export function useSettlementView() {
             ? "0 / unread"
             : "—";
 
+      const claimStatus = missedReveal
+        ? "No claim"
+        : !settled
+          ? "Pending settle"
+          : rewardWei != null && rewardWei > 0n
+            ? "Claimable"
+            : "No claim";
+
       return {
         tokenId,
         locationId: missedReveal ? null : locationId,
@@ -507,6 +605,11 @@ export function useSettlementView() {
             ? "—"
             : (GAME_LOCATIONS[locationId]?.name ?? `L${locationId}`),
         side,
+        gameplayClass: nft?.gameplayClass ?? gameplayClass,
+        image: nft?.image ?? null,
+        ownerAddress: address ?? null,
+        isOwn: true,
+        claimStatus,
         outcome,
         ability,
         activatedAbility,
@@ -517,6 +620,7 @@ export function useSettlementView() {
       };
     });
   }, [
+    address,
     live,
     day.day,
     phase,
@@ -537,7 +641,10 @@ export function useSettlementView() {
   const runSettle = useCallback(async () => {
     setLocalError(null);
     if (!live) {
-      const built = completeLocalSettlement(day.day);
+      const built = completeLocalSettlement(
+        day.day,
+        listOwnedCommitSecretsForDay(day.day, address, ownedTokenIds),
+      );
       if (built.rows.length === 0) {
         setLocalError("No committed NFTs for this day to settle locally.");
         return;
@@ -547,7 +654,7 @@ export function useSettlementView() {
     }
     if (!game) return;
 
-    // Testnet QA: server relayer fulfills seed + settleDay (no wallet popup).
+    // Testnet gasless: server vault + relayer (no localStorage salts).
     if (isTestnetGaslessResolveEnabled()) {
       if (gaslessSettleInFlightRef.current) return;
       resetSettle();
@@ -562,13 +669,27 @@ export function useSettlementView() {
         });
         if (!result.ok) {
           const msg = result.error ?? "Gasless settle failed.";
-          setLocalError(isSeedMissingError(msg) ? SEED_MISSING_UI_MESSAGE : msg);
-          return;
+          // AlreadySettled / SeedAlreadySet are success — continue to Battle Result.
+          if (
+            /AlreadySettled/i.test(msg) ||
+            isSeedAlreadySetError(msg)
+          ) {
+            /* soft-ok */
+          } else {
+            setLocalError(
+              isSeedMissingError(msg) ? SEED_MISSING_UI_MESSAGE : msg,
+            );
+            return;
+          }
+        } else {
+          setLocalError(null);
         }
         void dayStateRead.refetch?.();
         void settledRead.refetch?.();
         void claimableContracts.refetch?.();
         void hasDaySeedRead.refetch?.();
+        void owned.refetch?.();
+        setLocalTick((n) => n + 1);
       } finally {
         gaslessSettleInFlightRef.current = false;
         setGaslessSettlePending(false);
@@ -616,6 +737,7 @@ export function useSettlementView() {
     game,
     isConnected,
     address,
+    owned,
     walletChainId,
     publicClient,
     resetSettle,
@@ -650,9 +772,13 @@ export function useSettlementView() {
     if (settled) return;
     if (settleWriting || settleReceipt.isLoading || gaslessSettlePending) return;
 
-    // Testnet gasless: poll seed + settle until Claimable (no wallet).
+    // Testnet gasless: resolve as soon as Battle/Reveal opens (no wallet).
     if (isTestnetGaslessResolveEnabled()) {
-      if (status !== "available" && status !== "waiting_seed") return;
+      const ready =
+        status === "available" ||
+        status === "waiting_seed" ||
+        (status === "pending" && phase === "REVEAL");
+      if (!ready) return;
       const kick = () => {
         if (gaslessSettleInFlightRef.current) return;
         void runSettle();
@@ -668,6 +794,7 @@ export function useSettlementView() {
     void runSettle();
   }, [
     status,
+    phase,
     settleWriting,
     settleReceipt.isLoading,
     gaslessSettlePending,
@@ -691,6 +818,11 @@ export function useSettlementView() {
         ? SEED_MISSING_UI_MESSAGE
         : settlementStatusLabel(status),
     rows,
+    /** Revealed day participants not in the personal battle list. */
+    otherParticipants: (() => {
+      const own = new Set(rows.map((r) => r.tokenId));
+      return cohort.participants.filter((p) => !own.has(p.tokenId));
+    })(),
     empty: rows.length === 0,
     isConnected,
     canSettle: status === "available" || status === "waiting_seed",
@@ -724,8 +856,12 @@ function deriveLocalStatus(
   return "unavailable";
 }
 
-function mapLocalRow(r: LocalNftSettlementRow): SettlementRowView {
+function mapLocalRow(
+  r: LocalNftSettlementRow,
+  ownerAddress: string | null,
+): SettlementRowView {
   const missed = Boolean(r.missedReveal);
+  const mock = ownedNftLookup(r.tokenId);
   return {
     tokenId: r.tokenId,
     locationId: missed ? null : r.locationId,
@@ -733,6 +869,15 @@ function mapLocalRow(r: LocalNftSettlementRow): SettlementRowView {
       ? "—"
       : (GAME_LOCATIONS[r.locationId]?.name ?? `L${r.locationId}`),
     side: r.side,
+    gameplayClass: mock?.gameplayClass ?? null,
+    image: mock?.image ?? null,
+    ownerAddress,
+    isOwn: true,
+    claimStatus: missed
+      ? "No claim"
+      : r.rewardHansome > 0
+        ? "Claimable"
+        : "No claim",
     outcome: r.outcome,
     ability: r.ability,
     activatedAbility: r.activatedAbility ?? null,
@@ -743,6 +888,10 @@ function mapLocalRow(r: LocalNftSettlementRow): SettlementRowView {
     source: "mock",
     missedReveal: missed,
   };
+}
+
+function ownedNftLookup(tokenId: number) {
+  return MOCK_NFTS.find((n) => n.tokenId === tokenId) ?? null;
 }
 
 function formatHansome(wei: bigint): string {

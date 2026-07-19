@@ -10,10 +10,12 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useAccount } from "wagmi";
 import { useHansomeReveal } from "@/hooks/game/useHansomeReveal";
 import { useGameState } from "@/hooks/game/useGameState";
+import { useOwnedGenesisNfts } from "@/hooks/game/useOwnedGenesisNfts";
 import {
-  listCommitSecretsForDay,
+  listOwnedCommitSecretsForDay,
   upsertCommitSecret,
   type CommitSecretRecord,
 } from "@/lib/game/commitSecret";
@@ -21,17 +23,18 @@ import {
   isTestnetGaslessResolveEnabled,
   requestTestnetResolve,
 } from "@/lib/game/testnetGaslessResolve";
+import { isSeedAlreadySetError } from "@/lib/game/missedReveal";
 import { playSfx } from "@/lib/game/audio";
 
 export type AutoRevealStatus = {
-  /** Wire RevealOpen. */
+  /** Wire RevealOpen / gasless resolve active. */
   active: boolean;
-  /** At least one reveal in flight or still pending. */
   revealing: boolean;
   pendingCount: number;
   revealedCount: number;
-  /** No local secrets for this day (cannot auto-reveal). */
+  /** Legacy localStorage path only — unused when gasless. */
   noSecrets: boolean;
+  gasless: boolean;
   lastMessage: string | null;
   lastError: string | null;
   refreshQueue: () => CommitSecretRecord[];
@@ -40,12 +43,17 @@ export type AutoRevealStatus = {
 const AutoRevealContext = createContext<AutoRevealStatus | null>(null);
 
 function useAutoRevealEngine(): AutoRevealStatus {
+  const { address } = useAccount();
+  const owned = useOwnedGenesisNfts();
   const { day, phase } = useGameState();
   const { revealNft, isPending, lastError } = useHansomeReveal();
   const gasless = isTestnetGaslessResolveEnabled();
-  const [queue, setQueue] = useState<CommitSecretRecord[]>(() =>
-    listCommitSecretsForDay(day.day),
+  const ownedTokenIds = useMemo(
+    () => owned.nfts.map((n) => n.tokenId),
+    [owned.nfts],
   );
+
+  const [queue, setQueue] = useState<CommitSecretRecord[]>([]);
   const [lastMessage, setLastMessage] = useState<string | null>(null);
   const [runError, setRunError] = useState<string | null>(null);
   const [passRunning, setPassRunning] = useState(false);
@@ -53,27 +61,126 @@ function useAutoRevealEngine(): AutoRevealStatus {
   const runningRef = useRef(false);
 
   const refreshQueue = useCallback(() => {
-    const next = listCommitSecretsForDay(day.day);
+    if (gasless) {
+      setQueue([]);
+      return [];
+    }
+    const next = listOwnedCommitSecretsForDay(
+      day.day,
+      address,
+      ownedTokenIds,
+    );
     setQueue(next);
     return next;
-  }, [day.day]);
+  }, [day.day, address, ownedTokenIds, gasless]);
 
   useEffect(() => {
     refreshQueue();
   }, [refreshQueue]);
 
   useEffect(() => {
+    runningRef.current = false;
+    setPassRunning(false);
+    setRunError(null);
+    setLastMessage(null);
+    refreshQueue();
+  }, [address, refreshQueue]);
+
+  // —— Testnet gasless: server vault + /api/game/testnet-resolve (no localStorage) ——
+  useEffect(() => {
+    if (!gasless) return;
+    if (phase !== "REVEAL" && phase !== "SETTLEMENT") {
+      runningRef.current = false;
+      setPassRunning(false);
+      return;
+    }
+    if (runningRef.current) return;
+
+    let cancelled = false;
+    runningRef.current = true;
+    setPassRunning(true);
+    setRunError(null);
+
+    void (async () => {
+      const result = await requestTestnetResolve({
+        day: day.day,
+        // Vault is source of truth — do not send localStorage salts.
+        reveals: [],
+        fulfillSeed: true,
+        settle: true,
+      });
+      if (cancelled) return;
+
+      if (!result.ok) {
+        const msg = result.error ?? "Gasless resolve failed.";
+        // Seed already on-chain is not a player-facing failure.
+        if (
+          !isSeedAlreadySetError(msg) &&
+          !/AlreadySettled/i.test(msg)
+        ) {
+          setRunError(msg);
+          runningRef.current = false;
+          setPassRunning(false);
+          return;
+        }
+        setRunError(null);
+      }
+
+      if (result.alreadySettled || result.seedSkipped) {
+        setLastMessage(
+          result.alreadySettled
+            ? "Battle already settled — showing results."
+            : "Day seed ready — settling…",
+        );
+      } else if (result.settleTxHash) {
+        setLastMessage(
+          `Battle resolved (revealed ${result.revealed ?? 0}, vault ${result.vaultCount ?? 0}).`,
+        );
+        playSfx("ui-click");
+      } else if ((result.revealed ?? 0) > 0) {
+        setLastMessage(`Relayer revealed ${result.revealed} NFT(s)…`);
+        playSfx("ui-click");
+      } else {
+        setLastMessage(
+          `Relayer resolving… (vault ${result.vaultCount ?? 0} commit(s))`,
+        );
+      }
+
+      runningRef.current = false;
+      setPassRunning(false);
+    })();
+
+    return () => {
+      cancelled = true;
+      runningRef.current = false;
+    };
+  }, [gasless, phase, day.day, retryTick]);
+
+  useEffect(() => {
+    if (!gasless) return;
+    if (phase !== "REVEAL" && phase !== "SETTLEMENT") return;
+    const id = window.setInterval(() => {
+      if (!runningRef.current) setRetryTick((n) => n + 1);
+    }, 4_000);
+    return () => window.clearInterval(id);
+  }, [gasless, phase]);
+
+  // —— Legacy Mainnet / non-gasless: localStorage auto-reveal ——
+  useEffect(() => {
+    if (gasless) return;
     if (phase !== "REVEAL") {
       runningRef.current = false;
       setPassRunning(false);
       return;
     }
-
     if (runningRef.current) return;
+    if (!address) return;
 
-    const pending = listCommitSecretsForDay(day.day).filter(
-      (s) => s.status === "submitted" || s.status === "prepared",
-    );
+    const pending = listOwnedCommitSecretsForDay(
+      day.day,
+      address,
+      ownedTokenIds,
+    ).filter((s) => s.status === "submitted" || s.status === "prepared");
     if (pending.length === 0) {
       refreshQueue();
       return;
@@ -85,50 +192,6 @@ function useAutoRevealEngine(): AutoRevealStatus {
     setRunError(null);
 
     void (async () => {
-      if (gasless) {
-        const result = await requestTestnetResolve({
-          day: day.day,
-          reveals: pending.map((s) => ({
-            tokenId: s.tokenId,
-            locationId: s.locationId,
-            salt: s.salt,
-          })),
-          fulfillSeed: false,
-          settle: false,
-        });
-        if (cancelled) return;
-
-        if (!result.ok) {
-          setRunError(result.error ?? "Gasless reveal failed.");
-          runningRef.current = false;
-          setPassRunning(false);
-          refreshQueue();
-          return;
-        }
-
-        const n = result.revealed ?? 0;
-        if (n >= pending.length && n > 0) {
-          for (const secret of pending) {
-            upsertCommitSecret({
-              ...secret,
-              status: "revealed",
-              txHash: result.revealTxHash ?? secret.txHash,
-            });
-          }
-          setLastMessage(`Auto-revealed ${n} NFT(s) (gasless).`);
-          playSfx("ui-click");
-        } else if (n > 0) {
-          setLastMessage(`Auto-revealed ${n}/${pending.length}… retrying.`);
-        } else {
-          setLastMessage("Waiting for gasless reveal…");
-        }
-
-        runningRef.current = false;
-        setPassRunning(false);
-        refreshQueue();
-        return;
-      }
-
       for (const secret of pending) {
         if (cancelled) break;
         const result = await revealNft({
@@ -136,19 +199,20 @@ function useAutoRevealEngine(): AutoRevealStatus {
           day: secret.day,
         });
         if (cancelled) break;
-
         if (result.ok) {
           setLastMessage(`Auto-revealed #${secret.tokenId}.`);
           refreshQueue();
           continue;
         }
-
         if (/already revealed|AlreadyRevealed/i.test(result.error)) {
-          upsertCommitSecret({ ...secret, status: "revealed" });
+          upsertCommitSecret({
+            ...secret,
+            status: "revealed",
+            wallet: address,
+          });
           refreshQueue();
           continue;
         }
-
         setRunError(result.error);
         break;
       }
@@ -161,42 +225,41 @@ function useAutoRevealEngine(): AutoRevealStatus {
       cancelled = true;
       runningRef.current = false;
     };
-  }, [phase, day.day, revealNft, refreshQueue, gasless, retryTick]);
+  }, [
+    gasless,
+    phase,
+    day.day,
+    address,
+    ownedTokenIds,
+    revealNft,
+    refreshQueue,
+    retryTick,
+  ]);
 
-  useEffect(() => {
-    if (phase !== "REVEAL") return;
-    const id = window.setInterval(() => {
-      refreshQueue();
-      if (!gasless) return;
-      const pending = listCommitSecretsForDay(day.day).filter(
-        (s) => s.status === "submitted" || s.status === "prepared",
-      );
-      if (pending.length > 0 && !runningRef.current) {
-        setRetryTick((n) => n + 1);
-      }
-    }, 3000);
-    return () => window.clearInterval(id);
-  }, [phase, refreshQueue, gasless, day.day]);
-
-  const pendingCount = queue.filter(
-    (r) => r.status === "submitted" || r.status === "prepared",
-  ).length;
+  const pendingCount = gasless
+    ? passRunning
+      ? 1
+      : 0
+    : queue.filter(
+        (r) => r.status === "submitted" || r.status === "prepared",
+      ).length;
   const revealedCount = queue.filter((r) => r.status === "revealed").length;
 
   return useMemo(
     () => ({
-      active: phase === "REVEAL",
-      revealing:
-        phase === "REVEAL" && (isPending || passRunning || pendingCount > 0),
+      active: phase === "REVEAL" || (gasless && phase === "SETTLEMENT"),
+      revealing: passRunning || isPending || pendingCount > 0,
       pendingCount,
       revealedCount,
-      noSecrets: queue.length === 0,
+      noSecrets: gasless ? false : queue.length === 0,
+      gasless,
       lastMessage,
       lastError: runError ?? (!gasless ? lastError : null),
       refreshQueue,
     }),
     [
       phase,
+      gasless,
       isPending,
       passRunning,
       pendingCount,
@@ -206,7 +269,6 @@ function useAutoRevealEngine(): AutoRevealStatus {
       runError,
       lastError,
       refreshQueue,
-      gasless,
     ],
   );
 }
@@ -218,7 +280,6 @@ export function AutoRevealProvider({ children }: { children: ReactNode }) {
   );
 }
 
-/** Status for Battle Result UI. Must be under AutoRevealProvider. */
 export function useAutoReveal(): AutoRevealStatus {
   const ctx = useContext(AutoRevealContext);
   if (!ctx) {

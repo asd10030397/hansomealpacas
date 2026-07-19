@@ -1,5 +1,9 @@
-/** Minimal GameRandomness ABI for settlement presentation (view-only). */
+/** Minimal GameRandomness ABI for settlement presentation + Testnet relayer. */
 export const gameRandomnessAbi = [
+  { type: "error", name: "NotProvider", inputs: [] },
+  { type: "error", name: "SeedMissing", inputs: [] },
+  { type: "error", name: "SeedAlreadySet", inputs: [] },
+  { type: "error", name: "ZeroAddress", inputs: [] },
   {
     type: "function",
     name: "bernoulli",

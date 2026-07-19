@@ -44,7 +44,11 @@ export function useHansomeReveal() {
       setLastError(null);
       reset();
 
-      const secret = getCommitSecret(input.tokenId, input.day);
+      if (!isConnected || !address) {
+        return { ok: false, error: "Connect wallet to reveal." };
+      }
+
+      const secret = getCommitSecret(input.tokenId, input.day, address);
       if (!secret) {
         return {
           ok: false,
@@ -62,13 +66,10 @@ export function useHansomeReveal() {
         const record = upsertCommitSecret({
           ...secret,
           status: "revealed",
+          wallet: address,
         });
         playSfx("ui-click");
         return { ok: true, mode: "local", record };
-      }
-
-      if (!isConnected || !address) {
-        return { ok: false, error: "Connect wallet to reveal on-chain." };
       }
 
       if (walletChainId !== GAME_CHAIN_ID) {
@@ -110,6 +111,7 @@ export function useHansomeReveal() {
           ...secret,
           status: "revealed",
           txHash,
+          wallet: address,
         });
         playSfx("ui-click");
         return { ok: true, mode: "chain", record };

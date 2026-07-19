@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState, type CSSProperties } from "react";
 import { useReducedMotion } from "framer-motion";
 import {
@@ -23,6 +24,12 @@ type Props = {
   forceReducedMotion?: boolean;
   /** When false, skip SFX (caller already played it). Default true. */
   playSfx?: boolean;
+  /** Optional NFT identity chip so players know which token is animating. */
+  identity?: {
+    tokenId: number;
+    title: string;
+    image: string;
+  } | null;
 };
 
 const SAFE_SPARKS = [0, 1, 2, 3, 4] as const;
@@ -52,6 +59,7 @@ export function ResultEffectOverlay({
   onComplete,
   forceReducedMotion = false,
   playSfx = true,
+  identity = null,
 }: Props) {
   const systemReduceMotion = useReducedMotion();
   const reduceMotion = Boolean(forceReducedMotion || systemReduceMotion);
@@ -80,8 +88,30 @@ export function ResultEffectOverlay({
       className={`hg-result-fx hg-result-fx--${resultId}${reduceMotion ? " hg-result-fx--static-out" : ""}`}
       role="status"
       aria-live="polite"
-      aria-label={def.banner}
+      aria-label={
+        identity
+          ? `${def.banner}: #${identity.tokenId} ${identity.title}`
+          : def.banner
+      }
     >
+      {identity ? (
+        <div className="hg-result-fx__identity">
+          <div className="hg-result-fx__identity-art">
+            <Image
+              src={identity.image}
+              alt=""
+              fill
+              className="object-contain p-0.5"
+              sizes="34px"
+              unoptimized
+            />
+          </div>
+          <div className="hg-result-fx__identity-copy">
+            <p className="hg-result-fx__identity-id">#{identity.tokenId}</p>
+            <p className="hg-result-fx__identity-class">{identity.title}</p>
+          </div>
+        </div>
+      ) : null}
       <div className="hg-result-fx__stage">
         {resultId === "alpaca-hunted" && !reduceMotion ? (
           <>

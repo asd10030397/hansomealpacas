@@ -222,7 +222,15 @@ contract HansomeGame is IHansomeGame, Ownable, ReentrancyGuard {
 
     function settleDay(uint256 day) external nonReentrant {
         if (_settled[day]) revert AlreadySettled();
-        if (dayState(day) != GameTypes.DayState.RevealClosed) revert WrongPhase();
+        {
+            // Mainnet: settle only after Reveal closes (commit–reveal security).
+            // Testnet: allow settle as soon as Reveal opens so Battle can resolve
+            // instantly; the remaining window is presentation-only.
+            GameTypes.DayState s = dayState(day);
+            bool ok = s == GameTypes.DayState.RevealClosed
+                || (block.chainid != 4663 && s == GameTypes.DayState.RevealOpen);
+            if (!ok) revert WrongPhase();
+        }
         if (!randomness.hasDaySeed(day)) revert SeedMissing();
 
         uint256 g = treasury.spendable();
@@ -327,8 +335,12 @@ contract HansomeGame is IHansomeGame, Ownable, ReentrancyGuard {
 
     function _isGameplayReady(uint256 tokenId) internal view returns (bool) {
         if (genesis.isRevealed(tokenId)) return true;
+        // Testnet unlock: all sale tokens (#11..#550) are playable before collection reveal.
+        // Reserved #1..#10 still require on-chain Genesis reveal (King / founders).
         if (!_useTestnetIdentities()) return false;
-        if (tokenId < HansomeTypes.FIRST_SALE_ID || tokenId > HansomeTypes.LAST_TOKEN_ID) return false;
+        if (tokenId < HansomeTypes.FIRST_SALE_ID || tokenId > HansomeTypes.LAST_TOKEN_ID) {
+            return false;
+        }
         return true;
     }
 
