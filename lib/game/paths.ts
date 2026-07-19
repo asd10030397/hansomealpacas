@@ -1,9 +1,11 @@
 /**
- * Internal Next.js paths live under `/game/*`.
- * On `game.hansomealpacas.xyz`, middleware rewrites pretty URLs → these paths.
+ * Path maps for the game UI.
  *
- * IMPORTANT: On the game host, `/game` is rewritten to the dashboard (PLAY).
- * HOME must be `/` there — never `/game`.
+ * - Apex www `/game/*` uses GAME_INTERNAL (unchanged marketing site at `/`).
+ * - game.hansomealpacas.xyz uses GAME_PUBLIC pretty URLs.
+ *
+ * CRITICAL (game host): `/game` is rewritten to `/game/dashboard` (PLAY).
+ * HOME on the game host MUST be `/` (title menu), never `/game`.
  */
 
 export const GAME_INTERNAL = {

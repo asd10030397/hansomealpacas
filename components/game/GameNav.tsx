@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { gameHref } from "@/lib/game/paths";
+import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { useWalletUi } from "@/hooks/game/useWalletUi";
+import { isNavActive } from "@/lib/game/navActive";
 import { AudioSettings } from "./AudioSettings";
 import { GameLanguageToggle } from "./GameLanguageToggle";
 import { WalletRequiredModal } from "./WalletRequiredModal";
@@ -22,6 +23,7 @@ function navClass(active: boolean) {
 export function GameNav() {
   const pathname = usePathname();
   const router = useRouter();
+  const gameHref = useGameHref();
   const { t } = useGameI18n();
   const { wallet, connectMock, disconnectMock } = useWalletUi();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -46,13 +48,12 @@ export function GameNav() {
       { href: gameHref.leaderboard, label: t.nav.leaderboard, kind: "link" },
       { href: gameHref.docs, label: t.nav.docs, kind: "link" },
     ],
-    [t],
+    [t, gameHref],
   );
 
   const renderItem = (l: NavLink, mobile = false) => {
     if (l.kind === "link") {
-      const active =
-        pathname === l.href || (l.href !== gameHref.home && pathname.startsWith(l.href));
+      const active = isNavActive(pathname, l.href, gameHref.home);
       return (
         <Link
           key={`${l.kind}-${l.href}`}
@@ -65,8 +66,7 @@ export function GameNav() {
       );
     }
 
-    const active =
-      pathname === l.href || (l.href !== gameHref.home && pathname.startsWith(l.href));
+    const active = isNavActive(pathname, l.href, gameHref.home);
     return (
       <button
         key={`wallet-${l.href}`}

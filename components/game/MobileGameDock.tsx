@@ -3,22 +3,22 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { gameHref } from "@/lib/game/paths";
+import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { useWalletUi } from "@/hooks/game/useWalletUi";
+import { isNavActive } from "@/lib/game/navActive";
 import { WalletRequiredModal } from "./WalletRequiredModal";
 
 export function MobileGameDock() {
   const pathname = usePathname();
   const router = useRouter();
+  const gameHref = useGameHref();
   const { t } = useGameI18n();
   const { wallet, connectMock } = useWalletUi();
   const [walletOpen, setWalletOpen] = useState(false);
 
   const itemClass = (href: string) => {
-    const active =
-      pathname === href ||
-      (href !== gameHref.home && pathname.startsWith(href + "/"));
+    const active = isNavActive(pathname, href, gameHref.home);
     return `pixel-title flex flex-col items-center justify-center py-3 text-[0.45rem] ${
       active ? "bg-[#e8b03a] text-[#1a1520]" : "text-[#f3ebe0]"
     }`;

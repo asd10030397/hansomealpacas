@@ -1,9 +1,15 @@
 "use client";
 
-import { useMemo } from "react";
+import { useSyncExternalStore } from "react";
 import { getGameHref, type GameHrefMap } from "@/lib/game/paths";
 
-/** Host-aware game links — HOME is `/` on game.hansomealpacas.xyz, `/game` on apex. */
+const subscribe = () => () => {};
+
+/** Host-aware links for game.hansomealpacas.xyz vs www /game/* — does not change marketing `/`. */
 export function useGameHref(): GameHrefMap {
-  return useMemo(() => getGameHref(), []);
+  return useSyncExternalStore(
+    subscribe,
+    () => getGameHref(window.location.hostname),
+    () => getGameHref(null),
+  );
 }
