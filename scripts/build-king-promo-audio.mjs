@@ -31,7 +31,7 @@ const HUNT_SFX = path.join(
   "public/audio/game/settlement-results/cougar-hunt-success/effect.mp3",
 );
 
-/** Keep in sync with KING_PROMO_SCENES in page.tsx */
+/** Keep in sync with KING_PROMO_SCENES in lib/game/kingPromoScenes.ts */
 const SCENES = [
   { id: "intro", durationMs: 4500, sfx: "king" },
   { id: "hunt", durationMs: 4500, sfx: "hunt" },

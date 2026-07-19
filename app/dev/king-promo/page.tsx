@@ -11,116 +11,23 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AbilityEffectOverlay } from "@/components/game/ability-effects/AbilityEffectOverlay";
 import { loadAudioPreferences, saveAudioPreferences } from "@/lib/game/audio";
+import {
+  KING_PROMO_ASSETS,
+  KING_PROMO_SCENES,
+} from "@/lib/game/kingPromoScenes";
 import "@/styles/game.css";
 import "@/styles/game-polish.css";
 import "./promo.css";
 
-const KING_SRC = "/pixel/genesis/collection-550/image/1.png";
-const COUGAR_SRC = "/pixel/cougar/mint/image/cougar.png";
-const PREY_A = "/pixel/genesis/collection-550/image/100.png";
-const PREY_B = "/pixel/genesis/collection-550/image/250.png";
-const KING_BG = "/pixel/traits/backgrounds/king.png";
-const PASTURE_BG = "/pixel/pasture-hero-bg.png";
-const LOGO = "/logo/logo-512.png";
-
-type SceneId = "intro" | "hunt" | "reveal" | "immunity" | "ending";
-
-type Scene = {
-  id: SceneId;
-  durationMs: number;
-  bg: string;
-  bgTone: "royal" | "hunt";
-  goldWash: boolean;
-  showKing: boolean;
-  showCougar: boolean;
-  showPrey: boolean;
-  kingClass: string;
-  cougarClass: string;
-  playKingFx: boolean;
-  /** Marketing copy — never frames King as a random skill. */
-  lines: string[];
-  lineGold?: boolean;
-};
-
-/** Total ~24.5s (+ brief lead-in). Keep in sync with record/audio scripts. */
-export const KING_PROMO_SCENES: Scene[] = [
-  {
-    id: "intro",
-    durationMs: 4500,
-    bg: KING_BG,
-    bgTone: "royal",
-    goldWash: true,
-    showKing: true,
-    showCougar: false,
-    showPrey: false,
-    kingClass: "king-promo__char--king-proud",
-    cougarClass: "",
-    playKingFx: true,
-    lines: ["Not every Alpaca is born equal."],
-  },
-  {
-    id: "hunt",
-    durationMs: 4500,
-    bg: PASTURE_BG,
-    bgTone: "hunt",
-    goldWash: false,
-    showKing: false,
-    showCougar: true,
-    showPrey: true,
-    kingClass: "",
-    cougarClass: "king-promo__char--cougar-stalk",
-    playKingFx: false,
-    lines: ["Others become the hunted..."],
-  },
-  {
-    id: "reveal",
-    durationMs: 4000,
-    bg: KING_BG,
-    bgTone: "royal",
-    goldWash: true,
-    showKing: true,
-    showCougar: true,
-    showPrey: false,
-    kingClass: "king-promo__char--king-stand",
-    cougarClass: "",
-    playKingFx: false,
-    lines: ["But you..."],
-    lineGold: true,
-  },
-  {
-    id: "immunity",
-    durationMs: 5500,
-    bg: KING_BG,
-    bgTone: "royal",
-    goldWash: true,
-    showKing: true,
-    showCougar: false,
-    showPrey: false,
-    kingClass: "king-promo__char--king-stand",
-    cougarClass: "",
-    playKingFx: true,
-    lines: [
-      "Because you are HANSOME.",
-      "You are the King.",
-      "You cannot be hunted.",
-    ],
-    lineGold: true,
-  },
-  {
-    id: "ending",
-    durationMs: 5000,
-    bg: KING_BG,
-    bgTone: "royal",
-    goldWash: true,
-    showKing: false,
-    showCougar: false,
-    showPrey: false,
-    kingClass: "",
-    cougarClass: "",
-    playKingFx: false,
-    lines: [],
-  },
-];
+const {
+  king: KING_SRC,
+  cougar: COUGAR_SRC,
+  preyA: PREY_A,
+  preyB: PREY_B,
+  kingBg: KING_BG,
+  pastureBg: PASTURE_BG,
+  logo: LOGO,
+} = KING_PROMO_ASSETS;
 
 const COPY_DELAY_MS = 420;
 const FX_DELAY_MS = 700;
@@ -345,14 +252,8 @@ export default function KingPromoPage() {
                     />
                   ) : null}
                   {scene.showKing ? (
-                    <div style={{ position: "relative" }}>
-                      <img
-                        src={KING_SRC}
-                        alt="King Alpaca"
-                        className={`king-promo__char king-promo__char--king ${scene.kingClass}${charsIn ? " king-promo__char--in" : ""}`}
-                        data-testid="king-promo-king"
-                        draggable={false}
-                      />
+                    <div className="king-promo__king-stack">
+                      {/* FX behind the cutout so aura/particles sit in the scene */}
                       <div
                         className={`king-promo__fx${fxOn ? " king-promo__fx--on" : ""}`}
                         data-testid="king-promo-fx"
@@ -365,6 +266,13 @@ export default function KingPromoPage() {
                           />
                         ) : null}
                       </div>
+                      <img
+                        src={KING_SRC}
+                        alt="King Alpaca"
+                        className={`king-promo__char king-promo__char--king ${scene.kingClass}${charsIn ? " king-promo__char--in" : ""}`}
+                        data-testid="king-promo-king"
+                        draggable={false}
+                      />
                     </div>
                   ) : null}
                   {scene.showCougar && scene.id === "hunt" ? (

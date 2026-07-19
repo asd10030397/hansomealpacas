@@ -127,15 +127,30 @@ async function recordVariant(browser, variant) {
     { timeout: 120000 },
   );
 
-  // Wait until playing starts (autostart)
-  await page.waitForFunction(
-    () =>
-      document
-        .querySelector('[data-testid="king-promo-root"]')
-        ?.getAttribute("data-phase") === "playing",
-    null,
-    { timeout: 30000 },
-  );
+  // Wait until playing starts (autostart) — click Start if still idle.
+  try {
+    await page.waitForFunction(
+      () =>
+        document
+          .querySelector('[data-testid="king-promo-root"]')
+          ?.getAttribute("data-phase") === "playing",
+      null,
+      { timeout: 12000 },
+    );
+  } catch {
+    const start = page.getByTestId("king-promo-start");
+    if (await start.count()) {
+      await start.click();
+    }
+    await page.waitForFunction(
+      () =>
+        document
+          .querySelector('[data-testid="king-promo-root"]')
+          ?.getAttribute("data-phase") === "playing",
+      null,
+      { timeout: 30000 },
+    );
+  }
   const leadInMs = Date.now() - navAt;
 
   await page.waitForFunction(

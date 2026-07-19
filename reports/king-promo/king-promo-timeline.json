@@ -2,23 +2,23 @@
   "events": [
     {
       "label": "intro-king",
-      "startSec": 1.447,
-      "endSec": 2.967,
+      "startSec": 1.43,
+      "endSec": 2.95,
       "sfxPath": "C:\\hansomealpacas\\public\\audio\\game\\abilities\\king\\effect.mp3"
     },
     {
       "label": "hunt-hunt",
-      "startSec": 5.947,
-      "endSec": 7.367,
+      "startSec": 5.93,
+      "endSec": 7.3500000000000005,
       "sfxPath": "C:\\hansomealpacas\\public\\audio\\game\\settlement-results\\cougar-hunt-success\\effect.mp3"
     },
     {
       "label": "immunity-king",
-      "startSec": 14.447,
-      "endSec": 15.966999999999999,
+      "startSec": 14.43,
+      "endSec": 15.95,
       "sfxPath": "C:\\hansomealpacas\\public\\audio\\game\\abilities\\king\\effect.mp3"
     }
   ],
-  "totalSec": 24.597,
-  "leadInMs": 747
+  "totalSec": 24.58,
+  "leadInMs": 730
 }

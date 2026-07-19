@@ -75,10 +75,10 @@
   z-index: 3;
   opacity: 0;
   background: radial-gradient(
-    ellipse at 50% 35%,
-    rgba(240, 196, 74, 0.35) 0%,
-    rgba(240, 196, 74, 0.08) 42%,
-    transparent 70%
+    ellipse at 50% 40%,
+    rgba(240, 196, 74, 0.28) 0%,
+    rgba(240, 196, 74, 0.1) 38%,
+    transparent 68%
   );
   transition: opacity 0.6s ease;
 }
@@ -109,8 +109,12 @@
 
 .king-promo__char {
   position: relative;
+  display: block;
+  background: transparent;
+  border: 0;
   image-rendering: pixelated;
-  filter: drop-shadow(0 10px 0 rgba(0, 0, 0, 0.35));
+  /* Soft contact shadow that follows alpha silhouette (not a square box). */
+  filter: drop-shadow(0 12px 10px rgba(0, 0, 0, 0.45));
   opacity: 0;
   transform: translateY(18px) scale(0.96);
   transition:
@@ -180,10 +184,23 @@
   animation: kp-stand 5s ease-out both;
 }
 
+.king-promo__king-stack {
+  position: relative;
+  display: grid;
+  place-items: center;
+  z-index: 3;
+}
+
+.king-promo__king-stack .king-promo__char--king {
+  position: relative;
+  z-index: 2;
+  max-width: none;
+}
+
 .king-promo__fx {
   position: absolute;
-  inset: -8% -4% 8%;
-  z-index: 5;
+  inset: -18% -12% -6%;
+  z-index: 1;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.2s ease;

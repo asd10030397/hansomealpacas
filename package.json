@@ -16,7 +16,8 @@
     "generate:gameplay-theme": "node scripts/generate-gameplay-theme.mjs",
     "generate:ui-sfx": "node scripts/generate-ui-sfx.mjs",
     "generate:ability-sfx": "node scripts/generate-ability-sfx.mjs",
-    "promo:king": "node scripts/record-king-promo.mjs"
+    "promo:king:cutouts": "node scripts/build-king-promo-cutouts.mjs",
+    "promo:king": "node scripts/build-king-promo-cutouts.mjs && node scripts/record-king-promo.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.2",
