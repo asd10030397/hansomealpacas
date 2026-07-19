@@ -385,6 +385,28 @@
   font-size: 0.72rem;
 }
 
+.hg-settle-card--missed {
+  border-color: rgba(240, 196, 74, 0.35);
+}
+
+.hg-settle-card__missed {
+  display: grid;
+  gap: 0.35rem;
+  text-align: left;
+}
+
+.hg-settle-card__missed p {
+  margin: 0;
+  line-height: 1.35;
+  color: var(--hg-muted, #a8b0c0);
+  font-size: 0.82rem;
+}
+
+.hg-settle-card__missed-title {
+  color: #f0c44a !important;
+  font-weight: 600;
+}
+
 .hg-settle-card__ability-label {
   display: block;
   font-size: 0.55rem;
@@ -435,6 +457,13 @@
 }
 
 /* Phase-tinted prompt border */
+.dash-cmd__prompt--RESULT {
+  border-color: #3a6a9a;
+  box-shadow:
+    0 0 0 1px rgba(110, 184, 224, 0.3),
+    var(--hg-shadow);
+}
+
 .dash-cmd__prompt--COMMIT {
   border-color: #9a6a12;
   box-shadow:

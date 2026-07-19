@@ -135,4 +135,21 @@ export const hansomeGameAbi = [
     inputs: [],
     outputs: [{ name: "", type: "uint256" }],
   },
+  {
+    type: "function",
+    name: "randomness",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ name: "", type: "address" }],
+  },
+  {
+    type: "event",
+    name: "Revealed",
+    inputs: [
+      { name: "tokenId", type: "uint256", indexed: true },
+      { name: "day", type: "uint256", indexed: true },
+      { name: "locationId", type: "uint8", indexed: false },
+      { name: "side", type: "uint8", indexed: false },
+    ],
+  },
 ] as const;

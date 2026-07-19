@@ -20,13 +20,8 @@ function usePhaseStatusCopy(): PhaseStatusCopy {
     settlementDone: t.phaseStatus.settlementDone,
     timelineAria: t.phaseStatus.timelineAria,
     help: t.phaseStatus.help,
-    phaseName: (p) =>
-      ({
-        COMMIT: "Commit",
-        REVEAL: "Reveal",
-        SETTLEMENT: "Settlement",
-        CLAIM: "Claim",
-      })[p],
+    phaseName: (p) => t.phases[p],
+    resultPhaseName: t.phases.RESULT,
   };
 }
 

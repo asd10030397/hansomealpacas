@@ -14,7 +14,8 @@
     "test:scoring": "vitest run --config vitest.config.ts",
     "test:scoring:watch": "vitest --config vitest.config.ts",
     "generate:gameplay-theme": "node scripts/generate-gameplay-theme.mjs",
-    "generate:ui-sfx": "node scripts/generate-ui-sfx.mjs"
+    "generate:ui-sfx": "node scripts/generate-ui-sfx.mjs",
+    "generate:ability-sfx": "node scripts/generate-ability-sfx.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.2",

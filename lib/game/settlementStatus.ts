@@ -4,10 +4,13 @@
  * RevealClosed=4, Settlement=5, Claimable=6 — HansomeGame mainly uses 1/3/4/6.
  */
 
+import { isSeedMissingError } from "@/lib/game/missedReveal";
+
 export type SettlementUiStatus =
   | "loading"
   | "pending"
   | "available"
+  | "waiting_seed"
   | "processing"
   | "completed"
   | "unavailable"
@@ -24,15 +27,24 @@ export function deriveSettlementUiStatus(input: {
   settleTxPending?: boolean;
   error?: string | null;
   loading?: boolean;
+  /** When settle is eligible but day seed is not fulfilled yet. */
+  hasDaySeed?: boolean | null;
 }): SettlementUiStatus {
   if (input.loading) return "loading";
-  if (input.error) return "error";
   if (input.settleTxPending) return "processing";
   if (input.isSettled === true) return "completed";
+
+  // Seed gate — prefer dedicated UI over generic contract error.
+  if (isSeedMissingError(input.error)) return "waiting_seed";
+
+  if (input.error) return "error";
   if (input.dayState == null || input.isSettled == null) return "unavailable";
 
   // RevealClosed (4) or Settlement (5) → settleDay eligible
-  if (input.dayState === 4 || input.dayState === 5) return "available";
+  if (input.dayState === 4 || input.dayState === 5) {
+    if (input.hasDaySeed === false) return "waiting_seed";
+    return "available";
+  }
 
   // Still in commit/reveal window
   if (input.dayState === 1 || input.dayState === 2 || input.dayState === 3) {
@@ -53,6 +65,8 @@ export function settlementStatusLabel(status: SettlementUiStatus): string {
       return "Pending — waiting for Reveal to close";
     case "available":
       return "Available — settlement can run";
+    case "waiting_seed":
+      return "Waiting for settlement randomness.";
     case "processing":
       return "Processing…";
     case "completed":

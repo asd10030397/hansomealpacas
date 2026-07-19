@@ -1,6 +1,8 @@
 "use client";
 
 import type { CSSProperties, ReactNode } from "react";
+import { useGameI18n } from "@/hooks/game/useGameI18n";
+import { isMissedRevealOutcome } from "@/lib/game/missedReveal";
 
 export type SettlementResultRow = {
   tokenId: number;
@@ -10,6 +12,7 @@ export type SettlementResultRow = {
   locationName: string;
   outcome: string;
   ability?: string | null;
+  missedReveal?: boolean;
 };
 
 export function SettlementResultCard({
@@ -21,11 +24,14 @@ export function SettlementResultCard({
   index: number;
   overlays?: ReactNode;
 }) {
-  const hasAbility = Boolean(row.ability && row.ability !== "—");
+  const { t } = useGameI18n();
+  const missed =
+    row.missedReveal === true || isMissedRevealOutcome(row.outcome);
+  const hasAbility = !missed && Boolean(row.ability && row.ability !== "—");
 
   return (
     <li
-      className="hg-settle-card"
+      className={`hg-settle-card${missed ? " hg-settle-card--missed" : ""}`}
       style={{ animationDelay: `${Math.min(index, 8) * 70}ms` } as CSSProperties}
     >
       {overlays}
@@ -43,23 +49,37 @@ export function SettlementResultCard({
       </div>
       <dl className="hg-settle-card__meta">
         <div className="hg-settle-card__row">
-          <dt>Location</dt>
-          <dd>{row.locationName}</dd>
+          <dt>{t.settlement.locationLabel}</dt>
+          <dd>{missed ? "—" : row.locationName}</dd>
         </div>
         <div className="hg-settle-card__row">
-          <dt>Outcome</dt>
-          <dd>{row.outcome}</dd>
+          <dt>{t.settlement.outcomeLabel}</dt>
+          <dd>
+            {missed ? (
+              <div className="hg-settle-card__missed" role="status">
+                <p className="hg-settle-card__missed-title">
+                  {t.settlement.missedRevealTitle}
+                </p>
+                <p>{t.settlement.missedRevealZero}</p>
+                <p>{t.settlement.missedRevealNext}</p>
+              </div>
+            ) : (
+              row.outcome
+            )}
+          </dd>
         </div>
       </dl>
       {hasAbility ? (
         <div className="hg-settle-card__ability">
-          <span className="hg-settle-card__ability-label">Ability</span>
+          <span className="hg-settle-card__ability-label">
+            {t.settlement.abilityLabel}
+          </span>
           {row.ability}
         </div>
       ) : (
         <dl className="hg-settle-card__meta">
           <div className="hg-settle-card__row">
-            <dt>Ability</dt>
+            <dt>{t.settlement.abilityLabel}</dt>
             <dd>—</dd>
           </div>
         </dl>

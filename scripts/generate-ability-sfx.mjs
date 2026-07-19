@@ -2,7 +2,7 @@
  * Encode ability SFX from music/<Ability>/ → public/audio/game/abilities/<id>/effect.{ogg,mp3}
  *
  * Folder convention (source masters, not served):
- *   music/Guardian/  music/Runner/  music/Lucky/  music/Farmer/
+ *   music/Guardian/  music/Runner/  music/Lucky/  music/Farmer/  music/king/
  *
  * Drop any .wav/.mp3/.ogg into a folder; the first audio file is encoded as `effect.*`.
  * Replace files later without touching gameplay code — re-run this script.
@@ -23,6 +23,7 @@ const ABILITIES = [
   { id: "runner", folder: "Runner", maxSec: 1.3 },
   { id: "lucky", folder: "Lucky", maxSec: 1.4 },
   { id: "farmer", folder: "Farmer", maxSec: 1.4 },
+  { id: "king", folder: "king", maxSec: 1.5 },
 ];
 
 const AUDIO_EXT = new Set([".wav", ".mp3", ".ogg", ".m4a", ".flac"]);

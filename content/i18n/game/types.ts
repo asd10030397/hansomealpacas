@@ -14,6 +14,8 @@ export type GameMessages = {
     REVEAL: string;
     SETTLEMENT: string;
     CLAIM: string;
+    /** Player-facing loop label (Reveal + Settle + Claim). */
+    RESULT: string;
   };
   common: {
     demoBanner: string;
@@ -113,6 +115,7 @@ export type GameMessages = {
     mainReveal: string;
     mainSettlement: string;
     mainClaim: string;
+    mainResult: string;
     settlementStatusLine: (status: string) => string;
     pendingRewards: string;
     claimableRewards: string;
@@ -281,6 +284,58 @@ export type GameMessages = {
   reveal: {
     heading: string;
     blurb: string;
+  };
+  settlement: {
+    heading: string;
+    blurb: string;
+    statusTitle: string;
+    resultsTitle: string;
+    liveModeChip: string;
+    mockModeChip: string;
+    locationLabel: string;
+    outcomeLabel: string;
+    abilityLabel: string;
+    /** E9 — commit without reveal (after Reveal closed). */
+    missedRevealTitle: string;
+    missedRevealZero: string;
+    missedRevealNext: string;
+    /** Settlement blocked until day seed is set. */
+    waitingSeedTitle: string;
+    waitingSeedBody: string;
+    settling: string;
+    runSettleLive: string;
+    runSettleMock: string;
+    settlePendingBody: string;
+    unavailableBody: string;
+    emptyBodyLive: string;
+    emptyBodyMock: string;
+    goClaim: string;
+    goReveal: string;
+    awaitingReveal: string;
+    awaitingSettlement: string;
+    rewardZero: string;
+  };
+  result: {
+    heading: string;
+    blurb: string;
+    comeBackFeel: string;
+    revealSectionTitle: string;
+    settleSectionTitle: string;
+    battleSectionTitle: string;
+    claimSectionTitle: string;
+    revealQueueEyebrow: string;
+    revealClosedHint: string;
+    revealing: string;
+    revealed: string;
+    revealAction: string;
+    goCommit: string;
+    claimTotal: string;
+    claimAction: string;
+    claiming: string;
+    noClaimable: string;
+    substepReveal: string;
+    substepSettle: string;
+    substepClaim: string;
   };
   docs: {
     heading: string;

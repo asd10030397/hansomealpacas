@@ -6,12 +6,24 @@ import {
 } from "@/lib/game/abilityEffects/catalog";
 
 describe("ability effect catalog", () => {
-  it("parses ability labels to presentation ids", () => {
+  it("parses activation labels only — not static inventory class fluff", () => {
+    expect(parseAbilityEffectId("Guardian activated!")).toBe("guardian");
+    expect(parseAbilityEffectId("Runner activated!")).toBe("runner");
+    expect(parseAbilityEffectId("Lucky activated!")).toBe("lucky");
+    expect(parseAbilityEffectId("King activated!")).toBe("king");
     expect(parseAbilityEffectId("Guardian — mitigation (mock)")).toBe("guardian");
     expect(parseAbilityEffectId("Runner — escape (mock)")).toBe("runner");
     expect(parseAbilityEffectId("Lucky — immunity (mock)")).toBe("lucky");
-    expect(parseAbilityEffectId("Farmer — harvest (mock)")).toBe("farmer");
-    expect(parseAbilityEffectId("Harvest Bonus!")).toBe("farmer");
+
+    // Static / passive identity — must NOT trigger proc FX
+    expect(parseAbilityEffectId("Farmer · Harvest Boost")).toBeNull();
+    expect(parseAbilityEffectId("Farmer activated!")).toBe("farmer"); // legacy string
+    expect(parseAbilityEffectId("Lucky Escape")).toBeNull();
+    expect(parseAbilityEffectId("Harvest Boost")).toBeNull();
+    expect(parseAbilityEffectId("Sprint Escape")).toBeNull();
+    expect(parseAbilityEffectId("Guard")).toBeNull();
+    expect(parseAbilityEffectId("Royal Immunity")).toBeNull();
+    expect(parseAbilityEffectId("Harvest Bonus!")).toBeNull();
     expect(parseAbilityEffectId(null)).toBeNull();
     expect(parseAbilityEffectId("—")).toBeNull();
   });
@@ -22,5 +34,9 @@ describe("ability effect catalog", () => {
       expect(urls.ogg).toContain(`/audio/game/abilities/${id}/effect.ogg`);
       expect(urls.mp3).toContain(`/audio/game/abilities/${id}/effect.mp3`);
     }
+  });
+
+  it("King uses dedicated publicFolder king (not guardian reuse)", () => {
+    expect(abilitySfxUrls("king").ogg).toContain("/abilities/king/effect.ogg");
   });
 });

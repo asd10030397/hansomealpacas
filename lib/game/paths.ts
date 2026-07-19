@@ -13,9 +13,13 @@ export const GAME_INTERNAL = {
   dashboard: "/game/dashboard",
   mint: "/game/mint",
   commit: "/game/commit",
-  reveal: "/game/reveal",
+  /** Unified Result Phase (reveal + settle + battle + claim). */
+  result: "/game/result",
+  /** Alias → Result (legacy deep links). */
+  reveal: "/game/result",
   explore: "/game/explore",
-  settlement: "/game/settlement",
+  /** Alias → Result (legacy deep links). */
+  settlement: "/game/result",
   myNfts: "/game/my-nfts",
   rewards: "/game/rewards",
   leaderboard: "/game/leaderboard",
@@ -29,9 +33,10 @@ export const GAME_PUBLIC = {
   dashboard: "/dashboard",
   mint: "/mint",
   commit: "/commit",
-  reveal: "/reveal",
+  result: "/result",
+  reveal: "/result",
   explore: "/explore",
-  settlement: "/settlement",
+  settlement: "/result",
   myNfts: "/my-nfts",
   rewards: "/rewards",
   leaderboard: "/leaderboard",

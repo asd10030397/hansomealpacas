@@ -4,7 +4,7 @@
 |------|------|
 | `gameplay-theme.ogg` / `.mp3` | Game BGM — battle track (**done**; Music toggle) |
 | `ui-click.ogg` / `.mp3` | Button / link SFX from `music/UI.wav` (SFX toggle) |
-| `abilities/<id>/effect.{ogg,mp3}` | Special ability SFX (Guardian / Runner / Lucky / Farmer) |
+| `abilities/<id>/effect.{ogg,mp3}` | Special ability SFX (Guardian / Runner / Lucky / King / Farmer) |
 | `settlement-results/<id>/effect.{ogg,mp3}` | Result SFX (AlpacaHunted / AlpacaSafe / CougarHuntSuccess / CougarHuntFailed) |
 | `phase-impact.ogg` | Reserved for future SFX wiring |
 

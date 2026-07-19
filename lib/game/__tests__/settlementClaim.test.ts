@@ -23,6 +23,23 @@ describe("deriveSettlementUiStatus", () => {
     ).toBe("error");
   });
 
+  it("SeedMissing / missing day seed → waiting_seed (not generic error)", () => {
+    expect(
+      deriveSettlementUiStatus({
+        dayState: 4,
+        isSettled: false,
+        error: "Waiting for settlement randomness.",
+      }),
+    ).toBe("waiting_seed");
+    expect(
+      deriveSettlementUiStatus({
+        dayState: 4,
+        isSettled: false,
+        hasDaySeed: false,
+      }),
+    ).toBe("waiting_seed");
+  });
+
   it("maps reveal-closed to available and settled to completed", () => {
     expect(
       deriveSettlementUiStatus({ dayState: 4, isSettled: false }),

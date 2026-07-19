@@ -15,6 +15,7 @@ export const ABILITY_EFFECT_IDS = [
   "runner",
   "lucky",
   "farmer",
+  "king",
 ] as const;
 
 export type AbilityEffectId = (typeof ABILITY_EFFECT_IDS)[number];
@@ -30,35 +31,44 @@ export type AbilityEffectDef = {
   durationMs: number;
 };
 
-const CACHE_VER = "ability-1";
+const CACHE_VER = "ability-3";
 
 export const ABILITY_EFFECT_CATALOG: Record<AbilityEffectId, AbilityEffectDef> = {
   guardian: {
     id: "guardian",
     sourceFolder: "Guardian",
     publicFolder: "guardian",
-    banner: "Guardian Shield Activated!",
+    banner: "Guardian activated!",
     durationMs: 1200,
   },
   runner: {
     id: "runner",
     sourceFolder: "Runner",
     publicFolder: "runner",
-    banner: "Runner Escaped!",
+    banner: "Runner activated!",
     durationMs: 1200,
   },
   lucky: {
     id: "lucky",
     sourceFolder: "Lucky",
     publicFolder: "lucky",
-    banner: "Lucky Triggered!",
+    banner: "Lucky activated!",
     durationMs: 1300,
   },
   farmer: {
     id: "farmer",
     sourceFolder: "Farmer",
     publicFolder: "farmer",
-    banner: "Harvest Bonus!",
+    /** Passive identity — settlement does not treat Farmer as a temporary proc. */
+    banner: "Farmer · Harvest Boost",
+    durationMs: 1400,
+  },
+  king: {
+    id: "king",
+    /** Source masters: music/king/ (see generate-ability-sfx.mjs). */
+    sourceFolder: "king",
+    publicFolder: "king",
+    banner: "King activated!",
     durationMs: 1400,
   },
 };
@@ -71,16 +81,29 @@ export function abilitySfxUrls(id: AbilityEffectId): { ogg: string; mp3: string 
   };
 }
 
-/** Map gameplay class / ability label → presentation id (null if none). */
+/**
+ * Map an *activation* label → presentation id.
+ * Intentionally does NOT match static inventory class fluff
+ * ("Lucky Escape", "Harvest Boost", "Sprint Escape", "Guard", "Royal Immunity").
+ */
 export function parseAbilityEffectId(
   ability: string | null | undefined,
 ): AbilityEffectId | null {
   if (!ability) return null;
-  const s = ability.toLowerCase();
+  const s = ability.toLowerCase().trim();
+  if (!s || s === "—" || s === "-") return null;
+
+  const activated = s.includes("activated");
+  const mockDash = s.includes("—") || s.includes(" - ");
+
+  if (!activated && !mockDash) return null;
+
   if (s.includes("guardian")) return "guardian";
   if (s.includes("runner")) return "runner";
   if (s.includes("lucky")) return "lucky";
-  if (s.includes("farmer") || s.includes("harvest")) return "farmer";
+  // Farmer passive identity is card-only — do not treat as a proc cue.
+  if (s.includes("farmer") && activated) return "farmer";
+  if (s.includes("king")) return "king";
   return null;
 }
 

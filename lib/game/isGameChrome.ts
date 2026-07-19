@@ -38,6 +38,7 @@ const GAME_HOST_PRETTY = new Set([
   "/docs",
   "/dashboard",
   "/commit",
+  "/result",
   "/reveal",
   "/settlement",
   "/game",

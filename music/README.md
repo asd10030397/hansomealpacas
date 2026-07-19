@@ -8,6 +8,7 @@
 | `Runner/` | Runner ability SFX folder |
 | `Lucky/` | Lucky ability SFX folder |
 | `Farmer/` | Farmer ability SFX folder |
+| `king/` | King ability SFX folder (royal immunity) |
 | `AlpacaHunted/` | Alpaca hunted result SFX |
 | `AlpacaSafe/` | Alpaca safe / survived / escaped result SFX |
 | `CougarHuntSuccess/` | Cougar hunt success result SFX |

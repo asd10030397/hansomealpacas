@@ -1,22 +1,8 @@
 "use client";
 
+import { useGameI18n } from "@/hooks/game/useGameI18n";
 import type { PhaseTimelineStep } from "@/lib/game/phaseStatus";
-import type { GamePhase } from "@/types/game";
-
-const LABELS_DESKTOP: Record<GamePhase, string> = {
-  COMMIT: "Commit",
-  REVEAL: "Reveal",
-  SETTLEMENT: "Settlement",
-  CLAIM: "Claim",
-};
-
-/** Shorter labels so the full loop fits small phones without awkward clipping. */
-const LABELS_MOBILE: Record<GamePhase, string> = {
-  COMMIT: "Commit",
-  REVEAL: "Reveal",
-  SETTLEMENT: "Settle",
-  CLAIM: "Claim",
-};
+import type { UiLoopPhase } from "@/lib/game/uiLoopPhase";
 
 /** Shared timeline meaning; `variant` picks desktop vs mobile CSS hooks. */
 export function PhaseTimeline({
@@ -28,9 +14,14 @@ export function PhaseTimeline({
   variant: "desktop" | "mobile";
   ariaLabel: string;
 }) {
+  const { t } = useGameI18n();
   const root =
     variant === "desktop" ? "phase-tl phase-tl--desktop" : "phase-tl phase-tl--mobile";
-  const labels = variant === "mobile" ? LABELS_MOBILE : LABELS_DESKTOP;
+
+  const labels: Record<UiLoopPhase, string> = {
+    COMMIT: variant === "mobile" ? "Commit" : t.phases.COMMIT,
+    RESULT: variant === "mobile" ? "Result" : t.phases.RESULT,
+  };
 
   return (
     <ol className={root} aria-label={ariaLabel}>

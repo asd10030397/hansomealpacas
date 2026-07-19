@@ -23,15 +23,28 @@ export default function AbilityFxPreviewPage() {
   const [activeId, setActiveId] = useState<AbilityEffectId | null>(null);
   const [done, setDone] = useState(false);
   const [sfxOn, setSfxOn] = useState(true);
+  const [singleShot, setSingleShot] = useState(false);
 
   const start = useCallback(() => {
     const prefs = loadAudioPreferences();
     saveAudioPreferences({ ...prefs, sfxEnabled: true });
     setSfxOn(true);
     setDone(false);
+    setSingleShot(false);
     setStarted(true);
     setIndex(0);
     setActiveId(SEQUENCE[0]!);
+  }, []);
+
+  const playOne = useCallback((id: AbilityEffectId) => {
+    const prefs = loadAudioPreferences();
+    saveAudioPreferences({ ...prefs, sfxEnabled: true });
+    setSfxOn(true);
+    setDone(false);
+    setSingleShot(true);
+    setStarted(true);
+    setIndex(SEQUENCE.indexOf(id));
+    setActiveId(id);
   }, []);
 
   useEffect(() => {
@@ -39,17 +52,28 @@ export default function AbilityFxPreviewPage() {
     setSfxOn(prefs.sfxEnabled);
   }, []);
 
-  // Dev recording helper: /game/dev/ability-fx-preview?autostart=1
+  // Dev helpers:
+  //   ?autostart=1
+  //   ?ability=king  (single ability)
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
+    const only = params.get("ability") as AbilityEffectId | null;
+    if (only && ABILITY_EFFECT_IDS.includes(only)) {
+      const t = window.setTimeout(() => playOne(only), 400);
+      return () => window.clearTimeout(t);
+    }
     if (params.get("autostart") !== "1") return;
     const t = window.setTimeout(() => start(), 400);
     return () => window.clearTimeout(t);
-  }, [start]);
+  }, [start, playOne]);
 
   const onComplete = useCallback(() => {
     setActiveId(null);
+    if (singleShot) {
+      setDone(true);
+      return;
+    }
     const next = index + 1;
     if (next >= SEQUENCE.length) {
       setDone(true);
@@ -60,7 +84,7 @@ export default function AbilityFxPreviewPage() {
       setIndex(next);
       setActiveId(SEQUENCE[next]!);
     }, GAP_MS);
-  }, [index]);
+  }, [index, singleShot]);
 
   const current = activeId ? ABILITY_EFFECT_CATALOG[activeId] : null;
 
@@ -71,8 +95,8 @@ export default function AbilityFxPreviewPage() {
       </p>
       <h1 className="pixel-title text-lg text-[#f0c44a]">ABILITY FX PREVIEW</h1>
       <p className="mt-2 text-sm text-[var(--hg-muted)]">
-        Plays Guardian → Runner → Lucky → Farmer once. SFX uses the game SFX
-        channel (forced on for this preview).
+        Plays Guardian → Runner → Lucky → Farmer → King once. SFX uses the game
+        SFX channel (forced on for this preview).
       </p>
       <p className="mt-1 text-xs text-[var(--hg-muted)]" data-testid="sfx-status">
         SFX: {sfxOn ? "ON" : "OFF"}
@@ -121,18 +145,21 @@ export default function AbilityFxPreviewPage() {
 
       <ol className="mt-6 space-y-1 text-xs text-[var(--hg-muted)]">
         {SEQUENCE.map((id, i) => (
-          <li
-            key={id}
-            data-testid={`ability-fx-item-${id}`}
-            className={
-              id === activeId
-                ? "text-[#f0c44a]"
-                : i < index || done
-                  ? "text-[#3f9e4a]"
-                  : undefined
-            }
-          >
-            {i + 1}. {ABILITY_EFFECT_CATALOG[id].banner}
+          <li key={id}>
+            <button
+              type="button"
+              data-testid={`ability-fx-item-${id}`}
+              className={
+                id === activeId
+                  ? "text-[#f0c44a]"
+                  : i < index || done
+                    ? "text-[#3f9e4a]"
+                    : undefined
+              }
+              onClick={() => playOne(id)}
+            >
+              {i + 1}. {ABILITY_EFFECT_CATALOG[id].banner}
+            </button>
           </li>
         ))}
       </ol>

@@ -44,23 +44,32 @@ export default function GameDashboardPage() {
           eyebrow={t.dashboard.demoPhaseEyebrow}
         >
           <div
-            className="grid grid-cols-2 gap-2 sm:grid-cols-4"
+            className="grid grid-cols-2 gap-2"
             role="group"
             aria-label={t.dashboard.demoPhaseTitle}
           >
-            {(["COMMIT", "REVEAL", "SETTLEMENT", "CLAIM"] as const).map((p) => (
-              <PixelButton
-                key={p}
-                size="sm"
-                variant={phase === p ? "gold" : "slate"}
-                className="w-full"
-                aria-pressed={phase === p}
-                onClick={() => setDemoPhase(p)}
-              >
-                {t.phases[p]}
-              </PixelButton>
-            ))}
+            <PixelButton
+              size="sm"
+              variant={phase === "COMMIT" ? "gold" : "slate"}
+              className="w-full"
+              aria-pressed={phase === "COMMIT"}
+              onClick={() => setDemoPhase("COMMIT")}
+            >
+              {t.phases.COMMIT}
+            </PixelButton>
+            <PixelButton
+              size="sm"
+              variant={phase !== "COMMIT" ? "gold" : "slate"}
+              className="w-full"
+              aria-pressed={phase !== "COMMIT"}
+              onClick={() => setDemoPhase("REVEAL")}
+            >
+              {t.phases.RESULT}
+            </PixelButton>
           </div>
+          <p className="mt-2 text-[0.65rem] text-[var(--hg-muted)]">
+            Result demo opens Reveal window (manual reveal still required).
+          </p>
         </PixelPanel>
       ) : null}
     </div>

@@ -102,7 +102,7 @@ const REVERT_HINTS: Record<string, string> = {
   BadCommitHash: "BadCommitHash — location/salt does not match the commit hash.",
   IllegalLocation: "IllegalLocation — that location is illegal for this side.",
   AlreadySettled: "AlreadySettled — this day was already settled.",
-  SeedMissing: "SeedMissing — day randomness seed not set yet.",
+  SeedMissing: "Waiting for settlement randomness.",
 };
 
 function extractCustomErrorName(text: string): string | null {

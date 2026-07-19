@@ -95,12 +95,15 @@ export function parseSettlementResultSfxId(
   const o = outcome.trim().toLowerCase();
   if (!o || o === "—" || o === "-") return null;
 
-  // Live / unresolved placeholders — never invent a result cue.
+  // Live / unresolved / E9 missed-reveal — never invent a result cue.
   if (
     o.includes("settled on-chain") ||
     o.includes("awaiting") ||
     o.includes("not exposed") ||
-    o === "participated"
+    o === "participated" ||
+    o === "missed_reveal" ||
+    o.includes("missed today's reveal") ||
+    o.includes("missed reveal")
   ) {
     return null;
   }

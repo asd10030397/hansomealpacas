@@ -1,11 +1,22 @@
 /**
  * Local/mock settlement snapshot for frontend testing when game is not deployed.
  * Never presented as on-chain truth.
+ *
+ * E9: commit without reveal → reward 0, excluded from location denominators.
  */
 
-import type { LocationId, NftSide } from "@/types/game";
-import { listCommitSecretsForDay } from "@/lib/game/commitSecret";
+import type { GameplayClass, LocationId, NftSide } from "@/types/game";
+import {
+  listCommitSecretsForDay,
+  type CommitSecretRecord,
+} from "@/lib/game/commitSecret";
 import { MOCK_NFTS } from "@/data/game/mock";
+import { deriveSettlementActivation } from "@/lib/game/settlementActivation";
+import {
+  e9ZeroReward,
+  MISSED_REVEAL_OUTCOME,
+} from "@/lib/game/missedReveal";
+import type { AbilityEffectId } from "@/lib/game/abilityEffects/catalog";
 
 const STORAGE_KEY = "hansome-local-settlement-v1";
 
@@ -16,9 +27,14 @@ export type LocalNftSettlementRow = {
   side: NftSide;
   /** Human-readable outcome — mock only */
   outcome: string;
+  /** Set only when a skill actually influenced this settlement line. */
   ability: string | null;
+  /** Presentation id when activated; null otherwise. */
+  activatedAbility: AbilityEffectId | null;
   /** Whole HANSOME tokens (not wei) for mock display */
   rewardHansome: number;
+  /** GDS E9 — committed but never revealed. */
+  missedReveal?: boolean;
 };
 
 export type LocalDaySettlement = {
@@ -48,68 +64,120 @@ export function getLocalSettlement(day: number): LocalDaySettlement | null {
   return readAll().find((d) => d.day === day) ?? null;
 }
 
-/** Build mock outcomes from revealed/submitted secrets — deterministic, labeled mock. */
-export function buildMockSettlementRows(day: number): LocalNftSettlementRow[] {
-  const secrets = listCommitSecretsForDay(day).filter(
-    (s) => s.status === "revealed" || s.status === "submitted",
+function isCommittedSecret(s: CommitSecretRecord): boolean {
+  return (
+    s.status === "prepared" ||
+    s.status === "submitted" ||
+    s.status === "revealed"
   );
-  return secrets.map((s, i) => {
+}
+
+function isRevealedSecret(s: CommitSecretRecord): boolean {
+  return s.status === "revealed";
+}
+
+/**
+ * Build mock outcomes from commit secrets for a day.
+ * - Revealed tokens: participate in settlement math (may earn rewards).
+ * - Commit-only (E9): shown with 0 reward, excluded from adL/cdL denominators.
+ */
+export function buildMockSettlementRows(
+  day: number,
+  secretsInput?: CommitSecretRecord[],
+): LocalNftSettlementRow[] {
+  const secrets = (
+    secretsInput ?? listCommitSecretsForDay(day)
+  ).filter(isCommittedSecret);
+
+  const revealed = secrets.filter(isRevealedSecret);
+
+  const ad = [0, 0, 0, 0, 0];
+  const cd = [0, 0, 0, 0, 0];
+  let alpacaParticipantCount = 0;
+
+  const enrich = (s: CommitSecretRecord) => {
     const nft = MOCK_NFTS.find((n) => n.tokenId === s.tokenId);
-    const side = nft?.side ?? "Alpaca";
-    const underHunt = s.locationId !== 0 && side === "Alpaca";
-    const huntOk = side === "Cougar" && s.locationId !== 0;
-    let outcome = "Participated";
-    let ability: string | null = null;
+    const side: NftSide = nft?.side ?? "Alpaca";
+    const gameplayClass: GameplayClass = nft?.gameplayClass ?? "Common";
+    return { s, nft, side, gameplayClass };
+  };
+
+  const revealedEnriched = revealed.map(enrich);
+  for (const row of revealedEnriched) {
+    const loc = row.s.locationId;
+    if (row.side === "Alpaca") {
+      ad[loc] += 1;
+      alpacaParticipantCount += 1;
+    } else if (row.side === "Cougar") {
+      cd[loc] += 1;
+    }
+  }
+
+  let rewardIndex = 0;
+  return secrets.map((s) => {
+    const { side, gameplayClass } = enrich(s);
+    const loc = s.locationId;
+
+    // E9 — commit without reveal
+    if (!isRevealedSecret(s)) {
+      return {
+        tokenId: s.tokenId,
+        day,
+        locationId: loc,
+        side,
+        outcome: MISSED_REVEAL_OUTCOME,
+        ability: null,
+        activatedAbility: null,
+        rewardHansome: e9ZeroReward(),
+        missedReveal: true,
+      };
+    }
+
+    const runnerSuccess = s.tokenId % 4 === 0;
+    const luckySuccess = s.tokenId % 5 === 0;
+    const i = rewardIndex++;
+
+    const activation = deriveSettlementActivation({
+      side,
+      gameplayClass,
+      locationId: loc,
+      adL: ad[loc] ?? 1,
+      cdL: cd[loc] ?? 0,
+      alpacaParticipantCount,
+      runnerSuccess,
+      luckySuccess,
+    });
+
     let reward = 800 + (s.tokenId % 7) * 120 + i * 50;
-
-    if (side === "Alpaca") {
-      if (!underHunt) {
-        outcome = "Safe (Home / no hunt)";
-        reward = Math.floor(reward * 0.55);
-      } else if (nft?.gameplayClass === "Lucky" && s.tokenId % 5 === 0) {
-        outcome = "Survived under hunt";
-        ability = "Lucky — immunity (mock)";
-        reward = Math.floor(reward * 1.15);
-      } else if (nft?.gameplayClass === "Runner" && s.tokenId % 4 === 0) {
-        outcome = "Escaped hunt";
-        ability = "Runner — escape (mock)";
-      } else if (nft?.gameplayClass === "Guardian") {
-        outcome = "Survived under hunt";
-        ability = "Guardian — mitigation (mock)";
-      } else if (s.tokenId % 3 === 0) {
-        outcome = "Hunted — penalty applied";
-        reward = Math.floor(reward * 0.35);
-      } else {
-        outcome = "Survived under hunt";
-      }
-
-      // Presentation label when Farmer survives (mock harvest cue — no reward math change).
-      if (
-        !ability &&
-        nft?.gameplayClass === "Farmer" &&
-        !outcome.startsWith("Hunted")
-      ) {
-        ability = "Farmer — harvest (mock)";
-      }
-    } else if (huntOk) {
-      outcome = s.tokenId % 2 === 0 ? "Hunt success" : "Hunt miss";
-      reward = s.tokenId % 2 === 0 ? reward : Math.floor(reward * 0.2);
+    if (activation.outcome.startsWith("Safe")) {
+      reward = Math.floor(reward * 0.55);
+    } else if (activation.outcome.startsWith("Hunted")) {
+      reward = Math.floor(reward * 0.35);
+    } else if (activation.activatedAbility === "lucky") {
+      reward = Math.floor(reward * 1.15);
+    } else if (side === "Cougar" && activation.outcome.includes("miss")) {
+      reward = Math.floor(reward * 0.2);
     }
 
     return {
       tokenId: s.tokenId,
       day,
-      locationId: s.locationId,
+      locationId: loc,
       side,
-      outcome,
-      ability,
+      outcome: activation.outcome,
+      ability: activation.abilityLabel,
+      activatedAbility: activation.activatedAbility,
       rewardHansome: reward,
+      missedReveal: false,
     };
   });
 }
 
-export function completeLocalSettlement(day: number): LocalDaySettlement {
-  const rows = buildMockSettlementRows(day);
+export function completeLocalSettlement(
+  day: number,
+  secretsInput?: CommitSecretRecord[],
+): LocalDaySettlement {
+  const rows = buildMockSettlementRows(day, secretsInput);
   const next: LocalDaySettlement = {
     day,
     status: "completed",

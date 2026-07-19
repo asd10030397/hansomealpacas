@@ -142,8 +142,11 @@ async function main() {
   await page.getByTestId("ability-fx-label").filter({ hasText: "Harvest" }).waitFor({
     timeout: 8000,
   });
-  await page.getByTestId("ability-fx-label").filter({ hasText: "SEQUENCE COMPLETE" }).waitFor({
+  await page.getByTestId("ability-fx-label").filter({ hasText: "King" }).waitFor({
     timeout: 8000,
+  });
+  await page.getByTestId("ability-fx-label").filter({ hasText: "SEQUENCE COMPLETE" }).waitFor({
+    timeout: 10000,
   });
 
   // Hold a beat on the complete state.

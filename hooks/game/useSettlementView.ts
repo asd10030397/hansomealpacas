@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { formatEther } from "viem";
+import { formatEther, type Address, type Log, zeroHash } from "viem";
 import {
   useAccount,
   useChainId,
@@ -12,6 +12,13 @@ import {
   useWaitForTransactionReceipt,
 } from "wagmi";
 import { hansomeGameAbi } from "@/lib/game/abis/hansomeGame";
+import {
+  gameRandomnessAbi,
+  P_LUCKY_BPS,
+  P_RUNNER_BPS,
+  PURPOSE_LUCKY,
+  PURPOSE_RUNNER,
+} from "@/lib/game/abis/gameRandomness";
 import { rewardDistributorAbi } from "@/lib/game/abis/rewardDistributor";
 import { GAME_LOCATIONS } from "@/data/game/locations";
 import { useOwnedGenesisNfts } from "@/hooks/game/useOwnedGenesisNfts";
@@ -39,8 +46,20 @@ import {
   settlementStatusLabel,
   type SettlementUiStatus,
 } from "@/lib/game/settlementStatus";
+import { deriveSettlementActivation } from "@/lib/game/settlementActivation";
+import { interpretLiveSettlementRow } from "@/lib/game/interpretSettlementRow";
+import {
+  isRevealPhaseClosed,
+  isSeedMissingError,
+  MISSED_REVEAL_OUTCOME,
+  SEED_MISSING_UI_MESSAGE,
+} from "@/lib/game/missedReveal";
+import type { AbilityEffectId } from "@/lib/game/abilityEffects/catalog";
 import { useGameState } from "@/hooks/game/useGameState";
-import type { LocationId, NftSide } from "@/types/game";
+import type { GameplayClass, LocationId, NftSide } from "@/types/game";
+
+/** Testnet game deploy block — log scan lower bound (UI-only). */
+const REVEAL_LOG_FROM_BLOCK = 91_400_000n;
 
 export type SettlementRowView = {
   tokenId: number;
@@ -49,10 +68,58 @@ export type SettlementRowView = {
   side: NftSide | null;
   outcome: string;
   ability: string | null;
+  activatedAbility: AbilityEffectId | null;
   rewardLabel: string;
   rewardWei: bigint | null;
   source: "chain" | "mock";
+  missedReveal: boolean;
 };
+
+type CohortCounts = {
+  ad: number[];
+  cd: number[];
+  alpacaParticipantCount: number;
+  revealedTokenIds: Set<number>;
+};
+
+function emptyCohort(): CohortCounts {
+  return {
+    ad: [0, 0, 0, 0, 0],
+    cd: [0, 0, 0, 0, 0],
+    alpacaParticipantCount: 0,
+    revealedTokenIds: new Set(),
+  };
+}
+
+function sideFromEnum(side: number): NftSide | null {
+  if (side === 1) return "Alpaca";
+  if (side === 2) return "Cougar";
+  return null;
+}
+
+function parseRevealCohort(logs: Log[]): CohortCounts {
+  const cohort = emptyCohort();
+  for (const log of logs) {
+    const args = (
+      log as {
+        args?: { tokenId?: bigint; locationId?: number; side?: number };
+      }
+    ).args;
+    if (!args) continue;
+    const tokenId = Number(args.tokenId ?? 0);
+    const loc = Number(args.locationId ?? 0);
+    const side = sideFromEnum(Number(args.side ?? 0));
+    if (tokenId > 0) cohort.revealedTokenIds.add(tokenId);
+    if (loc < 0 || loc > 4) continue;
+    if (side === "Alpaca") {
+      cohort.ad[loc] += 1;
+      cohort.alpacaParticipantCount += 1;
+    } else if (side === "Cougar") {
+      cohort.cd[loc] += 1;
+    }
+  }
+  return cohort;
+}
 
 export function useSettlementView() {
   const { day, phase } = useGameState();
@@ -65,6 +132,10 @@ export function useSettlementView() {
 
   const [localTick, setLocalTick] = useState(0);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [cohort, setCohort] = useState<CohortCounts>(emptyCohort);
+  const [rollByToken, setRollByToken] = useState<
+    Record<number, { runnerSuccess: boolean; luckySuccess: boolean }>
+  >({});
 
   const dayStateRead = useReadContract({
     address: game ?? undefined,
@@ -92,10 +163,29 @@ export function useSettlementView() {
     query: { enabled: live && !!game && !isRewardDistributorConfigured() },
   });
 
+  const randomnessRead = useReadContract({
+    address: game ?? undefined,
+    abi: hansomeGameAbi,
+    functionName: "randomness",
+    chainId: GAME_CHAIN_ID,
+    query: { enabled: live && !!game },
+  });
+
   const distributorAddress =
     REWARD_DISTRIBUTOR_ADDRESS ??
     (distributorRead.data as `0x${string}` | undefined) ??
     null;
+
+  const randomnessAddress = (randomnessRead.data as Address | undefined) ?? null;
+
+  const hasDaySeedRead = useReadContract({
+    address: randomnessAddress ?? undefined,
+    abi: gameRandomnessAbi,
+    functionName: "hasDaySeed",
+    args: randomnessAddress ? [BigInt(day.day)] : undefined,
+    chainId: GAME_CHAIN_ID,
+    query: { enabled: live && !!randomnessAddress },
+  });
 
   const {
     writeContractAsync,
@@ -127,6 +217,17 @@ export function useSettlementView() {
     query: { enabled: live && !!game && tokenIds.length > 0 },
   });
 
+  const commitHashContracts = useReadContracts({
+    contracts: tokenIds.map((tokenId) => ({
+      address: game!,
+      abi: hansomeGameAbi,
+      functionName: "commitHashOf" as const,
+      args: [BigInt(tokenId), BigInt(day.day)] as const,
+      chainId: GAME_CHAIN_ID,
+    })),
+    query: { enabled: live && !!game && tokenIds.length > 0 },
+  });
+
   const claimableContracts = useReadContracts({
     contracts: tokenIds.map((tokenId) => ({
       address: distributorAddress!,
@@ -140,6 +241,122 @@ export function useSettlementView() {
     },
   });
 
+  const settled = Boolean(settledRead.data);
+  const dayStateNum =
+    dayStateRead.data !== undefined ? Number(dayStateRead.data) : null;
+  const revealClosed = isRevealPhaseClosed({
+    phase,
+    dayState: dayStateNum,
+    settled,
+  });
+
+  // Index Revealed(day) once Reveal is closed (missed-reveal + activation cohort).
+  useEffect(() => {
+    if (!live || !game || !publicClient || !revealClosed) {
+      setCohort(emptyCohort());
+      setRollByToken({});
+      return;
+    }
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const logs = await publicClient.getLogs({
+          address: game,
+          event: {
+            type: "event",
+            name: "Revealed",
+            inputs: [
+              { name: "tokenId", type: "uint256", indexed: true },
+              { name: "day", type: "uint256", indexed: true },
+              { name: "locationId", type: "uint8", indexed: false },
+              { name: "side", type: "uint8", indexed: false },
+            ],
+          },
+          args: { day: BigInt(day.day) },
+          fromBlock: REVEAL_LOG_FROM_BLOCK,
+          toBlock: "latest",
+        });
+        if (cancelled) return;
+        const nextCohort = parseRevealCohort(logs as Log[]);
+        setCohort(nextCohort);
+
+        if (!settled || !randomnessAddress || tokenIds.length === 0) {
+          setRollByToken({});
+          return;
+        }
+
+        const rolls: Record<
+          number,
+          { runnerSuccess: boolean; luckySuccess: boolean }
+        > = {};
+        await Promise.all(
+          tokenIds.map(async (tokenId) => {
+            const nft = owned.nfts.find((n) => n.tokenId === tokenId);
+            const cls = nft?.gameplayClass;
+            let runnerSuccess = false;
+            let luckySuccess = false;
+            try {
+              if (cls === "Runner") {
+                runnerSuccess = Boolean(
+                  await publicClient.readContract({
+                    address: randomnessAddress,
+                    abi: gameRandomnessAbi,
+                    functionName: "bernoulli",
+                    args: [
+                      BigInt(day.day),
+                      BigInt(tokenId),
+                      PURPOSE_RUNNER,
+                      P_RUNNER_BPS,
+                    ],
+                  }),
+                );
+              } else if (cls === "Lucky") {
+                luckySuccess = Boolean(
+                  await publicClient.readContract({
+                    address: randomnessAddress,
+                    abi: gameRandomnessAbi,
+                    functionName: "bernoulli",
+                    args: [
+                      BigInt(day.day),
+                      BigInt(tokenId),
+                      PURPOSE_LUCKY,
+                      P_LUCKY_BPS,
+                    ],
+                  }),
+                );
+              }
+            } catch {
+              /* seed missing / RPC — leave false (no false-positive FX) */
+            }
+            rolls[tokenId] = { runnerSuccess, luckySuccess };
+          }),
+        );
+        if (!cancelled) setRollByToken(rolls);
+      } catch {
+        if (!cancelled) {
+          setCohort(emptyCohort());
+          setRollByToken({});
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    live,
+    game,
+    publicClient,
+    revealClosed,
+    settled,
+    day.day,
+    randomnessAddress,
+    tokenIds,
+    owned.nfts,
+  ]);
+
   const chainLoading =
     live &&
     (dayStateRead.isLoading ||
@@ -147,21 +364,28 @@ export function useSettlementView() {
       locationContracts.isLoading ||
       claimableContracts.isLoading);
 
+  const settleFormattedError = settleWriteError
+    ? formatRobinhoodWriteError(settleWriteError, "settleDay failed")
+    : null;
+
   const chainError =
     dayStateRead.error?.message ||
     settledRead.error?.message ||
-    settleWriteError?.message ||
+    settleFormattedError ||
     localError;
+
+  const hasDaySeed =
+    hasDaySeedRead.data !== undefined ? Boolean(hasDaySeedRead.data) : null;
 
   const status: SettlementUiStatus = live
     ? deriveSettlementUiStatus({
-        dayState:
-          dayStateRead.data !== undefined ? Number(dayStateRead.data) : null,
+        dayState: dayStateNum,
         isSettled:
           settledRead.data !== undefined ? Boolean(settledRead.data) : null,
         settleTxPending: settleWriting || settleReceipt.isLoading,
         error: chainError,
         loading: chainLoading,
+        hasDaySeed,
       })
     : deriveLocalStatus(day.day, phase, localTick);
 
@@ -183,44 +407,108 @@ export function useSettlementView() {
           : (secret?.locationId ?? null);
       const claimRaw = claimableContracts.data?.[i]?.result;
       const rewardWei = claimRaw !== undefined ? (claimRaw as bigint) : null;
+      const hashRaw = commitHashContracts.data?.[i]?.result as
+        | `0x${string}`
+        | undefined;
       const nft = owned.nfts.find((n) => n.tokenId === tokenId);
-      const settled = Boolean(settledRead.data);
+      const side = nft?.side ?? null;
+      const gameplayClass: GameplayClass = nft?.gameplayClass ?? "Common";
+
+      const committedOnChain = Boolean(hashRaw && hashRaw !== zeroHash);
+      const committed =
+        committedOnChain ||
+        secret?.status === "prepared" ||
+        secret?.status === "submitted" ||
+        secret?.status === "revealed";
+      const revealed =
+        cohort.revealedTokenIds.has(tokenId) || secret?.status === "revealed";
+
+      const interpretation = interpretLiveSettlementRow({
+        phase,
+        dayState: dayStateNum,
+        settled,
+        committed,
+        revealed,
+      });
+
+      let outcome: string;
+      let ability: string | null = null;
+      let activatedAbility: AbilityEffectId | null = null;
+      let missedReveal = interpretation.missedReveal;
+
+      if (missedReveal) {
+        outcome = MISSED_REVEAL_OUTCOME;
+      } else if (!settled) {
+        outcome =
+          interpretation.outcomeKey === "awaiting_settlement"
+            ? "awaiting_settlement"
+            : "awaiting_reveal";
+      } else if (locationId == null || side == null) {
+        outcome = "Settled on-chain (detail fields not exposed by contract)";
+      } else if (!interpretation.suppressActivation) {
+        const loc = locationId;
+        const rolls = rollByToken[tokenId];
+        const activation = deriveSettlementActivation({
+          side,
+          gameplayClass,
+          locationId: loc,
+          adL: Math.max(1, cohort.ad[loc] ?? 1),
+          cdL: cohort.cd[loc] ?? 0,
+          alpacaParticipantCount: Math.max(
+            side === "Alpaca" ? 1 : 0,
+            cohort.alpacaParticipantCount,
+          ),
+          runnerSuccess: rolls?.runnerSuccess,
+          luckySuccess: rolls?.luckySuccess,
+        });
+        outcome = activation.outcome;
+        ability = activation.abilityLabel;
+        activatedAbility = activation.activatedAbility;
+      } else {
+        outcome = "Settled on-chain (detail fields not exposed by contract)";
+      }
+
+      const rewardLabel = missedReveal
+        ? "0"
+        : rewardWei != null
+          ? `${formatHansome(rewardWei)} tHANSOME`
+          : settled
+            ? "0 / unread"
+            : "—";
 
       return {
         tokenId,
-        locationId,
+        locationId: missedReveal ? null : locationId,
         locationName:
-          locationId != null
-            ? (GAME_LOCATIONS[locationId]?.name ?? `L${locationId}`)
-            : "—",
-        side: nft?.side ?? null,
-        outcome: settled
-          ? "Settled on-chain (detail fields not exposed by contract)"
-          : secret?.status === "revealed"
-            ? "Revealed — awaiting settlement"
-            : "Committed — awaiting reveal/settlement",
-        ability: nft?.ability ?? null,
-        rewardLabel:
-          rewardWei != null
-            ? `${formatHansome(rewardWei)} tHANSOME`
-            : settled
-              ? "0 / unread"
-              : "—",
-        rewardWei,
+          missedReveal || locationId == null
+            ? "—"
+            : (GAME_LOCATIONS[locationId]?.name ?? `L${locationId}`),
+        side,
+        outcome,
+        ability,
+        activatedAbility,
+        rewardLabel,
+        rewardWei: missedReveal ? 0n : rewardWei,
         source: "chain" as const,
+        missedReveal,
       };
     });
   }, [
     live,
     day.day,
+    phase,
+    dayStateNum,
     status,
     tokenIds,
     secrets,
     locationContracts.data,
     claimableContracts.data,
-    settledRead.data,
+    commitHashContracts.data,
+    settled,
     localTick,
     owned.nfts,
+    cohort,
+    rollByToken,
   ]);
 
   const runSettle = useCallback(async () => {
@@ -228,7 +516,7 @@ export function useSettlementView() {
     if (!live) {
       const built = completeLocalSettlement(day.day);
       if (built.rows.length === 0) {
-        setLocalError("No revealed/submitted commits for this day to settle locally.");
+        setLocalError("No committed NFTs for this day to settle locally.");
         return;
       }
       setLocalTick((n) => n + 1);
@@ -266,7 +554,8 @@ export function useSettlementView() {
         extraLog: { day: day.day },
       });
     } catch (e) {
-      setLocalError(formatRobinhoodWriteError(e, "settleDay failed"));
+      const msg = formatRobinhoodWriteError(e, "settleDay failed");
+      setLocalError(isSeedMissingError(msg) ? SEED_MISSING_UI_MESSAGE : msg);
     }
   }, [
     live,
@@ -285,22 +574,33 @@ export function useSettlementView() {
       void dayStateRead.refetch?.();
       void settledRead.refetch?.();
       void claimableContracts.refetch?.();
+      void hasDaySeedRead.refetch?.();
     }
   }, [settleReceipt.isSuccess]);
+
+  /** Surface SeedMissing as waiting_seed, not a generic error banner. */
+  const displayError =
+    status === "waiting_seed" || isSeedMissingError(chainError)
+      ? null
+      : chainError;
 
   return {
     day: day.day,
     phase,
     live,
     status,
-    statusLabel: settlementStatusLabel(status),
+    statusLabel:
+      status === "waiting_seed"
+        ? SEED_MISSING_UI_MESSAGE
+        : settlementStatusLabel(status),
     rows,
     empty: rows.length === 0,
     isConnected,
-    canSettle: status === "available",
+    canSettle: status === "available" || status === "waiting_seed",
     settlePending: settleWriting || settleReceipt.isLoading,
     settleHash,
-    error: chainError,
+    error: displayError,
+    waitingSeed: status === "waiting_seed",
     runSettle,
     refreshLocal: () => setLocalTick((n) => n + 1),
   };
@@ -320,16 +620,23 @@ function deriveLocalStatus(
 }
 
 function mapLocalRow(r: LocalNftSettlementRow): SettlementRowView {
+  const missed = Boolean(r.missedReveal);
   return {
     tokenId: r.tokenId,
-    locationId: r.locationId,
-    locationName: GAME_LOCATIONS[r.locationId]?.name ?? `L${r.locationId}`,
+    locationId: missed ? null : r.locationId,
+    locationName: missed
+      ? "—"
+      : (GAME_LOCATIONS[r.locationId]?.name ?? `L${r.locationId}`),
     side: r.side,
     outcome: r.outcome,
     ability: r.ability,
-    rewardLabel: `${r.rewardHansome.toLocaleString()} HANSOME`,
+    activatedAbility: r.activatedAbility ?? null,
+    rewardLabel: missed
+      ? "0"
+      : `${r.rewardHansome.toLocaleString()} HANSOME`,
     rewardWei: null,
     source: "mock",
+    missedReveal: missed,
   };
 }
 

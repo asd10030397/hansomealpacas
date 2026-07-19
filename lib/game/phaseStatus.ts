@@ -1,9 +1,14 @@
 import type { GameDayState, GamePhase } from "@/types/game";
+import {
+  toUiLoopPhase,
+  UI_LOOP_FLOW,
+  type UiLoopPhase,
+} from "@/lib/game/uiLoopPhase";
 
-/** Daily loop order — UI timeline only (does not change on-chain timing). */
-export const PHASE_FLOW = ["COMMIT", "REVEAL", "SETTLEMENT", "CLAIM"] as const;
+/** Player-facing daily loop — Commit → Result (UI timeline only). */
+export const PHASE_FLOW = UI_LOOP_FLOW;
 
-export type PhaseFlowId = (typeof PHASE_FLOW)[number];
+export type PhaseFlowId = UiLoopPhase;
 
 export type TimelineStepState = "done" | "active" | "upcoming";
 
@@ -14,8 +19,11 @@ export type PhaseTimelineStep = {
 
 export type PhaseStatusView = {
   day: number;
+  /** Wire phase from chain / mock (REVEAL | SETTLEMENT | CLAIM | COMMIT). */
   phase: GamePhase;
-  /** Countdown for the active phase window (commit end or reveal end). */
+  /** Player-facing loop phase. */
+  loopPhase: UiLoopPhase;
+  /** Countdown for the active window (commit end or result/reveal end). */
   phaseEndsAt: number;
   /** When settlement becomes eligible (= reveal window end). */
   settlementAt: number;
@@ -27,21 +35,18 @@ export function buildPhaseStatusView(
   day: GameDayState,
   phase: GamePhase = day.phase,
 ): PhaseStatusView {
-  const idx = PHASE_FLOW.indexOf(phase as PhaseFlowId);
-  const safeIdx = idx < 0 ? 0 : idx;
+  const loopPhase = toUiLoopPhase(phase);
+  const safeIdx = loopPhase === "COMMIT" ? 0 : 1;
   const nextPhase =
     safeIdx < PHASE_FLOW.length - 1 ? PHASE_FLOW[safeIdx + 1]! : null;
 
   const phaseEndsAt =
-    phase === "COMMIT"
-      ? day.commitEndsAt
-      : phase === "REVEAL"
-        ? day.revealEndsAt
-        : day.revealEndsAt;
+    phase === "COMMIT" ? day.commitEndsAt : day.revealEndsAt;
 
   return {
     day: day.day,
     phase,
+    loopPhase,
     phaseEndsAt,
     settlementAt: day.revealEndsAt,
     nextPhase,

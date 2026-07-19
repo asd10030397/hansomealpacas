@@ -1,18 +1,22 @@
 "use client";
 
 import { useGameI18n } from "@/hooks/game/useGameI18n";
+import { toUiLoopPhase } from "@/lib/game/uiLoopPhase";
 import type { GamePhase } from "@/types/game";
 import { PixelBadge } from "./PixelBadge";
 
-const tone: Record<GamePhase, "gold" | "green" | "blue" | "danger"> = {
+const tone: Record<"COMMIT" | "RESULT", "gold" | "blue"> = {
   COMMIT: "gold",
-  REVEAL: "blue",
-  SETTLEMENT: "danger",
-  CLAIM: "green",
+  RESULT: "blue",
 };
 
-/** Player-facing phase label — never expose raw contract enum strings in ZH. */
+/** Player-facing phase label — Commit or Result (wire phases collapsed). */
 export function GamePhaseBadge({ phase }: { phase: GamePhase }) {
   const { t } = useGameI18n();
-  return <PixelBadge tone={tone[phase]}>{t.phases[phase]}</PixelBadge>;
+  const loop = toUiLoopPhase(phase);
+  return (
+    <PixelBadge tone={tone[loop]}>
+      {loop === "COMMIT" ? t.phases.COMMIT : t.phases.RESULT}
+    </PixelBadge>
+  );
 }

@@ -10,6 +10,7 @@ import {
 import {
   FarmerWheatIcon,
   GuardianShieldIcon,
+  KingCrownIcon,
   LuckyCloverIcon,
   RunnerShoesIcon,
 } from "@/components/game/ability-effects/AbilityIcons";
@@ -27,12 +28,21 @@ type Props = {
 const PARTICLE_SLOTS = [0, 1, 2, 3, 4, 5] as const;
 /** Sparse wind streaks — shoes stay the focus. */
 const RUNNER_WIND_SLOTS = [0, 1, 2, 3] as const;
+/** Royal sparkles around the crown. */
+const KING_SPARKLE_SLOTS = [0, 1, 2, 3, 4, 5, 6, 7] as const;
 
 function Icon({ id }: { id: AbilityEffectId }) {
   if (id === "runner") {
     return (
       <span className="hg-ability-fx__runner-fly">
         <RunnerShoesIcon className="hg-ability-fx__icon hg-ability-fx__icon--runner" />
+      </span>
+    );
+  }
+  if (id === "king") {
+    return (
+      <span className="hg-ability-fx__king-drop">
+        <KingCrownIcon className="hg-ability-fx__icon hg-ability-fx__icon--king" />
       </span>
     );
   }
@@ -79,25 +89,31 @@ export function AbilityEffectOverlay({
 
   if (!visible) return null;
 
+  const stageClass =
+    abilityId === "runner"
+      ? "hg-ability-fx__stage hg-ability-fx__stage--runner"
+      : abilityId === "king"
+        ? "hg-ability-fx__stage hg-ability-fx__stage--king"
+        : "hg-ability-fx__stage";
+
   return (
     <div
       className={`hg-ability-fx hg-ability-fx--${abilityId}${reduceMotion ? " hg-ability-fx--static-out" : ""}`}
       role="status"
       aria-live="polite"
       aria-label={def.banner}
+      data-testid={`ability-fx-${abilityId}`}
     >
-      <div
-        className={
-          abilityId === "runner"
-            ? "hg-ability-fx__stage hg-ability-fx__stage--runner"
-            : "hg-ability-fx__stage"
-        }
-      >
+      <div className={stageClass}>
         {(abilityId === "guardian" ||
           abilityId === "farmer" ||
-          abilityId === "runner") && (
+          abilityId === "runner" ||
+          abilityId === "king") && (
           <span className="hg-ability-fx__burst" />
         )}
+        {abilityId === "king" ? (
+          <span className="hg-ability-fx__king-aura" aria-hidden />
+        ) : null}
         {abilityId === "runner" && !reduceMotion ? (
           <>
             <span className="hg-ability-fx__trail hg-ability-fx__trail--wide" />
@@ -110,25 +126,36 @@ export function AbilityEffectOverlay({
           </>
         ) : null}
         {!reduceMotion &&
-          (abilityId === "runner" ? RUNNER_WIND_SLOTS : PARTICLE_SLOTS).map((i) => (
+          (abilityId === "runner"
+            ? RUNNER_WIND_SLOTS
+            : abilityId === "king"
+              ? KING_SPARKLE_SLOTS
+              : PARTICLE_SLOTS
+          ).map((i) => (
             <span
               key={i}
               className={
                 abilityId === "runner"
                   ? "hg-ability-fx__particle hg-ability-fx__particle--wind"
-                  : "hg-ability-fx__particle"
+                  : abilityId === "king"
+                    ? "hg-ability-fx__particle hg-ability-fx__particle--royal"
+                    : "hg-ability-fx__particle"
               }
               style={
                 {
                   left:
                     abilityId === "runner"
                       ? `${6 + (i % 4) * 22}%`
-                      : `${18 + (i % 3) * 28}%`,
+                      : abilityId === "king"
+                        ? `${10 + (i % 4) * 22}%`
+                        : `${18 + (i % 3) * 28}%`,
                   top:
                     abilityId === "runner"
                       ? `${28 + Math.floor(i / 4) * 22}%`
-                      : `${22 + Math.floor(i / 3) * 34}%`,
-                  animationDelay: `${i * (abilityId === "runner" ? 40 : 55)}ms`,
+                      : abilityId === "king"
+                        ? `${12 + Math.floor(i / 4) * 28}%`
+                        : `${22 + Math.floor(i / 3) * 34}%`,
+                  animationDelay: `${i * (abilityId === "runner" ? 40 : abilityId === "king" ? 50 : 55)}ms`,
                   ["--dx" as string]:
                     abilityId === "runner"
                       ? `${48 + i * 10}px`
@@ -136,7 +163,9 @@ export function AbilityEffectOverlay({
                   ["--dy" as string]:
                     abilityId === "runner"
                       ? `${(i % 2 === 0 ? -1 : 1) * (4 + i * 2)}px`
-                      : `${-12 - i * 3}px`,
+                      : abilityId === "king"
+                        ? `${-16 - i * 3}px`
+                        : `${-12 - i * 3}px`,
                 } as CSSProperties
               }
             />

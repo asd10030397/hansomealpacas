@@ -8,6 +8,7 @@ import { PixelPanel } from "@/components/ui/pixel";
 import { useClaimRewards } from "@/hooks/game/useClaimRewards";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
+import { toUiLoopPhase } from "@/lib/game/uiLoopPhase";
 import type { GameDayState, GamePhase } from "@/types/game";
 import "@/styles/dashboard-command.css";
 
@@ -16,41 +17,22 @@ function mainActionForPhase(
   t: ReturnType<typeof useGameI18n>["t"],
   hrefs: ReturnType<typeof useGameHref>,
 ) {
-  switch (phase) {
-    case "COMMIT":
-      return {
-        kind: "link" as const,
-        href: hrefs.explore,
-        label: t.dashboard.mainCommit,
-        feature: t.features.commit,
-        variant: "gold" as const,
-      };
-    case "REVEAL":
-      return {
-        kind: "link" as const,
-        href: hrefs.reveal,
-        label: t.dashboard.mainReveal,
-        feature: t.features.reveal,
-        variant: "gold" as const,
-      };
-    case "SETTLEMENT":
-      return {
-        kind: "link" as const,
-        // Settlement presentation page ships separately; rewards reads live claimable.
-        href: hrefs.rewards,
-        label: t.dashboard.mainSettlement,
-        feature: t.features.settlementStatus,
-        variant: "gold" as const,
-      };
-    case "CLAIM":
-      return {
-        kind: "link" as const,
-        href: hrefs.rewards,
-        label: t.dashboard.mainClaim,
-        feature: t.features.claim,
-        variant: "green" as const,
-      };
+  if (phase === "COMMIT") {
+    return {
+      kind: "link" as const,
+      href: hrefs.explore,
+      label: t.dashboard.mainCommit,
+      feature: t.features.commit,
+      variant: "gold" as const,
+    };
   }
+  return {
+    kind: "link" as const,
+    href: hrefs.result,
+    label: t.dashboard.mainResult,
+    feature: t.phases.RESULT,
+    variant: phase === "CLAIM" ? ("green" as const) : ("gold" as const),
+  };
 }
 
 export function DashboardCommand({
@@ -68,6 +50,7 @@ export function DashboardCommand({
   const gameHref = useGameHref();
   const claim = useClaimRewards();
   const main = mainActionForPhase(phase, t, gameHref);
+  const loop = toUiLoopPhase(phase);
   const nextSettlementLabel =
     phase === "SETTLEMENT"
       ? t.dashboard.settlementNow
@@ -92,7 +75,7 @@ export function DashboardCommand({
   return (
     <div className="dash-cmd">
       <div
-        className={`dash-cmd__prompt dash-cmd__prompt--${phase}${pulse ? " dash-cmd__phase-pulse" : ""}`}
+        className={`dash-cmd__prompt dash-cmd__prompt--${loop}${pulse ? " dash-cmd__phase-pulse" : ""}`}
       >
         <p className="dash-cmd__prompt-label">{t.dashboard.doNowLabel}</p>
         <p className="dash-cmd__prompt-text">{t.dashboard.doNow[phase]}</p>

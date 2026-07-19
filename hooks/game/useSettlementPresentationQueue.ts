@@ -19,7 +19,10 @@ import {
 export type SettlementPresentationRow = {
   tokenId: number;
   outcome: string;
+  /** Human label — only when activated. */
   ability: string | null;
+  /** Preferred: explicit activation id from settlementActivation. */
+  activatedAbility?: AbilityEffectId | null;
 };
 
 export type SettlementResultCue = {
@@ -37,6 +40,12 @@ export type SettlementAbilityCue = {
 
 export type SettlementPresentationCue = SettlementResultCue | SettlementAbilityCue;
 
+function resolveAbilityId(row: SettlementPresentationRow): AbilityEffectId | null {
+  if (row.activatedAbility) return row.activatedAbility;
+  // Fallback: only activation-shaped labels (not inventory class fluff).
+  return parseAbilityEffectId(row.ability);
+}
+
 function buildPending(
   day: number,
   rows: SettlementPresentationRow[],
@@ -53,8 +62,13 @@ function buildPending(
       });
     }
 
-    const abilityId = parseAbilityEffectId(row.ability);
-    if (abilityId && !hasPlayedAbilityEffect(day, row.tokenId, abilityId)) {
+    const abilityId = resolveAbilityId(row);
+    // Farmer is a permanent passive card indicator — never queue proc VFX/SFX.
+    if (
+      abilityId &&
+      abilityId !== "farmer" &&
+      !hasPlayedAbilityEffect(day, row.tokenId, abilityId)
+    ) {
       cues.push({
         kind: "ability",
         tokenId: row.tokenId,
@@ -67,7 +81,7 @@ function buildPending(
 
 /**
  * Settlement presentation queue:
- * per NFT — result VFX/SFX first, then ability VFX/SFX.
+ * per NFT — result VFX/SFX first, then ability VFX/SFX (only if activated).
  * Overlays call `advance` on complete. Once per result (sessionStorage).
  */
 export function useSettlementPresentationQueue(
@@ -83,7 +97,10 @@ export function useSettlementPresentationQueue(
   const signature = useMemo(
     () =>
       `${day}|${enabled ? 1 : 0}|${rows
-        .map((r) => `${r.tokenId}:${r.outcome}:${r.ability ?? ""}`)
+        .map(
+          (r) =>
+            `${r.tokenId}:${r.outcome}:${r.activatedAbility ?? ""}:${r.ability ?? ""}`,
+        )
         .join("|")}`,
     [day, enabled, rows],
   );

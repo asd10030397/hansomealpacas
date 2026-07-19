@@ -1,0 +1,17 @@
+# Keep CLI deploys under Vercel size limits
+reports/season1-showcase/**/*.webm
+reports/season1-showcase/**/*.wav
+reports/season1-showcase/**/*.mp4
+reports/**/*.webm
+.next
+node_modules
+contracts/node_modules
+contracts/artifacts
+contracts/cache
+contracts/typechain-types
+bot/node_modules
+bot/dist
+public/pixel/genesis/collection-550/image
+public/pixel/genesis/collection-550/reveal-metadata
+.env.vercel.production
+.env.local

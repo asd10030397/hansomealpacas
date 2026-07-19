@@ -65,6 +65,42 @@ export function LuckyCloverIcon({ className }: { className?: string }) {
   );
 }
 
+/** Pixel-forward royal crown — matches settlement ability icon scale. */
+export function KingCrownIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 64 64" aria-hidden shapeRendering="crispEdges">
+      <defs>
+        <linearGradient id="hg-king-g" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#fff6c8" />
+          <stop offset="40%" stopColor="#f0c44a" />
+          <stop offset="100%" stopColor="#a67c0a" />
+        </linearGradient>
+        <linearGradient id="hg-king-band" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#ffe56a" />
+          <stop offset="100%" stopColor="#c49214" />
+        </linearGradient>
+      </defs>
+      {/* Soft aura disc behind crown */}
+      <circle cx="32" cy="30" r="26" fill="rgba(240,196,74,0.18)" />
+      {/* Crown body — stepped pixel silhouette */}
+      <path
+        d="M8 44 L10 20 L20 34 L32 12 L44 34 L54 20 L56 44 Z"
+        fill="url(#hg-king-g)"
+        stroke="#ffe9a0"
+        strokeWidth="2"
+        strokeLinejoin="miter"
+      />
+      <rect x="10" y="44" width="44" height="10" fill="url(#hg-king-band)" />
+      <rect x="12" y="48" width="40" height="3" fill="#8a6410" opacity="0.55" />
+      {/* Jewels */}
+      <rect x="12" y="18" width="5" height="5" fill="#ff5a5a" />
+      <rect x="30" y="10" width="5" height="5" fill="#6ec8ff" />
+      <rect x="48" y="18" width="5" height="5" fill="#7dff8a" />
+      <rect x="30" y="36" width="4" height="4" fill="#fff1a0" />
+    </svg>
+  );
+}
+
 export function FarmerWheatIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 48 72" aria-hidden>

@@ -14,8 +14,9 @@ const PRETTY_TO_INTERNAL: Record<string, string> = {
   "/leaderboard": "/game/leaderboard",
   "/docs": "/game/docs",
   "/commit": "/game/commit",
-  "/reveal": "/game/reveal",
-  "/settlement": "/game/settlement",
+  "/result": "/game/result",
+  "/reveal": "/game/result",
+  "/settlement": "/game/result",
 };
 
 /** HOME on game host is `/` → title menu (`/game`), never dashboard. */

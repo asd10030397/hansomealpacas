@@ -57,8 +57,9 @@ export function middleware(request: NextRequest) {
     "/docs/guide": "/game/docs/guide",
     "/dashboard": "/game/dashboard",
     "/commit": "/game/commit",
-    "/reveal": "/game/reveal",
-    "/settlement": "/game/settlement",
+    "/result": "/game/result",
+    "/reveal": "/game/result",
+    "/settlement": "/game/result",
   };
 
   const target = map[pathname];
