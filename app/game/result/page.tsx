@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { AbilityEffectOverlay } from "@/components/game/ability-effects/AbilityEffectOverlay";
 import { ResultEffectOverlay } from "@/components/game/result-effects/ResultEffectOverlay";
 import { GameStatusPanel } from "@/components/game/GameStatusPanel";
@@ -11,19 +11,18 @@ import {
   GameSkeleton,
 } from "@/components/game/ui/GameFeedback";
 import { PixelButton, PixelPanel } from "@/components/ui/pixel";
-import { GAME_LOCATIONS } from "@/data/game/locations";
 import { useClaimRewards } from "@/hooks/game/useClaimRewards";
+import { useAutoReveal } from "@/hooks/game/useAutoReveal";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { useGameState } from "@/hooks/game/useGameState";
-import { useHansomeReveal } from "@/hooks/game/useHansomeReveal";
 import { useSettlementPresentationQueue } from "@/hooks/game/useSettlementPresentationQueue";
 import { useSettlementView } from "@/hooks/game/useSettlementView";
 import { parseAbilityEffectId } from "@/lib/game/abilityEffects";
-import { listCommitSecretsForDay } from "@/lib/game/commitSecret";
 import { formatCountdown } from "@/lib/game/phaseStatus";
 import { parseSettlementResultSfxId } from "@/lib/game/settlementResults";
 import { resultSubstep } from "@/lib/game/uiLoopPhase";
+import { isTestnetGaslessResolveEnabled } from "@/lib/game/testnetGaslessResolve";
 
 function resolveOutcomeLabel(
   outcome: string,
@@ -31,6 +30,7 @@ function resolveOutcomeLabel(
 ): string {
   if (outcome === "awaiting_reveal") return t.settlement.awaitingReveal;
   if (outcome === "awaiting_settlement") return t.settlement.awaitingSettlement;
+  if (outcome === "missed_reveal") return t.result.missedRevealTitle;
   return outcome;
 }
 
@@ -39,15 +39,12 @@ export default function ResultPhasePage() {
   const gameHref = useGameHref();
   const { day, now, phaseEndsAt, phase, isMock } = useGameState();
   const sub = resultSubstep(phase);
-
-  const { revealNft, configured, isPending, lastError } = useHansomeReveal();
-  const [queue, setQueue] = useState(() => listCommitSecretsForDay(day.day));
-  const [statusMsg, setStatusMsg] = useState<string | null>(null);
-  const [busyId, setBusyId] = useState<number | null>(null);
+  const autoReveal = useAutoReveal();
 
   const settleView = useSettlementView();
   const claim = useClaimRewards();
   const battleRef = useRef<HTMLDivElement | null>(null);
+  const scrolledRef = useRef(false);
 
   const showPresentationFx =
     settleView.status === "completed" &&
@@ -68,60 +65,35 @@ export default function ResultPhasePage() {
     showPresentationFx,
   );
 
-  const pending = queue.filter(
-    (r) => r.status === "submitted" || r.status === "prepared",
-  );
-  const done = queue.filter((r) => r.status === "revealed");
-  const hasRevealed = done.length > 0;
-  const allRevealed = pending.length === 0 && done.length > 0;
-
   const settleMsLeft = Math.max(0, phaseEndsAt - now);
   const settleCountdown = formatCountdown(settleMsLeft);
-  const showPostRevealStaging =
-    hasRevealed &&
-    (phase === "REVEAL" ||
-      settleView.status === "pending" ||
-      settleView.status === "available" ||
-      settleView.status === "waiting_seed" ||
-      settleView.status === "processing");
+  const showPreparing =
+    phase === "REVEAL" ||
+    settleView.status === "pending" ||
+    settleView.status === "available" ||
+    settleView.status === "waiting_seed" ||
+    settleView.status === "processing" ||
+    autoReveal.revealing;
 
   const settleStatusLabel =
     settleView.status === "waiting_seed"
       ? t.settlement.waitingSeedTitle
       : settleView.statusLabel;
 
-  const onReveal = async (tokenId: number) => {
-    if (phase !== "REVEAL") {
-      setStatusMsg(t.result.revealClosedHint);
-      return;
-    }
-    setBusyId(tokenId);
-    const result = await revealNft({ tokenId, day: day.day });
-    setQueue(listCommitSecretsForDay(day.day));
-    settleView.refreshLocal();
-    setBusyId(null);
+  const missedRows = settleView.rows.filter((r) => r.missedReveal);
 
-    if (!result.ok) {
-      setStatusMsg(result.error);
-      return;
-    }
-
-    const loc = GAME_LOCATIONS[result.record.locationId]?.name ?? "?";
-    setStatusMsg(
-      result.mode === "chain"
-        ? `Reveal Move #${tokenId} on-chain → ${loc}.`
-        : `Reveal Move #${tokenId} locally → ${loc}.`,
-    );
-
-    // Reveal opens the result — jump straight to the arena staging.
+  // After auto-reveal / settle advances, scroll once to battle results.
+  useEffect(() => {
+    if (scrolledRef.current) return;
+    if (settleView.status !== "completed" && autoReveal.revealedCount === 0) return;
+    scrolledRef.current = true;
     window.requestAnimationFrame(() => {
       battleRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
-  };
+  }, [settleView.status, autoReveal.revealedCount]);
 
-  // Keep local queue in sync when day rolls.
   useEffect(() => {
-    setQueue(listCommitSecretsForDay(day.day));
+    scrolledRef.current = false;
   }, [day.day]);
 
   return (
@@ -140,109 +112,77 @@ export default function ResultPhasePage() {
       </div>
 
       <p className="mt-3 text-xs text-[var(--hg-muted)]" data-substep={sub}>
-        {sub === "reveal"
-          ? t.result.substepReveal
+        {sub === "preparing"
+          ? t.result.substepPreparing
           : sub === "battle"
             ? t.result.substepBattle
             : t.result.substepClaim}
       </p>
 
-      {/* 1 · Reveal (manual — salt stays client-side) */}
+      {/* Auto-reveal status — no Reveal button */}
       <PixelPanel
         className="mt-4"
         title={t.result.revealSectionTitle}
         eyebrow={t.result.revealQueueEyebrow}
       >
-        {phase !== "REVEAL" ? (
-          <GameFeedback tone="info" label={t.common.phaseChanged}>
-            {t.result.revealClosedHint}
-          </GameFeedback>
-        ) : null}
-
-        {pending.length === 0 && done.length === 0 ? (
-          <GameEmptyState title={t.common.emptyTitle}>
-            No commit secrets for day {day.day} on this device.
+        {phase === "REVEAL" && autoReveal.noSecrets ? (
+          <GameFeedback tone="error" label={t.result.noSecretsTitle}>
+            {t.result.noSecretsBody}
             <div className="mt-3">
               <PixelButton href={gameHref.commit} variant="green" size="sm" className="w-auto">
                 {t.result.goCommit}
               </PixelButton>
             </div>
-          </GameEmptyState>
-        ) : (
-          <ul className="mt-2 space-y-2">
-            {[...pending, ...done].map((secret) => {
-              const loc = GAME_LOCATIONS[secret.locationId];
-              const revealed = secret.status === "revealed";
-              const busy = busyId === secret.tokenId && isPending;
-              return (
-                <li
-                  key={`${secret.day}-${secret.tokenId}`}
-                  className="hg-list-row"
-                >
-                  <span>
-                    #{secret.tokenId} · {loc?.name ?? `L${secret.locationId}`}
-                    <span className="ml-2 text-[0.65rem] text-[var(--hg-muted)]">
-                      · {secret.status.toUpperCase()}
-                    </span>
-                  </span>
-                  <PixelButton
-                    variant="gold"
-                    size="sm"
-                    className="w-auto min-w-[7rem]"
-                    disabled={
-                      revealed ||
-                      isPending ||
-                      phase !== "REVEAL" ||
-                      busyId === secret.tokenId
-                    }
-                    aria-busy={busy || undefined}
-                    onClick={() => void onReveal(secret.tokenId)}
-                  >
-                    {busy
-                      ? t.result.revealing
-                      : revealed
-                        ? t.result.revealed
-                        : t.result.revealAction}
-                  </PixelButton>
-                </li>
-              );
-            })}
-          </ul>
-        )}
+          </GameFeedback>
+        ) : null}
 
-        {isPending ? (
-          <GameFeedback tone="pending" label={t.common.txPending}>
-            Confirm in wallet if prompted, then wait for the transaction.
-          </GameFeedback>
-        ) : null}
-        {statusMsg && !lastError ? (
+        {phase === "REVEAL" && !autoReveal.noSecrets ? (
           <GameFeedback
-            tone={
-              /fail|closed|missed/i.test(statusMsg) ? "error" : "success"
-            }
-            label={
-              /fail|closed|missed/i.test(statusMsg)
-                ? t.common.txError
-                : t.common.txSuccess
-            }
+            tone={autoReveal.revealing ? "pending" : "success"}
+            label={t.result.autoRevealTitle}
           >
-            {statusMsg}
+            {autoReveal.revealing
+              ? t.result.autoRevealBody
+              : t.result.autoRevealWaiting}
+            <p className="mt-2 text-xs tabular-nums text-[var(--hg-muted)]">
+              {autoReveal.revealedCount} revealed
+              {autoReveal.pendingCount > 0
+                ? ` · ${autoReveal.pendingCount} pending · ${settleCountdown}`
+                : ` · ${settleCountdown}`}
+            </p>
           </GameFeedback>
         ) : null}
-        {lastError ? (
+
+        {phase !== "REVEAL" && phase !== "COMMIT" ? (
+          <GameFeedback tone="info" label={t.common.phaseChanged}>
+            {t.result.revealClosedHint}
+          </GameFeedback>
+        ) : null}
+
+        {missedRows.length > 0 ? (
+          <GameFeedback tone="error" label={t.result.missedRevealTitle}>
+            {t.result.missedRevealBody}
+            <ul className="mt-2 space-y-1 text-xs">
+              {missedRows.map((r) => (
+                <li key={r.tokenId}>#{r.tokenId}</li>
+              ))}
+            </ul>
+          </GameFeedback>
+        ) : null}
+
+        {autoReveal.lastError ? (
           <GameFeedback tone="error" label={t.common.txError}>
-            {lastError}
+            {autoReveal.lastError}
           </GameFeedback>
         ) : null}
-        {!configured && isMock ? (
-          <p className="mt-2 text-xs text-[var(--hg-muted)]">
-            Local Reveal Move recorded until the game contract is used.
-          </p>
+        {autoReveal.lastMessage && !autoReveal.lastError ? (
+          <GameFeedback tone="success" label={t.common.txSuccess}>
+            {autoReveal.lastMessage}
+          </GameFeedback>
         ) : null}
       </PixelPanel>
 
-      {/* Post-reveal arena staging — keep player on Result, not a dead wait */}
-      {showPostRevealStaging ? (
+      {showPreparing ? (
         <div className="mt-4" data-testid="result-post-reveal-staging">
           <GameFeedback tone="pending" label={t.result.afterRevealTitle}>
             {phase === "REVEAL"
@@ -254,7 +194,6 @@ export default function ResultPhasePage() {
         </div>
       ) : null}
 
-      {/* 2 · Settlement status */}
       <PixelPanel
         className="mt-4"
         title={t.result.settleSectionTitle}
@@ -263,16 +202,8 @@ export default function ResultPhasePage() {
         <p className="pixel-title text-sm text-[#f0c44a]">{settleStatusLabel}</p>
         <p className="mt-2 text-xs text-[var(--hg-muted)]">
           Day {settleView.day} · {settleView.phase}
-          {phase === "REVEAL" && hasRevealed
-            ? ` · ${settleCountdown}`
-            : null}
+          {phase === "REVEAL" ? ` · ${settleCountdown}` : null}
         </p>
-
-        {allRevealed && phase === "REVEAL" ? (
-          <p className="mt-2 text-xs text-[var(--hg-muted)]">
-            {t.result.afterRevealBody(settleCountdown)}
-          </p>
-        ) : null}
 
         {settleView.status === "loading" ? (
           <div className="mt-3">
@@ -292,8 +223,9 @@ export default function ResultPhasePage() {
           </GameFeedback>
         ) : null}
 
-        {/* Manual settle remains as fallback if auto-settle was rejected / failed */}
-        {settleView.canSettle && settleView.status === "available" ? (
+        {settleView.canSettle &&
+        settleView.status === "available" &&
+        !isTestnetGaslessResolveEnabled() ? (
           <PixelButton
             className="mt-4"
             variant="gold"
@@ -317,15 +249,12 @@ export default function ResultPhasePage() {
         ) : null}
       </PixelPanel>
 
-      {/* 3 · Battle results + FX */}
       <div ref={battleRef}>
         <PixelPanel
           className="mt-4"
           title={t.result.battleSectionTitle}
           eyebrow={
-            showPostRevealStaging
-              ? t.result.arenaEyebrow
-              : `DAY ${settleView.day}`
+            showPreparing ? t.result.arenaEyebrow : `DAY ${settleView.day}`
           }
         >
           {settleView.empty ? (
@@ -371,7 +300,6 @@ export default function ResultPhasePage() {
         </PixelPanel>
       </div>
 
-      {/* 4 · Claim */}
       <PixelPanel
         className="mt-4"
         title={t.result.claimSectionTitle}

@@ -23,9 +23,8 @@ function usePhaseStatusCopy(): PhaseStatusCopy {
     help: t.phaseStatus.help,
     phaseName: (phase) => t.phases[phase],
     loopPhaseName: (loop) => {
-      if (loop === "BATTLE") return t.phases.BATTLE;
-      if (loop === "COMMIT") return t.phases.COMMIT_SHORT;
-      if (loop === "REVEAL") return t.phases.REVEAL_SHORT;
+      if (loop === "CHOOSE") return t.phases.CHOOSE_SHORT;
+      if (loop === "BATTLE") return t.phases.BATTLE_RESULT_SHORT;
       return t.phases.CLAIM_SHORT;
     },
   };

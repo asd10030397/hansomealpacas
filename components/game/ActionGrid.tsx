@@ -41,11 +41,7 @@ export function ActionGrid({ phase }: { phase: GamePhase }) {
   ];
 
   const phaseActionLabel =
-    loop === "REVEAL"
-      ? t.phases.REVEAL
-      : loop === "BATTLE"
-        ? t.phases.BATTLE
-        : t.phases.CLAIM;
+    loop === "BATTLE" ? t.phases.BATTLE_RESULT : t.phases.CLAIM;
 
   const resultActions: SecondaryAction[] = [
     {
@@ -71,7 +67,7 @@ export function ActionGrid({ phase }: { phase: GamePhase }) {
     },
   ];
 
-  const actions = loop === "COMMIT" ? commitActions : resultActions;
+  const actions = loop === "CHOOSE" ? commitActions : resultActions;
 
   return (
     <div className="dash-cmd__secondary" role="navigation" aria-label={t.dashboard.alsoAvailable}>

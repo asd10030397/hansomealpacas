@@ -14,13 +14,19 @@ export type GameMessages = {
     REVEAL: string;
     SETTLEMENT: string;
     CLAIM: string;
-    /** Player-facing Battle step (wire SETTLEMENT). */
+    /** @deprecated Prefer BATTLE_RESULT — kept for older copy paths. */
     BATTLE: string;
+    /** Player-facing: Choose Location (wire COMMIT). */
+    CHOOSE: string;
+    CHOOSE_SHORT: string;
+    /** Player-facing: Battle Result (wire REVEAL + SETTLEMENT). */
+    BATTLE_RESULT: string;
+    BATTLE_RESULT_SHORT: string;
     /** Short timeline labels. */
     COMMIT_SHORT: string;
     REVEAL_SHORT: string;
     CLAIM_SHORT: string;
-    /** Result page heading (Reveal + Battle + Claim surface). */
+    /** Battle Result page heading. */
     RESULT: string;
   };
   common: {
@@ -351,6 +357,14 @@ export type GameMessages = {
     substepSettle: string;
     substepBattle: string;
     substepClaim: string;
+    substepPreparing: string;
+    autoRevealTitle: string;
+    autoRevealBody: string;
+    autoRevealWaiting: string;
+    noSecretsTitle: string;
+    noSecretsBody: string;
+    missedRevealTitle: string;
+    missedRevealBody: string;
   };
   docs: {
     heading: string;

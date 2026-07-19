@@ -6,6 +6,7 @@ import { GameChrome } from "@/components/game/GameChrome";
 import { GameplayMusic } from "@/components/game/GameplayMusic";
 import { GameUiSfx } from "@/components/game/GameUiSfx";
 import { GameVisualShell } from "@/components/game/GameVisualShell";
+import { AutoRevealProvider } from "@/hooks/game/useAutoReveal";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { forceUnlockBodyScroll } from "@/lib/ui/bodyScrollLock";
 
@@ -23,18 +24,20 @@ export function GameShell({ children }: { children: React.ReactNode }) {
     <GameVisualShell>
       <GameplayMusic />
       <GameUiSfx />
-      <div className="hansome-game hansome-game-shell">
-        <a
-          href="#game-main"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:z-[100] focus:bg-[#e8b03a] focus:px-3 focus:py-2 focus:text-[#1a1520]"
-        >
-          {t.common.skipToContent}
-        </a>
-        <GameChrome />
-        <main id="game-main" className="hansome-game-main">
-          {children}
-        </main>
-      </div>
+      <AutoRevealProvider>
+        <div className="hansome-game hansome-game-shell">
+          <a
+            href="#game-main"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:z-[100] focus:bg-[#e8b03a] focus:px-3 focus:py-2 focus:text-[#1a1520]"
+          >
+            {t.common.skipToContent}
+          </a>
+          <GameChrome />
+          <main id="game-main" className="hansome-game-main">
+            {children}
+          </main>
+        </div>
+      </AutoRevealProvider>
     </GameVisualShell>
   );
 }

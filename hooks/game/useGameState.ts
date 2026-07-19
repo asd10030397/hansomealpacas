@@ -16,17 +16,6 @@ import {
 } from "@/lib/game/hansomeGame";
 import type { GameDayState, GamePhase, TerritoryStats } from "@/types/game";
 
-/** On-chain GameTypes.DayState */
-const DS = {
-  Idle: 0,
-  CommitOpen: 1,
-  CommitClosed: 2,
-  RevealOpen: 3,
-  RevealClosed: 4,
-  Settlement: 5,
-  Claimable: 6,
-} as const;
-
 function derivePhaseFromMock(day: GameDayState, now: number): GamePhase {
   if (day.settled || day.settlementStatus === "Complete") return "CLAIM";
   if (now >= day.revealEndsAt) return "SETTLEMENT";
@@ -34,10 +23,26 @@ function derivePhaseFromMock(day: GameDayState, now: number): GamePhase {
   return "COMMIT";
 }
 
-function phaseFromDayState(state: number, settled: boolean): GamePhase {
-  if (settled || state === DS.Claimable) return "CLAIM";
-  if (state === DS.RevealClosed || state === DS.Settlement) return "SETTLEMENT";
-  if (state === DS.RevealOpen || state === DS.CommitClosed) return "REVEAL";
+/**
+ * Same formula as HansomeGame.currentDay() — wall clock is authoritative so the
+ * UI cannot linger on Day N Battle after Day N+1 Commit has already opened.
+ */
+export function computeDayIndex(dayZeroSec: number, dayLengthSec: number, nowMs: number): number {
+  const nowSec = Math.floor(nowMs / 1000);
+  if (nowSec < dayZeroSec || dayLengthSec <= 0) return 0;
+  return Math.floor((nowSec - dayZeroSec) / dayLengthSec);
+}
+
+/** Derive Commit / Reveal / Battle(SETTLEMENT) / Claim from day windows + settled. */
+export function derivePhaseFromWindows(input: {
+  nowMs: number;
+  commitEndsAt: number;
+  revealEndsAt: number;
+  settled: boolean;
+}): GamePhase {
+  if (input.settled) return "CLAIM";
+  if (input.nowMs >= input.revealEndsAt) return "SETTLEMENT";
+  if (input.nowMs >= input.commitEndsAt) return "REVEAL";
   return "COMMIT";
 }
 
@@ -89,15 +94,38 @@ export function useGameState() {
     query: { enabled: live && !!game },
   });
 
+  const timingsReady =
+    dayZeroRead.data != null &&
+    dayLengthRead.data != null &&
+    commitDurationRead.data != null &&
+    revealDurationRead.data != null;
+
+  const dayZeroSec = timingsReady ? Number(dayZeroRead.data) : null;
+  const dayLenSec = timingsReady
+    ? Number(dayLengthRead.data)
+    : DAY_LENGTH_SEC;
+  const commitDurSec = timingsReady
+    ? Number(commitDurationRead.data)
+    : COMMIT_DURATION_SEC;
+  const revealDurSec = timingsReady
+    ? Number(revealDurationRead.data)
+    : REVEAL_DURATION_SEC;
+
+  // Clock-derived day index (matches on-chain currentDay); tick every second.
+  const clockDay =
+    live && dayZeroSec != null && dayLenSec > 0
+      ? computeDayIndex(dayZeroSec, dayLenSec, now)
+      : null;
+
   const currentDayRead = useReadContract({
     address: game ?? undefined,
     abi: hansomeGameAbi,
     functionName: "currentDay",
     chainId: GAME_CHAIN_ID,
-    query: { enabled: live && !!game, refetchInterval: 15_000 },
+    query: { enabled: live && !!game, refetchInterval: 4_000 },
   });
 
-  const dayIndex = Number(currentDayRead.data ?? 0n);
+  const dayIndex = clockDay ?? Number(currentDayRead.data ?? 0n);
 
   const dayStateRead = useReadContract({
     address: game ?? undefined,
@@ -105,7 +133,7 @@ export function useGameState() {
     functionName: "dayState",
     args: [BigInt(dayIndex)],
     chainId: GAME_CHAIN_ID,
-    query: { enabled: live && !!game, refetchInterval: 10_000 },
+    query: { enabled: live && !!game, refetchInterval: 4_000 },
   });
 
   const settledRead = useReadContract({
@@ -114,28 +142,28 @@ export function useGameState() {
     functionName: "isSettled",
     args: [BigInt(dayIndex)],
     chainId: GAME_CHAIN_ID,
-    query: { enabled: live && !!game, refetchInterval: 10_000 },
+    query: { enabled: live && !!game, refetchInterval: 4_000 },
   });
 
   const liveDay: GameDayState | null = useMemo(() => {
-    if (!live || dayZeroRead.data == null || currentDayRead.data == null) return null;
-    const dayZero = Number(dayZeroRead.data);
-    const day = Number(currentDayRead.data);
-    const state = Number(dayStateRead.data ?? DS.Idle);
+    if (!live || dayZeroSec == null || dayLenSec <= 0) return null;
+
+    const day = computeDayIndex(dayZeroSec, dayLenSec, now);
     const settled = Boolean(settledRead.data);
-    // Prefer on-chain immutables (Testnet fast timing); fall back to env/GDS constants.
-    const dayLen = Number(dayLengthRead.data ?? DAY_LENGTH_SEC);
-    const commitDur = Number(commitDurationRead.data ?? COMMIT_DURATION_SEC);
-    // Prefer on-chain revealDuration so a Battle pad (day - commit - reveal) stays intact.
-    const revealDur = Number(revealDurationRead.data ?? REVEAL_DURATION_SEC);
-    const startSec = dayZero + day * dayLen;
-    const commitEndsAt = (startSec + commitDur) * 1000;
-    const revealEndsAt = (startSec + commitDur + revealDur) * 1000;
-    const dayEndsAt = (startSec + dayLen) * 1000;
-    const phase = phaseFromDayState(state, settled);
+    const startSec = dayZeroSec + day * dayLenSec;
+    const commitEndsAt = (startSec + commitDurSec) * 1000;
+    const revealEndsAt = (startSec + commitDurSec + revealDurSec) * 1000;
+    const dayEndsAt = (startSec + dayLenSec) * 1000;
+    const phase = derivePhaseFromWindows({
+      nowMs: now,
+      commitEndsAt,
+      revealEndsAt,
+      settled,
+    });
     let phaseEndsAt = commitEndsAt;
     if (phase === "REVEAL") phaseEndsAt = revealEndsAt;
     if (phase === "SETTLEMENT" || phase === "CLAIM") phaseEndsAt = dayEndsAt;
+
     return {
       day,
       phase,
@@ -152,12 +180,11 @@ export function useGameState() {
     };
   }, [
     live,
-    dayZeroRead.data,
-    dayLengthRead.data,
-    commitDurationRead.data,
-    revealDurationRead.data,
-    currentDayRead.data,
-    dayStateRead.data,
+    dayZeroSec,
+    dayLenSec,
+    commitDurSec,
+    revealDurSec,
+    now,
     settledRead.data,
   ]);
 

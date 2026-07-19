@@ -19,6 +19,16 @@ export const gameRandomnessAbi = [
     inputs: [{ name: "day", type: "uint256" }],
     outputs: [{ name: "", type: "bool" }],
   },
+  {
+    type: "function",
+    name: "fulfillDaySeed",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "day", type: "uint256" },
+      { name: "seed", type: "bytes32" },
+    ],
+    outputs: [],
+  },
 ] as const;
 
 /** GameTypes PURPOSE_* / P_* — presentation mirrors on-chain rolls. */

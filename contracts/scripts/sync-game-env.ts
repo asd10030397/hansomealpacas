@@ -42,7 +42,25 @@ async function main() {
     NEXT_PUBLIC_GAME_CHAIN_ID: String(record.chainId),
     NEXT_PUBLIC_GAME_RPC_URL: "https://rpc.testnet.chain.robinhood.com",
     NEXT_PUBLIC_GAME_EXPLORER: "https://explorer.testnet.chain.robinhood.com",
+    // Client flag: use /api/game/testnet-resolve (server key required separately).
+    NEXT_PUBLIC_TESTNET_GASLESS_RESOLVE: "1",
   };
+
+  // Server-only relayer key (never NEXT_PUBLIC_*). Hardhat loads contracts/.env.
+  const pkFromEnv = (
+    process.env.DEPLOYER_PRIVATE_KEY ||
+    process.env.TREASURY_PRIVATE_KEY ||
+    ""
+  ).trim();
+  if (pkFromEnv) {
+    lines.GAME_TESTNET_RELAYER_PRIVATE_KEY = pkFromEnv.startsWith("0x")
+      ? pkFromEnv
+      : `0x${pkFromEnv}`;
+  } else {
+    console.warn(
+      "WARN: set GAME_TESTNET_RELAYER_PRIVATE_KEY in .env.local (game owner key)",
+    );
+  }
   if (thansome) {
     lines.NEXT_PUBLIC_THANSOME_ADDRESS = thansome;
   }
@@ -68,7 +86,11 @@ async function main() {
 
   writeFileSync(envPath, next.endsWith("\n") ? next : `${next}\n`);
   console.log("Updated", envPath);
-  console.log(JSON.stringify(lines, null, 2));
+  const publicLines = { ...lines };
+  if (publicLines.GAME_TESTNET_RELAYER_PRIVATE_KEY) {
+    publicLines.GAME_TESTNET_RELAYER_PRIVATE_KEY = "[set]";
+  }
+  console.log(JSON.stringify(publicLines, null, 2));
 }
 
 main().catch((error) => {

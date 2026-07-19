@@ -42,6 +42,10 @@ import {
   sendRobinhoodContractWrite,
 } from "@/lib/game/robinhoodContractWrite";
 import {
+  isTestnetGaslessResolveEnabled,
+  requestTestnetResolve,
+} from "@/lib/game/testnetGaslessResolve";
+import {
   deriveSettlementUiStatus,
   settlementStatusLabel,
   type SettlementUiStatus,
@@ -132,6 +136,8 @@ export function useSettlementView() {
 
   const [localTick, setLocalTick] = useState(0);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [gaslessSettlePending, setGaslessSettlePending] = useState(false);
+  const gaslessSettleInFlightRef = useRef(false);
   const [cohort, setCohort] = useState<CohortCounts>(emptyCohort);
   const [rollByToken, setRollByToken] = useState<
     Record<number, { runnerSuccess: boolean; luckySuccess: boolean }>
@@ -402,6 +408,7 @@ export function useSettlementView() {
         error: chainError,
         loading: chainLoading,
         hasDaySeed,
+        phase,
       })
     : deriveLocalStatus(day.day, phase, localTick);
 
@@ -539,6 +546,36 @@ export function useSettlementView() {
       return;
     }
     if (!game) return;
+
+    // Testnet QA: server relayer fulfills seed + settleDay (no wallet popup).
+    if (isTestnetGaslessResolveEnabled()) {
+      if (gaslessSettleInFlightRef.current) return;
+      resetSettle();
+      gaslessSettleInFlightRef.current = true;
+      setGaslessSettlePending(true);
+      try {
+        const result = await requestTestnetResolve({
+          day: day.day,
+          reveals: [],
+          fulfillSeed: true,
+          settle: true,
+        });
+        if (!result.ok) {
+          const msg = result.error ?? "Gasless settle failed.";
+          setLocalError(isSeedMissingError(msg) ? SEED_MISSING_UI_MESSAGE : msg);
+          return;
+        }
+        void dayStateRead.refetch?.();
+        void settledRead.refetch?.();
+        void claimableContracts.refetch?.();
+        void hasDaySeedRead.refetch?.();
+      } finally {
+        gaslessSettleInFlightRef.current = false;
+        setGaslessSettlePending(false);
+      }
+      return;
+    }
+
     if (!isConnected || !address) {
       setLocalError("Connect wallet to settle on-chain.");
       return;
@@ -583,6 +620,10 @@ export function useSettlementView() {
     publicClient,
     resetSettle,
     writeContractAsync,
+    dayStateRead,
+    settledRead,
+    claimableContracts,
+    hasDaySeedRead,
   ]);
 
   useEffect(() => {
@@ -606,16 +647,30 @@ export function useSettlementView() {
    * Timing windows stay unchanged — this only removes the extra manual wait.
    */
   useEffect(() => {
+    if (settled) return;
+    if (settleWriting || settleReceipt.isLoading || gaslessSettlePending) return;
+
+    // Testnet gasless: poll seed + settle until Claimable (no wallet).
+    if (isTestnetGaslessResolveEnabled()) {
+      if (status !== "available" && status !== "waiting_seed") return;
+      const kick = () => {
+        if (gaslessSettleInFlightRef.current) return;
+        void runSettle();
+      };
+      kick();
+      const id = window.setInterval(kick, 5_000);
+      return () => window.clearInterval(id);
+    }
+
     if (status !== "available") return;
     if (!autoSettleArmedRef.current) return;
-    if (settleWriting || settleReceipt.isLoading) return;
-    if (settled) return;
     autoSettleArmedRef.current = false;
     void runSettle();
   }, [
     status,
     settleWriting,
     settleReceipt.isLoading,
+    gaslessSettlePending,
     settled,
     runSettle,
   ]);
@@ -639,7 +694,8 @@ export function useSettlementView() {
     empty: rows.length === 0,
     isConnected,
     canSettle: status === "available" || status === "waiting_seed",
-    settlePending: settleWriting || settleReceipt.isLoading,
+    settlePending:
+      settleWriting || settleReceipt.isLoading || gaslessSettlePending,
     settleHash,
     error: displayError,
     waitingSeed: status === "waiting_seed",

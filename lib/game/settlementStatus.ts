@@ -29,6 +29,11 @@ export function deriveSettlementUiStatus(input: {
   loading?: boolean;
   /** When settle is eligible but day seed is not fulfilled yet. */
   hasDaySeed?: boolean | null;
+  /**
+   * Wire UI phase from the day clock. When SETTLEMENT/CLAIM, settle is eligible
+   * even if dayState already rolled to Idle after the Battle pad (late settle).
+   */
+  phase?: "COMMIT" | "REVEAL" | "SETTLEMENT" | "CLAIM" | null;
 }): SettlementUiStatus {
   if (input.loading) return "loading";
   if (input.settleTxPending) return "processing";
@@ -38,10 +43,16 @@ export function deriveSettlementUiStatus(input: {
   if (isSeedMissingError(input.error)) return "waiting_seed";
 
   if (input.error) return "error";
-  if (input.dayState == null || input.isSettled == null) return "unavailable";
+  if (input.isSettled == null) return "unavailable";
 
-  // RevealClosed (4) or Settlement (5) → settleDay eligible
+  // RevealClosed (4) or Settlement (5) → settleDay eligible (Battle window)
   if (input.dayState === 4 || input.dayState === 5) {
+    if (input.hasDaySeed === false) return "waiting_seed";
+    return "available";
+  }
+
+  // Clock says Battle/Claim and not settled — cover late settle after dayEnd → Idle.
+  if (input.phase === "SETTLEMENT" || input.phase === "CLAIM") {
     if (input.hasDaySeed === false) return "waiting_seed";
     return "available";
   }
@@ -54,6 +65,7 @@ export function deriveSettlementUiStatus(input: {
   // Claimable without isSettled should not happen; treat as completed if claimed path
   if (input.dayState === 6) return "completed";
 
+  if (input.dayState == null) return "unavailable";
   return "unavailable";
 }
 
@@ -62,9 +74,9 @@ export function settlementStatusLabel(status: SettlementUiStatus): string {
     case "loading":
       return "Loading…";
     case "pending":
-      return "Move revealed — battle resolves when Reveal ends";
+      return "Move locked in — battle resolves when preparation ends";
     case "available":
-      return "Reveal closed — settling battle now";
+      return "Settling battle now";
     case "waiting_seed":
       return "Waiting for settlement randomness.";
     case "processing":

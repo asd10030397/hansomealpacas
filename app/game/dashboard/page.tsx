@@ -44,7 +44,7 @@ export default function GameDashboardPage() {
           eyebrow={t.dashboard.demoPhaseEyebrow}
         >
           <div
-            className="grid grid-cols-2 gap-2 sm:grid-cols-4"
+            className="grid grid-cols-3 gap-2"
             role="group"
             aria-label={t.dashboard.demoPhaseTitle}
           >
@@ -55,25 +55,16 @@ export default function GameDashboardPage() {
               aria-pressed={phase === "COMMIT"}
               onClick={() => setDemoPhase("COMMIT")}
             >
-              {t.phases.COMMIT_SHORT}
+              {t.phases.CHOOSE_SHORT}
             </PixelButton>
             <PixelButton
               size="sm"
-              variant={phase === "REVEAL" ? "gold" : "slate"}
+              variant={phase === "REVEAL" || phase === "SETTLEMENT" ? "gold" : "slate"}
               className="w-full"
-              aria-pressed={phase === "REVEAL"}
+              aria-pressed={phase === "REVEAL" || phase === "SETTLEMENT"}
               onClick={() => setDemoPhase("REVEAL")}
             >
-              {t.phases.REVEAL_SHORT}
-            </PixelButton>
-            <PixelButton
-              size="sm"
-              variant={phase === "SETTLEMENT" ? "gold" : "slate"}
-              className="w-full"
-              aria-pressed={phase === "SETTLEMENT"}
-              onClick={() => setDemoPhase("SETTLEMENT")}
-            >
-              {t.phases.BATTLE}
+              {t.phases.BATTLE_RESULT_SHORT}
             </PixelButton>
             <PixelButton
               size="sm"
@@ -86,7 +77,7 @@ export default function GameDashboardPage() {
             </PixelButton>
           </div>
           <p className="mt-2 text-[0.65rem] text-[var(--hg-muted)]">
-            Demo: Commit → Reveal → Battle → Claim (manual reveal still required).
+            Demo: Choose Location → Battle Result (auto-reveal) → Claim.
           </p>
         </PixelPanel>
       ) : null}

@@ -77,7 +77,7 @@ async function main() {
     deployBlockNumber: receipt!.blockNumber,
     deployedAt: new Date().toISOString(),
     deployer: deployer.address,
-    previousGameNote: "redeploy-hansome-game-only (testnetGameplayUnlock support)",
+    previousGameNote: "redeploy-hansome-game-only (testnetRelayerRevealBatch)",
   };
   writeFileSync(prevPath, `${JSON.stringify(record, null, 2)}\n`);
   console.log("Wrote", prevPath);

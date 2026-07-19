@@ -71,6 +71,7 @@ contract HansomeGame is IHansomeGame, Ownable, ReentrancyGuard {
     error InvalidDayTiming();
     error TestnetUnlockForbidden();
     error BadTestnetIdentities();
+    error LengthMismatch();
 
     event Committed(uint256 indexed tokenId, uint256 indexed day, bytes32 commitHash);
     event Revealed(uint256 indexed tokenId, uint256 indexed day, uint8 locationId, HansomeTypes.Side side);
@@ -195,27 +196,28 @@ contract HansomeGame is IHansomeGame, Ownable, ReentrancyGuard {
     function reveal(uint256 tokenId, uint256 day, uint8 locationId, bytes32 salt) external {
         if (dayState(day) != GameTypes.DayState.RevealOpen) revert WrongPhase();
         _authorizePlayer(tokenId, msg.sender);
-        if (!_committed[tokenId][day]) revert NotCommitted();
-        if (_revealed[tokenId][day]) revert AlreadyRevealed();
+        _applyReveal(tokenId, day, locationId, salt);
+    }
 
-        bytes32 expected = computeCommitHash(tokenId, day, locationId, salt);
-        if (expected != _commitHash[tokenId][day]) revert BadCommitHash();
-
-        HansomeTypes.Side side_ = _sideOf(tokenId);
-        if (!SettlementLib.isLocationLegal(side_, locationId)) revert IllegalLocation();
-
-        _revealed[tokenId][day] = true;
-        _location[tokenId][day] = locationId;
-
-        if (side_ == HansomeTypes.Side.Alpaca) {
-            _alpacaIds[day].push(tokenId);
-        } else if (side_ == HansomeTypes.Side.Cougar) {
-            _cougarIds[day].push(tokenId);
-        } else {
-            revert InvalidSide();
+    /**
+     * @notice TESTNET ONLY — owner/relayer reveals commits without the NFT owner signing.
+     * @dev Forbidden on Mainnet (chainid 4663). Mainnet players still use `reveal()`.
+     *      Used so Testnet QA can auto-resolve after a single Commit wallet confirm.
+     */
+    function testnetRelayerRevealBatch(
+        uint256[] calldata tokenIds,
+        uint256 day,
+        uint8[] calldata locationIds,
+        bytes32[] calldata salts
+    ) external onlyOwner {
+        if (block.chainid == 4663) revert TestnetUnlockForbidden();
+        if (dayState(day) != GameTypes.DayState.RevealOpen) revert WrongPhase();
+        uint256 n = tokenIds.length;
+        if (n != locationIds.length || n != salts.length) revert LengthMismatch();
+        for (uint256 i = 0; i < n; i++) {
+            if (_revealed[tokenIds[i]][day]) continue;
+            _applyReveal(tokenIds[i], day, locationIds[i], salts[i]);
         }
-
-        emit Revealed(tokenId, day, locationId, side_);
     }
 
     function settleDay(uint256 day) external nonReentrant {
@@ -292,6 +294,31 @@ contract HansomeGame is IHansomeGame, Ownable, ReentrancyGuard {
         if (caller != owner && nft.getApproved(tokenId) != caller && !nft.isApprovedForAll(owner, caller)) {
             revert NotAuthorized();
         }
+    }
+
+    function _applyReveal(uint256 tokenId, uint256 day, uint8 locationId, bytes32 salt) internal {
+        if (!_isGameplayReady(tokenId)) revert TokenNotRevealed();
+        if (!_committed[tokenId][day]) revert NotCommitted();
+        if (_revealed[tokenId][day]) revert AlreadyRevealed();
+
+        bytes32 expected = computeCommitHash(tokenId, day, locationId, salt);
+        if (expected != _commitHash[tokenId][day]) revert BadCommitHash();
+
+        HansomeTypes.Side side_ = _sideOf(tokenId);
+        if (!SettlementLib.isLocationLegal(side_, locationId)) revert IllegalLocation();
+
+        _revealed[tokenId][day] = true;
+        _location[tokenId][day] = locationId;
+
+        if (side_ == HansomeTypes.Side.Alpaca) {
+            _alpacaIds[day].push(tokenId);
+        } else if (side_ == HansomeTypes.Side.Cougar) {
+            _cougarIds[day].push(tokenId);
+        } else {
+            revert InvalidSide();
+        }
+
+        emit Revealed(tokenId, day, locationId, side_);
     }
 
     function _useTestnetIdentities() internal view returns (bool) {

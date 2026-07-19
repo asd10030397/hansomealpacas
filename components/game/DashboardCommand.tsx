@@ -26,21 +26,12 @@ function mainActionForPhase(
       variant: "gold" as const,
     };
   }
-  if (phase === "REVEAL") {
-    return {
-      kind: "link" as const,
-      href: hrefs.result,
-      label: t.dashboard.mainReveal,
-      feature: t.phases.REVEAL,
-      variant: "gold" as const,
-    };
-  }
-  if (phase === "SETTLEMENT") {
+  if (phase === "REVEAL" || phase === "SETTLEMENT") {
     return {
       kind: "link" as const,
       href: hrefs.result,
       label: t.dashboard.mainSettlement,
-      feature: t.phases.BATTLE,
+      feature: t.phases.BATTLE_RESULT,
       variant: "gold" as const,
     };
   }

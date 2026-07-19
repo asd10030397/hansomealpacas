@@ -457,6 +457,7 @@
 }
 
 /* Phase-tinted prompt border (UiLoopPhase) */
+.dash-cmd__prompt--CHOOSE,
 .dash-cmd__prompt--COMMIT {
   border-color: #9a6a12;
   box-shadow:
@@ -464,14 +465,8 @@
     var(--hg-shadow);
 }
 
-.dash-cmd__prompt--REVEAL {
-  border-color: #3a6a9a;
-  box-shadow:
-    0 0 0 1px rgba(110, 184, 224, 0.3),
-    var(--hg-shadow);
-}
-
 .dash-cmd__prompt--BATTLE,
+.dash-cmd__prompt--REVEAL,
 .dash-cmd__prompt--SETTLEMENT {
   border-color: #8a3a2a;
   box-shadow:

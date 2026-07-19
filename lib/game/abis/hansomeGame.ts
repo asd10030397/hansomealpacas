@@ -17,6 +17,7 @@ export const hansomeGameAbi = [
   { type: "error", name: "InvalidDayTiming", inputs: [] },
   { type: "error", name: "TestnetUnlockForbidden", inputs: [] },
   { type: "error", name: "BadTestnetIdentities", inputs: [] },
+  { type: "error", name: "LengthMismatch", inputs: [] },
   {
     type: "function",
     name: "commit",
@@ -37,6 +38,18 @@ export const hansomeGameAbi = [
       { name: "day", type: "uint256" },
       { name: "locationId", type: "uint8" },
       { name: "salt", type: "bytes32" },
+    ],
+    outputs: [],
+  },
+  {
+    type: "function",
+    name: "testnetRelayerRevealBatch",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "tokenIds", type: "uint256[]" },
+      { name: "day", type: "uint256" },
+      { name: "locationIds", type: "uint8[]" },
+      { name: "salts", type: "bytes32[]" },
     ],
     outputs: [],
   },
