@@ -24,6 +24,7 @@ const Class = {
 
 const DAY = 24 * 3600;
 const COMMIT = 20 * 3600;
+const REVEAL = DAY - COMMIT;
 const G0 = ethers.parseEther("300000000");
 const R0 = ethers.parseEther("400000");
 
@@ -76,6 +77,7 @@ async function deployFixture() {
     dayZero,
     DAY,
     COMMIT,
+    REVEAL,
     owner.address,
   )) as HansomeGame;
   await game.waitForDeployment();
@@ -390,6 +392,7 @@ describe("HansomeGame integration", () => {
       dayZero,
       DAY,
       COMMIT,
+      REVEAL,
       owner.address,
     )) as HansomeGame;
     await treasury.setGame(await game.getAddress());

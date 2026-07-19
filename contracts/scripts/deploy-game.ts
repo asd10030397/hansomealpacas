@@ -113,6 +113,7 @@ async function main() {
     timing.fast ? "FAST (testnet QA)" : "PRODUCTION (GDS)",
     `commit=${timing.commitDurationSec}s`,
     `reveal=${timing.revealDurationSec}s`,
+    `battle=${timing.battleDurationSec}s`,
     `day=${timing.dayLengthSec}s`,
   );
 
@@ -141,6 +142,7 @@ async function main() {
     dayZero,
     timing.dayLengthSec,
     timing.commitDurationSec,
+    timing.revealDurationSec,
     deployer.address,
   );
   await game.waitForDeployment();
@@ -155,6 +157,8 @@ async function main() {
     "commitEndsAt:",
     dayZero + timing.commitDurationSec,
     "revealEndsAt:",
+    dayZero + timing.commitDurationSec + timing.revealDurationSec,
+    "dayEndsAt:",
     dayZero + timing.dayLengthSec,
   );
 

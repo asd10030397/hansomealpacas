@@ -6,6 +6,7 @@ export default defineConfig({
     include: [
       "lib/game/**/*.test.ts",
       "lib/game/**/__tests__/**/*.test.ts",
+      "lib/swap/**/__tests__/**/*.test.ts",
       "lib/ui/**/__tests__/**/*.test.ts",
     ],
     environment: "node",

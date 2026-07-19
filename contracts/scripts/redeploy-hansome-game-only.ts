@@ -43,6 +43,7 @@ async function main() {
     dayZero,
     timing.dayLengthSec,
     timing.commitDurationSec,
+    timing.revealDurationSec,
     deployer.address,
   );
   await game.waitForDeployment();

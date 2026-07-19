@@ -28,10 +28,12 @@ contract HansomeGame is IHansomeGame, Ownable, ReentrancyGuard {
     IGameRandomness public immutable randomness;
 
     uint256 public immutable dayZero;
-    /// @notice Full day length in seconds (Commit + Reveal). Production: 24h.
+    /// @notice Full day length in seconds (Commit + Reveal + optional Battle pad). Production: 24h.
     uint256 public immutable dayLength;
-    /// @notice Commit window length in seconds. Production: 20h. Reveal = dayLength - commitDuration.
+    /// @notice Commit window length in seconds. Production: 20h.
     uint256 public immutable commitDuration;
+    /// @notice Reveal window length in seconds. Production: 4h. Settlement eligible when this ends.
+    uint256 public immutable revealDuration;
 
     bool public commitPaused;
 
@@ -92,9 +94,15 @@ contract HansomeGame is IHansomeGame, Ownable, ReentrancyGuard {
         uint256 dayZero_,
         uint256 dayLength_,
         uint256 commitDuration_,
+        uint256 revealDuration_,
         address initialOwner
     ) Ownable(initialOwner) {
-        if (commitDuration_ == 0 || commitDuration_ >= dayLength_) revert InvalidDayTiming();
+        if (
+            commitDuration_ == 0 || revealDuration_ == 0
+                || commitDuration_ + revealDuration_ > dayLength_
+        ) {
+            revert InvalidDayTiming();
+        }
         genesis = IHansomeGenesis(genesis_);
         nft = IERC721(genesis_);
         treasury = IGameTreasury(treasury_);
@@ -104,11 +112,7 @@ contract HansomeGame is IHansomeGame, Ownable, ReentrancyGuard {
         dayZero = dayZero_;
         dayLength = dayLength_;
         commitDuration = commitDuration_;
-    }
-
-    /// @notice Reveal window length (seconds). Settlement is eligible as soon as this ends.
-    function revealDuration() external view returns (uint256) {
-        return dayLength - commitDuration;
+        revealDuration = revealDuration_;
     }
 
     function setCommitPaused(bool paused_) external onlyOwner {
@@ -147,12 +151,13 @@ contract HansomeGame is IHansomeGame, Ownable, ReentrancyGuard {
 
         uint256 start = dayZero + day * dayLength;
         uint256 commitEnd = start + commitDuration;
-        uint256 revealEnd = start + dayLength;
+        uint256 revealEnd = start + commitDuration + revealDuration;
 
         if (block.timestamp < start) return GameTypes.DayState.Idle;
         if (block.timestamp < commitEnd) return GameTypes.DayState.CommitOpen;
         if (block.timestamp < revealEnd) return GameTypes.DayState.RevealOpen;
-        return GameTypes.DayState.RevealClosed; // settlement eligible (no extra delay)
+        // RevealClosed through end of dayLength (Battle / settlement presentation pad on Testnet).
+        return GameTypes.DayState.RevealClosed;
     }
 
     function isSettled(uint256 day) external view returns (bool) {

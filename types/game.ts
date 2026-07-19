@@ -35,6 +35,8 @@ export interface GameDayState {
   phaseEndsAt: number;
   commitEndsAt: number;
   revealEndsAt: number;
+  /** Unix ms when the calendar day ends (next Commit). May equal revealEndsAt when no Battle pad. */
+  dayEndsAt?: number;
   settled: boolean;
   settlementStatus: "Pending" | "Ready" | "Complete";
 }

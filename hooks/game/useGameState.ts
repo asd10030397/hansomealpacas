@@ -81,6 +81,14 @@ export function useGameState() {
     query: { enabled: live && !!game },
   });
 
+  const revealDurationRead = useReadContract({
+    address: game ?? undefined,
+    abi: hansomeGameAbi,
+    functionName: "revealDuration",
+    chainId: GAME_CHAIN_ID,
+    query: { enabled: live && !!game },
+  });
+
   const currentDayRead = useReadContract({
     address: game ?? undefined,
     abi: hansomeGameAbi,

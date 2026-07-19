@@ -2,7 +2,16 @@
 
 import { m } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { formatEther, formatUnits, parseEther, parseUnits, maxUint256, maxUint160 } from "viem";
+import {
+  formatEther,
+  formatUnits,
+  parseEther,
+  parseUnits,
+  maxUint256,
+  maxUint160,
+  type Abi,
+  type Address,
+} from "viem";
 import {
   useBalance,
   useChainId,
@@ -33,11 +42,14 @@ import {
   UNIVERSAL_ROUTER_ADDRESS,
   robinhoodChain,
 } from "@/lib/chain";
+import {
+  formatRobinhoodWriteError,
+  sendRobinhoodContractWrite,
+} from "@/lib/game/robinhoodContractWrite";
 import { formatUsd } from "@/lib/market/format";
 import { requestWatchTokenAsset } from "@/lib/wallet/watchAsset";
 import { erc20Abi, permit2Abi, stateViewAbi, universalRouterAbi } from "@/lib/swap/abis";
 import { buildUniversalRouterCalldata } from "@/lib/swap/encoding";
-import { getSafeGasFees } from "@/lib/swap/gas";
 import { DEFAULT_SLIPPAGE_BPS, applySlippage, quoteFromPoolState } from "@/lib/swap/quote";
 
 type SwapDirection = "ethToToken" | "tokenToEth";
@@ -182,7 +194,7 @@ export function SwapCard() {
     (permit2Allowance?.[0] ?? 0n) < parsedAmountIn;
 
   const {
-    writeContract,
+    writeContractAsync,
     data: writeHash,
     isPending: isWritePending,
     error: writeError,
@@ -204,6 +216,44 @@ export function SwapCard() {
     resetWrite();
   }, [resetWrite]);
 
+  const failTx = useCallback((error: unknown, fallback: string) => {
+    setSwapPhase("idle");
+    setPendingAction(null);
+    setTxPhase("failed");
+    setTxMessage(formatRobinhoodWriteError(error, fallback));
+  }, []);
+
+  /** simulate → estimate → pin fees → sanity gate → wallet (same as game txs). */
+  const sendSwapWrite = useCallback(
+    async (input: {
+      label: string;
+      address: Address;
+      abi: Abi;
+      functionName: string;
+      args: readonly unknown[];
+      value?: bigint;
+    }) => {
+      if (!publicClient || !address) {
+        throw new Error("Wallet or RPC not ready.");
+      }
+      return sendRobinhoodContractWrite({
+        label: input.label,
+        publicClient,
+        writeContractAsync: writeContractAsync as never,
+        request: {
+          chainId: ROBINHOOD_CHAIN_ID,
+          address: input.address,
+          abi: input.abi,
+          functionName: input.functionName,
+          args: input.args,
+          account: address,
+          value: input.value,
+        },
+      });
+    },
+    [publicClient, address, writeContractAsync],
+  );
+
   useEffect(() => {
     if (!writeHash) return;
     setTxHash(writeHash);
@@ -219,62 +269,61 @@ export function SwapCard() {
     lastHandledHash.current = writeHash;
 
     void (async () => {
-      if (pendingAction === "tokenApprove") {
-        await refetchTokenAllowance();
-        setPendingAction("permit2Approve");
-        setSwapPhase("approvingPermit2");
-        setTxPhase("loading");
-        setTxMessage(t.swap.status.approvingPermit2);
-        const expiration = BigInt(Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30);
-        const gasFees = await getSafeGasFees(publicClient);
-        writeContract({
-          address: PERMIT2_ADDRESS,
-          abi: permit2Abi,
-          functionName: "approve",
-          args: [TOKEN_ADDRESS, UNIVERSAL_ROUTER_ADDRESS, maxUint160, Number(expiration)],
-          chainId: ROBINHOOD_CHAIN_ID,
-          ...gasFees,
-        });
-        return;
-      }
+      try {
+        if (pendingAction === "tokenApprove") {
+          await refetchTokenAllowance();
+          setPendingAction("permit2Approve");
+          setSwapPhase("approvingPermit2");
+          setTxPhase("loading");
+          setTxMessage(t.swap.status.approvingPermit2);
+          const expiration = BigInt(Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30);
+          await sendSwapWrite({
+            label: "swap-permit2-approve",
+            address: PERMIT2_ADDRESS,
+            abi: permit2Abi,
+            functionName: "approve",
+            args: [TOKEN_ADDRESS, UNIVERSAL_ROUTER_ADDRESS, maxUint160, Number(expiration)],
+          });
+          return;
+        }
 
-      if (pendingAction === "permit2Approve") {
-        await refetchPermit2Allowance();
-        if (!parsedAmountIn || !amountOutMin) return;
+        if (pendingAction === "permit2Approve") {
+          await refetchPermit2Allowance();
+          if (!parsedAmountIn || !amountOutMin) return;
 
-        setPendingAction("swap");
-        setSwapPhase("swapping");
-        setTxPhase("loading");
-        setTxMessage(t.swap.status.swapping);
+          setPendingAction("swap");
+          setSwapPhase("swapping");
+          setTxPhase("loading");
+          setTxMessage(t.swap.status.swapping);
 
-        const deadline = BigInt(Math.floor(Date.now() / 1000) + 1200);
-        const calldata = buildUniversalRouterCalldata(
-          direction,
-          parsedAmountIn,
-          amountOutMin,
-          deadline,
-        );
-        const gasFees = await getSafeGasFees(publicClient);
+          const deadline = BigInt(Math.floor(Date.now() / 1000) + 1200);
+          const calldata = buildUniversalRouterCalldata(
+            direction,
+            parsedAmountIn,
+            amountOutMin,
+            deadline,
+          );
+          await sendSwapWrite({
+            label: "swap-execute",
+            address: UNIVERSAL_ROUTER_ADDRESS,
+            abi: universalRouterAbi,
+            functionName: "execute",
+            args: [calldata.commands, calldata.inputs, calldata.deadline],
+            value: calldata.value,
+          });
+          return;
+        }
 
-        writeContract({
-          address: UNIVERSAL_ROUTER_ADDRESS,
-          abi: universalRouterAbi,
-          functionName: "execute",
-          args: [calldata.commands, calldata.inputs, calldata.deadline],
-          value: calldata.value,
-          chainId: ROBINHOOD_CHAIN_ID,
-          ...gasFees,
-        });
-        return;
-      }
-
-      if (pendingAction === "swap") {
-        setPendingAction(null);
-        setSwapPhase("idle");
-        setTxPhase("success");
-        setTxMessage(t.swap.status.swapComplete);
-        await Promise.all([refetchEthBalance(), refetchTokenBalance()]);
-        setAmountIn("");
+        if (pendingAction === "swap") {
+          setPendingAction(null);
+          setSwapPhase("idle");
+          setTxPhase("success");
+          setTxMessage(t.swap.status.swapComplete);
+          await Promise.all([refetchEthBalance(), refetchTokenBalance()]);
+          setAmountIn("");
+        }
+      } catch (error) {
+        failTx(error, "Swap transaction failed.");
       }
     })();
   }, [
@@ -284,8 +333,8 @@ export function SwapCard() {
     parsedAmountIn,
     amountOutMin,
     direction,
-    writeContract,
-    publicClient,
+    sendSwapWrite,
+    failTx,
     refetchTokenAllowance,
     refetchPermit2Allowance,
     refetchEthBalance,
@@ -297,11 +346,8 @@ export function SwapCard() {
 
   useEffect(() => {
     if (!writeError) return;
-    setSwapPhase("idle");
-    setPendingAction(null);
-    setTxPhase("failed");
-    setTxMessage(writeError.message);
-  }, [writeError]);
+    failTx(writeError, "Swap transaction failed.");
+  }, [writeError, failTx]);
 
   useEffect(() => {
     if (!connectError) return;
@@ -358,64 +404,61 @@ export function SwapCard() {
     if (!parsedAmountIn || parsedAmountIn <= 0n || !amountOutMin) return;
     resetTxState();
 
-    if (direction === "tokenToEth" && needsTokenApproval) {
-      setPendingAction("tokenApprove");
-      setSwapPhase("approvingToken");
+    try {
+      if (direction === "tokenToEth" && needsTokenApproval) {
+        setPendingAction("tokenApprove");
+        setSwapPhase("approvingToken");
+        setTxPhase("loading");
+        setTxMessage(t.swap.status.approvingToken);
+        await sendSwapWrite({
+          label: "swap-token-approve",
+          address: TOKEN_ADDRESS,
+          abi: erc20Abi,
+          functionName: "approve",
+          args: [PERMIT2_ADDRESS, maxUint256],
+        });
+        return;
+      }
+
+      if (direction === "tokenToEth" && needsPermit2Approval) {
+        setPendingAction("permit2Approve");
+        setSwapPhase("approvingPermit2");
+        setTxPhase("loading");
+        setTxMessage(t.swap.status.approvingPermit2);
+        const expiration = BigInt(Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30);
+        await sendSwapWrite({
+          label: "swap-permit2-approve",
+          address: PERMIT2_ADDRESS,
+          abi: permit2Abi,
+          functionName: "approve",
+          args: [TOKEN_ADDRESS, UNIVERSAL_ROUTER_ADDRESS, maxUint160, Number(expiration)],
+        });
+        return;
+      }
+
+      setPendingAction("swap");
+      setSwapPhase("swapping");
       setTxPhase("loading");
-      setTxMessage(t.swap.status.approvingToken);
-      const gasFees = await getSafeGasFees(publicClient);
-      writeContract({
-        address: TOKEN_ADDRESS,
-        abi: erc20Abi,
-        functionName: "approve",
-        args: [PERMIT2_ADDRESS, maxUint256],
-        chainId: ROBINHOOD_CHAIN_ID,
-        ...gasFees,
+      setTxMessage(t.swap.status.swapping);
+
+      const deadline = BigInt(Math.floor(Date.now() / 1000) + 1200);
+      const calldata = buildUniversalRouterCalldata(
+        direction,
+        parsedAmountIn,
+        amountOutMin,
+        deadline,
+      );
+      await sendSwapWrite({
+        label: "swap-execute",
+        address: UNIVERSAL_ROUTER_ADDRESS,
+        abi: universalRouterAbi,
+        functionName: "execute",
+        args: [calldata.commands, calldata.inputs, calldata.deadline],
+        value: calldata.value,
       });
-      return;
+    } catch (error) {
+      failTx(error, "Swap transaction failed.");
     }
-
-    if (direction === "tokenToEth" && needsPermit2Approval) {
-      setPendingAction("permit2Approve");
-      setSwapPhase("approvingPermit2");
-      setTxPhase("loading");
-      setTxMessage(t.swap.status.approvingPermit2);
-      const expiration = BigInt(Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30);
-      const gasFees = await getSafeGasFees(publicClient);
-      writeContract({
-        address: PERMIT2_ADDRESS,
-        abi: permit2Abi,
-        functionName: "approve",
-        args: [TOKEN_ADDRESS, UNIVERSAL_ROUTER_ADDRESS, maxUint160, Number(expiration)],
-        chainId: ROBINHOOD_CHAIN_ID,
-        ...gasFees,
-      });
-      return;
-    }
-
-    setPendingAction("swap");
-    setSwapPhase("swapping");
-    setTxPhase("loading");
-    setTxMessage(t.swap.status.swapping);
-
-    const deadline = BigInt(Math.floor(Date.now() / 1000) + 1200);
-    const calldata = buildUniversalRouterCalldata(
-      direction,
-      parsedAmountIn,
-      amountOutMin,
-      deadline,
-    );
-    const gasFees = await getSafeGasFees(publicClient);
-
-    writeContract({
-      address: UNIVERSAL_ROUTER_ADDRESS,
-      abi: universalRouterAbi,
-      functionName: "execute",
-      args: [calldata.commands, calldata.inputs, calldata.deadline],
-      value: calldata.value,
-      chainId: ROBINHOOD_CHAIN_ID,
-      ...gasFees,
-    });
   }, [
     parsedAmountIn,
     amountOutMin,
@@ -423,8 +466,8 @@ export function SwapCard() {
     needsTokenApproval,
     needsPermit2Approval,
     resetTxState,
-    writeContract,
-    publicClient,
+    sendSwapWrite,
+    failTx,
     t.swap.status.approvingToken,
     t.swap.status.approvingPermit2,
     t.swap.status.swapping,

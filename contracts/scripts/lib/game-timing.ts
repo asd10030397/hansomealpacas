@@ -1,12 +1,13 @@
 /**
  * Day-cycle timings for HansomeGame deployments.
  *
- * Production / Mainnet GDS: Commit 20h + Reveal 4h = Day 24h.
- * Robinhood Testnet (default): Commit 2m + Reveal 2m = Day 4m for fast loop QA.
+ * Production / Mainnet GDS: Commit 20h + Reveal 4h = Day 24h (no Battle pad).
+ * Robinhood Testnet (default): Commit 2m + Reveal 2m + Battle 2m = Day 6m.
  *
  * Overrides (seconds):
  *   GAME_DAY_LENGTH_SEC
  *   GAME_COMMIT_DURATION_SEC
+ *   GAME_REVEAL_DURATION_SEC  — optional; default day - commit when day/commit set
  *   GAME_FAST_TIMING=0  — force production timings even on robinhoodTestnet
  *   GAME_FAST_TIMING=1  — force fast timings on any network
  */
@@ -15,39 +16,51 @@ export const PROD_COMMIT_DURATION_SEC = 20 * 3600;
 export const PROD_REVEAL_DURATION_SEC = 4 * 3600;
 export const PROD_DAY_LENGTH_SEC = PROD_COMMIT_DURATION_SEC + PROD_REVEAL_DURATION_SEC;
 
-/** Testnet QA: 2 min commit + 2 min reveal; settlement eligible immediately after reveal. */
+/** Testnet QA: 2 min commit + 2 min reveal + 2 min battle presentation. */
 export const TESTNET_COMMIT_DURATION_SEC = 2 * 60;
 export const TESTNET_REVEAL_DURATION_SEC = 2 * 60;
+export const TESTNET_BATTLE_DURATION_SEC = 2 * 60;
 export const TESTNET_DAY_LENGTH_SEC =
-  TESTNET_COMMIT_DURATION_SEC + TESTNET_REVEAL_DURATION_SEC;
+  TESTNET_COMMIT_DURATION_SEC +
+  TESTNET_REVEAL_DURATION_SEC +
+  TESTNET_BATTLE_DURATION_SEC;
 
 export type GameTiming = {
   dayLengthSec: number;
   commitDurationSec: number;
   revealDurationSec: number;
+  battleDurationSec: number;
   fast: boolean;
 };
 
 export function resolveGameTiming(networkName: string): GameTiming {
   const envDay = process.env.GAME_DAY_LENGTH_SEC?.trim();
   const envCommit = process.env.GAME_COMMIT_DURATION_SEC?.trim();
+  const envReveal = process.env.GAME_REVEAL_DURATION_SEC?.trim();
+
   if (envDay && envCommit) {
     const dayLengthSec = Number(envDay);
     const commitDurationSec = Number(envCommit);
+    const revealDurationSec = envReveal
+      ? Number(envReveal)
+      : dayLengthSec - commitDurationSec;
     if (
       !Number.isFinite(dayLengthSec) ||
       !Number.isFinite(commitDurationSec) ||
+      !Number.isFinite(revealDurationSec) ||
       commitDurationSec <= 0 ||
-      commitDurationSec >= dayLengthSec
+      revealDurationSec <= 0 ||
+      commitDurationSec + revealDurationSec > dayLengthSec
     ) {
       throw new Error(
-        "Invalid GAME_DAY_LENGTH_SEC / GAME_COMMIT_DURATION_SEC (need 0 < commit < day)",
+        "Invalid GAME_* timing (need commit > 0, reveal > 0, commit + reveal <= day)",
       );
     }
     return {
       dayLengthSec,
       commitDurationSec,
-      revealDurationSec: dayLengthSec - commitDurationSec,
+      revealDurationSec,
+      battleDurationSec: dayLengthSec - commitDurationSec - revealDurationSec,
       fast: dayLengthSec < PROD_DAY_LENGTH_SEC,
     };
   }
@@ -62,6 +75,7 @@ export function resolveGameTiming(networkName: string): GameTiming {
       dayLengthSec: TESTNET_DAY_LENGTH_SEC,
       commitDurationSec: TESTNET_COMMIT_DURATION_SEC,
       revealDurationSec: TESTNET_REVEAL_DURATION_SEC,
+      battleDurationSec: TESTNET_BATTLE_DURATION_SEC,
       fast: true,
     };
   }
@@ -70,6 +84,7 @@ export function resolveGameTiming(networkName: string): GameTiming {
     dayLengthSec: PROD_DAY_LENGTH_SEC,
     commitDurationSec: PROD_COMMIT_DURATION_SEC,
     revealDurationSec: PROD_REVEAL_DURATION_SEC,
+    battleDurationSec: 0,
     fast: false,
   };
 }

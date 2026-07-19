@@ -25,6 +25,7 @@ const Class = {
 
 const DAY = 24 * 3600;
 const COMMIT = 20 * 3600;
+const REVEAL = DAY - COMMIT;
 const G0 = ethers.parseEther("900000000");
 const R0 = ethers.parseEther("400000");
 
@@ -119,6 +120,7 @@ describe("TestHANSOME (Robinhood Testnet reward token)", () => {
         dayZero,
         DAY,
         COMMIT,
+        REVEAL,
         owner.address,
       )) as HansomeGame;
       await game.waitForDeployment();

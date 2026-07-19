@@ -5,7 +5,7 @@ import {
   type UiLoopPhase,
 } from "@/lib/game/uiLoopPhase";
 
-/** Player-facing daily loop — Commit → Result (UI timeline only). */
+/** Player-facing daily loop — Commit → Reveal → Battle → Claim. */
 export const PHASE_FLOW = UI_LOOP_FLOW;
 
 export type PhaseFlowId = UiLoopPhase;
@@ -23,7 +23,7 @@ export type PhaseStatusView = {
   phase: GamePhase;
   /** Player-facing loop phase. */
   loopPhase: UiLoopPhase;
-  /** Countdown for the active window (commit end or result/reveal end). */
+  /** Countdown for the active window. */
   phaseEndsAt: number;
   /** When settlement becomes eligible (= reveal window end). */
   settlementAt: number;
@@ -31,23 +31,27 @@ export type PhaseStatusView = {
   timeline: PhaseTimelineStep[];
 };
 
+function phaseEndsAtFor(day: GameDayState, phase: GamePhase): number {
+  if (phase === "COMMIT") return day.commitEndsAt;
+  if (phase === "REVEAL") return day.revealEndsAt;
+  // Battle / Claim: count down the day pad (or stay at reveal end when pad is 0).
+  return day.dayEndsAt ?? day.revealEndsAt;
+}
+
 export function buildPhaseStatusView(
   day: GameDayState,
   phase: GamePhase = day.phase,
 ): PhaseStatusView {
   const loopPhase = toUiLoopPhase(phase);
-  const safeIdx = loopPhase === "COMMIT" ? 0 : 1;
+  const safeIdx = Math.max(0, PHASE_FLOW.indexOf(loopPhase));
   const nextPhase =
     safeIdx < PHASE_FLOW.length - 1 ? PHASE_FLOW[safeIdx + 1]! : null;
-
-  const phaseEndsAt =
-    phase === "COMMIT" ? day.commitEndsAt : day.revealEndsAt;
 
   return {
     day: day.day,
     phase,
     loopPhase,
-    phaseEndsAt,
+    phaseEndsAt: phaseEndsAtFor(day, phase),
     settlementAt: day.revealEndsAt,
     nextPhase,
     timeline: PHASE_FLOW.map((id, i) => ({

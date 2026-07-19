@@ -1,40 +1,37 @@
+/**
+ * Swap fee helpers — same Robinhood pipeline as game txs.
+ *
+ * MetaMask's EIP-1559 feeHistory prediction on Robinhood invents absurd
+ * "Market" fees (tens of thousands of ETH). Never omit maxFeePerGas /
+ * maxPriorityFeePerGas, and never fall back to wallet fee estimation.
+ *
+ * Prefer `sendRobinhoodContractWrite` for every Swap write (approve / Permit2 /
+ * Universal Router execute). This module re-exports the shared fee guards.
+ */
+
 import type { PublicClient } from "viem";
+import {
+  ABNORMAL_NETWORK_FEE_MESSAGE,
+  assertSaneMintNetworkFee,
+  buildSafeMintFees,
+} from "@/lib/game/mintTx";
+
+export {
+  ABNORMAL_NETWORK_FEE_MESSAGE,
+  assertSaneMintNetworkFee,
+  buildSafeMintFees,
+};
 
 /**
- * Some wallets (MetaMask in particular) run their own EIP-1559 fee prediction
- * on chains they don't have first-class support for, and on Robinhood Chain
- * this has been observed to blow up into a nonsensical estimate (seen: a
- * "Market" gas estimate showing tens of millions of USD, while the network's
- * actual base fee / priority fee were both ~0). See:
- * https://github.com/MetaMask/metamask-extension/issues/23289 and similar
- * reports for other custom/low-traffic EVM chains.
- *
- * Passing explicit `maxFeePerGas` / `maxPriorityFeePerGas` on the transaction
- * request (computed here from the chain's real current gas price) makes the
- * wallet use *our* numbers directly instead of running its own estimation —
- * sidestepping the bug entirely rather than trying to work around it in the
- * wallet UI. Overall cost stays negligible either way (Robinhood Chain gas
- * price is a small fraction of a gwei), so a generous multiplier here is
- * still effectively free while comfortably absorbing base-fee drift between
- * building and mining the transaction.
+ * Pin EIP-1559 caps from eth_gasPrice only.
+ * Throws on failure — never returns undefined (undefined = MetaMask feeHistory bug).
  */
 export async function getSafeGasFees(
   publicClient: PublicClient | undefined,
-): Promise<{ maxFeePerGas: bigint; maxPriorityFeePerGas: bigint } | undefined> {
-  if (!publicClient) return undefined;
-
-  try {
-    const gasPrice = await publicClient.getGasPrice();
-    // Robinhood Chain's own eth_maxPriorityFeePerGas reports 0 — validators
-    // aren't paid a tip here, only the base fee applies.
-    const maxPriorityFeePerGas = 0n;
-    // 4x current gas price comfortably covers normal base-fee drift while
-    // still being a tiny absolute amount (gas price is sub-gwei).
-    const maxFeePerGas = gasPrice * 4n;
-
-    return { maxFeePerGas, maxPriorityFeePerGas };
-  } catch (error) {
-    console.warn("[gas] getSafeGasFees failed, falling back to wallet defaults:", error);
-    return undefined;
+): Promise<{ maxFeePerGas: bigint; maxPriorityFeePerGas: bigint }> {
+  if (!publicClient) {
+    throw new Error("RPC client unavailable — cannot pin Robinhood gas fees.");
   }
+  const gasPrice = await publicClient.getGasPrice();
+  return buildSafeMintFees(gasPrice);
 }
