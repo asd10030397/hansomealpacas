@@ -103,8 +103,8 @@ export function PhaseStatusBody({
           <p className="phase-status__value">
             {view.nextPhase === "RESULT"
               ? copy.resultPhaseName
-              : view.nextPhase
-                ? copy.phaseName(view.nextPhase === "COMMIT" ? "COMMIT" : "REVEAL")
+              : view.nextPhase === "COMMIT"
+                ? copy.phaseName("COMMIT")
                 : "—"}
           </p>
         </div>

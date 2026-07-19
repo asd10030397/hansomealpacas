@@ -5,7 +5,7 @@ import {
   type UiLoopPhase,
 } from "@/lib/game/uiLoopPhase";
 
-/** Player-facing daily loop — Commit → Reveal → Battle → Claim. */
+/** Player-facing daily loop — Commit → Result. */
 export const PHASE_FLOW = UI_LOOP_FLOW;
 
 export type PhaseFlowId = UiLoopPhase;
