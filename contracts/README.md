@@ -94,6 +94,27 @@ npx hardhat run scripts/sync-genesis-env.ts --network robinhoodTestnet
 Writes `deployments/robinhoodTestnet-genesis.json`. Sale identity bytes are
 saved as `*-genesis-identities.bin` (gitignored — needed for later reveal).
 
+### Gameplay suite (testnet)
+
+```bash
+# Requires Genesis deploy + deployer ETH. Uses reserved NFT #1–#10 identities.
+# Funds GameTreasury via a dedicated HansomeAlpacas mint (deployer has 0 of the
+# public testnet HANSOME); set GAME_TOKEN_ADDRESS to reuse another ERC-20.
+npx hardhat run scripts/deploy-game.ts --network robinhoodTestnet
+
+# Sync Next.js env (game + distributor addresses):
+npx hardhat run scripts/sync-game-env.ts --network robinhoodTestnet
+
+# Live Commit → Reveal → Settle → Claim (resumable).
+# Before Commit: requires CommitOpen — aborts immediately if Commit already ended
+# (does not wait for the Commit window to close). For next-round auto-start:
+#   set GAME_FLOW_AUTO_NEXT=1
+npx hardhat run scripts/validate-game-flow.ts --network robinhoodTestnet
+```
+
+Writes `deployments/robinhoodTestnet-game.json`.
+
+
 ## Robinhood Chain networks
 
 | Network | Chain ID | RPC |

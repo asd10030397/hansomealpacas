@@ -1,0 +1,68 @@
+{
+  "totalSec": 25.483,
+  "endingStartSec": 21.683,
+  "leadInMs": 1323,
+  "bgmBase": 0.22,
+  "bgmDucked": 0.07,
+  "sfxGain": 4.2,
+  "fxDelayMs": 950,
+  "duckReleaseSec": 0.28,
+  "events": [
+    {
+      "label": "guardian",
+      "startSec": 2.273,
+      "endSec": 3.573,
+      "durationMs": 1200,
+      "sfx": "C:\\hansomealpacas\\public\\audio\\game\\abilities\\guardian\\effect.mp3"
+    },
+    {
+      "label": "runner",
+      "startSec": 4.743,
+      "endSec": 6.042999999999999,
+      "durationMs": 1200,
+      "sfx": "C:\\hansomealpacas\\public\\audio\\game\\abilities\\runner\\effect.mp3"
+    },
+    {
+      "label": "lucky",
+      "startSec": 7.213,
+      "endSec": 8.613,
+      "durationMs": 1300,
+      "sfx": "C:\\hansomealpacas\\public\\audio\\game\\abilities\\lucky\\effect.mp3"
+    },
+    {
+      "label": "farmer",
+      "startSec": 9.783,
+      "endSec": 11.283,
+      "durationMs": 1400,
+      "sfx": "C:\\hansomealpacas\\public\\audio\\game\\abilities\\farmer\\effect.mp3"
+    },
+    {
+      "label": "alpaca-hunted",
+      "startSec": 12.453,
+      "endSec": 13.753,
+      "durationMs": 1200,
+      "sfx": "C:\\hansomealpacas\\public\\audio\\game\\settlement-results\\alpaca-hunted\\effect.mp3"
+    },
+    {
+      "label": "alpaca-safe",
+      "startSec": 14.923,
+      "endSec": 16.273,
+      "durationMs": 1250,
+      "sfx": "C:\\hansomealpacas\\public\\audio\\game\\settlement-results\\alpaca-safe\\effect.mp3"
+    },
+    {
+      "label": "cougar-hunt-success",
+      "startSec": 17.443,
+      "endSec": 18.843,
+      "durationMs": 1300,
+      "sfx": "C:\\hansomealpacas\\public\\audio\\game\\settlement-results\\cougar-hunt-success\\effect.mp3"
+    },
+    {
+      "label": "cougar-hunt-failed",
+      "startSec": 20.013,
+      "endSec": 21.463,
+      "durationMs": 1350,
+      "sfx": "C:\\hansomealpacas\\public\\audio\\game\\settlement-results\\cougar-hunt-failed\\effect.mp3"
+    }
+  ]
+}

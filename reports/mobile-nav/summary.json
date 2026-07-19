@@ -1,5 +1,5 @@
 {
-  "base": "http://localhost:3000",
+  "base": "https://game.hansomealpacas.xyz",
   "results": [
     {
       "width": 320,
@@ -46,8 +46,8 @@
         "hasDocs": true,
         "hasRewards": true
       },
-      "lbPath": "/game/leaderboard",
-      "docsPath": "/game/docs"
+      "lbPath": "/leaderboard",
+      "docsPath": "/docs"
     },
     {
       "width": 360,
@@ -94,8 +94,8 @@
         "hasDocs": true,
         "hasRewards": true
       },
-      "lbPath": "/game/leaderboard",
-      "docsPath": "/game/docs"
+      "lbPath": "/leaderboard",
+      "docsPath": "/docs"
     },
     {
       "width": 375,
@@ -142,8 +142,8 @@
         "hasDocs": true,
         "hasRewards": true
       },
-      "lbPath": "/game/leaderboard",
-      "docsPath": "/game/docs"
+      "lbPath": "/leaderboard",
+      "docsPath": "/docs"
     },
     {
       "width": 390,
@@ -190,8 +190,8 @@
         "hasDocs": true,
         "hasRewards": true
       },
-      "lbPath": "/game/leaderboard",
-      "docsPath": "/game/docs"
+      "lbPath": "/leaderboard",
+      "docsPath": "/docs"
     },
     {
       "width": 393,
@@ -238,8 +238,8 @@
         "hasDocs": true,
         "hasRewards": true
       },
-      "lbPath": "/game/leaderboard",
-      "docsPath": "/game/docs"
+      "lbPath": "/leaderboard",
+      "docsPath": "/docs"
     },
     {
       "width": 412,
@@ -286,8 +286,8 @@
         "hasDocs": true,
         "hasRewards": true
       },
-      "lbPath": "/game/leaderboard",
-      "docsPath": "/game/docs"
+      "lbPath": "/leaderboard",
+      "docsPath": "/docs"
     },
     {
       "width": 430,
@@ -334,8 +334,8 @@
         "hasDocs": true,
         "hasRewards": true
       },
-      "lbPath": "/game/leaderboard",
-      "docsPath": "/game/docs"
+      "lbPath": "/leaderboard",
+      "docsPath": "/docs"
     }
   ]
 }

@@ -10,6 +10,12 @@ import {GameTypes} from "./GameTypes.sol";
 interface IHansomeGame {
     function currentDay() external view returns (uint256);
 
+    function dayLength() external view returns (uint256);
+
+    function commitDuration() external view returns (uint256);
+
+    function revealDuration() external view returns (uint256);
+
     function dayState(uint256 day) external view returns (GameTypes.DayState);
 
     function commit(uint256 tokenId, uint256 day, bytes32 commitHash) external;

@@ -65,6 +65,22 @@ export function useGameState() {
     query: { enabled: live && !!game },
   });
 
+  const dayLengthRead = useReadContract({
+    address: game ?? undefined,
+    abi: hansomeGameAbi,
+    functionName: "dayLength",
+    chainId: GAME_CHAIN_ID,
+    query: { enabled: live && !!game },
+  });
+
+  const commitDurationRead = useReadContract({
+    address: game ?? undefined,
+    abi: hansomeGameAbi,
+    functionName: "commitDuration",
+    chainId: GAME_CHAIN_ID,
+    query: { enabled: live && !!game },
+  });
+
   const currentDayRead = useReadContract({
     address: game ?? undefined,
     abi: hansomeGameAbi,
@@ -99,9 +115,14 @@ export function useGameState() {
     const day = Number(currentDayRead.data);
     const state = Number(dayStateRead.data ?? DS.Idle);
     const settled = Boolean(settledRead.data);
-    const startSec = dayZero + day * DAY_LENGTH_SEC;
-    const commitEndsAt = (startSec + COMMIT_DURATION_SEC) * 1000;
-    const revealEndsAt = (startSec + COMMIT_DURATION_SEC + REVEAL_DURATION_SEC) * 1000;
+    // Prefer on-chain immutables (Testnet fast timing); fall back to env/GDS constants.
+    const dayLen = Number(dayLengthRead.data ?? DAY_LENGTH_SEC);
+    const commitDur = Number(commitDurationRead.data ?? COMMIT_DURATION_SEC);
+    const revealDur =
+      dayLen > commitDur ? dayLen - commitDur : REVEAL_DURATION_SEC;
+    const startSec = dayZero + day * dayLen;
+    const commitEndsAt = (startSec + commitDur) * 1000;
+    const revealEndsAt = (startSec + commitDur + revealDur) * 1000;
     const phase = phaseFromDayState(state, settled);
     let phaseEndsAt = commitEndsAt;
     if (phase === "REVEAL") phaseEndsAt = revealEndsAt;
@@ -122,6 +143,8 @@ export function useGameState() {
   }, [
     live,
     dayZeroRead.data,
+    dayLengthRead.data,
+    commitDurationRead.data,
     currentDayRead.data,
     dayStateRead.data,
     settledRead.data,

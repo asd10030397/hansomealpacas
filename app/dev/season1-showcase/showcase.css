@@ -1,0 +1,381 @@
+/* Season 1 social showcase — 1920×1080 composition */
+
+.s1-show {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(240, 196, 74, 0.08), transparent 55%),
+    radial-gradient(ellipse at 80% 80%, rgba(110, 184, 224, 0.06), transparent 45%),
+    #0e121c;
+  color: var(--hg-cream, #f3ebe0);
+  font-family: var(--font-body), system-ui, sans-serif;
+  overflow: hidden;
+}
+
+.s1-show__preload {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.s1-show__preload img {
+  width: 1px;
+  height: 1px;
+}
+
+.s1-show__frame {
+  width: min(100vw, 1920px);
+  height: min(100vh, 1080px);
+  aspect-ratio: 16 / 9;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: 1.5rem 2rem 1.25rem;
+  box-sizing: border-box;
+}
+
+.s1-show__hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 3px solid #0d1018;
+  box-shadow: 0 4px 0 #1a2030;
+}
+
+.s1-show__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.s1-show__logo-mark {
+  image-rendering: pixelated;
+  filter: drop-shadow(2px 2px 0 #0a0c12);
+}
+
+.s1-show__brand-name {
+  margin: 0;
+  font-family: var(--font-anton), monospace;
+  font-size: 1.35rem;
+  letter-spacing: 0.08em;
+  color: #f0c44a;
+  text-shadow: 2px 2px 0 #0a0c12;
+}
+
+.s1-show__brand-sub {
+  margin: 0.1rem 0 0;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  color: #9aa3b5;
+}
+
+.s1-show__phase {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.s1-show__phase-chip {
+  font-family: var(--font-anton), monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.65rem;
+  border: 2px solid #7a281c;
+  background: #c44b3a;
+  color: #f3ebe0;
+  box-shadow: 3px 3px 0 #0a0c12;
+}
+
+.s1-show__phase-meta {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: #9aa3b5;
+}
+
+.s1-show__stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+}
+
+.s1-show__card {
+  display: grid;
+  grid-template-columns: minmax(300px, 440px) minmax(240px, 360px);
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.s1-show__nft-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 4px solid #0d1018;
+  background: #121826;
+  box-shadow:
+    0 0 0 2px #5a6478,
+    8px 8px 0 #0a0c12;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* NFT is the visual hero — always under FX but never blanked out */
+.s1-show__nft {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+  display: block;
+  opacity: 0;
+  transform: scale(0.94) translateY(10px);
+  transition:
+    opacity 0.45s cubic-bezier(0.22, 0.9, 0.3, 1),
+    transform 0.45s cubic-bezier(0.22, 0.9, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.s1-show__nft--in {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.s1-show__fx {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.s1-show__fx--on {
+  opacity: 1;
+}
+
+/* Keep character readable — FX sits in front, never blanks the NFT */
+.s1-show__fx .hg-result-fx,
+.s1-show__fx .hg-ability-fx {
+  border-radius: 0;
+  background: transparent !important;
+}
+
+.s1-show__fx .hg-result-fx__banner,
+.s1-show__fx .hg-ability-fx__banner {
+  background: rgba(10, 14, 22, 0.62);
+  bottom: 0.45rem;
+}
+
+.s1-show__fx .hg-ability-fx__stage,
+.s1-show__fx .hg-result-fx__stage {
+  transform: scale(0.88);
+  transform-origin: center 42%;
+}
+
+/* Soften burst/flash so the NFT face stays readable at FX start */
+.s1-show__fx .hg-ability-fx__burst,
+.s1-show__fx .hg-result-fx__flash {
+  opacity: 0.55;
+}
+
+.s1-show__meta {
+  display: grid;
+  gap: 0.45rem;
+  text-align: left;
+  opacity: 0;
+  transform: translateX(12px);
+  transition:
+    opacity 0.4s ease 0.08s,
+    transform 0.4s ease 0.08s;
+}
+
+.s1-show__meta--in {
+  opacity: 1;
+  transform: none;
+}
+
+.s1-show__token {
+  margin: 0;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  color: #f0c44a;
+}
+
+.s1-show__token span {
+  color: #9aa3b5;
+  font-size: 0.75rem;
+}
+
+.s1-show__title {
+  margin: 0;
+  font-family: var(--font-anton), monospace;
+  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+  letter-spacing: 0.04em;
+  color: #f3ebe0;
+  text-shadow: 3px 3px 0 #0a0c12;
+}
+
+.s1-show__subtitle {
+  margin: 0;
+  font-size: 1rem;
+  color: #c8d0e0;
+}
+
+.s1-show__banner {
+  margin: 0.6rem 0 0;
+  display: inline-block;
+  width: fit-content;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  padding: 0.35rem 0.7rem;
+  border: 2px solid rgba(154, 163, 181, 0.45);
+  background: rgba(10, 14, 22, 0.85);
+  color: #9aa3b5;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.s1-show__banner--on {
+  border-color: rgba(240, 196, 74, 0.55);
+  color: #f7f3e8;
+}
+
+.s1-show__ending {
+  display: grid;
+  justify-items: center;
+  gap: 0.85rem;
+  text-align: center;
+  animation: s1-ending-in 0.7s ease both;
+}
+
+@keyframes s1-ending-in {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.s1-show__ending-logo {
+  width: min(220px, 28vw);
+  height: auto;
+  filter: drop-shadow(0 4px 0 #0a0c12);
+}
+
+.s1-show__ending-title {
+  margin: 0.4rem 0 0;
+  font-family: var(--font-anton), monospace;
+  font-size: clamp(1.5rem, 3.4vw, 2.6rem);
+  letter-spacing: 0.05em;
+  color: #f0c44a;
+  text-shadow: 3px 3px 0 #0a0c12;
+}
+
+.s1-show__ending-sub {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.6vw, 1.25rem);
+  letter-spacing: 0.04em;
+  color: #e8dfd2;
+}
+
+.s1-show__idle {
+  text-align: center;
+}
+
+.s1-show__idle-title {
+  margin: 0;
+  font-family: var(--font-anton), monospace;
+  font-size: 1.5rem;
+  color: #f0c44a;
+}
+
+.s1-show__idle-sub {
+  margin: 0.5rem 0 0;
+  color: #9aa3b5;
+}
+
+.s1-show__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.65rem;
+  border-top: 2px solid #2a3348;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9aa3b5;
+}
+
+.s1-show__footer-right {
+  color: #f0c44a;
+}
+
+.s1-show__start {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 10000;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  padding: 0.7rem 1.2rem;
+  border: 3px solid #9a6a12;
+  background: #e8b03a;
+  color: #1a1520;
+  box-shadow: 4px 4px 0 #0a0c12;
+  cursor: pointer;
+}
+
+.s1-show[data-record="1"] .s1-show__start {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .s1-show__card {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .s1-show__nft-wrap {
+    width: min(70vw, 320px);
+  }
+
+  .s1-show__meta {
+    justify-items: center;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s1-show__nft,
+  .s1-show__meta,
+  .s1-show__fx,
+  .s1-show__ending {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .s1-show__nft--in,
+  .s1-show__meta--in {
+    opacity: 1;
+    transform: none;
+  }
+}

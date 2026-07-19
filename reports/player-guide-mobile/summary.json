@@ -1,6 +1,6 @@
 {
-  "base": "http://localhost:3000",
-  "guide": "http://localhost:3000/game/docs/guide",
+  "base": "https://game.hansomealpacas.xyz",
+  "guide": "https://game.hansomealpacas.xyz/docs/guide",
   "results": [
     {
       "vp": "iphone-se",

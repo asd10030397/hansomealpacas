@@ -125,6 +125,21 @@ export type GameMessages = {
     demoPhaseTitle: string;
     demoPhaseEyebrow: string;
   };
+  phaseStatus: {
+    gameStatus: string;
+    eyebrow: string;
+    dayLabel: string;
+    dayValue: (day: number) => string;
+    phaseLabel: string;
+    timeRemainingLabel: string;
+    endsInLabel: (phase: "COMMIT" | "REVEAL" | "SETTLEMENT" | "CLAIM") => string;
+    nextPhaseLabel: string;
+    settlementInLabel: string;
+    settlementReady: string;
+    settlementDone: string;
+    timelineAria: string;
+    help: Record<"COMMIT" | "REVEAL" | "SETTLEMENT" | "CLAIM", string>;
+  };
   launch: {
     eyebrow: string;
     title: string;

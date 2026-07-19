@@ -347,7 +347,7 @@ export const en: Messages = {
       ],
       loopLabel: "Each day, players make strategic decisions through the game's:",
       closing: [
-        "Commit → Reveal → Settlement → Claim",
+        "Commit Move → Reveal Move → Settlement → Claim Rewards",
         "Different NFT traits and abilities influence gameplay, creating a unique experience for every holder.",
         "This Litepaper provides only a simple overview of the game ecosystem.",
         "For detailed gameplay mechanics, NFT abilities, locations, reward pools, settlement rules, and claiming instructions, please visit the Game section.",

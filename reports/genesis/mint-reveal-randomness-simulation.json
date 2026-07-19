@@ -1,0 +1,382 @@
+{
+  "generatedAt": "2026-07-19T09:44:56.464Z",
+  "architecture": {
+    "algorithm": "Fisher–Yates (_fyTake) over 540 committed packed identities",
+    "when": "After sell-out + VRF/mock entropy + processReveal (not at each mint)",
+    "tokenIdAtMint": "Sequential #11..#550 (counter only)",
+    "identityAtReveal": "Random permutation of remaining deck onto token slots",
+    "reserved": "#1–#10 fixed; never enter sale FY deck",
+    "prediction": "Public cannot predict next identity until reveal seed is known post-collectionRevealed",
+    "userExampleDifference": "User example Mint#1→Token#347 is random TOKEN ID at mint. Current ABI mints sequential tokenIds and randomizes IDENTITY (side/class/metadata) at reveal."
+  },
+  "fixedSeedRun": {
+    "seed": "0x7e764e44e6fc2f7e7a90072e6345ded047ed8e39c53f60bdcba46b78e4163d35",
+    "reservedExcludedFromSale": true,
+    "saleMints": 540,
+    "totalSupply": 550,
+    "composition": {
+      "saleAlpacas": 490,
+      "saleCougars": 50,
+      "reservedAlpacas": 10,
+      "expectedSaleAlpacas": 490,
+      "expectedSaleCougars": 50,
+      "classCounts": {
+        "Common": 479,
+        "Lucky": 3,
+        "Runner": 2,
+        "None": 50,
+        "Guardian": 3,
+        "Farmer": 3
+      }
+    },
+    "integrity": {
+      "everyIdentityOnce": true,
+      "everySaleTokenOnce": true,
+      "noDuplicates": true,
+      "reservedFixed": true
+    },
+    "sequentiality": {
+      "tokenIdConsecutivePairs": 539,
+      "tokenIdsAreSequentialByDesign": true,
+      "packageIdentityConsecutivePairs": 1,
+      "packageIdentityLooksShuffled": true,
+      "mintOrderEqualsPackageOrderCount": 0
+    },
+    "moduloBias": {
+      "note": "keccak256(seed,salt) % n for n<=540; theoretical max relative bias < n/2^256 ≈ 540/2^256",
+      "maxRelativeBiasUpperBound": 4.663531019751e-75,
+      "practicallyUnbiased": true
+    },
+    "samples": [
+      {
+        "mintIndex": 1,
+        "tokenId": 11,
+        "identityIndex": 139,
+        "packageIdentity": 150,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mintIndex": 2,
+        "tokenId": 12,
+        "identityIndex": 72,
+        "packageIdentity": 83,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mintIndex": 3,
+        "tokenId": 13,
+        "identityIndex": 121,
+        "packageIdentity": 132,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mintIndex": 4,
+        "tokenId": 14,
+        "identityIndex": 536,
+        "packageIdentity": 547,
+        "side": "Alpaca",
+        "class": "Lucky"
+      },
+      {
+        "mintIndex": 50,
+        "tokenId": 60,
+        "identityIndex": 350,
+        "packageIdentity": 361,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mintIndex": 101,
+        "tokenId": 111,
+        "identityIndex": 438,
+        "packageIdentity": 449,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mintIndex": 251,
+        "tokenId": 261,
+        "identityIndex": 241,
+        "packageIdentity": 252,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mintIndex": 540,
+        "tokenId": 550,
+        "identityIndex": 178,
+        "packageIdentity": 189,
+        "side": "Alpaca",
+        "class": "Common"
+      }
+    ],
+    "firstTenSale": [
+      {
+        "mint": 1,
+        "tokenId": 11,
+        "packageIdentity": 150,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mint": 2,
+        "tokenId": 12,
+        "packageIdentity": 83,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mint": 3,
+        "tokenId": 13,
+        "packageIdentity": 132,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mint": 4,
+        "tokenId": 14,
+        "packageIdentity": 547,
+        "side": "Alpaca",
+        "class": "Lucky"
+      },
+      {
+        "mint": 5,
+        "tokenId": 15,
+        "packageIdentity": 514,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mint": 6,
+        "tokenId": 16,
+        "packageIdentity": 436,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mint": 7,
+        "tokenId": 17,
+        "packageIdentity": 278,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mint": 8,
+        "tokenId": 18,
+        "packageIdentity": 365,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mint": 9,
+        "tokenId": 19,
+        "packageIdentity": 550,
+        "side": "Alpaca",
+        "class": "Runner"
+      },
+      {
+        "mint": 10,
+        "tokenId": 20,
+        "packageIdentity": 534,
+        "side": "Alpaca",
+        "class": "Common"
+      }
+    ]
+  },
+  "randomSeedRun": {
+    "seed": "0xc1ba419d2b5d1c87126be90f8aefba2c48eebb881b20147da282fdde40fc4d64",
+    "reservedExcludedFromSale": true,
+    "saleMints": 540,
+    "totalSupply": 550,
+    "composition": {
+      "saleAlpacas": 490,
+      "saleCougars": 50,
+      "reservedAlpacas": 10,
+      "expectedSaleAlpacas": 490,
+      "expectedSaleCougars": 50,
+      "classCounts": {
+        "Common": 479,
+        "Runner": 2,
+        "None": 50,
+        "Guardian": 3,
+        "Farmer": 3,
+        "Lucky": 3
+      }
+    },
+    "integrity": {
+      "everyIdentityOnce": true,
+      "everySaleTokenOnce": true,
+      "noDuplicates": true,
+      "reservedFixed": true
+    },
+    "sequentiality": {
+      "tokenIdConsecutivePairs": 539,
+      "tokenIdsAreSequentialByDesign": true,
+      "packageIdentityConsecutivePairs": 3,
+      "packageIdentityLooksShuffled": true,
+      "mintOrderEqualsPackageOrderCount": 1
+    },
+    "moduloBias": {
+      "note": "keccak256(seed,salt) % n for n<=540; theoretical max relative bias < n/2^256 ≈ 540/2^256",
+      "maxRelativeBiasUpperBound": 4.663531019751e-75,
+      "practicallyUnbiased": true
+    },
+    "samples": [
+      {
+        "mintIndex": 1,
+        "tokenId": 11,
+        "identityIndex": 315,
+        "packageIdentity": 326,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mintIndex": 2,
+        "tokenId": 12,
+        "identityIndex": 462,
+        "packageIdentity": 473,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mintIndex": 3,
+        "tokenId": 13,
+        "identityIndex": 75,
+        "packageIdentity": 86,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mintIndex": 4,
+        "tokenId": 14,
+        "identityIndex": 144,
+        "packageIdentity": 155,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mintIndex": 50,
+        "tokenId": 60,
+        "identityIndex": 464,
+        "packageIdentity": 475,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mintIndex": 101,
+        "tokenId": 111,
+        "identityIndex": 110,
+        "packageIdentity": 121,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mintIndex": 251,
+        "tokenId": 261,
+        "identityIndex": 290,
+        "packageIdentity": 301,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mintIndex": 540,
+        "tokenId": 550,
+        "identityIndex": 249,
+        "packageIdentity": 260,
+        "side": "Alpaca",
+        "class": "Common"
+      }
+    ],
+    "firstTenSale": [
+      {
+        "mint": 1,
+        "tokenId": 11,
+        "packageIdentity": 326,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mint": 2,
+        "tokenId": 12,
+        "packageIdentity": 473,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mint": 3,
+        "tokenId": 13,
+        "packageIdentity": 86,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mint": 4,
+        "tokenId": 14,
+        "packageIdentity": 155,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mint": 5,
+        "tokenId": 15,
+        "packageIdentity": 549,
+        "side": "Alpaca",
+        "class": "Runner"
+      },
+      {
+        "mint": 6,
+        "tokenId": 16,
+        "packageIdentity": 136,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mint": 7,
+        "tokenId": 17,
+        "packageIdentity": 409,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mint": 8,
+        "tokenId": 18,
+        "packageIdentity": 34,
+        "side": "Cougar",
+        "class": "None"
+      },
+      {
+        "mint": 9,
+        "tokenId": 19,
+        "packageIdentity": 207,
+        "side": "Alpaca",
+        "class": "Common"
+      },
+      {
+        "mint": 10,
+        "tokenId": 20,
+        "packageIdentity": 541,
+        "side": "Alpaca",
+        "class": "Guardian"
+      }
+    ]
+  },
+  "multiSeedSummary": {
+    "runs": 20,
+    "allPass": true,
+    "avgPackageAdjacentPairs": 1.3
+  },
+  "verdict": {
+    "everyTokenAssignedOnce": true,
+    "noDuplicates": true,
+    "identityDistributionRandomized": true,
+    "tokenIdsSequentialByDesign": true,
+    "reservedExcluded": true,
+    "equalProbabilityAmongRemaining": true,
+    "moduloBiasNegligible": true,
+    "matchesUserRandomTokenIdAtMintExample": false,
+    "readyForMainnetWithRevealOps": true
+  }
+}

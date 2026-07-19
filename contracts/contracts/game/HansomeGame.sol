@@ -28,8 +28,20 @@ contract HansomeGame is IHansomeGame, Ownable, ReentrancyGuard {
     IGameRandomness public immutable randomness;
 
     uint256 public immutable dayZero;
+    /// @notice Full day length in seconds (Commit + Reveal). Production: 24h.
+    uint256 public immutable dayLength;
+    /// @notice Commit window length in seconds. Production: 20h. Reveal = dayLength - commitDuration.
+    uint256 public immutable commitDuration;
 
     bool public commitPaused;
+
+    /**
+     * @dev TESTNET ONLY. When set, sale-token side/class for gameplay are read from
+     * `_testnetAssigned` (540 bytes, token #11 = index 0) until Genesis `collectionRevealed`.
+     * Mainnet (chainid 4663) cannot activate this path.
+     */
+    bool public testnetGameplayUnlock;
+    bytes private _testnetAssigned;
 
     mapping(uint256 => mapping(uint256 => bytes32)) private _commitHash;
     mapping(uint256 => mapping(uint256 => bool)) private _committed;
@@ -54,6 +66,9 @@ contract HansomeGame is IHansomeGame, Ownable, ReentrancyGuard {
     error SafeMode();
     error CommitGloballyPaused();
     error InsufficientTreasury();
+    error InvalidDayTiming();
+    error TestnetUnlockForbidden();
+    error BadTestnetIdentities();
 
     event Committed(uint256 indexed tokenId, uint256 indexed day, bytes32 commitHash);
     event Revealed(uint256 indexed tokenId, uint256 indexed day, uint8 locationId, HansomeTypes.Side side);
@@ -66,6 +81,7 @@ contract HansomeGame is IHansomeGame, Ownable, ReentrancyGuard {
         uint256 playerTotal
     );
     event CommitPausedSet(bool paused);
+    event TestnetGameplayUnlockSet(bool active, uint256 assignedLength);
 
     constructor(
         address genesis_,
@@ -74,8 +90,11 @@ contract HansomeGame is IHansomeGame, Ownable, ReentrancyGuard {
         address distributor_,
         address randomness_,
         uint256 dayZero_,
+        uint256 dayLength_,
+        uint256 commitDuration_,
         address initialOwner
     ) Ownable(initialOwner) {
+        if (commitDuration_ == 0 || commitDuration_ >= dayLength_) revert InvalidDayTiming();
         genesis = IHansomeGenesis(genesis_);
         nft = IERC721(genesis_);
         treasury = IGameTreasury(treasury_);
@@ -83,6 +102,13 @@ contract HansomeGame is IHansomeGame, Ownable, ReentrancyGuard {
         distributor = IRewardDistributor(distributor_);
         randomness = IGameRandomness(randomness_);
         dayZero = dayZero_;
+        dayLength = dayLength_;
+        commitDuration = commitDuration_;
+    }
+
+    /// @notice Reveal window length (seconds). Settlement is eligible as soon as this ends.
+    function revealDuration() external view returns (uint256) {
+        return dayLength - commitDuration;
     }
 
     function setCommitPaused(bool paused_) external onlyOwner {
@@ -90,23 +116,43 @@ contract HansomeGame is IHansomeGame, Ownable, ReentrancyGuard {
         emit CommitPausedSet(paused_);
     }
 
+    /**
+     * @notice Robinhood Testnet helper: unlock Commit/Reveal/Settle for sale NFTs before
+     * Genesis sell-out + collection reveal. `assigned540[i]` is the packed identity for tokenId 11+i
+     * (same packing as Genesis). Forbidden on Mainnet.
+     */
+    function setTestnetGameplayIdentities(bytes calldata assigned540) external onlyOwner {
+        if (block.chainid == 4663) revert TestnetUnlockForbidden();
+        if (assigned540.length != 540) revert BadTestnetIdentities();
+        _testnetAssigned = assigned540;
+        testnetGameplayUnlock = true;
+        emit TestnetGameplayUnlockSet(true, assigned540.length);
+    }
+
+    function clearTestnetGameplayIdentities() external onlyOwner {
+        if (block.chainid == 4663) revert TestnetUnlockForbidden();
+        delete _testnetAssigned;
+        testnetGameplayUnlock = false;
+        emit TestnetGameplayUnlockSet(false, 0);
+    }
+
     function currentDay() public view returns (uint256) {
         if (block.timestamp < dayZero) return 0;
-        return (block.timestamp - dayZero) / GameTypes.DAY_LENGTH;
+        return (block.timestamp - dayZero) / dayLength;
     }
 
     function dayState(uint256 day) public view returns (GameTypes.DayState) {
         if (_settled[day]) return GameTypes.DayState.Claimable;
         if (block.timestamp < dayZero) return GameTypes.DayState.Idle;
 
-        uint256 start = dayZero + day * GameTypes.DAY_LENGTH;
-        uint256 commitEnd = start + GameTypes.COMMIT_DURATION;
-        uint256 revealEnd = start + GameTypes.DAY_LENGTH;
+        uint256 start = dayZero + day * dayLength;
+        uint256 commitEnd = start + commitDuration;
+        uint256 revealEnd = start + dayLength;
 
         if (block.timestamp < start) return GameTypes.DayState.Idle;
         if (block.timestamp < commitEnd) return GameTypes.DayState.CommitOpen;
         if (block.timestamp < revealEnd) return GameTypes.DayState.RevealOpen;
-        return GameTypes.DayState.RevealClosed; // settlement eligible
+        return GameTypes.DayState.RevealClosed; // settlement eligible (no extra delay)
     }
 
     function isSettled(uint256 day) external view returns (bool) {
@@ -150,7 +196,7 @@ contract HansomeGame is IHansomeGame, Ownable, ReentrancyGuard {
         bytes32 expected = computeCommitHash(tokenId, day, locationId, salt);
         if (expected != _commitHash[tokenId][day]) revert BadCommitHash();
 
-        HansomeTypes.Side side_ = genesis.side(tokenId);
+        HansomeTypes.Side side_ = _sideOf(tokenId);
         if (!SettlementLib.isLocationLegal(side_, locationId)) revert IllegalLocation();
 
         _revealed[tokenId][day] = true;
@@ -181,7 +227,7 @@ contract HansomeGame is IHansomeGame, Ownable, ReentrancyGuard {
         for (uint256 i = 0; i < _alpacaIds[day].length; i++) {
             uint256 tokenId = _alpacaIds[day][i];
             uint8 loc = _location[tokenId][day];
-            HansomeTypes.GameplayClass class_ = genesis.gameplayClass(tokenId);
+            HansomeTypes.GameplayClass class_ = _classOf(tokenId);
             bool runnerOk = false;
             bool luckyOk = false;
             if (class_ == HansomeTypes.GameplayClass.Runner) {
@@ -233,13 +279,54 @@ contract HansomeGame is IHansomeGame, Ownable, ReentrancyGuard {
     }
 
     function _authorizePlayer(uint256 tokenId, address caller) internal view {
-        if (!genesis.isRevealed(tokenId)) revert TokenNotRevealed();
-        HansomeTypes.Side side_ = genesis.side(tokenId);
+        if (!_isGameplayReady(tokenId)) revert TokenNotRevealed();
+        HansomeTypes.Side side_ = _sideOf(tokenId);
         if (side_ == HansomeTypes.Side.None) revert InvalidSide();
 
         address owner = nft.ownerOf(tokenId);
         if (caller != owner && nft.getApproved(tokenId) != caller && !nft.isApprovedForAll(owner, caller)) {
             revert NotAuthorized();
         }
+    }
+
+    function _useTestnetIdentities() internal view returns (bool) {
+        return testnetGameplayUnlock && !genesis.isCollectionRevealed() && _testnetAssigned.length == 540;
+    }
+
+    function _isGameplayReady(uint256 tokenId) internal view returns (bool) {
+        if (genesis.isRevealed(tokenId)) return true;
+        if (!_useTestnetIdentities()) return false;
+        if (tokenId < HansomeTypes.FIRST_SALE_ID || tokenId > HansomeTypes.LAST_TOKEN_ID) return false;
+        return true;
+    }
+
+    function _sideOf(uint256 tokenId) internal view returns (HansomeTypes.Side) {
+        if (_useTestnetIdentities() && tokenId >= HansomeTypes.FIRST_SALE_ID) {
+            (HansomeTypes.Side s,) = _unpackTestnet(uint8(_testnetAssigned[tokenId - HansomeTypes.FIRST_SALE_ID]));
+            return s;
+        }
+        return genesis.side(tokenId);
+    }
+
+    function _classOf(uint256 tokenId) internal view returns (HansomeTypes.GameplayClass) {
+        if (_useTestnetIdentities() && tokenId >= HansomeTypes.FIRST_SALE_ID) {
+            (, HansomeTypes.GameplayClass c) =
+                _unpackTestnet(uint8(_testnetAssigned[tokenId - HansomeTypes.FIRST_SALE_ID]));
+            return c;
+        }
+        return genesis.gameplayClass(tokenId);
+    }
+
+    function _unpackTestnet(uint8 packed)
+        private
+        pure
+        returns (HansomeTypes.Side s, HansomeTypes.GameplayClass c)
+    {
+        bool isCougar = (packed & 0x80) != 0;
+        uint8 cls = packed & 0x0f;
+        if (isCougar) {
+            return (HansomeTypes.Side.Cougar, HansomeTypes.GameplayClass.None);
+        }
+        return (HansomeTypes.Side.Alpaca, HansomeTypes.GameplayClass(cls));
     }
 }

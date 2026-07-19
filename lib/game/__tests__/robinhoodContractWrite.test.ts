@@ -39,6 +39,18 @@ describe("robinhood commit/mint fee path", () => {
       formatRobinhoodWriteError(new Error("User rejected the request"), "fallback"),
     ).toBe("Transaction cancelled in wallet.");
   });
+
+  it("decodes TokenNotRevealed instead of generic Contract", () => {
+    const msg = formatRobinhoodWriteError(
+      new Error(
+        'The contract function "commit" reverted.\n\nError: TokenNotRevealed()\n \nContract Call:\n  address:   0x84f7',
+      ),
+      "fallback",
+    );
+    expect(msg).toMatch(/TokenNotRevealed/);
+    expect(msg).not.toBe("Contract reverted: Contract");
+    expect(msg).not.toBe("Contract reverted: The");
+  });
 });
 
 describe("sendRobinhoodContractWrite pipeline", () => {

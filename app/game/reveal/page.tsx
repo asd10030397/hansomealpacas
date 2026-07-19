@@ -25,7 +25,7 @@ export default function RevealPage() {
 
   const onReveal = async (tokenId: number) => {
     if (phase !== "REVEAL") {
-      setStatusMsg(`Reveal window closed (phase is ${phase}).`);
+      setStatusMsg(`Reveal Move window closed (phase is ${phase}).`);
       return;
     }
     setBusyId(tokenId);
@@ -41,11 +41,11 @@ export default function RevealPage() {
     const loc = GAME_LOCATIONS[result.record.locationId]?.name ?? "?";
     setStatusMsg(
       result.mode === "chain"
-        ? `Revealed #${tokenId} on-chain → ${loc}.`
-        : `Revealed #${tokenId} locally → ${loc}. ` +
+        ? `Reveal Move #${tokenId} on-chain → ${loc}.`
+        : `Reveal Move #${tokenId} locally → ${loc}. ` +
             (configured
-              ? "Connect wallet for on-chain reveal."
-              : "Game contract not deployed yet — local reveal recorded."),
+              ? "Connect wallet for on-chain Reveal Move."
+              : "Game contract not deployed yet — local Reveal Move recorded."),
     );
   };
 
@@ -58,17 +58,17 @@ export default function RevealPage() {
       <h1 className="pixel-title text-lg text-[#f0c44a]">{t.reveal.heading}</h1>
       <p className="mt-2 text-sm text-[var(--hg-muted)]">{t.reveal.blurb}</p>
       <div className="mt-4">
-        <GameStatusPanel day={day} now={now} phaseEndsAt={phaseEndsAt} />
+        <GameStatusPanel day={day} now={now} phaseEndsAt={phaseEndsAt} phase={phase} />
       </div>
 
       <PixelPanel
         className="mt-4"
-        title="REVEAL QUEUE"
+        title="REVEAL MOVE QUEUE"
         eyebrow={configured ? "CHAIN READY WHEN CONNECTED" : "LOCAL SECRETS · AWAITING GAME DEPLOY"}
       >
         {phase !== "REVEAL" ? (
           <GameFeedback tone="info" label={t.common.phaseChanged}>
-            Current phase is {phase}. Switch demo phase to REVEAL on Dashboard to test this step.
+            Current phase is {phase}. Switch demo phase to REVEAL on Dashboard to test Reveal Move.
           </GameFeedback>
         ) : null}
 
@@ -77,7 +77,7 @@ export default function RevealPage() {
             No commit secrets for day {day.day} on this device.
             <div className="mt-3">
               <PixelButton href={gameHref.commit} variant="green" size="sm" className="w-auto">
-                GO TO COMMIT
+                GO TO COMMIT MOVE
               </PixelButton>
             </div>
           </GameEmptyState>
@@ -105,7 +105,7 @@ export default function RevealPage() {
                     aria-busy={busy || undefined}
                     onClick={() => void onReveal(secret.tokenId)}
                   >
-                    {busy ? "REVEALING…" : revealed ? "REVEALED" : "REVEAL"}
+                    {busy ? "REVEALING…" : revealed ? "REVEALED" : "REVEAL MOVE"}
                   </PixelButton>
                 </li>
               );

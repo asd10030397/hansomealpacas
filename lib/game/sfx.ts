@@ -29,7 +29,7 @@ export const SFX_ASSETS: Partial<
   },
 };
 
-const SFX_VOLUME = 0.22;
+const SFX_VOLUME = 0.35;
 const POOL_SIZE = 4;
 
 const pools = new Map<string, HTMLAudioElement[]>();
@@ -70,22 +70,44 @@ export function playSfxNow(sfxId: SfxAssetId): void {
   const el = pool[i % pool.length]!;
   poolIndex.set(sfxId, i + 1);
 
-  try {
-    el.pause();
-    el.currentTime = 0;
-    el.volume = SFX_VOLUME;
-    void el.play();
-  } catch {
-    /* ignore autoplay / interruption */
+  el.volume = SFX_VOLUME;
+  const start = () => {
+    try {
+      el.pause();
+      el.currentTime = 0;
+    } catch {
+      /* not seekable yet */
+    }
+    void el.play().catch(() => {
+      /* autoplay / interruption */
+    });
+  };
+
+  if (el.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+    start();
+  } else {
+    el.addEventListener("canplay", start, { once: true });
+    el.load();
   }
+}
+
+function eventTargetElement(target: EventTarget | null): Element | null {
+  if (target instanceof Element) return target;
+  // Clicks on label text often hit a Text node — walk up to an Element.
+  if (target instanceof Text) return target.parentElement;
+  if (target instanceof Node) {
+    return target.parentElement;
+  }
+  return null;
 }
 
 /**
  * True if the event target is an interactive control that should click-SFX.
  */
 export function isSfxInteractiveTarget(target: EventTarget | null): boolean {
-  if (!(target instanceof Element)) return false;
-  const el = target.closest(
+  const start = eventTargetElement(target);
+  if (!start) return false;
+  const el = start.closest(
     'button, a[href], [role="button"], input[type="button"], input[type="submit"]',
   );
   if (!el) return false;

@@ -48,9 +48,26 @@ export function abilityLabelFor(side: NftSide, cls: GameplayClass): string {
   }
 }
 
-export const DAY_LENGTH_SEC = 24 * 60 * 60;
-export const COMMIT_DURATION_SEC = 20 * 60 * 60;
-export const REVEAL_DURATION_SEC = 4 * 60 * 60;
+/** Production GDS defaults (Mainnet). Testnet overrides via NEXT_PUBLIC_* after sync-game-env. */
+export const PROD_DAY_LENGTH_SEC = 24 * 60 * 60;
+export const PROD_COMMIT_DURATION_SEC = 20 * 60 * 60;
+export const PROD_REVEAL_DURATION_SEC = 4 * 60 * 60;
+
+function envPositiveInt(name: string): number | null {
+  const raw = process.env[name]?.trim();
+  if (!raw) return null;
+  const n = Number(raw);
+  return Number.isFinite(n) && n > 0 ? Math.floor(n) : null;
+}
+
+/** Day length used by UI countdown when live chain timings are not yet hydrated. */
+export const DAY_LENGTH_SEC =
+  envPositiveInt("NEXT_PUBLIC_GAME_DAY_LENGTH_SEC") ?? PROD_DAY_LENGTH_SEC;
+export const COMMIT_DURATION_SEC =
+  envPositiveInt("NEXT_PUBLIC_GAME_COMMIT_DURATION_SEC") ?? PROD_COMMIT_DURATION_SEC;
+export const REVEAL_DURATION_SEC =
+  envPositiveInt("NEXT_PUBLIC_GAME_REVEAL_DURATION_SEC") ??
+  Math.max(1, DAY_LENGTH_SEC - COMMIT_DURATION_SEC);
 
 /** Production reveal metadata CID (Pinata). Override via env. */
 export const GENESIS_METADATA_CID =

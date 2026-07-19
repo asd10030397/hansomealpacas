@@ -1,0 +1,152 @@
+/**
+ * Mobile phase status / timeline (≤1023 via exclusive MobileGameStatusPanel mount).
+ */
+
+.phase-status-panel--mobile {
+  width: 100%;
+  border: 3px solid #0d1018;
+  background: #121826;
+  box-shadow: 3px 3px 0 #0a0c12;
+  padding: 0.75rem 0.8rem 0.9rem;
+}
+
+.phase-status-panel__mobile-head {
+  margin-bottom: 0.55rem;
+}
+
+.phase-status-panel__mobile-eyebrow {
+  margin: 0;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f0c44a;
+}
+
+.phase-status--mobile {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.phase-status--mobile .phase-tl {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: center;
+  column-gap: 0.15rem;
+  margin: 0;
+  padding: 0.5rem 0.35rem;
+  list-style: none;
+  border: 2px solid #0d1018;
+  background: #0f1420;
+}
+
+.phase-status--mobile .phase-tl__step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.18rem;
+  min-width: 0;
+}
+
+.phase-status--mobile .phase-tl__connector {
+  display: none;
+}
+
+.phase-status--mobile .phase-tl__marker {
+  font-size: 0.65rem;
+  color: #6b7280;
+}
+
+.phase-status--mobile .phase-tl__label {
+  font-family: var(--font-anton), monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #8b93a7;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.phase-status--mobile .phase-tl__step--active .phase-tl__marker,
+.phase-status--mobile .phase-tl__step--active .phase-tl__label {
+  color: #f0c44a;
+}
+
+.phase-status--mobile .phase-tl__step--done .phase-tl__marker,
+.phase-status--mobile .phase-tl__step--done .phase-tl__label {
+  color: #7dcea0;
+}
+
+.phase-status--mobile .phase-status__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.phase-status--mobile .phase-status__cell {
+  border: 2px solid #0d1018;
+  background: #0f1420;
+  padding: 0.55rem 0.6rem;
+  min-width: 0;
+}
+
+.phase-status--mobile .phase-status__cell--wide {
+  grid-column: 1 / -1;
+}
+
+.phase-status--mobile .phase-status__cell--timer {
+  grid-column: 1 / -1;
+}
+
+.phase-status--mobile .phase-status__label {
+  margin: 0;
+  font-size: 0.58rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--hg-muted, #9aa3b5);
+}
+
+.phase-status--mobile .phase-status__value {
+  margin: 0.28rem 0 0;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+  color: #f3ebe0;
+  overflow-wrap: anywhere;
+}
+
+.phase-status--mobile .phase-status__value--gold {
+  color: #f0c44a;
+}
+
+.phase-status--mobile .phase-status__value--timer {
+  font-variant-numeric: tabular-nums;
+  font-size: 1.15rem;
+  color: #f0c44a;
+}
+
+.phase-status--mobile .phase-status__badge {
+  margin-top: 0.25rem;
+}
+
+.phase-status--mobile .phase-status__help {
+  margin: 0;
+  border: 2px solid #0d1018;
+  background: #1a2438;
+  padding: 0.6rem 0.7rem;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: #d8d2c4;
+}
+
+@media (max-width: 380px) {
+  .phase-status--mobile .phase-tl__label {
+    font-size: 0.48rem;
+  }
+
+  .phase-status--mobile .phase-status__value--timer {
+    font-size: 1.05rem;
+  }
+}

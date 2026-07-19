@@ -11,6 +11,12 @@ deployments/*.json
 !deployments/*-genesis.json
 !deployments/*-genesis-whitelist-TESTNET-ONLY.json
 !deployments/*-genesis-report.md
+# Public game deploy records may be committed (addresses only).
+!deployments/*-game.json
+!deployments/*-game-report.md
+!deployments/*-game-flow-report.md
+# Flow salt / in-progress validation state — do not commit.
+deployments/*-game-flow.json
 # Packed sale identities are reveal secrets — never commit.
 deployments/*-genesis-identities.bin
 deployments/*-genesis-identities.json

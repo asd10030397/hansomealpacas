@@ -1,6 +1,6 @@
 /**
  * Client-side Commit secret vault.
- * Salt + location must survive until Reveal; never send salt on-chain at Commit.
+ * Salt + location must survive until Reveal Move; never send salt on-chain at Commit Move.
  */
 
 import { encodePacked, keccak256, toHex, type Hex } from "viem";

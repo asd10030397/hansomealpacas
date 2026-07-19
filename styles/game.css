@@ -1230,13 +1230,13 @@ html.hansome-game-route body.hansome-game-route {
   text-transform: none;
 }
 
-/* Compact HUD — secondary, low visual weight */
+/* Compact HUD — hosts clarified phase status panel */
 .hansome-game .compact-hud {
-  width: min(100%, 26rem);
-  padding: 0.4rem 0.7rem;
-  border: 2px solid rgba(90, 100, 120, 0.55);
-  background: rgba(12, 16, 28, 0.55);
-  box-shadow: 2px 2px 0 rgba(10, 12, 18, 0.45);
+  width: min(100%, 36rem);
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
 }
 
 .hansome-game .compact-hud__row {

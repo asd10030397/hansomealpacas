@@ -124,7 +124,7 @@ export default function CommitPage() {
         {t.commit.blurb}
       </p>
       <div className="mt-4">
-        <GameStatusPanel day={day} now={now} phaseEndsAt={phaseEndsAt} />
+        <GameStatusPanel day={day} now={now} phaseEndsAt={phaseEndsAt} phase={phase} />
       </div>
 
       <PixelPanel

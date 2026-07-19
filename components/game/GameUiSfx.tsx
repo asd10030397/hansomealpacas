@@ -10,16 +10,27 @@ import { isSfxInteractiveTarget } from "@/lib/game/sfx";
  */
 export function GameUiSfx() {
   useEffect(() => {
-    const onPointerDown = (event: PointerEvent) => {
-      // Primary button / touch / pen only
-      if (event.pointerType === "mouse" && event.button !== 0) return;
-      if (!isSfxInteractiveTarget(event.target)) return;
+    const fire = (target: EventTarget | null) => {
+      if (!isSfxInteractiveTarget(target)) return;
       playSfx("ui-click");
     };
 
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.pointerType === "mouse" && event.button !== 0) return;
+      fire(event.target);
+    };
+
+    // Keyboard activation (Enter/Space) fires click with detail === 0.
+    const onClick = (event: MouseEvent) => {
+      if (event.detail !== 0) return;
+      fire(event.target);
+    };
+
     document.addEventListener("pointerdown", onPointerDown, true);
+    document.addEventListener("click", onClick, true);
     return () => {
       document.removeEventListener("pointerdown", onPointerDown, true);
+      document.removeEventListener("click", onClick, true);
     };
   }, []);
 

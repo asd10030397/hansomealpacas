@@ -3,12 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { ActionGrid } from "@/components/game/ActionGrid";
 import { WalletGateButton } from "@/components/game/WalletGateButton";
-import {
-  GamePhaseBadge,
-  PixelCountdown,
-  PixelPanel,
-} from "@/components/ui/pixel";
-import { MOCK_DASHBOARD } from "@/data/game/mock";
+import { GameStatusPanel } from "@/components/game/GameStatusPanel";
+import { PixelPanel } from "@/components/ui/pixel";
 import { useClaimRewards } from "@/hooks/game/useClaimRewards";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
@@ -102,43 +98,7 @@ export function DashboardCommand({
         <p className="dash-cmd__prompt-text">{t.dashboard.doNow[phase]}</p>
       </div>
 
-      <div className="dash-cmd__status">
-        <div className="dash-cmd__stat">
-          <p className="dash-cmd__stat-label">{t.dashboard.phaseLabel}</p>
-          <div className="mt-1">
-            <GamePhaseBadge phase={phase} />
-          </div>
-        </div>
-        <div className="dash-cmd__stat">
-          <PixelCountdown
-            endsAt={phaseEndsAt}
-            now={now}
-            label={t.dashboard.countdownLabel}
-          />
-        </div>
-        <div className="dash-cmd__stat">
-          <p className="dash-cmd__stat-label">{t.dashboard.dayLabel}</p>
-          <p className="dash-cmd__stat-value dash-cmd__stat-value--gold">
-            {t.dashboard.dayValue(day.day)}
-          </p>
-        </div>
-        <div className="dash-cmd__stat">
-          <p className="dash-cmd__stat-label">{t.dashboard.rankLabel}</p>
-          <p className="dash-cmd__stat-value dash-cmd__stat-value--gold">
-            {claim.live ? (
-              <span className="text-[0.75rem] text-[var(--hg-muted)]">—</span>
-            ) : (
-              <>
-                #{MOCK_DASHBOARD.seasonRank}{" "}
-                <span className="text-[0.65rem] text-[var(--hg-muted)]">
-                  / {MOCK_DASHBOARD.seasonRankOf}
-                </span>
-              </>
-            )}
-          </p>
-        </div>
-      </div>
-      <p className="dash-cmd__phase-explain">{t.dashboard.phaseExplain[phase]}</p>
+      <GameStatusPanel day={day} now={now} phaseEndsAt={phaseEndsAt} phase={phase} />
 
       <div className="dash-cmd__main">
         <p className="dash-cmd__main-label">{t.dashboard.mainActionLabel}</p>

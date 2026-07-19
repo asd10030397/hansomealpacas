@@ -97,6 +97,36 @@ export const MOCK_NFTS: MockNft[] = [
     gameStatus: "Committed",
   },
   {
+    tokenId: 22,
+    side: "Alpaca",
+    gameplayClass: "Guardian",
+    revealed: true,
+    image: "/assets/characters/alpaca-placeholder.svg",
+    selectedLocationId: 2,
+    claimableHansome: 0,
+    gameStatus: "Idle",
+  },
+  {
+    tokenId: 36,
+    side: "Alpaca",
+    gameplayClass: "Runner",
+    revealed: true,
+    image: "/assets/characters/alpaca-placeholder.svg",
+    selectedLocationId: 4,
+    claimableHansome: 0,
+    gameStatus: "Idle",
+  },
+  {
+    tokenId: 40,
+    side: "Alpaca",
+    gameplayClass: "Lucky",
+    revealed: true,
+    image: "/assets/characters/alpaca-placeholder.svg",
+    selectedLocationId: 1,
+    claimableHansome: 0,
+    gameStatus: "Idle",
+  },
+  {
     tokenId: 88,
     side: "Alpaca",
     gameplayClass: "Common",
@@ -145,7 +175,7 @@ export const MOCK_REWARDS: RewardSummary = {
 export const MOCK_DASHBOARD = {
   seasonRank: 12,
   seasonRankOf: 48,
-  nextSettlementLabel: "After Reveal",
+  nextSettlementLabel: "After Reveal Move",
 };
 
 /** Demo ranks only — gameplay metrics, never wallet balance. */

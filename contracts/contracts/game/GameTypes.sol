@@ -46,6 +46,8 @@ library GameTypes {
     uint256 internal constant G0 = 300_000_000 ether;
     uint256 internal constant G_SAFE = 15_000_000 ether;
 
+    /// @dev Production (Mainnet) GDS defaults. Deployments may override via
+    /// HansomeGame constructor immutables (Testnet uses shorter windows).
     uint256 internal constant DAY_LENGTH = 24 hours;
     uint256 internal constant COMMIT_DURATION = 20 hours;
     uint256 internal constant REVEAL_DURATION = 4 hours;

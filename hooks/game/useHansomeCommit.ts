@@ -103,6 +103,17 @@ export function useHansomeCommit() {
           prepared.commitHash,
         ] as const;
 
+        console.info("[hansome-commit] simulate args", {
+          tokenId: input.tokenId,
+          day: input.day,
+          commitHash: prepared.commitHash,
+          contract: HANSOME_GAME_ADDRESS,
+          chainId: GAME_CHAIN_ID,
+          walletChainId,
+          account: address,
+          locationId: input.locationId,
+        });
+
         const { hash: txHash } = await sendRobinhoodContractWrite({
           label: "hansome-commit",
           publicClient,

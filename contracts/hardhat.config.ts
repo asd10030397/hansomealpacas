@@ -9,7 +9,11 @@ function envOr(primary: string | undefined, fallback: string): string {
   return value ? value : fallback;
 }
 
-const rawKey = (process.env.DEPLOYER_PRIVATE_KEY ?? process.env.PRIVATE_KEY)?.trim();
+const rawKey = (
+  process.env.DEPLOYER_PRIVATE_KEY ??
+  process.env.PRIVATE_KEY ??
+  process.env.TREASURY_PRIVATE_KEY
+)?.trim();
 const normalizedKey =
   rawKey && !rawKey.startsWith("0x") ? `0x${rawKey}` : rawKey;
 

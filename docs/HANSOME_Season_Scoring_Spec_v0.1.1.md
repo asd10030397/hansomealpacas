@@ -8,6 +8,7 @@
 | Scope | Off-chain / indexer leaderboard scoring only |
 | Non-scope | Gameplay contracts, mint, wallet token balance; **historical season browsing / archives / past-season APIs** (future update) |
 | Product priority | Current **active season** leaderboard only until Season 1 is stable in production |
+| Season 1 freeze | No season history, achievements, guilds, marketplace, chat, extra boards, or new systems — see `docs/CURSOR_AGENT_HANDOFF.md` §0.1 |
 
 **Abandoned:** fixed-event points (Commit +5, Reveal +5, Survive +10, Hunt +20, Daily +2).
 

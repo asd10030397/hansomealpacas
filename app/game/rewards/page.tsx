@@ -157,7 +157,7 @@ export default function RewardsPage() {
           )
         ) : claim.mockRows.length === 0 ? (
           <GameEmptyState title={t.common.emptyTitle}>
-            Nothing claimable locally. Complete Commit → Reveal → Settlement first.
+            Nothing claimable locally. Complete Commit Move → Reveal Move → Settlement first.
           </GameEmptyState>
         ) : (
           <ul className="space-y-2 text-sm">

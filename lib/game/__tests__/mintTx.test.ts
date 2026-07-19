@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { parseEther } from "viem";
 import {
+  ABNORMAL_NETWORK_FEE_MESSAGE,
   assertMintValueMatches,
   assertSaneMintGasEstimate,
   assertSaneMintNetworkFee,
   buildSafeMintFees,
   computeMintValue,
+  formatMintError,
   MINT_MAX_FEE_PER_GAS_WEI,
   MINT_MAX_NETWORK_FEE_WEI,
 } from "@/lib/game/mintTx";
@@ -54,13 +56,38 @@ describe("safe mint fees (Robinhood MetaMask workaround)", () => {
     // Simulate MetaMask-style absurd maxFeePerGas
     const absurdMaxFee = parseEther("0.015"); // per gas unit → huge total
     expect(() => assertSaneMintNetworkFee(gas, absurdMaxFee)).toThrow(
-      /Gas estimation is abnormal/,
+      ABNORMAL_NETWORK_FEE_MESSAGE,
     );
   });
 
+  it("aborts before wallet when estimated fee exceeds 0.01 ETH", () => {
+    expect(MINT_MAX_NETWORK_FEE_WEI).toBe(parseEther("0.01"));
+    // 250k gas × 50 gwei = 0.0125 ETH > 0.01 ETH
+    expect(() => assertSaneMintNetworkFee(250_000n, 50_000_000_000n)).toThrow(
+      ABNORMAL_NETWORK_FEE_MESSAGE,
+    );
+    // 500k × 25 gwei = 0.0125 ETH > 0.01 ETH
+    expect(() => assertSaneMintNetworkFee(500_000n, 25_000_000_000n)).toThrow(
+      ABNORMAL_NETWORK_FEE_MESSAGE,
+    );
+    // Sane Robinhood path (~0.00001 ETH) stays under the threshold
+    expect(() => assertSaneMintNetworkFee(250_000n, 40_000_000n)).not.toThrow();
+  });
+
+  it("surfaces the exact user-facing fee abort message", () => {
+    expect(formatMintError(new Error(ABNORMAL_NETWORK_FEE_MESSAGE))).toBe(
+      ABNORMAL_NETWORK_FEE_MESSAGE,
+    );
+    expect(
+      formatMintError(new Error("Gas estimation is abnormal. Transaction was not submitted.")),
+    ).toBe(ABNORMAL_NETWORK_FEE_MESSAGE);
+  });
+
   it("rejects zero / huge gas estimates", () => {
-    expect(() => assertSaneMintGasEstimate(0n)).toThrow(/abnormal/);
-    expect(() => assertSaneMintGasEstimate(50_000_000n)).toThrow(/abnormal/);
+    expect(() => assertSaneMintGasEstimate(0n)).toThrow(ABNORMAL_NETWORK_FEE_MESSAGE);
+    expect(() => assertSaneMintGasEstimate(50_000_000n)).toThrow(
+      ABNORMAL_NETWORK_FEE_MESSAGE,
+    );
     expect(() => assertSaneMintGasEstimate(210_000n)).not.toThrow();
   });
 

@@ -14,12 +14,65 @@
 
 你正在協助 **HANSOME：羊駝 VS 美洲獅** 專案。
 
-- **現在是設計／文件階段**，不是「隨便重做一款遊戲」的階段。
+- **Season 1 Feature Freeze 已鎖定**（見下方 §0.1）：以品質交付完整 Season 1，不擅自加新玩法系統。
 - **玩法、獎池、NFT 數量、排放規則已大致鎖定**（見 GDS v1.1）。
-- **使用者若沒有明確要求，不要寫 Solidity、不要生成整包合約、不要改數值平衡。**
-- 你的預設工作是：**讀懂規格 → 維持文件一致性 → 僅在被要求時才實作。**
+- **使用者若沒有明確要求，不要寫 Solidity、不要改數值平衡、不要開新系統。**
+- 你的預設工作是：**完成日循環 → 特質能力 → UX 打磨 → SFX → 效能與修 bug**（遊戲 BGM 已定案，勿再動）。
 
-若使用者說「開始實作／寫合約／做前端」，再進入實作模式，並以本文 §5 的順序進行。
+若使用者說「開始實作／寫合約／做前端」，再進入實作模式，並以本文 §0.1 優先序與 §5 為準。
+
+---
+
+## 0.1 Season 1 Feature Freeze（OFFICIALLY LOCKED）
+
+**狀態：** Feature Freeze **正式鎖定（Approved）**。  
+**目標：** 完成並打磨既有遊戲，交付 production-ready Season 1。
+
+**哲學：** Finish before expanding · Polish before adding · Stability before features。
+
+未經使用者**明確要求**，禁止導入新玩法機制、系統、UI 模組或基礎設施。
+
+完成一項任務後：**立刻進入下一優先項**，不要停下來徵求新功能構想。
+
+**僅在以下情況停下來詢問核准：**
+
+- 範圍會擴大（scope expansion）  
+- 需要破壞性／重大設計決策  
+- 有多個同等合理的實作路徑必須抉擇  
+
+否則持續執行，直到 Season 1 可上線。
+
+### 剩餘工作一律優先考慮
+
+- 穩定性 · 回應速度 · 視覺打磨 · 音訊打磨（SFX；BGM 已定案） · 手機相容 · 上線就緒  
+
+### 開發優先（依序）
+
+1. **完整日循環** — Commit → Reveal → Settlement → Claim  
+2. **全部特殊 NFT 能力**（GDS 特質：King / Guardian / Farmer / Lucky / Runner 等）  
+3. **UX/UI 打磨** — 動畫、轉場、手機版、loading、無障礙  
+4. **完成 SFX 實作** — UI click 起，再補齊成套（皆走 SFX 開關）  
+5. **效能優化** — 載入、動畫、渲染  
+6. **修 bug 與邊界案例**
+
+### 音訊現況（BGM 已定案，勿再動）
+
+- **首頁／行銷站：** 既有 HANSOME 主題（`ambient.wav`）— **維持不變**  
+- **遊戲內 BGM：** 已換成 battle BGM（Alpaca Warpath / gameplay-theme）— **完成**  
+- **除非使用者明確要求，否則不要再改 gameplay 背景音樂**
+
+### Season 1 明確不做（留給之後賽季）
+
+- 歷史賽季瀏覽／封存  
+- 成就系統  
+- Guilds  
+- Marketplace  
+- Chat  
+- 額外排行榜類別  
+- Analytics dashboards  
+- 其他新玩法系統  
+
+排行榜：**僅當前活躍賽季**；計分模組 v0.1.1 已核准但 live cutover 需另批。
 
 ---
 
@@ -174,7 +227,8 @@
 | 把美術、安全、公式全寫進同一個 md 無限膨脹 | 違反文件架構 |
 | 把市價／流動性寫進鏈上公式 | 美元只是參考，不是參數 |
 | 在使用者只要文件時產出大段 Solidity | 使用者曾明確只要文件 |
-| 做歷史賽季排行榜瀏覽／封存頁／past-season API | 現階段只做**當前活躍賽季**；優先完成玩法與 Season 1。歷史查看留待日後有活躍玩家再加 |
+| 做歷史賽季／成就／Guild／Marketplace／Chat／額外榜／Analytics／新玩法系統 | **Season 1 Feature Freeze**（§0.1）；未經明確要求禁止開工 |
+| 再改 gameplay BGM／做各階段主題變奏配樂 | BGM 已定案（首頁 ambient 不變；遊戲內 battle BGM 已上）；除非明確要求 |
 
 ---
 

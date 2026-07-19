@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { MintPanel } from "@/components/mint/MintPanel";
 import { PixelButton, PixelPanel } from "@/components/ui/pixel";
+import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
-import { gameHref } from "@/lib/game/paths";
 import "@/styles/genesis-launch.css";
 
 /**
@@ -13,6 +13,7 @@ import "@/styles/genesis-launch.css";
  */
 export function GenesisLaunchPage() {
   const { t } = useGameI18n();
+  const gameHref = useGameHref();
   const L = t.launch;
 
   return (

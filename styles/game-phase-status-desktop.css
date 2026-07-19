@@ -1,0 +1,127 @@
+/**
+ * Desktop phase status / timeline (≥1024 via exclusive DesktopGameStatusPanel mount).
+ */
+
+.phase-status--desktop {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.phase-status--desktop .phase-tl {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0.55rem 0.65rem;
+  list-style: none;
+  border: 2px solid #0d1018;
+  background: #0f1420;
+  overflow-x: auto;
+}
+
+.phase-status--desktop .phase-tl__step {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.phase-status--desktop .phase-tl__connector {
+  display: inline-block;
+  width: 0.85rem;
+  height: 2px;
+  margin-right: 0.2rem;
+  background: #3a455c;
+  flex-shrink: 0;
+}
+
+.phase-status--desktop .phase-tl__marker {
+  font-size: 0.7rem;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.phase-status--desktop .phase-tl__label {
+  font-family: var(--font-anton), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8b93a7;
+}
+
+.phase-status--desktop .phase-tl__step--active .phase-tl__marker,
+.phase-status--desktop .phase-tl__step--active .phase-tl__label {
+  color: #f0c44a;
+}
+
+.phase-status--desktop .phase-tl__step--done .phase-tl__marker,
+.phase-status--desktop .phase-tl__step--done .phase-tl__label {
+  color: #7dcea0;
+}
+
+.phase-status--desktop .phase-tl__step--active .phase-tl__connector,
+.phase-status--desktop .phase-tl__step--done .phase-tl__connector {
+  background: #5a6a4a;
+}
+
+.phase-status--desktop .phase-status__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.phase-status--desktop .phase-status__cell {
+  border: 2px solid #0d1018;
+  background: #121826;
+  padding: 0.65rem 0.7rem;
+  min-width: 0;
+}
+
+.phase-status--desktop .phase-status__cell--wide {
+  grid-column: span 2;
+}
+
+.phase-status--desktop .phase-status__label {
+  margin: 0;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hg-muted, #9aa3b5);
+}
+
+.phase-status--desktop .phase-status__value {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  color: #f3ebe0;
+  overflow-wrap: anywhere;
+}
+
+.phase-status--desktop .phase-status__value--gold {
+  color: #f0c44a;
+}
+
+.phase-status--desktop .phase-status__value--timer {
+  font-variant-numeric: tabular-nums;
+  font-size: 1.05rem;
+  color: #f0c44a;
+}
+
+.phase-status--desktop .phase-status__badge {
+  margin-top: 0.3rem;
+}
+
+.phase-status--desktop .phase-status__help {
+  margin: 0;
+  border: 2px solid #0d1018;
+  background: linear-gradient(180deg, #1a2438 0%, #121826 100%);
+  padding: 0.7rem 0.85rem;
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: #d8d2c4;
+}

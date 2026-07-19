@@ -1,7 +1,7 @@
 "use client";
 
 import { MOCK_BANNER } from "@/data/game/mock";
-import { gameHref } from "@/lib/game/paths";
+import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameState } from "@/hooks/game/useGameState";
 import { useWalletUi } from "@/hooks/game/useWalletUi";
 import { CompactGameHud } from "./CompactGameHud";
@@ -14,7 +14,8 @@ import { TitleScreenBackdrop } from "./TitleScreenBackdrop";
  * Premium RPG title screen — composition first, Web3 second.
  */
 export function MainMenuHero() {
-  const { day, now, phaseEndsAt } = useGameState();
+  const { day, now, phaseEndsAt, phase } = useGameState();
+  const gameHref = useGameHref();
   const { wallet, connectMock, disconnectMock } = useWalletUi();
 
   return (
@@ -56,7 +57,7 @@ export function MainMenuHero() {
         </nav>
 
         <div className="title-screen__hud">
-          <CompactGameHud day={day} now={now} phaseEndsAt={phaseEndsAt} />
+          <CompactGameHud day={day} now={now} phaseEndsAt={phaseEndsAt} phase={phase} />
         </div>
       </div>
     </section>

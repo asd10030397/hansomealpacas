@@ -74,6 +74,8 @@ async function deployFixture() {
     await distributor.getAddress(),
     await randomness.getAddress(),
     dayZero,
+    DAY,
+    COMMIT,
     owner.address,
   )) as HansomeGame;
   await game.waitForDeployment();
@@ -386,6 +388,8 @@ describe("HansomeGame integration", () => {
       await distributor.getAddress(),
       await randomness.getAddress(),
       dayZero,
+      DAY,
+      COMMIT,
       owner.address,
     )) as HansomeGame;
     await treasury.setGame(await game.getAddress());

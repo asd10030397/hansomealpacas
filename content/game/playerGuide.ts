@@ -200,7 +200,7 @@ export const GUIDE_CORE_PHASES: GuidePhase[] = [
   {
     n: "01",
     emoji: "🔒",
-    title: { en: "Commit Phase", zh: "提交階段" },
+    title: { en: "Commit Move Phase", zh: "提交行動階段" },
     body: {
       en: "Players secretly choose a location. After commitment, the choice cannot be changed.",
       zh: "玩家秘密選擇地點。提交後無法修改。",
@@ -209,16 +209,16 @@ export const GUIDE_CORE_PHASES: GuidePhase[] = [
   {
     n: "02",
     emoji: "🔎",
-    title: { en: "Reveal Phase", zh: "揭示階段" },
+    title: { en: "Reveal Move Phase", zh: "揭露行動階段" },
     body: {
-      en: "All choices are revealed and hunting results are calculated.",
-      zh: "所有玩家揭示選擇，系統計算狩獵結果。",
+      en: "All committed moves are revealed and hunting results are calculated. (This is not NFT Reveal.)",
+      zh: "所有已提交的行動被揭露，系統計算狩獵結果。（這不是 NFT 揭示。）",
     },
   },
   {
     n: "03",
     emoji: "🎁",
-    title: { en: "Reward Phase", zh: "獎勵階段" },
+    title: { en: "Claim Rewards Phase", zh: "領取獎勵階段" },
     body: {
       en: "Players receive rewards based on location, strategy, and gameplay class.",
       zh: "玩家根據地點選擇、策略以及角色能力獲得獎勵。",
@@ -239,10 +239,10 @@ export const GUIDE_COUGAR_PHASES: GuidePhase[] = [
   {
     n: "02",
     emoji: "🔎",
-    title: { en: "Reveal", zh: "揭示" },
+    title: { en: "Reveal Move", zh: "揭露行動" },
     body: {
-      en: "Locations are revealed together with everyone else's.",
-      zh: "與所有玩家一同揭示地點。",
+      en: "Locations are revealed together with everyone else's during Reveal Move.",
+      zh: "在揭露行動時段，與所有玩家一同公開地點。",
     },
   },
   {

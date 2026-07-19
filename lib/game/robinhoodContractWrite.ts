@@ -88,6 +88,48 @@ export function logRobinhoodWrite(
   });
 }
 
+const REVERT_HINTS: Record<string, string> = {
+  TokenNotRevealed:
+    "TokenNotRevealed — Genesis sale NFT is not collection-revealed on-chain yet (UI artwork ≠ gameplay unlock).",
+  InvalidSide:
+    "InvalidSide — token has no on-chain Alpaca/Cougar identity (collection reveal incomplete).",
+  WrongPhase: "WrongPhase — not in the required day phase for this action.",
+  AlreadyCommitted: "AlreadyCommitted — this token already committed for this day.",
+  NotAuthorized: "NotAuthorized — wallet is not the token owner/operator.",
+  SafeMode: "SafeMode — treasury below safe threshold; commits paused.",
+  CommitGloballyPaused: "CommitGloballyPaused — owner paused commits.",
+  NotCommitted: "NotCommitted — commit this token before reveal.",
+  BadCommitHash: "BadCommitHash — location/salt does not match the commit hash.",
+  IllegalLocation: "IllegalLocation — that location is illegal for this side.",
+  AlreadySettled: "AlreadySettled — this day was already settled.",
+  SeedMissing: "SeedMissing — day randomness seed not set yet.",
+};
+
+function extractCustomErrorName(text: string): string | null {
+  const patterns = [
+    /Error:\s*([A-Z][A-Za-z0-9]+)\s*\(/,
+    /reverted with custom error ['"]([A-Z][A-Za-z0-9]+)['"]/i,
+    /\b([A-Z][A-Za-z0-9]+)\(\)/,
+  ];
+  for (const re of patterns) {
+    const m = text.match(re);
+    if (!m?.[1]) continue;
+    const name = m[1];
+    // Ignore generic viem/English words that are not Solidity custom errors.
+    if (
+      name === "Contract" ||
+      name === "The" ||
+      name === "Error" ||
+      name === "Execution" ||
+      name === "Transaction"
+    ) {
+      continue;
+    }
+    return name;
+  }
+  return null;
+}
+
 export function formatRobinhoodWriteError(error: unknown, fallback: string): string {
   if (!error) return fallback;
   if (typeof error === "string") return error;
@@ -95,8 +137,13 @@ export function formatRobinhoodWriteError(error: unknown, fallback: string): str
     const reverted = error.walk(
       (e) => e instanceof ContractFunctionRevertedError,
     ) as ContractFunctionRevertedError | null;
-    if (reverted?.data?.errorName) {
-      return `Contract reverted: ${reverted.data.errorName}`;
+    const errorName = reverted?.data?.errorName;
+    if (errorName) {
+      return REVERT_HINTS[errorName] ?? `Contract reverted: ${errorName}`;
+    }
+    const fromMsg = extractCustomErrorName(error.message);
+    if (fromMsg) {
+      return REVERT_HINTS[fromMsg] ?? `Contract reverted: ${fromMsg}`;
     }
   }
   if (error instanceof Error) {
@@ -111,9 +158,9 @@ export function formatRobinhoodWriteError(error: unknown, fallback: string): str
     ) {
       return ABNORMAL_NETWORK_FEE_MESSAGE;
     }
-    const custom = short.match(/\b([A-Z][A-Za-z0-9]+)\b/);
-    if (custom && /reverted|Custom/i.test(short)) {
-      return `Contract reverted: ${custom[1]}`;
+    const custom = extractCustomErrorName(msg);
+    if (custom) {
+      return REVERT_HINTS[custom] ?? `Contract reverted: ${custom}`;
     }
     return short.length > 220 ? `${short.slice(0, 220)}…` : short;
   }

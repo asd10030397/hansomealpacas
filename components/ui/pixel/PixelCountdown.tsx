@@ -11,6 +11,8 @@ function format(ms: number) {
   return [h, m, r].map((n) => String(n).padStart(2, "0")).join(":");
 }
 
+const URGENT_MS = 5 * 60 * 1000;
+
 export function PixelCountdown({
   endsAt,
   now,
@@ -20,20 +22,25 @@ export function PixelCountdown({
   now: number;
   label: string;
 }) {
-  const [display, setDisplay] = useState(format(endsAt - now));
+  const remaining = endsAt - now;
+  const [display, setDisplay] = useState(format(remaining));
 
   useEffect(() => {
     setDisplay(format(endsAt - now));
   }, [endsAt, now]);
 
+  const ended = remaining <= 0;
+  const urgent = !ended && remaining <= URGENT_MS;
+
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-[0.65rem] uppercase tracking-wide text-[var(--hg-muted)]">
-        {label}
-      </span>
+    <div className="hg-countdown">
+      <span className="hg-countdown__label">{label}</span>
       <span
-        className="pixel-title text-sm text-[#f0c44a] sm:text-base"
+        className={`hg-countdown__digits${
+          ended ? " hg-countdown__digits--ended" : urgent ? " hg-countdown__digits--urgent" : ""
+        }`}
         aria-live="polite"
+        aria-atomic="true"
       >
         {display}
       </span>

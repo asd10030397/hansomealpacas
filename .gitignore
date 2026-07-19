@@ -71,3 +71,10 @@ public/pixel/traits/base/_face-locate/
 # Off-chain 550 merge images are regenerable via prepare-550-package.mjs (~275MB).
 # Metadata + README under collection-550 stay tracked.
 public/pixel/genesis/collection-550/image/
+# Generated post-shuffle bake + pin staging (regenerate via nft:publish-reveal)
+public/pixel/genesis/collection-550/reveal-metadata/
+public/pixel/genesis/collection-550/placeholder-pin/
+
+# Oversized local showcase recordings (>100MB GitHub limit)
+reports/season1-showcase/page@82df41adefe2efe288c0978e151940e7.webm
+
