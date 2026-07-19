@@ -71,7 +71,7 @@ export const gameEn: GameMessages = {
     play: "PLAY",
     deploy: "DEPLOY",
     nfts: "NFTS",
-    loot: "LOOT",
+    loot: "REWARDS",
   },
   title: {
     eyebrow: "PIXEL RPG · ROBINHOOD CHAIN",
@@ -163,7 +163,7 @@ export const gameEn: GameMessages = {
       ["Public wallet limit", "5"],
       ["Combined wallet max", "6"],
       ["Mainnet intent price", "0.015 ETH"],
-      ["Testnet price", "0.001 ETH (testing only)"],
+      ["Testnet price", "0.001 ETH"],
     ],
     priceNote:
       "The mint UI always reads the live price from the deployed contract. Never treat the intent price as the live display when a contract is configured.",
@@ -190,20 +190,19 @@ export const gameEn: GameMessages = {
     poolCougar: "Cougar Base Pool",
     poolHunt: "Hunting Pool",
     poolsNote: "Do not call the Alpaca Pool the Base Pool.",
-    statusTitle: "BUILD STATUS",
+    statusTitle: "NETWORK STATUS",
     statusEyebrow: "CURRENT",
     statusLive: "LIVE",
-    statusSoon: "NOT YET",
+    statusSoon: "SOON",
     statusRows: [
       ["Robinhood Testnet mint", "live"],
       ["Whitelist + Public mint", "live"],
       ["Frontend mint integration", "live"],
       ["Unified 550 package validated", "live"],
-      ["IPFS / final metadata CID", "soon"],
-      ["Production reveal", "soon"],
+      ["IPFS / reveal metadata", "live"],
+      ["Gameplay contracts (testnet)", "live"],
+      ["Live My NFTs / Rewards / Board", "live"],
       ["Mainnet deployment", "soon"],
-      ["Gameplay contracts", "soon"],
-      ["Live My NFTs / Rewards / Board", "soon"],
     ],
     backHome: "← Back to title",
   },
@@ -211,7 +210,7 @@ export const gameEn: GameMessages = {
     loading: "Loading mint state…",
     blurb:
       "One Genesis ERC-721 collection (550 total: 500 Alpacas + 50 Cougars). Side cannot be chosen at mint — reveal assigns it. Token ID does not imply side.",
-    liveBanner: "LIVE TESTNET — HansomeGenesisNFT on Robinhood Chain Testnet",
+    liveBanner: "Robinhood Chain Testnet",
     notConfigured:
       "Genesis NFT address is not configured. Set NEXT_PUBLIC_GENESIS_NFT_ADDRESS after deploy.",
     saleStatus: "SALE STATUS",
@@ -367,9 +366,10 @@ export const gameEn: GameMessages = {
     locationsBody:
       "Home · Mountain · Grassland · Forest · River — weights 1 / 2 / 3 / 5 / 8. Higher weight, higher share narrative and higher hunt-risk narrative. Cougars cannot choose Home.",
     moreTitle: "MORE",
-    playerGuide: "Player Guide (PDF)",
+    playerGuide: "Open Player Guide",
+    playerGuidePdf: "Download PDF",
     fullRulesNote:
-      "Player Guide covers classes, locations, and pool overview. Settlement formulas, trait resolution order (King → Runner → Lucky → Guardian → …), and edge cases are defined in HANSOME GDS v1.1 — not in the Player Guide PDF.",
+      "Player Guide covers classes, locations, and pool overview. Settlement formulas, trait resolution order (King → Runner → Lucky → Guardian → …), and edge cases are defined in HANSOME GDS v1.1 — not in the Player Guide.",
   },
   actions: {
     deploy: "DEPLOY",

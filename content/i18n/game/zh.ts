@@ -72,7 +72,7 @@ export const gameZh: GameMessages = {
     play: "遊玩",
     deploy: "部署",
     nfts: "NFT",
-    loot: "戰利",
+    loot: "獎勵",
   },
   title: {
     eyebrow: "像素 RPG · ROBINHOOD CHAIN",
@@ -163,7 +163,7 @@ export const gameZh: GameMessages = {
       ["公開錢包上限", "5"],
       ["合計錢包上限", "6"],
       ["主網意圖價格", "0.015 ETH"],
-      ["測試網價格", "0.001 ETH（僅測試）"],
+      ["測試網價格", "0.001 ETH"],
     ],
     priceNote:
       "鑄造介面一律讀取已部署合約的即時價格。已設定合約時，切勿把意圖價格當成畫面即時價。",
@@ -189,20 +189,19 @@ export const gameZh: GameMessages = {
     poolCougar: "Cougar Base Pool（美洲獅基礎池）",
     poolHunt: "Hunting Pool（狩獵池）",
     poolsNote: "不要把 Alpaca Pool 稱為 Base Pool。",
-    statusTitle: "建置狀態",
+    statusTitle: "網路狀態",
     statusEyebrow: "目前",
     statusLive: "已上線",
-    statusSoon: "尚未",
+    statusSoon: "即將",
     statusRows: [
       ["Robinhood 測試網鑄造", "live"],
       ["白名單 + 公開鑄造", "live"],
       ["前端鑄造整合", "live"],
       ["統一 550 包驗證通過", "live"],
-      ["IPFS / 最終 metadata CID", "soon"],
-      ["正式揭示", "soon"],
+      ["IPFS / 揭示 metadata", "live"],
+      ["玩法合約（測試網）", "live"],
+      ["即時 My NFTs / Rewards / 排行", "live"],
       ["主網部署", "soon"],
-      ["玩法合約", "soon"],
-      ["即時 My NFTs / Rewards / 排行", "soon"],
     ],
     backHome: "← 回標題頁",
   },
@@ -210,7 +209,7 @@ export const gameZh: GameMessages = {
     loading: "載入鑄造狀態…",
     blurb:
       "單一 Genesis ERC-721 集合（總量 550：羊駝 500 + 美洲獅 50）。鑄造時不可選陣營 — 揭示後才決定。Token ID 不代表陣營。",
-    liveBanner: "測試網即時 — HansomeGenesisNFT（Robinhood Chain Testnet）",
+    liveBanner: "Robinhood Chain 測試網",
     notConfigured:
       "尚未設定 Genesis NFT 合約地址。部署後請設定 NEXT_PUBLIC_GENESIS_NFT_ADDRESS。",
     saleStatus: "銷售狀態",
@@ -360,9 +359,10 @@ export const gameZh: GameMessages = {
     locationsBody:
       "Home · Mountain · Grassland · Forest · River — 權重 1 / 2 / 3 / 5 / 8。權重越高，份額敘事與狩獵風險敘事越高。美洲獅不能選 Home。",
     moreTitle: "更多",
-    playerGuide: "玩家指南（PDF）",
+    playerGuide: "開啟玩家指南",
+    playerGuidePdf: "下載 PDF",
     fullRulesNote:
-      "玩家指南涵蓋特質、地點與獎池概覽。結算公式、特質結算順序（King → Runner → Lucky → Guardian → …）與邊界情況定義於 HANSOME GDS v1.1，不在玩家指南 PDF 內。",
+      "玩家指南涵蓋特質、地點與獎池概覽。結算公式、特質結算順序（King → Runner → Lucky → Guardian → …）與邊界情況定義於 HANSOME GDS v1.1，不在玩家指南內。",
   },
   actions: {
     deploy: "部署",

@@ -54,6 +54,7 @@ export function middleware(request: NextRequest) {
     "/rewards": "/game/rewards",
     "/leaderboard": "/game/leaderboard",
     "/docs": "/game/docs",
+    "/docs/guide": "/game/docs/guide",
     "/dashboard": "/game/dashboard",
     "/commit": "/game/commit",
     "/reveal": "/game/reveal",

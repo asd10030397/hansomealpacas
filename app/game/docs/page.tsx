@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { PixelPanel } from "@/components/ui/pixel";
+import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
-import { gameHref } from "@/lib/game/paths";
 
 export default function GameDocsPage() {
   const { t } = useGameI18n();
+  const gameHref = useGameHref();
   const d = t.docs;
 
   return (
@@ -92,11 +93,15 @@ export default function GameDocsPage() {
 
       <PixelPanel title={d.moreTitle}>
         <p className="text-sm text-[var(--hg-muted)]">
+          <Link href={gameHref.playerGuide} className="text-[#f0c44a] underline">
+            {d.playerGuide}
+          </Link>
+          {" · "}
           <Link
             href="/docs/HANSOME_Alpacas_Player_Guide_Bilingual.pdf"
             className="text-[#f0c44a] underline"
           >
-            {d.playerGuide}
+            {d.playerGuidePdf}
           </Link>
           {" · "}
           <Link href={gameHref.home} className="text-[#f0c44a] underline">

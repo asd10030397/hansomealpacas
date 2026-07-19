@@ -20,6 +20,7 @@ export const GAME_INTERNAL = {
   rewards: "/game/rewards",
   leaderboard: "/game/leaderboard",
   docs: "/game/docs",
+  playerGuide: "/game/docs/guide",
 } as const;
 
 /** Pretty public paths on game.hansomealpacas.xyz (and game.localhost). */
@@ -35,6 +36,7 @@ export const GAME_PUBLIC = {
   rewards: "/rewards",
   leaderboard: "/leaderboard",
   docs: "/docs",
+  playerGuide: "/docs/guide",
 } as const;
 
 export type GameHrefMap = { readonly [K in keyof typeof GAME_INTERNAL]: string };

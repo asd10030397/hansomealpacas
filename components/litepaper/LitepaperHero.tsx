@@ -10,12 +10,12 @@ export function LitepaperHero() {
   const hero = t.litepaper.hero;
 
   return (
-    <FadeIn as="div" className="relative pb-16 pt-4 sm:pb-24">
+    <FadeIn as="div" className="relative overflow-x-clip pb-16 pt-4 sm:pb-24">
       <img
         src="/pixel/alpaca-sunglasses.png"
         alt=""
         aria-hidden="true"
-        className="no-print pointer-events-none absolute -right-2 -top-2 hidden h-20 w-20 select-none opacity-90 sm:block sm:h-24 sm:w-24"
+        className="no-print pointer-events-none absolute right-0 top-0 hidden h-20 w-20 select-none opacity-90 sm:block sm:h-24 sm:w-24"
       />
 
       <div className="no-print flex flex-wrap items-center justify-between gap-4">

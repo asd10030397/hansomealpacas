@@ -1,0 +1,103 @@
+{
+  "base": "http://localhost:3000",
+  "results": [
+    {
+      "name": "home",
+      "url": "http://localhost:3000/game",
+      "pass": true,
+      "expectOk": true,
+      "forbidOk": true,
+      "overflowX": false,
+      "hasLoot": false,
+      "homeHref": "/game",
+      "shot": "C:\\hansomealpacas\\reports\\regression-recent\\home-390.png"
+    },
+    {
+      "name": "dashboard",
+      "url": "http://localhost:3000/game/dashboard",
+      "pass": true,
+      "expectOk": true,
+      "forbidOk": true,
+      "overflowX": false,
+      "hasLoot": false,
+      "homeHref": "/game",
+      "shot": "C:\\hansomealpacas\\reports\\regression-recent\\dashboard-390.png"
+    },
+    {
+      "name": "mint",
+      "url": "http://localhost:3000/game/mint",
+      "pass": true,
+      "expectOk": true,
+      "forbidOk": true,
+      "overflowX": false,
+      "hasLoot": false,
+      "homeHref": "/game",
+      "shot": "C:\\hansomealpacas\\reports\\regression-recent\\mint-390.png"
+    },
+    {
+      "name": "my-nfts",
+      "url": "http://localhost:3000/game/my-nfts",
+      "pass": true,
+      "expectOk": true,
+      "forbidOk": true,
+      "overflowX": false,
+      "hasLoot": false,
+      "homeHref": "/game",
+      "shot": "C:\\hansomealpacas\\reports\\regression-recent\\my-nfts-390.png"
+    },
+    {
+      "name": "rewards",
+      "url": "http://localhost:3000/game/rewards",
+      "pass": true,
+      "expectOk": true,
+      "forbidOk": true,
+      "overflowX": false,
+      "hasLoot": false,
+      "homeHref": "/game",
+      "shot": "C:\\hansomealpacas\\reports\\regression-recent\\rewards-390.png"
+    },
+    {
+      "name": "leaderboard",
+      "url": "http://localhost:3000/game/leaderboard",
+      "pass": true,
+      "expectOk": true,
+      "forbidOk": true,
+      "overflowX": false,
+      "hasLoot": false,
+      "homeHref": "/game",
+      "shot": "C:\\hansomealpacas\\reports\\regression-recent\\leaderboard-390.png"
+    },
+    {
+      "name": "docs",
+      "url": "http://localhost:3000/game/docs",
+      "pass": true,
+      "expectOk": true,
+      "forbidOk": true,
+      "overflowX": false,
+      "hasLoot": false,
+      "homeHref": "/game",
+      "shot": "C:\\hansomealpacas\\reports\\regression-recent\\docs-390.png"
+    },
+    {
+      "name": "guide",
+      "url": "http://localhost:3000/game/docs/guide",
+      "pass": true,
+      "expectOk": true,
+      "forbidOk": true,
+      "overflowX": false,
+      "hasLoot": false,
+      "homeHref": "/game",
+      "shot": "C:\\hansomealpacas\\reports\\regression-recent\\guide-390.png"
+    },
+    {
+      "name": "litepaper",
+      "url": "http://localhost:3000/litepaper",
+      "pass": true,
+      "expectOk": true,
+      "forbidOk": true,
+      "overflowX": false,
+      "hasLoot": false,
+      "shot": "C:\\hansomealpacas\\reports\\regression-recent\\litepaper-390.png"
+    }
+  ]
+}
