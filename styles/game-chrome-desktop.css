@@ -1,0 +1,67 @@
+/**
+ * Desktop game chrome (≥ 1024px).
+ * Do not put mobile dock / MENU drawer rules here.
+ */
+
+.hansome-game .game-nav--desktop .game-nav__inner--desktop {
+  display: flex;
+  max-width: 80rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 auto;
+  padding: 0.55rem 1rem;
+  min-width: 0;
+}
+
+.hansome-game .game-nav--desktop .game-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.hansome-game .game-nav__link {
+  padding: 0.55rem 0.7rem;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+  color: #e8e4d8;
+  border: 2px solid transparent;
+}
+
+.hansome-game .game-nav__link:hover {
+  border-color: #3a455c;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.hansome-game .game-nav__link--active {
+  color: #1a1520;
+  background: #e8b03a;
+  border-color: #9a6a12;
+  box-shadow: 2px 2px 0 #0a0c12;
+}
+
+.hansome-game .game-nav__tools {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.hansome-game .game-nav__chain-badge {
+  display: none;
+}
+
+@media (min-width: 1280px) {
+  .hansome-game .game-nav__chain-badge {
+    display: inline-flex;
+  }
+}
+
+/* Desktop chrome active: no dock padding on main */
+.hansome-game:has([data-game-chrome="desktop"]) .hansome-game-main {
+  padding-bottom: 0;
+}

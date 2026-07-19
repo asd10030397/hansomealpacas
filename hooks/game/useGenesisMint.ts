@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BaseError, ContractFunctionRevertedError, zeroAddress } from "viem";
 import {
   useAccount,
@@ -32,6 +32,7 @@ import {
   lookupWhitelistProof,
   type WhitelistProofMap,
 } from "@/lib/game/mintService";
+import { refreshOwnedGenesisInventory } from "@/lib/game/ownedGenesisMetaCache";
 import type { MintSaleState } from "@/types/game";
 
 const abi = hansomeGenesisNftAbi;
@@ -212,6 +213,16 @@ export function useGenesisMint(options: UseGenesisMintOptions = {}) {
     hash: txHash,
     chainId: GENESIS_CHAIN_ID,
   });
+
+  // Mint confirmed → drop shared inventory meta and notify My NFTs / Commit hooks.
+  const lastInventoryRefreshHash = useRef<`0x${string}` | undefined>(undefined);
+  useEffect(() => {
+    if (!receipt.isSuccess || !txHash) return;
+    if (lastInventoryRefreshHash.current === txHash) return;
+    lastInventoryRefreshHash.current = txHash;
+    refreshOwnedGenesisInventory();
+    void reads.refetch();
+  }, [receipt.isSuccess, txHash, reads]);
 
   const prepareAndSend = useCallback(
     async (input: {

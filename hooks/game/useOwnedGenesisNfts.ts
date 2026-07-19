@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { formatEther, type Address } from "viem";
-import { useAccount, useReadContract, useReadContracts } from "wagmi";
+import { useAccount, useChainId, useReadContract, useReadContracts } from "wagmi";
 import { hansomeGenesisInventoryAbi } from "@/lib/game/abis/hansomeGenesisInventory";
 import { hansomeGameAbi } from "@/lib/game/abis/hansomeGame";
 import { rewardDistributorAbi } from "@/lib/game/abis/rewardDistributor";
@@ -19,10 +19,30 @@ import {
   isGenesisConfigured,
 } from "@/lib/game/genesis";
 import {
+  isImmediateGenesisNftRevealEnabled,
+  isOwnedGenesisMetaIncomplete,
+  parseGenesisMetadataIdentity,
+  resolveOwnedGenesisRevealFlags,
+} from "@/lib/game/genesisNftReveal";
+import {
   GAME_CHAIN_ID,
   HANSOME_GAME_ADDRESS,
   isHansomeGameConfigured,
 } from "@/lib/game/hansomeGame";
+import {
+  getOwnedGenesisInventoryRevision,
+  getOwnedGenesisMeta,
+  getOwnedGenesisMetaEpoch,
+  getServerOwnedGenesisInventoryRevision,
+  getServerOwnedGenesisMetaEpoch,
+  hasFreshOwnedGenesisMeta,
+  ownedGenesisMetaSourceKey,
+  publishOwnedGenesisMeta,
+  refreshOwnedGenesisInventory,
+  setOwnedGenesisMeta,
+  subscribeOwnedGenesisInventory,
+  subscribeOwnedGenesisMeta,
+} from "@/lib/game/ownedGenesisMetaCache";
 import {
   REWARD_DISTRIBUTOR_ADDRESS,
   isRewardDistributorConfigured,
@@ -36,48 +56,87 @@ export type OwnedGenesisNft = MockNft & {
   trait: string;
 };
 
-type MetaCache = { image: string; name?: string };
+export {
+  invalidateOwnedGenesisMeta,
+  refreshOwnedGenesisInventory,
+} from "@/lib/game/ownedGenesisMetaCache";
 
 const MAX_SCAN = 550;
+const immediateNftReveal = isImmediateGenesisNftRevealEnabled();
+const VISIBILITY_REFRESH_DEBOUNCE_MS = 400;
 
-async function fetchTokenMeta(tokenId: number, chainUri: string): Promise<MetaCache> {
+async function fetchTokenMeta(
+  tokenId: number,
+  chainUri: string,
+): Promise<{
+  image: string;
+  name?: string;
+  identity: ReturnType<typeof parseGenesisMetadataIdentity>;
+}> {
   const candidates: string[] = [];
   if (chainUri) candidates.push(ipfsToHttps(chainUri));
   // Production metadata CID — used when on-chain URI is still the pre-reveal placeholder.
-  if (/placeholder/i.test(chainUri) || !chainUri) {
+  // On Testnet immediate NFT Reveal, always prefer the reveal metadata package.
+  if (immediateNftReveal || /placeholder/i.test(chainUri) || !chainUri) {
     candidates.unshift(metadataUrlForToken(tokenId));
   }
   for (const url of candidates) {
     try {
       const res = await fetch(url, { signal: AbortSignal.timeout(12_000) });
       if (!res.ok) continue;
-      const json = (await res.json()) as { image?: string; name?: string };
+      const json = (await res.json()) as {
+        image?: string;
+        name?: string;
+        attributes?: unknown;
+      };
       if (json.image) {
-        return { image: ipfsToHttps(json.image), name: json.name };
+        return {
+          image: ipfsToHttps(json.image),
+          name: json.name,
+          identity: parseGenesisMetadataIdentity(json),
+        };
       }
     } catch {
       /* try next */
     }
   }
-  return { image: "/pixel/cougar/mint/image/cougar.png" };
+  return { image: "/pixel/cougar/mint/image/cougar.png", identity: null };
 }
 
 export function useOwnedGenesisNfts() {
   const { address, isConnected } = useAccount();
+  const chainId = useChainId();
   const configured = isGenesisConfigured() && !!GENESIS_NFT_ADDRESS;
   const liveGame = isHansomeGameConfigured();
   const nft = GENESIS_NFT_ADDRESS as Address | undefined;
   const game = HANSOME_GAME_ADDRESS;
 
-  const [metaById, setMetaById] = useState<Record<number, MetaCache>>({});
-  const [metaLoading, setMetaLoading] = useState(false);
+  const metaEpoch = useSyncExternalStore(
+    subscribeOwnedGenesisMeta,
+    getOwnedGenesisMetaEpoch,
+    getServerOwnedGenesisMetaEpoch,
+  );
+  const inventoryRevision = useSyncExternalStore(
+    subscribeOwnedGenesisInventory,
+    getOwnedGenesisInventoryRevision,
+    getServerOwnedGenesisInventoryRevision,
+  );
+  const [metaFetching, setMetaFetching] = useState(false);
+
+  const liveQuery = {
+    enabled: configured && !!address,
+    refetchInterval: isConnected ? 20_000 : false,
+  } as const;
 
   const totalMinted = useReadContract({
     address: nft,
     abi: hansomeGenesisInventoryAbi,
     functionName: "totalMinted",
     chainId: GENESIS_CHAIN_ID,
-    query: { enabled: configured },
+    query: {
+      enabled: configured,
+      refetchInterval: isConnected ? 20_000 : false,
+    },
   });
 
   const balance = useReadContract({
@@ -86,7 +145,7 @@ export function useOwnedGenesisNfts() {
     functionName: "balanceOf",
     args: address ? [address] : undefined,
     chainId: GENESIS_CHAIN_ID,
-    query: { enabled: configured && !!address },
+    query: liveQuery,
   });
 
   const currentDay = useReadContract({
@@ -94,7 +153,7 @@ export function useOwnedGenesisNfts() {
     abi: hansomeGameAbi,
     functionName: "currentDay",
     chainId: GAME_CHAIN_ID,
-    query: { enabled: liveGame && !!game },
+    query: { enabled: liveGame && !!game, refetchInterval: isConnected ? 20_000 : false },
   });
 
   const distributorFromGame = useReadContract({
@@ -123,6 +182,7 @@ export function useOwnedGenesisNfts() {
     })),
     query: {
       enabled: configured && !!nft && !!address && scanCount > 0,
+      refetchInterval: isConnected ? 20_000 : false,
     },
   });
 
@@ -206,44 +266,159 @@ export function useOwnedGenesisNfts() {
           : [];
       return [...base, ...gameReads, ...claimRead];
     }),
-    query: { enabled: configured && !!nft && ownedIds.length > 0 },
+    query: {
+      enabled: configured && !!nft && ownedIds.length > 0,
+      refetchInterval: isConnected ? 20_000 : false,
+    },
   });
 
   const stride = 4 + (liveGame && game ? 2 : 0) + (distributor ? 1 : 0);
 
+  const sourceKeyByTokenId = useMemo(() => {
+    const map = new Map<number, string>();
+    if (!detailReads.data) return map;
+    for (let idx = 0; idx < ownedIds.length; idx++) {
+      const tokenId = ownedIds[idx]!;
+      const base = idx * stride;
+      const onChainRevealed = Boolean(detailReads.data?.[base + 2]?.result);
+      const uri =
+        (detailReads.data?.[base + 3]?.result as string | undefined) ?? "";
+      map.set(tokenId, ownedGenesisMetaSourceKey(uri, onChainRevealed));
+    }
+    return map;
+  }, [detailReads.data, ownedIds, stride]);
+
+  const metaIncomplete = isOwnedGenesisMetaIncomplete(ownedIds, (tokenId) => {
+    const sourceKey = sourceKeyByTokenId.get(tokenId);
+    if (sourceKey == null) return false;
+    return hasFreshOwnedGenesisMeta(tokenId, sourceKey);
+  });
+
+  const refetchChain = async () => {
+    await Promise.all([
+      totalMinted.refetch?.(),
+      balance.refetch?.(),
+      ownerReads.refetch?.(),
+      detailReads.refetch?.(),
+      currentDay.refetch?.(),
+    ]);
+  };
+
+  // Account or wallet chain change → drop meta + requery ownership.
+  const sessionKey = `${address?.toLowerCase() ?? ""}:${chainId}`;
+  const prevSessionKey = useRef<string | null>(null);
   useEffect(() => {
-    if (!detailReads.data || ownedIds.length === 0) return;
+    if (prevSessionKey.current == null) {
+      prevSessionKey.current = sessionKey;
+      return;
+    }
+    if (prevSessionKey.current === sessionKey) return;
+    prevSessionKey.current = sessionKey;
+    refreshOwnedGenesisInventory();
+  }, [sessionKey]);
+
+  // Keep latest chain refetch for revision / visibility listeners.
+  const refetchChainRef = useRef(refetchChain);
+  refetchChainRef.current = refetchChain;
+
+  // External bump (mint success, etc.) → refetch chain reads for mounted pages.
+  const prevInventoryRevision = useRef(inventoryRevision);
+  useEffect(() => {
+    if (prevInventoryRevision.current === inventoryRevision) return;
+    prevInventoryRevision.current = inventoryRevision;
+    if (!configured || !isConnected) return;
+    void refetchChainRef.current();
+  }, [inventoryRevision, configured, isConnected]);
+
+  // Returning from MetaMask / tab focus / bfcache restore.
+  // Soft refresh: re-read chain; URI/reveal fingerprint drops stale meta automatically.
+  useEffect(() => {
+    if (!configured) return;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const schedule = () => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (typeof document !== "undefined" && document.visibilityState === "hidden") {
+          return;
+        }
+        void refetchChainRef.current();
+      }, VISIBILITY_REFRESH_DEBOUNCE_MS);
+    };
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") schedule();
+    };
+    window.addEventListener("focus", schedule);
+    window.addEventListener("pageshow", schedule);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      if (timer) clearTimeout(timer);
+      window.removeEventListener("focus", schedule);
+      window.removeEventListener("pageshow", schedule);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [configured]);
+
+  useEffect(() => {
+    if (!detailReads.data || ownedIds.length === 0) {
+      setMetaFetching(false);
+      return;
+    }
+    const stale = ownedIds.filter((tokenId) => {
+      const sourceKey = sourceKeyByTokenId.get(tokenId);
+      if (sourceKey == null) return true;
+      return !hasFreshOwnedGenesisMeta(tokenId, sourceKey);
+    });
+    if (stale.length === 0) {
+      setMetaFetching(false);
+      return;
+    }
+
     let cancelled = false;
-    setMetaLoading(true);
+    setMetaFetching(true);
     (async () => {
-      const next: Record<number, MetaCache> = {};
       await Promise.all(
-        ownedIds.map(async (tokenId, idx) => {
+        stale.map(async (tokenId) => {
+          const idx = ownedIds.indexOf(tokenId);
           const base = idx * stride;
-          const uri = (detailReads.data?.[base + 3]?.result as string | undefined) ?? "";
-          next[tokenId] = await fetchTokenMeta(tokenId, uri);
+          const onChainRevealed = Boolean(detailReads.data?.[base + 2]?.result);
+          const uri =
+            (detailReads.data?.[base + 3]?.result as string | undefined) ?? "";
+          const sourceKey = ownedGenesisMetaSourceKey(uri, onChainRevealed);
+          const meta = await fetchTokenMeta(tokenId, uri);
+          // Always cache (including failures) so loading cannot hang.
+          setOwnedGenesisMeta(tokenId, { ...meta, sourceKey });
         }),
       );
-      if (!cancelled) {
-        setMetaById(next);
-        setMetaLoading(false);
-      }
+      publishOwnedGenesisMeta();
+      if (!cancelled) setMetaFetching(false);
     })();
     return () => {
       cancelled = true;
     };
-  }, [detailReads.data, ownedIds, stride]);
+  }, [detailReads.data, ownedIds, stride, sourceKeyByTokenId, metaEpoch]);
 
   const nfts: OwnedGenesisNft[] = useMemo(() => {
     if (!detailReads.data) return [];
     return ownedIds.map((tokenId, idx) => {
       const base = idx * stride;
-      const side = mapSide(Number(detailReads.data?.[base]?.result ?? 0));
-      const gameplayClass = mapGameplayClass(
+      const onChainSide = mapSide(Number(detailReads.data?.[base]?.result ?? 0));
+      const onChainClass = mapGameplayClass(
         Number(detailReads.data?.[base + 1]?.result ?? 0),
       );
-      const revealed = Boolean(detailReads.data?.[base + 2]?.result);
+      const onChainRevealed = Boolean(detailReads.data?.[base + 2]?.result);
       const uri = (detailReads.data?.[base + 3]?.result as string | undefined) ?? null;
+      const meta = getOwnedGenesisMeta(tokenId);
+      const metaIdentity = meta?.identity ?? null;
+      const { revealed, useMetaReveal } = resolveOwnedGenesisRevealFlags({
+        onChainRevealed,
+        metaIdentity,
+        immediateNftReveal,
+      });
+      const side = useMetaReveal && metaIdentity ? metaIdentity.side : onChainSide;
+      const gameplayClass =
+        useMetaReveal && metaIdentity
+          ? metaIdentity.gameplayClass
+          : onChainClass;
       let locOffset = base + 4;
       let locationId: LocationId | null = null;
       let gameStatus: MockNft["gameStatus"] = "Idle";
@@ -253,8 +428,6 @@ export function useOwnedGenesisNfts() {
         hash = detailReads.data?.[locOffset + 1]?.result as `0x${string}` | undefined;
         locOffset += 2;
         if (hash && hash !== zeroHash) {
-          // Home is location 0 — after reveal locationOf is still 0, so hash alone
-          // means at least Committed; non-zero loc confirms Revealed away from Home.
           locationId = loc as LocationId;
           gameStatus = "Revealed";
         }
@@ -265,10 +438,8 @@ export function useOwnedGenesisNfts() {
           : 0n;
       if (claimableWei > 0n) gameStatus = "Settled";
       else if (hash && hash !== zeroHash && locationId === 0) {
-        // Ambiguous Home vs not-yet-revealed: prefer Committed until claimable/settled.
         gameStatus = "Committed";
       }
-      const meta = metaById[tokenId];
       const trait = side === "Cougar" ? "Cougar" : gameplayClass;
       return {
         tokenId,
@@ -292,7 +463,7 @@ export function useOwnedGenesisNfts() {
     liveGame,
     game,
     distributor,
-    metaById,
+    metaEpoch,
   ]);
 
   const isLoading =
@@ -302,7 +473,8 @@ export function useOwnedGenesisNfts() {
       balance.isLoading ||
       ownerReads.isLoading ||
       detailReads.isLoading ||
-      metaLoading);
+      metaIncomplete ||
+      metaFetching);
 
   return {
     configured,
@@ -318,12 +490,8 @@ export function useOwnedGenesisNfts() {
       (detailReads.error as Error | null)?.message ??
       null,
     refetch: async () => {
-      await Promise.all([
-        totalMinted.refetch?.(),
-        balance.refetch?.(),
-        ownerReads.refetch?.(),
-        detailReads.refetch?.(),
-      ]);
+      refreshOwnedGenesisInventory(ownedIds.length > 0 ? ownedIds : undefined);
+      await refetchChain();
     },
   };
 }

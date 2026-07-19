@@ -32,8 +32,12 @@ export default function CommitPage() {
   const { commitNft, isPending, lastError } = useHansomeCommit();
   const owned = useOwnedGenesisNfts();
   const gameConfigured = isHansomeGameConfigured();
-  /** Preview inventory when chain is live but wallet is not connected. */
-  const usingDemoInventory = !gameConfigured || !owned.isConnected;
+  /**
+   * Live inventory matches My NFTs (`useOwnedGenesisNfts`) whenever Genesis is
+   * configured and the wallet is connected. Demo MOCK_NFTS only when that
+   * inventory source is unavailable — never as a parallel filter path.
+   */
+  const usingDemoInventory = !owned.configured || !owned.isConnected;
 
   const playable = usingDemoInventory
     ? MOCK_NFTS.filter((n) => n.revealed)
@@ -150,18 +154,15 @@ export default function CommitPage() {
         ) : null}
         {usingDemoInventory ? (
           <GameFeedback tone="info" label="Wallet">
-            {gameConfigured ? t.commit.connectWallet : t.common.demoBanner}
+            {owned.configured ? t.commit.connectWallet : t.common.demoBanner}
           </GameFeedback>
         ) : null}
-        {gameConfigured && owned.isConnected && owned.isLoading ? (
+        {!usingDemoInventory && owned.isLoading ? (
           <p className="mt-2 text-sm text-[var(--hg-muted)]">
             {t.commit.loadingInventory}
           </p>
         ) : null}
-        {gameConfigured &&
-        owned.isConnected &&
-        !owned.isLoading &&
-        playable.length === 0 ? (
+        {!usingDemoInventory && !owned.isLoading && playable.length === 0 ? (
           <GameFeedback tone="info" label="Inventory">
             {t.commit.emptyInventory}
           </GameFeedback>

@@ -2,11 +2,10 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { GameNav } from "@/components/game/GameNav";
+import { GameChrome } from "@/components/game/GameChrome";
 import { GameplayMusic } from "@/components/game/GameplayMusic";
 import { GameUiSfx } from "@/components/game/GameUiSfx";
 import { GameVisualShell } from "@/components/game/GameVisualShell";
-import { MobileGameDock } from "@/components/game/MobileGameDock";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { forceUnlockBodyScroll } from "@/lib/ui/bodyScrollLock";
 
@@ -31,11 +30,10 @@ export function GameShell({ children }: { children: React.ReactNode }) {
         >
           {t.common.skipToContent}
         </a>
-        <GameNav />
+        <GameChrome />
         <main id="game-main" className="hansome-game-main">
           {children}
         </main>
-        <MobileGameDock />
       </div>
     </GameVisualShell>
   );

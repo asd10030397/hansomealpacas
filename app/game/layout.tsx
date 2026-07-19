@@ -7,11 +7,14 @@ import { WalletConnectProvider } from "@/context/WalletConnectContext";
 import { getGameHref } from "@/lib/game/paths";
 import "@/styles/game.css";
 import "@/styles/game-polish.css";
+import "@/styles/game-chrome-shared.css";
+import "@/styles/game-chrome-desktop.css";
+import "@/styles/game-chrome-mobile.css";
 
 export const metadata: Metadata = {
   title: "HANSOME: Alpacas vs Cougars",
   description:
-    "Premium pixel-art GameFi — Commit → Reveal → Settlement → Claim on Robinhood Chain.",
+    "Premium pixel-art GameFi — Commit Move → Reveal Move → Settlement → Claim Rewards on Robinhood Chain.",
   robots: { index: true, follow: true },
 };
 

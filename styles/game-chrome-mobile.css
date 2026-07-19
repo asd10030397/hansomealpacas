@@ -1,0 +1,231 @@
+/**
+ * Mobile game chrome (≤ 1023px).
+ * Header, MENU drawer, bottom dock, MORE sheet.
+ */
+
+.hansome-game .game-nav--mobile .game-nav__mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.75rem 0.9rem 0.85rem;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.hansome-game .game-nav__mobile-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  width: 100%;
+}
+
+.hansome-game .game-nav__mobile-row--top {
+  justify-content: space-between;
+}
+
+.hansome-game .game-nav__mobile-row--actions {
+  justify-content: space-between;
+}
+
+.hansome-game .game-nav__mobile-row--actions .game-wallet-btn {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: min(100%, 14rem);
+}
+
+.hansome-game .game-nav__menu-btn {
+  flex: 0 0 auto;
+  min-width: 4.5rem;
+  min-height: 2.6rem;
+}
+
+.hansome-game .game-nav__drawer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  border-top: 2px solid #0d1018;
+  background: #0e121c;
+  padding: 0.75rem 0.85rem calc(0.85rem + env(safe-area-inset-bottom, 0px));
+  max-height: min(70dvh, 28rem);
+}
+
+.hansome-game .game-nav__drawer-scroll {
+  display: grid;
+  gap: 0.35rem;
+  overflow-y: auto;
+  min-height: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.hansome-game .game-nav__drawer-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid #2a3348;
+}
+
+.hansome-game .game-nav__mobile-link {
+  padding: 0.85rem 0.95rem;
+  border: 2px solid #2a3348;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.68rem;
+  color: #f3ebe0;
+  text-align: left;
+  min-height: 2.75rem;
+}
+
+.hansome-game .game-nav__mobile-link.is-active {
+  background: #e8b03a;
+  color: #1a1520;
+  border-color: #9a6a12;
+}
+
+/* ========== MOBILE BOTTOM DOCK ========== */
+
+.mobile-dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /*
+   * Always above the portaled MORE sheet so dock taps —
+   * including MORE toggle to close — are never blocked by the backdrop.
+   */
+  z-index: 90;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border-top: 4px solid #0d1018;
+  background: #121826;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  max-width: 100%;
+  pointer-events: auto;
+}
+
+.mobile-dock__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.15rem;
+  padding: 0.45rem 0.2rem;
+  font-family: var(--font-anton), monospace;
+  font-size: clamp(0.42rem, 2.6vw, 0.52rem);
+  letter-spacing: 0.04em;
+  color: #f3ebe0;
+  text-align: center;
+  line-height: 1.15;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.mobile-dock__item.is-active {
+  background: #e8b03a;
+  color: #1a1520;
+}
+
+/* Portaled to document.body — unmounted when closed (no leftover overlay).
+ * Above sticky header (z-index 80) so backdrop receives dismiss taps;
+ * below dock (z-index 90) so MORE toggle stays clickable. */
+.mobile-dock__sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 85;
+  pointer-events: none;
+}
+
+.mobile-dock__sheet[data-more-sheet="open"] {
+  pointer-events: none;
+}
+
+.mobile-dock__sheet-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* Stop above the dock so MORE / dock items stay clickable while open. */
+  bottom: calc(3.35rem + env(safe-area-inset-bottom, 0px));
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: rgba(6, 8, 14, 0.55);
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 0;
+}
+
+.mobile-dock__sheet-panel {
+  position: absolute;
+  left: 0.65rem;
+  right: 0.65rem;
+  bottom: calc(3.35rem + env(safe-area-inset-bottom, 0px));
+  max-height: min(55dvh, 22rem);
+  overflow-y: auto;
+  border: 3px solid #0d1018;
+  background: #121826;
+  box-shadow:
+    0 0 0 2px #5a6478,
+    0 12px 28px rgba(0, 0, 0, 0.45);
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  pointer-events: auto;
+  z-index: 1;
+}
+
+.mobile-dock__sheet-title {
+  margin: 0;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  color: #9aa3b5;
+}
+
+.mobile-dock__sheet-links {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.mobile-dock__sheet-link {
+  min-height: 2.75rem;
+  padding: 0.75rem 0.9rem;
+  border: 2px solid #2a3348;
+  background: #0e121c;
+  color: #f3ebe0;
+  font-family: var(--font-anton), monospace;
+  font-size: 0.65rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mobile-dock__sheet-link.is-active {
+  background: #e8b03a;
+  color: #1a1520;
+  border-color: #9a6a12;
+}
+
+.mobile-dock__sheet-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid #2a3348;
+}
+
+/* Reserve space for dock when mobile chrome is mounted */
+.hansome-game:has([data-game-chrome="mobile"]) .hansome-game-main {
+  padding-bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
+}
+
+.hansome-game:has([data-game-chrome="mobile"]):has(.standoff) .hansome-game-main {
+  padding-bottom: 0;
+}

@@ -1,5 +1,5 @@
 /**
- * Mobile wallet connect regression — Playwright taps, not DOM-only asserts.
+ * Mobile + desktop wallet connect regression — Playwright taps, not DOM-only asserts.
  *
  * Usage:
  *   BASE_URL=http://localhost:3000 node scripts/qa-wallet-connect-mobile.mjs
@@ -28,8 +28,48 @@ async function bodyLockState(page) {
   }));
 }
 
-async function sheetOverlayPresent(page) {
-  return page.locator(".mobile-dock__sheet").count();
+async function assertNoMoreOverlay(page, label) {
+  const state = await page.evaluate(() => {
+    const sheet = document.querySelector(".mobile-dock__sheet, [data-more-sheet='open']");
+    const backdrop = document.querySelector(
+      ".mobile-dock__sheet-backdrop, [data-more-backdrop='true']",
+    );
+    const dock = document.querySelector(".mobile-dock");
+    const mid = document.elementFromPoint(
+      Math.floor(window.innerWidth / 2),
+      Math.floor(window.innerHeight / 2),
+    );
+    const midClass = mid?.className?.toString?.() ?? "";
+    return {
+      sheetCount: document.querySelectorAll(".mobile-dock__sheet").length,
+      backdropCount: document.querySelectorAll(".mobile-dock__sheet-backdrop").length,
+      sheetDisplay: sheet ? getComputedStyle(sheet).display : null,
+      sheetPointerEvents: sheet ? getComputedStyle(sheet).pointerEvents : null,
+      backdropPointerEvents: backdrop ? getComputedStyle(backdrop).pointerEvents : null,
+      dockZ: dock ? getComputedStyle(dock).zIndex : null,
+      dockPointerEvents: dock ? getComputedStyle(dock).pointerEvents : null,
+      moreOpenAttr: dock?.getAttribute("data-more-open") ?? null,
+      midBlocks:
+        Boolean(mid?.closest?.(".mobile-dock__sheet")) ||
+        /mobile-dock__sheet/.test(midClass),
+      midTag: mid?.tagName ?? null,
+      midClass: midClass.slice(0, 80),
+    };
+  });
+
+  if (state.sheetCount !== 0 || state.backdropCount !== 0) {
+    throw new Error(`${label}: MORE sheet still in DOM after close: ${JSON.stringify(state)}`);
+  }
+  if (state.moreOpenAttr === "true") {
+    throw new Error(`${label}: dock data-more-open still true after close`);
+  }
+  if (state.midBlocks) {
+    throw new Error(`${label}: invisible MORE overlay still above page center: ${JSON.stringify(state)}`);
+  }
+  if (state.dockPointerEvents === "none") {
+    throw new Error(`${label}: dock pointer-events disabled after close`);
+  }
+  return state;
 }
 
 async function tapConnectAndExpectHelp(page, selector, label) {
@@ -53,11 +93,16 @@ async function tapConnectAndExpectHelp(page, selector, label) {
             tag: el.tagName,
             text: (el.textContent || "").trim().slice(0, 40),
             pe: getComputedStyle(el).pointerEvents,
+            cls: (el.className || "").toString().slice(0, 60),
           }
         : null;
     },
     { x: box.x + box.width / 2, y: box.y + box.height / 2 },
   );
+
+  if (hit?.cls?.includes("mobile-dock__sheet")) {
+    throw new Error(`${label}: MORE overlay intercepts wallet button hit test: ${JSON.stringify(hit)}`);
+  }
 
   await btn.click({ timeout: 8000 });
   const help = page.locator('[data-wallet-help-modal="open"]');
@@ -72,6 +117,7 @@ async function tapConnectAndExpectHelp(page, selector, label) {
       ),
       bodyPos: document.body.style.position,
       overlay: Boolean(document.querySelector(".mobile-dock__sheet, .game-nav__drawer")),
+      moreSheet: document.querySelectorAll(".mobile-dock__sheet").length,
     }));
     throw new Error(
       `${label}: help modal did not open. hit=${JSON.stringify(hit)} diag=${JSON.stringify(diag)}`,
@@ -103,14 +149,70 @@ async function tapConnectAndExpectHelp(page, selector, label) {
 
 async function assertProviderMounted(page) {
   const ok = await page.evaluate(() => {
-    // Wagmi + wallet help host: connect buttons exist and wagmi config is present via React.
     return Boolean(document.querySelector('[aria-label="Connect wallet"], [data-wallet-entry]'));
   });
   if (!ok) throw new Error("Wallet connect UI not mounted");
 }
 
-async function run() {
-  const browser = await chromium.launch({ headless: true });
+async function runMoreSheetChecks(page, results, prefix) {
+  const more = page.locator('[data-dock-more="true"], .mobile-dock button:has-text("MORE")');
+  if (!(await more.count())) {
+    results.push({ label: `${prefix}:more-absent`, ok: true, note: "no MORE dock (expected on desktop)" });
+    return;
+  }
+
+  await more.first().click();
+  await page.locator('[data-more-sheet="open"]').waitFor({ state: "visible", timeout: 5000 });
+
+  const openState = await page.evaluate(() => {
+    const sheet = document.querySelector('[data-more-sheet="open"]');
+    const backdrop = document.querySelector("[data-more-backdrop='true']");
+    const dock = document.querySelector(".mobile-dock");
+    return {
+      sheetZ: sheet ? getComputedStyle(sheet).zIndex : null,
+      backdropPe: backdrop ? getComputedStyle(backdrop).pointerEvents : null,
+      dockZ: dock ? getComputedStyle(dock).zIndex : null,
+      dockPe: dock ? getComputedStyle(dock).pointerEvents : null,
+      moreOpen: dock?.getAttribute("data-more-open"),
+    };
+  });
+  if (Number(openState.dockZ) <= Number(openState.sheetZ)) {
+    throw new Error(`${prefix}: dock z-index must be above sheet while open: ${JSON.stringify(openState)}`);
+  }
+  if (openState.backdropPe !== "auto") {
+    throw new Error(`${prefix}: backdrop pointer-events should be auto while open`);
+  }
+  if (openState.dockPe === "none") {
+    throw new Error(`${prefix}: dock pointer-events must stay enabled while MORE is open`);
+  }
+
+  // Close via MORE toggle (must not be blocked by backdrop).
+  await more.first().click({ timeout: 8000 });
+  await page.locator('[data-more-sheet="open"]').waitFor({ state: "detached", timeout: 5000 });
+  await assertNoMoreOverlay(page, `${prefix}:after-toggle-close`);
+
+  // Open again and close via backdrop (center of viewport, clear of dock/header).
+  await more.first().click();
+  await page.locator('[data-more-sheet="open"]').waitFor({ state: "visible", timeout: 5000 });
+  const backdropBox = await page.locator("[data-more-backdrop='true']").boundingBox();
+  if (!backdropBox) throw new Error(`${prefix}: backdrop missing while open`);
+  await page.mouse.click(
+    backdropBox.x + backdropBox.width / 2,
+    backdropBox.y + Math.min(80, backdropBox.height / 3),
+  );
+  await page.locator('[data-more-sheet="open"]').waitFor({ state: "detached", timeout: 5000 });
+  await assertNoMoreOverlay(page, `${prefix}:after-backdrop-close`);
+
+  results.push(
+    await tapConnectAndExpectHelp(
+      page,
+      '[data-wallet-entry="header-mobile"] button, .game-nav__mobile [aria-label="Connect wallet"], [data-wallet-entry="header-desktop"] button, .game-nav--desktop [aria-label="Connect wallet"]',
+      `${prefix}:after-more-close`,
+    ),
+  );
+}
+
+async function runMobileSuite(browser) {
   const context = await browser.newContext({
     ...devices["iPhone SE"],
     locale: "en-US",
@@ -126,7 +228,7 @@ async function run() {
       await tapConnectAndExpectHelp(
         page,
         '[data-wallet-entry="header-mobile"] button, .game-nav__mobile [aria-label="Connect wallet"]',
-        "header-mobile",
+        "mobile:header",
       ),
     );
 
@@ -134,76 +236,112 @@ async function run() {
       await tapConnectAndExpectHelp(
         page,
         '[data-wallet-entry="home-cta"], button.standoff__btn:has-text("CONNECT")',
-        "home-cta",
+        "mobile:home-cta",
       ),
     );
 
-    // MENU wallet action
     await page.locator(".game-nav__menu-btn").click();
     await page.locator('[data-wallet-entry="mobile-menu"] button').waitFor({ state: "visible" });
     results.push(
       await tapConnectAndExpectHelp(
         page,
         '[data-wallet-entry="mobile-menu"] button',
-        "mobile-menu",
+        "mobile:menu",
       ),
     );
 
     await page.goto(`${BASE}${gamePath("myNfts")}`, { waitUntil: "domcontentloaded" });
     results.push(
-      await tapConnectAndExpectHelp(page, '[data-wallet-entry="my-nfts"]', "my-nfts"),
+      await tapConnectAndExpectHelp(page, '[data-wallet-entry="my-nfts"]', "mobile:my-nfts"),
     );
 
     await page.goto(`${BASE}${gamePath("mint")}`, { waitUntil: "domcontentloaded" });
-    results.push(await tapConnectAndExpectHelp(page, '[data-wallet-entry="mint"]', "mint"));
+    results.push(await tapConnectAndExpectHelp(page, '[data-wallet-entry="mint"]', "mobile:mint"));
 
     await page.goto(`${BASE}${gamePath("rewards")}`, { waitUntil: "domcontentloaded" });
-    // Rewards uses header wallet (no page-level CTA)
     results.push(
       await tapConnectAndExpectHelp(
         page,
         '[data-wallet-entry="header-mobile"] button, .game-nav__mobile [aria-label="Connect wallet"]',
-        "rewards-header",
+        "mobile:rewards-header",
       ),
     );
 
-    // MORE sheet must not leave a blocking overlay
-    const more = page.locator(".mobile-dock button:has-text('MORE')");
-    if (await more.count()) {
-      await more.first().click();
-      await page.locator(".mobile-dock__sheet").waitFor({ state: "visible", timeout: 5000 });
-      // Toggle MORE again (same as user closing); backdrop is a sibling under sheet.
-      await more.first().click();
-      await page.locator(".mobile-dock__sheet").waitFor({ state: "detached", timeout: 5000 });
-      if ((await sheetOverlayPresent(page)) !== 0) {
-        throw new Error("MORE sheet still mounted after close");
-      }
-      // Header connect still tappable — no leftover overlay
-      results.push(
-        await tapConnectAndExpectHelp(
-          page,
-          '[data-wallet-entry="header-mobile"] button, .game-nav__mobile [aria-label="Connect wallet"]',
-          "after-more-close",
-        ),
-      );
-    }
+    await runMoreSheetChecks(page, results, "mobile");
 
     const finalLock = await bodyLockState(page);
-    console.log(JSON.stringify({ base: BASE, results, finalLock, pass: true }, null, 2));
+    return { surface: "mobile", results, finalLock, pass: true };
   } catch (e) {
-    console.error(
-      JSON.stringify(
-        {
-          base: BASE,
-          results,
-          pass: false,
-          error: e instanceof Error ? e.message : String(e),
-        },
-        null,
-        2,
+    return {
+      surface: "mobile",
+      results,
+      pass: false,
+      error: e instanceof Error ? e.message : String(e),
+    };
+  } finally {
+    await context.close();
+  }
+}
+
+async function runDesktopSuite(browser) {
+  const context = await browser.newContext({
+    viewport: { width: 1280, height: 800 },
+    locale: "en-US",
+  });
+  const page = await context.newPage();
+  const results = [];
+
+  try {
+    await page.goto(`${BASE}${gamePath("home")}`, { waitUntil: "domcontentloaded", timeout: 60000 });
+    await assertProviderMounted(page);
+
+    // Desktop chrome only — dock / MORE must not mount.
+    const mobileChrome = await page.locator('[data-game-chrome="mobile"]').count();
+    const dock = await page.locator(".mobile-dock").count();
+    if (mobileChrome !== 0 || dock !== 0) {
+      throw new Error(`desktop: mobile chrome unexpectedly mounted (chrome=${mobileChrome}, dock=${dock})`);
+    }
+
+    results.push(
+      await tapConnectAndExpectHelp(
+        page,
+        '[data-wallet-entry="header-desktop"] button, .game-nav--desktop [aria-label="Connect wallet"], .game-nav__inner--desktop [aria-label="Connect wallet"]',
+        "desktop:header",
       ),
     );
-    process.exitCode = 1;
+
+    results.push(
+      await tapConnectAndExpectHelp(
+        page,
+        '[data-wallet-entry="home-cta"], button.standoff__btn:has-text("CONNECT")',
+        "desktop:home-cta",
+      ),
+    );
+
+    await runMoreSheetChecks(page, results, "desktop");
+
+    const finalLock = await bodyLockState(page);
+    return { surface: "desktop", results, finalLock, pass: true };
+  } catch (e) {
+    return {
+      surface: "desktop",
+      results,
+      pass: false,
+      error: e instanceof Error ? e.message : String(e),
+    };
+  } finally {
+    await context.close();
+  }
+}
+
+async function run() {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const mobile = await runMobileSuite(browser);
+    const desktop = await runDesktopSuite(browser);
+    const pass = Boolean(mobile.pass && desktop.pass);
+    console.log(JSON.stringify({ base: BASE, mobile, desktop, pass }, null, 2));
+    if (!pass) process.exitCode = 1;
   } finally {
     await browser.close();
   }

@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import {
@@ -45,19 +46,34 @@ export function MobileGameDock() {
   const gameHref = useGameHref();
   const { t } = useGameI18n();
   const [moreOpen, setMoreOpen] = useState(false);
+  const [portalReady, setPortalReady] = useState(false);
 
-  useEffect(() => {
+  const closeMore = useCallback(() => {
     setMoreOpen(false);
     forceUnlockBodyScroll();
-  }, [pathname]);
+  }, []);
+
+  useEffect(() => {
+    setPortalReady(true);
+  }, []);
+
+  useEffect(() => {
+    closeMore();
+  }, [pathname, closeMore]);
 
   useEffect(() => {
     if (!moreOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMoreOpen(false);
+      if (e.key === "Escape") closeMore();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
+  }, [moreOpen, closeMore]);
+
+  // Closed state: never leave dialog markup, overlays, or body lock behind.
+  useEffect(() => {
+    if (moreOpen) return;
+    forceUnlockBodyScroll();
   }, [moreOpen]);
 
   const moreActive = GAME_DOCK_MORE.some((id) => {
@@ -71,40 +87,62 @@ export function MobileGameDock() {
     return `mobile-dock__item ${active ? "is-active" : ""}`;
   };
 
+  const sheet =
+    moreOpen && portalReady
+      ? createPortal(
+          <div
+            className="mobile-dock__sheet"
+            data-more-sheet="open"
+            role="dialog"
+            aria-modal="true"
+            aria-label={t.dock.more}
+          >
+            <button
+              type="button"
+              className="mobile-dock__sheet-backdrop"
+              data-more-backdrop="true"
+              aria-label={t.common.close}
+              onClick={closeMore}
+            />
+            <div className="mobile-dock__sheet-panel" data-more-panel="true">
+              <p className="mobile-dock__sheet-title">{t.dock.more}</p>
+              <div className="mobile-dock__sheet-links">
+                {GAME_DOCK_MORE.map((id) => {
+                  const item = navItemById(id);
+                  const href = gameHref[item.hrefKey];
+                  const active = isNavActive(pathname, href, gameHref.home);
+                  return (
+                    <Link
+                      key={id}
+                      href={href}
+                      data-nav-id={id}
+                      className={`mobile-dock__sheet-link ${active ? "is-active" : ""}`}
+                      onClick={closeMore}
+                    >
+                      {dockLabel(id, t)}
+                    </Link>
+                  );
+                })}
+              </div>
+              <div className="mobile-dock__sheet-tools">
+                <GameLanguageToggle />
+                <AudioSettings />
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )
+      : null;
+
   return (
     <>
-      {moreOpen ? (
-        <div className="mobile-dock__sheet" role="dialog" aria-label={t.dock.more}>
-          <div className="mobile-dock__sheet-backdrop" onClick={() => setMoreOpen(false)} />
-          <div className="mobile-dock__sheet-panel">
-            <p className="mobile-dock__sheet-title">{t.dock.more}</p>
-            <div className="mobile-dock__sheet-links">
-              {GAME_DOCK_MORE.map((id) => {
-                const item = navItemById(id);
-                const href = gameHref[item.hrefKey];
-                const active = isNavActive(pathname, href, gameHref.home);
-                return (
-                  <Link
-                    key={id}
-                    href={href}
-                    data-nav-id={id}
-                    className={`mobile-dock__sheet-link ${active ? "is-active" : ""}`}
-                    onClick={() => setMoreOpen(false)}
-                  >
-                    {dockLabel(id, t)}
-                  </Link>
-                );
-              })}
-            </div>
-            <div className="mobile-dock__sheet-tools">
-              <GameLanguageToggle />
-              <AudioSettings />
-            </div>
-          </div>
-        </div>
-      ) : null}
+      {sheet}
 
-      <nav className="mobile-dock mobile-game-dock" aria-label={t.dock.aria}>
+      <nav
+        className="mobile-dock mobile-game-dock"
+        aria-label={t.dock.aria}
+        data-more-open={moreOpen ? "true" : "false"}
+      >
         {GAME_DOCK_PRIMARY.map((id) => {
           const item = navItemById(id);
           const href = gameHref[item.hrefKey];
@@ -115,7 +153,7 @@ export function MobileGameDock() {
               key={id}
               href={href}
               className={itemClass(href)}
-              onClick={() => setMoreOpen(false)}
+              onClick={closeMore}
             >
               {label}
             </Link>
@@ -124,8 +162,15 @@ export function MobileGameDock() {
         <button
           type="button"
           className={itemClass("", moreOpen || moreActive)}
+          data-dock-more="true"
           aria-expanded={moreOpen}
-          onClick={() => setMoreOpen((v) => !v)}
+          onClick={() => {
+            setMoreOpen((v) => {
+              const next = !v;
+              if (!next) forceUnlockBodyScroll();
+              return next;
+            });
+          }}
         >
           {t.dock.more}
         </button>
