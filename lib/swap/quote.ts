@@ -32,3 +32,15 @@ export function applySlippage(amountOut: bigint, slippageBps: number): bigint {
 }
 
 export const DEFAULT_SLIPPAGE_BPS = 50;
+
+/** Compact display so long HANSOME amounts don't overflow the receive row. */
+export function formatSwapAmountDisplay(raw: string, maxFrac = 4): string {
+  if (!raw || raw === "—") return raw;
+  const neg = raw.startsWith("-");
+  const body = neg ? raw.slice(1) : raw;
+  const [intPart, fracPart = ""] = body.split(".");
+  if (!fracPart) return raw;
+  const trimmed = fracPart.replace(/0+$/, "").slice(0, maxFrac);
+  const joined = trimmed ? `${intPart}.${trimmed}` : intPart;
+  return neg ? `-${joined}` : joined;
+}

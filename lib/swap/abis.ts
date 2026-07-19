@@ -12,6 +12,26 @@ export const universalRouterAbi = [
   },
 ] as const;
 
+/** Decode Universal Router / V4Router custom errors from simulate / eth_call. */
+export const v4RouterErrorsAbi = [
+  {
+    type: "error",
+    name: "V4TooLittleReceived",
+    inputs: [
+      { name: "minAmountOutReceived", type: "uint256" },
+      { name: "amountReceived", type: "uint256" },
+    ],
+  },
+  {
+    type: "error",
+    name: "V4TooMuchRequested",
+    inputs: [
+      { name: "maxAmountInRequested", type: "uint256" },
+      { name: "amountRequested", type: "uint256" },
+    ],
+  },
+] as const;
+
 export const stateViewAbi = [
   {
     type: "function",

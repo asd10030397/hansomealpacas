@@ -103,6 +103,15 @@ const REVERT_HINTS: Record<string, string> = {
   IllegalLocation: "IllegalLocation — that location is illegal for this side.",
   AlreadySettled: "AlreadySettled — this day was already settled.",
   SeedMissing: "Waiting for settlement randomness.",
+  V4TooLittleReceived:
+    "V4TooLittleReceived — output below minimum (price moved or quote was stale). Try a smaller size or higher slippage.",
+  V4TooMuchRequested:
+    "V4TooMuchRequested — input exceeded the settle cap. Reduce the amount and try again.",
+};
+
+const REVERT_SIGNATURE_HINTS: Record<string, string> = {
+  "0x8b063d73": REVERT_HINTS.V4TooLittleReceived,
+  "0x12bacdd3": REVERT_HINTS.V4TooMuchRequested,
 };
 
 function extractCustomErrorName(text: string): string | null {
@@ -130,6 +139,11 @@ function extractCustomErrorName(text: string): string | null {
   return null;
 }
 
+function extractRevertSignature(text: string): string | null {
+  const m = text.match(/signature:\s*\n?\s*(0x[0-9a-f]{8})\b/i);
+  return m?.[1]?.toLowerCase() ?? null;
+}
+
 export function formatRobinhoodWriteError(error: unknown, fallback: string): string {
   if (!error) return fallback;
   if (typeof error === "string") return error;
@@ -145,16 +159,22 @@ export function formatRobinhoodWriteError(error: unknown, fallback: string): str
     if (fromMsg) {
       return REVERT_HINTS[fromMsg] ?? `Contract reverted: ${fromMsg}`;
     }
+    const sig = extractRevertSignature(error.message);
+    if (sig && REVERT_SIGNATURE_HINTS[sig]) {
+      return REVERT_SIGNATURE_HINTS[sig];
+    }
+    if (sig) {
+      return `Contract reverted with signature ${sig}.`;
+    }
   }
   if (error instanceof Error) {
     const msg = error.message || error.name;
-    const short = msg.split("\n")[0] ?? msg;
-    if (/User rejected|denied|rejected the request/i.test(short)) {
+    if (/User rejected|denied|rejected the request/i.test(msg)) {
       return "Transaction cancelled in wallet.";
     }
     if (
-      /Abnormal network fee detected/i.test(short) ||
-      /Gas estimation is abnormal/i.test(short)
+      /Abnormal network fee detected/i.test(msg) ||
+      /Gas estimation is abnormal/i.test(msg)
     ) {
       return ABNORMAL_NETWORK_FEE_MESSAGE;
     }
@@ -162,6 +182,14 @@ export function formatRobinhoodWriteError(error: unknown, fallback: string): str
     if (custom) {
       return REVERT_HINTS[custom] ?? `Contract reverted: ${custom}`;
     }
+    const sig = extractRevertSignature(msg);
+    if (sig && REVERT_SIGNATURE_HINTS[sig]) {
+      return REVERT_SIGNATURE_HINTS[sig];
+    }
+    if (sig) {
+      return `Contract reverted with signature ${sig}.`;
+    }
+    const short = msg.split("\n")[0] ?? msg;
     return short.length > 220 ? `${short.slice(0, 220)}…` : short;
   }
   return fallback;

@@ -50,7 +50,13 @@ import { formatUsd } from "@/lib/market/format";
 import { requestWatchTokenAsset } from "@/lib/wallet/watchAsset";
 import { erc20Abi, permit2Abi, stateViewAbi, universalRouterAbi } from "@/lib/swap/abis";
 import { buildUniversalRouterCalldata } from "@/lib/swap/encoding";
-import { DEFAULT_SLIPPAGE_BPS, applySlippage, quoteFromPoolState } from "@/lib/swap/quote";
+import { probeSwapAmountOut } from "@/lib/swap/probeQuote";
+import {
+  DEFAULT_SLIPPAGE_BPS,
+  applySlippage,
+  formatSwapAmountDisplay,
+  quoteFromPoolState,
+} from "@/lib/swap/quote";
 
 type SwapDirection = "ethToToken" | "tokenToEth";
 
@@ -157,7 +163,9 @@ export function SwapCard() {
     query: { enabled: Boolean(address) && direction === "tokenToEth" },
   });
 
-  const quoteOut = useMemo(() => {
+  // Single-tick math is instant but optimistic once a trade crosses ticks.
+  // Prefer the Universal Router probe (real pool execution) when available.
+  const tickQuoteOut = useMemo(() => {
     if (!parsedAmountIn || parsedAmountIn <= 0n || !slot0 || !poolLiquidity) return null;
     const [sqrtPriceX96] = slot0;
     if (sqrtPriceX96 <= 0n || poolLiquidity <= 0n) return null;
@@ -169,6 +177,45 @@ export function SwapCard() {
     );
   }, [parsedAmountIn, slot0, poolLiquidity, direction]);
 
+  const [probedQuoteOut, setProbedQuoteOut] = useState<bigint | null>(null);
+  const [isProbingQuote, setIsProbingQuote] = useState(false);
+
+  useEffect(() => {
+    if (!publicClient || !parsedAmountIn || parsedAmountIn <= 0n) {
+      setProbedQuoteOut(null);
+      setIsProbingQuote(false);
+      return;
+    }
+    // token→ETH probe needs the connected payer (Permit2 settle path).
+    if (direction === "tokenToEth" && !address) {
+      setProbedQuoteOut(null);
+      setIsProbingQuote(false);
+      return;
+    }
+
+    let cancelled = false;
+    setIsProbingQuote(true);
+    setProbedQuoteOut(null);
+
+    void (async () => {
+      const probed = await probeSwapAmountOut({
+        publicClient,
+        direction,
+        amountIn: parsedAmountIn,
+        account: address,
+      });
+      if (cancelled) return;
+      setProbedQuoteOut(probed);
+      setIsProbingQuote(false);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [publicClient, parsedAmountIn, direction, address]);
+
+  const quoteOut = probedQuoteOut ?? tickQuoteOut;
+
   const amountOutMin = useMemo(() => {
     if (!quoteOut) return null;
     return applySlippage(quoteOut, DEFAULT_SLIPPAGE_BPS);
@@ -176,9 +223,11 @@ export function SwapCard() {
 
   const formattedQuote = useMemo(() => {
     if (!quoteOut) return "—";
-    return direction === "ethToToken"
-      ? formatUnits(quoteOut, TOKEN_DECIMALS)
-      : formatEther(quoteOut);
+    const raw =
+      direction === "ethToToken"
+        ? formatUnits(quoteOut, TOKEN_DECIMALS)
+        : formatEther(quoteOut);
+    return formatSwapAmountDisplay(raw);
   }, [quoteOut, direction]);
 
   const needsTokenApproval =
@@ -289,7 +338,19 @@ export function SwapCard() {
 
         if (pendingAction === "permit2Approve") {
           await refetchPermit2Allowance();
-          if (!parsedAmountIn || !amountOutMin) return;
+          if (!parsedAmountIn || !amountOutMin || !publicClient) return;
+
+          let liveAmountOutMin = amountOutMin;
+          const liveOut = await probeSwapAmountOut({
+            publicClient,
+            direction,
+            amountIn: parsedAmountIn,
+            account: address,
+          });
+          if (liveOut && liveOut > 0n) {
+            liveAmountOutMin = applySlippage(liveOut, DEFAULT_SLIPPAGE_BPS);
+            setProbedQuoteOut(liveOut);
+          }
 
           setPendingAction("swap");
           setSwapPhase("swapping");
@@ -300,7 +361,7 @@ export function SwapCard() {
           const calldata = buildUniversalRouterCalldata(
             direction,
             parsedAmountIn,
-            amountOutMin,
+            liveAmountOutMin,
             deadline,
           );
           await sendSwapWrite({
@@ -333,6 +394,8 @@ export function SwapCard() {
     parsedAmountIn,
     amountOutMin,
     direction,
+    publicClient,
+    address,
     sendSwapWrite,
     failTx,
     refetchTokenAllowance,
@@ -405,6 +468,34 @@ export function SwapCard() {
     resetTxState();
 
     try {
+      if (direction === "ethToToken" && ethBalance) {
+        if (parsedAmountIn + ETH_GAS_RESERVE_WEI > ethBalance.value) {
+          failTx(
+            new Error(
+              "Not enough ETH left for gas after this swap. Leave ~0.001 ETH or use MAX.",
+            ),
+            "Not enough ETH for gas.",
+          );
+          return;
+        }
+      }
+
+      // Refresh min-out from a live router probe right before submit so a
+      // stale optimistic tick quote cannot push amountOutMin above reality.
+      let liveAmountOutMin = amountOutMin;
+      if (publicClient) {
+        const liveOut = await probeSwapAmountOut({
+          publicClient,
+          direction,
+          amountIn: parsedAmountIn,
+          account: address,
+        });
+        if (liveOut && liveOut > 0n) {
+          liveAmountOutMin = applySlippage(liveOut, DEFAULT_SLIPPAGE_BPS);
+          setProbedQuoteOut(liveOut);
+        }
+      }
+
       if (direction === "tokenToEth" && needsTokenApproval) {
         setPendingAction("tokenApprove");
         setSwapPhase("approvingToken");
@@ -445,7 +536,7 @@ export function SwapCard() {
       const calldata = buildUniversalRouterCalldata(
         direction,
         parsedAmountIn,
-        amountOutMin,
+        liveAmountOutMin,
         deadline,
       );
       await sendSwapWrite({
@@ -463,6 +554,9 @@ export function SwapCard() {
     parsedAmountIn,
     amountOutMin,
     direction,
+    ethBalance,
+    publicClient,
+    address,
     needsTokenApproval,
     needsPermit2Approval,
     resetTxState,
@@ -563,6 +657,12 @@ export function SwapCard() {
                 ? t.swap.approveRouter
                 : t.swap.swap;
 
+  const ethHeadroomOk =
+    direction !== "ethToToken" ||
+    !ethBalance ||
+    parsedAmountIn === null ||
+    parsedAmountIn + ETH_GAS_RESERVE_WEI <= ethBalance.value;
+
   const canSubmit =
     isConnected &&
     !isWrongChain &&
@@ -570,6 +670,8 @@ export function SwapCard() {
     parsedAmountIn > 0n &&
     quoteOut !== null &&
     quoteOut > 0n &&
+    ethHeadroomOk &&
+    !isProbingQuote &&
     !isBusy;
 
   const handlePrimary = !isConnected
@@ -678,8 +780,8 @@ export function SwapCard() {
           <p className="text-xs tracking-[0.2em] text-muted">{t.swap.youReceive}</p>
           <div className="mt-3 flex items-center gap-3">
             <TokenIcon symbol={outputSymbol} size={36} />
-            <p className="min-w-0 flex-1 text-right font-[family-name:var(--font-anton)] text-2xl tracking-wide text-foreground">
-              {formattedQuote}
+            <p className="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-right font-[family-name:var(--font-anton)] text-2xl tracking-wide text-foreground tabular-nums">
+              {isProbingQuote && !probedQuoteOut ? "…" : formattedQuote}
             </p>
             <span className="font-[family-name:var(--font-anton)] text-sm tracking-[0.15em] text-gold-light">
               {outputSymbol}

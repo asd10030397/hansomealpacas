@@ -51,6 +51,19 @@ describe("robinhood commit/mint fee path", () => {
     expect(msg).not.toBe("Contract reverted: Contract");
     expect(msg).not.toBe("Contract reverted: The");
   });
+
+  it("maps V4TooLittleReceived signature instead of truncating after the colon", () => {
+    const msg = formatRobinhoodWriteError(
+      new Error(
+        'The contract function "execute" reverted with the following signature:\n0x8b063d73\n\nUnable to decode signature "0x8b063d73"',
+      ),
+      "fallback",
+    );
+    expect(msg).toMatch(/V4TooLittleReceived/);
+    expect(msg).not.toBe(
+      'The contract function "execute" reverted with the following signature:',
+    );
+  });
 });
 
 describe("sendRobinhoodContractWrite pipeline", () => {
