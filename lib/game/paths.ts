@@ -2,13 +2,23 @@
  * Internal Next.js paths live under `/game/*`.
  * On `game.hansomealpacas.xyz`, middleware rewrites pretty URLs → these paths.
  *
- * IMPORTANT: On the game host, `/game` is rewritten to the dashboard (PLAY).
- * HOME must be `/` there — never `/game`.
+ * HOME is always the marketing landing page — never a /game route.
+ * PLAY is the live daily-game dashboard.
  */
 
+export const MARKETING_ORIGIN = (
+  process.env.NEXT_PUBLIC_WEBSITE?.trim() || "https://hansomealpacas.xyz"
+).replace(/\/$/, "");
+
+/** Absolute marketing homepage (use on game subdomain so HOME leaves the game host). */
+export const MARKETING_HOME = `${MARKETING_ORIGIN}/`;
+
 export const GAME_INTERNAL = {
-  home: "/game",
+  home: "/",
+  /** Daily Game command center */
   dashboard: "/game/dashboard",
+  /** Game title / main menu (not HOME) */
+  title: "/game",
   mint: "/game/mint",
   commit: "/game/commit",
   reveal: "/game/reveal",
@@ -22,8 +32,11 @@ export const GAME_INTERNAL = {
 
 /** Pretty public paths on game.hansomealpacas.xyz (and game.localhost). */
 export const GAME_PUBLIC = {
-  home: "/",
+  /** Leave game host → marketing site */
+  home: MARKETING_HOME,
   dashboard: "/dashboard",
+  /** On game host, `/` is the title menu (middleware → /game) */
+  title: "/",
   mint: "/mint",
   commit: "/commit",
   reveal: "/reveal",
@@ -60,6 +73,6 @@ export function getGameHref(hostname?: string | null): GameHrefMap {
 
 /**
  * Default export for SSR / apex `/game/*` pages.
- * Client UI on the game subdomain should use `useGameHref()` or `getGameHref()`.
+ * Prefer `useGameHref()` in client components so game-host HOME is absolute.
  */
 export const gameHref: GameHrefMap = GAME_INTERNAL;

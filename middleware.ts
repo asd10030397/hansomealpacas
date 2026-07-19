@@ -7,15 +7,13 @@ import { GAME_HOSTS } from "@/lib/game/paths";
  * Marketing host (hansomealpacas.xyz) is untouched — `/` stays the marketing site.
  *
  * Public (game host)     → Internal
- * /                      → /game              (main menu)
- * /game                  → /game/dashboard
+ * /                      → /game              (title menu — not marketing HOME)
+ * /game                  → /game/dashboard    (PLAY)
+ * /dashboard             → /game/dashboard
  * /mint                  → /game/mint
- * /explore               → /game/explore
- * /my-nfts               → /game/my-nfts
- * /rewards               → /game/rewards
- * /leaderboard           → /game/leaderboard
- * /docs                  → /game/docs
- * /game/commit|reveal    → same
+ * …other pretty game routes
+ *
+ * Marketing HOME lives on hansomealpacas.xyz `/` (nav uses absolute URL from game host).
  */
 export function middleware(request: NextRequest) {
   const host = request.headers.get("host")?.split(":")[0]?.toLowerCase() ?? "";
