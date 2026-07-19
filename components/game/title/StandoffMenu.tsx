@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { gameHref } from "@/lib/game/paths";
+import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { useWalletUi } from "@/hooks/game/useWalletUi";
 
@@ -12,6 +12,7 @@ import { useWalletUi } from "@/hooks/game/useWalletUi";
  */
 export function StandoffMenu() {
   const { t } = useGameI18n();
+  const gameHref = useGameHref();
   const { wallet, connectMock, disconnectMock } = useWalletUi();
 
   return (
@@ -30,6 +31,7 @@ export function StandoffMenu() {
         <button
           type="button"
           className="standoff__btn standoff__btn--gold"
+          data-wallet-entry="home-cta"
           onClick={() => (wallet.connected ? disconnectMock() : connectMock())}
         >
           <Image

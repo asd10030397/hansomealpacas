@@ -181,6 +181,7 @@ export function MintPanel() {
             onClick={connectWallet}
             className="mb-3"
             disabled={walletPending}
+            data-wallet-entry="mint"
           >
             {t.common.connectWallet}
           </PixelButton>

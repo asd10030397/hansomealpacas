@@ -41,6 +41,10 @@ export type GameMessages = {
     walletRequiredTitle: string;
     walletRequiredBody: (feature: string) => string;
     walletRequiredDemo: string;
+    walletHelpTitle: string;
+    walletHelpBody: string;
+    walletHelpHint: string;
+    openInMetaMask: string;
     musicToggleTitle: string;
     sfxToggleTitle: string;
     sfxToggleAria: string;

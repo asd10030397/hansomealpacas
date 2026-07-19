@@ -1,15 +1,24 @@
 "use client";
 
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { GameNav } from "@/components/game/GameNav";
 import { GameplayMusic } from "@/components/game/GameplayMusic";
 import { GameUiSfx } from "@/components/game/GameUiSfx";
 import { GameVisualShell } from "@/components/game/GameVisualShell";
 import { MobileGameDock } from "@/components/game/MobileGameDock";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
+import { forceUnlockBodyScroll } from "@/lib/ui/bodyScrollLock";
 
 /** Client chrome around /game/* pages (nav, dock, i18n skip link). */
 export function GameShell({ children }: { children: React.ReactNode }) {
   const { t } = useGameI18n();
+  const pathname = usePathname();
+
+  // Emergency cleanup: never leave body locked after route changes.
+  useEffect(() => {
+    forceUnlockBodyScroll();
+  }, [pathname]);
 
   return (
     <GameVisualShell>

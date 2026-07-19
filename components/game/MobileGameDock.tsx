@@ -12,6 +12,7 @@ import {
   type GameNavId,
 } from "@/lib/game/navConfig";
 import { isNavActive } from "@/lib/game/navActive";
+import { forceUnlockBodyScroll } from "@/lib/ui/bodyScrollLock";
 import { AudioSettings } from "./AudioSettings";
 import { GameLanguageToggle } from "./GameLanguageToggle";
 
@@ -47,7 +48,17 @@ export function MobileGameDock() {
 
   useEffect(() => {
     setMoreOpen(false);
+    forceUnlockBodyScroll();
   }, [pathname]);
+
+  useEffect(() => {
+    if (!moreOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMoreOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [moreOpen]);
 
   const moreActive = GAME_DOCK_MORE.some((id) => {
     const item = navItemById(id);

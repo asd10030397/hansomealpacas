@@ -48,7 +48,13 @@ export default function MyNftsPage() {
           <p className="text-sm text-[var(--hg-muted)]">
             Connect a wallet on Robinhood Testnet to load your live inventory.
           </p>
-          <PixelButton size="sm" variant="gold" onClick={connectWallet} disabled={isPending}>
+          <PixelButton
+            size="sm"
+            variant="gold"
+            onClick={connectWallet}
+            disabled={isPending}
+            data-wallet-entry="my-nfts"
+          >
             CONNECT WALLET
           </PixelButton>
         </div>

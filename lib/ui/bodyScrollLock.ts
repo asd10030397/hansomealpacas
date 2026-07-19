@@ -42,11 +42,35 @@ export function unlockBodyScroll(): void {
   if (typeof document === "undefined") return;
   lockCount = Math.max(0, lockCount - 1);
   if (lockCount > 0 || !savedBodyStyles) return;
+  restoreBodyStyles(savedScrollY);
+}
 
-  const body = document.body;
+/** Force-clear any leftover lock (route changes / emergency cleanup). */
+export function forceUnlockBodyScroll(): void {
+  if (typeof document === "undefined") return;
   const y = savedScrollY;
+  lockCount = 0;
+  if (!savedBodyStyles) {
+    // Still clear common stale styles that may have been set outside this helper.
+    const body = document.body;
+    if (body.style.position === "fixed") {
+      body.style.position = "";
+      body.style.top = "";
+      body.style.left = "";
+      body.style.right = "";
+      body.style.width = "";
+      body.style.overflow = "";
+    }
+    return;
+  }
+  restoreBodyStyles(y);
+}
+
+function restoreBodyStyles(y: number): void {
+  const body = document.body;
   const prev = savedBodyStyles;
   savedBodyStyles = null;
+  if (!prev) return;
 
   body.style.position = prev.position;
   body.style.top = prev.top;
@@ -56,4 +80,8 @@ export function unlockBodyScroll(): void {
   body.style.overflow = prev.overflow;
 
   window.scrollTo(0, y);
+}
+
+export function getBodyScrollLockCountForTests(): number {
+  return lockCount;
 }

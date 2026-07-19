@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { Web3Provider } from "@/components/Web3Provider";
 import { GameShell } from "@/components/game/GameShell";
 import { GameHrefProvider } from "@/context/GameHrefContext";
+import { WalletConnectProvider } from "@/context/WalletConnectContext";
 import { getGameHref } from "@/lib/game/paths";
 import "@/styles/game.css";
 import "@/styles/game-polish.css";
@@ -27,9 +28,11 @@ export default async function GameLayout({ children }: { children: React.ReactNo
 
   return (
     <Web3Provider>
-      <GameHrefProvider value={hrefs}>
-        <GameShell>{children}</GameShell>
-      </GameHrefProvider>
+      <WalletConnectProvider>
+        <GameHrefProvider value={hrefs}>
+          <GameShell>{children}</GameShell>
+        </GameHrefProvider>
+      </WalletConnectProvider>
     </Web3Provider>
   );
 }

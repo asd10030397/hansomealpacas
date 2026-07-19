@@ -39,6 +39,12 @@ export const gameEn: GameMessages = {
     walletRequiredBody: (feature) => `Connect your wallet to use ${feature}.`,
     walletRequiredDemo:
       "Connect an injected wallet on Robinhood Chain. Gameplay pages stay mocked until the game contract is live.",
+    walletHelpTitle: "Connect a wallet",
+    walletHelpBody:
+      "Unable to open wallet connection. Please open this page in MetaMask or use WalletConnect.",
+    walletHelpHint:
+      "Mobile Safari and Telegram do not include a browser wallet. Open this site inside MetaMask, or install a wallet extension on desktop.",
+    openInMetaMask: "OPEN IN METAMASK",
     musicToggleTitle: "Music — Alpaca Warpath",
     sfxToggleTitle: "Sound effects — UI clicks and game cues",
     sfxToggleAria: "Toggle sound effects",

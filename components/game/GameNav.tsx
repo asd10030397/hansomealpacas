@@ -110,7 +110,9 @@ export function GameNav() {
             <PixelBadge tone="blue">{t.common.chainBadge}</PixelBadge>
           </span>
           <AudioSettings />
-          <WalletButton wallet={wallet} onConnect={connectMock} onDisconnect={disconnectMock} compact />
+          <span data-wallet-entry="header-desktop">
+            <WalletButton wallet={wallet} onConnect={connectMock} onDisconnect={disconnectMock} compact />
+          </span>
           <GameLanguageToggle />
         </div>
       </div>
@@ -134,12 +136,14 @@ export function GameNav() {
           </PixelButton>
         </div>
         <div className="game-nav__mobile-row game-nav__mobile-row--actions">
-          <WalletButton
-            wallet={wallet}
-            onConnect={connectMock}
-            onDisconnect={disconnectMock}
-            compact
-          />
+          <span data-wallet-entry="header-mobile">
+            <WalletButton
+              wallet={wallet}
+              onConnect={connectMock}
+              onDisconnect={disconnectMock}
+              compact
+            />
+          </span>
           <AudioSettings />
         </div>
       </div>
@@ -176,6 +180,17 @@ export function GameNav() {
             })}
           </div>
           <div className="game-nav__drawer-tools">
+            <span data-wallet-entry="mobile-menu">
+              <WalletButton
+                wallet={wallet}
+                onConnect={() => {
+                  connectMock();
+                  setMenuOpen(false);
+                }}
+                onDisconnect={disconnectMock}
+                compact
+              />
+            </span>
             <GameLanguageToggle />
           </div>
         </nav>

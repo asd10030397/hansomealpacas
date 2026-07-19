@@ -1658,7 +1658,8 @@ html.hansome-game-route [data-language-toggle="true"]:not([data-game-language-to
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 50;
+  /* Above MORE sheet backdrop so dock actions (incl. MORE toggle) stay tappable. */
+  z-index: 56;
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   border-top: 4px solid #0d1018;
@@ -1698,13 +1699,16 @@ html.hansome-game-route [data-language-toggle="true"]:not([data-game-language-to
 .mobile-dock__sheet {
   position: fixed;
   inset: 0;
-  z-index: 55;
+  z-index: 54;
+  /* Container itself must not steal taps outside backdrop/panel. */
+  pointer-events: none;
 }
 
 .mobile-dock__sheet-backdrop {
   position: absolute;
   inset: 0;
   background: rgba(6, 8, 14, 0.55);
+  pointer-events: auto;
 }
 
 .mobile-dock__sheet-panel {
@@ -1723,6 +1727,7 @@ html.hansome-game-route [data-language-toggle="true"]:not([data-game-language-to
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
+  pointer-events: auto;
 }
 
 .mobile-dock__sheet-title {

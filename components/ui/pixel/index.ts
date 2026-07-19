@@ -8,3 +8,4 @@ export { PixelModal } from "./PixelModal";
 export { PixelTooltip } from "./PixelTooltip";
 export { GamePhaseBadge } from "./GamePhaseBadge";
 export { WalletButton } from "./WalletButton";
+export { ConnectWalletButton } from "./ConnectWalletButton";

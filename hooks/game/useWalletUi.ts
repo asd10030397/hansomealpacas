@@ -4,10 +4,10 @@ import { useCallback, useMemo } from "react";
 import {
   useAccount,
   useChainId,
-  useConnect,
   useDisconnect,
   useSwitchChain,
 } from "wagmi";
+import { useWalletConnectAction } from "@/context/WalletConnectContext";
 import { GENESIS_CHAIN_ID } from "@/lib/game/genesis";
 import { robinhoodChain, robinhoodTestnetChain } from "@/lib/chain";
 import type { WalletUiState } from "@/types/game";
@@ -24,14 +24,15 @@ function networkLabelFor(chainId: number | undefined): string {
 }
 
 /**
- * Live wallet UI via wagmi (injected). Game layout must wrap with Web3Provider.
+ * Live wallet UI via wagmi (injected). Game layout must wrap with
+ * Web3Provider + WalletConnectProvider so connect never fails silently.
  */
 export function useWalletUi() {
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
-  const { connect, connectors, isPending, error: connectError } = useConnect();
   const { disconnect } = useDisconnect();
   const { switchChain, isPending: isSwitching } = useSwitchChain();
+  const { openWalletConnect, isConnecting, connectError } = useWalletConnectAction();
 
   const wallet: WalletUiState = useMemo(
     () => ({
@@ -47,10 +48,8 @@ export function useWalletUi() {
   );
 
   const connectWallet = useCallback(() => {
-    const injected = connectors.find((c) => c.id === "injected") ?? connectors[0];
-    if (!injected) return;
-    connect({ connector: injected });
-  }, [connect, connectors]);
+    void openWalletConnect();
+  }, [openWalletConnect]);
 
   const disconnectWallet = useCallback(() => {
     disconnect();
@@ -67,7 +66,7 @@ export function useWalletUi() {
     connectWallet,
     disconnectWallet,
     switchToGenesisChain,
-    isPending: isPending || isSwitching,
+    isPending: isConnecting || isSwitching,
     connectError,
     isMock: false as const,
   };

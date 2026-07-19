@@ -3,7 +3,11 @@ import path from "node:path";
 
 export default defineConfig({
   test: {
-    include: ["lib/game/scoring/**/*.test.ts"],
+    include: [
+      "lib/game/**/*.test.ts",
+      "lib/game/**/__tests__/**/*.test.ts",
+      "lib/ui/**/__tests__/**/*.test.ts",
+    ],
     environment: "node",
   },
   resolve: {

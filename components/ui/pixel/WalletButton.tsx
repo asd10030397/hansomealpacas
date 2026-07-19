@@ -16,12 +16,14 @@ export function WalletButton({
   size = "sm",
   /** Header/mobile: single-line label, no injected-wallet subtitle stack. */
   compact = false,
+  disabled = false,
 }: {
   wallet: WalletUiState;
   onConnect: () => void;
   onDisconnect: () => void;
   size?: "sm" | "md" | "lg";
   compact?: boolean;
+  disabled?: boolean;
 }) {
   const { t } = useGameI18n();
 
@@ -31,6 +33,7 @@ export function WalletButton({
         size={size}
         variant="slate"
         onClick={onDisconnect}
+        disabled={disabled}
         aria-label={t.common.disconnectAria}
         className={compact ? "game-wallet-btn game-wallet-btn--compact" : "w-full max-w-md"}
         subtitle={
@@ -51,6 +54,8 @@ export function WalletButton({
       size={size}
       variant="gold"
       onClick={onConnect}
+      disabled={disabled}
+      data-wallet-entry="header-or-shared"
       aria-label={t.common.connectAria}
       className={compact ? "game-wallet-btn game-wallet-btn--compact" : "w-full max-w-md"}
       subtitle={
