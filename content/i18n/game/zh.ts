@@ -72,6 +72,8 @@ export const gameZh: GameMessages = {
     featureMyNfts: "我的 NFT",
     featureRewards: "獎勵",
     featureLeaderboard: "排行榜",
+    back: "上一頁",
+    backAria: "返回上一頁",
   },
   dock: {
     aria: "快捷遊戲操作",

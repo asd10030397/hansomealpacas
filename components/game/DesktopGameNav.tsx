@@ -11,6 +11,7 @@ import { useWalletUi } from "@/hooks/game/useWalletUi";
 import { isNavActive } from "@/lib/game/navActive";
 import type { GameNavItemDef } from "@/lib/game/navConfig";
 import { AudioSettings } from "./AudioSettings";
+import { GameBackButton } from "./GameBackButton";
 import { GameLanguageToggle } from "./GameLanguageToggle";
 import { WalletRequiredModal } from "./WalletRequiredModal";
 
@@ -43,10 +44,13 @@ export function DesktopGameNav() {
   return (
     <header className="game-nav game-nav--desktop" data-game-chrome="desktop">
       <div className="game-nav__inner game-nav__inner--desktop">
-        <Link href={gameHref.home} className="game-nav__brand">
-          {t.nav.brand}
-          <span>{t.nav.brandSub}</span>
-        </Link>
+        <div className="game-nav__brand-cluster">
+          <GameBackButton />
+          <Link href={gameHref.home} className="game-nav__brand">
+            {t.nav.brand}
+            <span>{t.nav.brandSub}</span>
+          </Link>
+        </div>
 
         <nav className="game-nav__links" aria-label={t.nav.aria}>
           {links.map((item) => {

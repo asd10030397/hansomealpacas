@@ -40,6 +40,27 @@
   min-height: 2.6rem;
 }
 
+.hansome-game .game-nav--mobile .game-nav__back-label {
+  /* Keep header compact on narrow phones — arrow remains. */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.hansome-game .game-nav--mobile .game-nav__back {
+  min-width: 2.45rem;
+  justify-content: center;
+  padding-left: 0.45rem;
+  padding-right: 0.45rem;
+  font-size: 0.95rem;
+}
+
 .hansome-game .game-nav__drawer {
   display: flex;
   flex-direction: column;

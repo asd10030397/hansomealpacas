@@ -73,6 +73,9 @@ export type GameMessages = {
     featureMyNfts: string;
     featureRewards: string;
     featureLeaderboard: string;
+    /** Header control — go to previous page. */
+    back: string;
+    backAria: string;
   };
   dock: {
     aria: string;

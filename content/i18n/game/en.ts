@@ -72,6 +72,8 @@ export const gameEn: GameMessages = {
     featureMyNfts: "My NFTs",
     featureRewards: "Rewards",
     featureLeaderboard: "Leaderboard",
+    back: "BACK",
+    backAria: "Go to previous page",
   },
   dock: {
     aria: "Quick game actions",

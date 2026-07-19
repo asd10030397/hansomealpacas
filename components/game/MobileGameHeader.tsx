@@ -11,6 +11,7 @@ import { useWalletUi } from "@/hooks/game/useWalletUi";
 import { isNavActive } from "@/lib/game/navActive";
 import type { GameNavItemDef } from "@/lib/game/navConfig";
 import { AudioSettings } from "./AudioSettings";
+import { GameBackButton } from "./GameBackButton";
 import { GameLanguageToggle } from "./GameLanguageToggle";
 import { WalletRequiredModal } from "./WalletRequiredModal";
 
@@ -60,14 +61,17 @@ export function MobileGameHeader() {
     <header className="game-nav game-nav--mobile" data-game-chrome="mobile-header">
       <div className="game-nav__mobile">
         <div className="game-nav__mobile-row game-nav__mobile-row--top">
-          <Link
-            href={gameHref.home}
-            className="game-nav__brand"
-            onClick={() => setMenuOpen(false)}
-          >
-            {t.nav.brand}
-            <span>{t.nav.brandSub}</span>
-          </Link>
+          <div className="game-nav__brand-cluster">
+            <GameBackButton />
+            <Link
+              href={gameHref.home}
+              className="game-nav__brand"
+              onClick={() => setMenuOpen(false)}
+            >
+              {t.nav.brand}
+              <span>{t.nav.brandSub}</span>
+            </Link>
+          </div>
           <PixelButton
             size="sm"
             variant={menuOpen ? "gold" : "ghost"}
