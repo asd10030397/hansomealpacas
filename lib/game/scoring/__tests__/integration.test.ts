@@ -398,8 +398,11 @@ describe("integration: special boards", () => {
       })),
     };
     const scored = scoreSettlementDay(day);
-    const hunter = computeHunterSeason([scored], 1);
-    const survivor = computeSurvivorSeason([scored], 1);
+    const hunter = computeHunterSeason([scored], 1 as typeof SCORING_CONSTANTS.L);
+    const survivor = computeSurvivorSeason(
+      [scored],
+      1 as typeof SCORING_CONSTANTS.D_min_survivor,
+    );
     expect(hunter.every((h) => h.owner.startsWith("0xc"))).toBe(true);
     expect(survivor.every((s) => s.owner.startsWith("0xa"))).toBe(true);
     expect(hunter.some((h) => h.owner.startsWith("0xa"))).toBe(false);

@@ -1,5 +1,5 @@
 /**
- * Shared Robinhood write path (Commit / Mint-style).
+ * Shared Robinhood write path for every game transaction.
  *
  * MetaMask's EIP-1559 feeHistory prediction on Robinhood invents absurd
  * "Market" fees (thousands of ETH). Pin maxFeePerGas from eth_gasPrice and
@@ -11,7 +11,6 @@ import {
   ContractFunctionRevertedError,
   formatEther,
   type Abi,
-  type Account,
   type Address,
   type Hash,
 } from "viem";
@@ -34,12 +33,13 @@ export type RobinhoodWriteRequest = {
 
 export type RobinhoodWritePrepared = RobinhoodWriteRequest & {
   gas: bigint;
+  gasPrice: bigint;
   maxFeePerGas: bigint;
   maxPriorityFeePerGas: bigint;
   estimatedNetworkFee: bigint;
 };
 
-type WriteContractAsync = (params: {
+export type RobinhoodWalletRequest = {
   address: Address;
   abi: Abi;
   functionName: string;
@@ -48,11 +48,14 @@ type WriteContractAsync = (params: {
   value?: bigint;
   maxFeePerGas: bigint;
   maxPriorityFeePerGas: bigint;
-}) => Promise<Hash>;
+};
+
+type WriteContractAsync = (params: RobinhoodWalletRequest) => Promise<Hash>;
 
 export function logRobinhoodWrite(
   label: string,
   prepared: RobinhoodWritePrepared,
+  walletRequest: RobinhoodWalletRequest,
   extra?: Record<string, unknown>,
 ): void {
   if (typeof console === "undefined") return;
@@ -63,12 +66,24 @@ export function logRobinhoodWrite(
     args: prepared.args.map((a) => (typeof a === "bigint" ? a.toString() : a)),
     account: prepared.account,
     valueWei: prepared.value?.toString() ?? "0",
-    simulate: "ok",
-    gas: prepared.gas.toString(),
+    simulateResult: "ok",
+    estimateGasResult: prepared.gas.toString(),
+    gasPrice: prepared.gasPrice.toString(),
     maxFeePerGas: prepared.maxFeePerGas.toString(),
     maxPriorityFeePerGas: prepared.maxPriorityFeePerGas.toString(),
     estimatedNetworkFeeWei: prepared.estimatedNetworkFee.toString(),
     estimatedNetworkFeeEth: formatEther(prepared.estimatedNetworkFee),
+    finalTransactionRequest: {
+      address: walletRequest.address,
+      functionName: walletRequest.functionName,
+      chainId: walletRequest.chainId,
+      value: walletRequest.value?.toString() ?? "0",
+      maxFeePerGas: walletRequest.maxFeePerGas.toString(),
+      maxPriorityFeePerGas: walletRequest.maxPriorityFeePerGas.toString(),
+      // Explicitly absent — must never be sent (avoids MetaMask feeHistory path).
+      gasFieldOmitted: true,
+      gasLimitFieldOmitted: true,
+    },
     ...extra,
   });
 }
@@ -124,11 +139,12 @@ export async function sendRobinhoodContractWrite(input: {
       abi: request.abi,
       functionName: request.functionName,
       args: request.args as never,
-      account: request.account as Account,
+      account: request.account,
       value: request.value,
       chain: publicClient.chain,
     });
   } catch (e) {
+    // Must not open MetaMask — abort before estimate / write.
     throw new Error(formatRobinhoodWriteError(e, "Simulation failed."));
   }
 
@@ -142,20 +158,19 @@ export async function sendRobinhoodContractWrite(input: {
   });
 
   const gasPrice = await publicClient.getGasPrice();
-  // Same helper Mint uses (buildSafeMintFees / eth_gasPrice × 4, capped).
   const safeFees = buildSafeMintFees(gasPrice);
   const estimatedNetworkFee = assertSaneMintNetworkFee(gas, safeFees.maxFeePerGas);
 
   const prepared: RobinhoodWritePrepared = {
     ...request,
     gas,
+    gasPrice,
     maxFeePerGas: safeFees.maxFeePerGas,
     maxPriorityFeePerGas: safeFees.maxPriorityFeePerGas,
     estimatedNetworkFee,
   };
-  logRobinhoodWrite(label, prepared, extraLog);
 
-  const hash = await writeContractAsync({
+  const walletRequest: RobinhoodWalletRequest = {
     address: request.address,
     abi: request.abi,
     functionName: request.functionName,
@@ -164,7 +179,11 @@ export async function sendRobinhoodContractWrite(input: {
     value: request.value,
     maxFeePerGas: prepared.maxFeePerGas,
     maxPriorityFeePerGas: prepared.maxPriorityFeePerGas,
-  });
+  };
+
+  logRobinhoodWrite(label, prepared, walletRequest, extraLog);
+
+  const hash = await writeContractAsync(walletRequest);
 
   return { hash, prepared };
 }

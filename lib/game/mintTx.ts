@@ -14,8 +14,16 @@ import { ROBINHOOD_CHAIN_ID, ROBINHOOD_TESTNET_CHAIN_ID } from "@/lib/chain";
 /** Hard cap on per-gas fee we ever attach (1 gwei). */
 export const MINT_MAX_FEE_PER_GAS_WEI = 1_000_000_000n;
 
-/** Reject if network fee alone would exceed this (testnet-safe). */
-export const MINT_MAX_NETWORK_FEE_WEI = parseEther("0.05");
+/**
+ * Reject if estimated network fee alone would exceed this.
+ * Robinhood Testnet mint gas is normally ~0.000005 ETH — anything ≥ 0.01 ETH
+ * is treated as a broken fee estimate and must never reach MetaMask.
+ */
+export const MINT_MAX_NETWORK_FEE_WEI = parseEther("0.01");
+
+/** User-facing copy when a fee estimate is aborted before the wallet opens. */
+export const ABNORMAL_NETWORK_FEE_MESSAGE =
+  "Abnormal network fee detected. Please try again later.";
 
 /** Gas units above this are treated as malformed estimates. */
 export const MINT_MAX_GAS_UNITS = 2_000_000n;
@@ -91,25 +99,32 @@ export function buildSafeMintFees(gasPrice: bigint): {
 }
 
 export function assertSaneMintGasEstimate(gas: bigint): void {
-  if (gas < MINT_MIN_GAS_UNITS) {
-    throw new Error("Gas estimation is abnormal. Transaction was not submitted.");
-  }
-  if (gas > MINT_MAX_GAS_UNITS) {
-    throw new Error("Gas estimation is abnormal. Transaction was not submitted.");
+  if (gas < MINT_MIN_GAS_UNITS || gas > MINT_MAX_GAS_UNITS) {
+    throw new Error(ABNORMAL_NETWORK_FEE_MESSAGE);
   }
 }
 
+/**
+ * Abort before opening MetaMask when the calculated network fee is absurd.
+ * Threshold: > 0.01 ETH on Robinhood Testnet (see MINT_MAX_NETWORK_FEE_WEI).
+ * Must run after simulation / estimate and before writeContract / wallet UI.
+ */
 export function assertSaneMintNetworkFee(
   gas: bigint,
   maxFeePerGas: bigint,
 ): bigint {
   assertSaneMintGasEstimate(gas);
-  if (maxFeePerGas <= 0n || maxFeePerGas > MINT_MAX_FEE_PER_GAS_WEI) {
-    throw new Error("Gas estimation is abnormal. Transaction was not submitted.");
+  if (maxFeePerGas <= 0n) {
+    throw new Error(ABNORMAL_NETWORK_FEE_MESSAGE);
   }
   const estimatedNetworkFee = gas * maxFeePerGas;
-  if (estimatedNetworkFee <= 0n || estimatedNetworkFee > MINT_MAX_NETWORK_FEE_WEI) {
-    throw new Error("Gas estimation is abnormal. Transaction was not submitted.");
+  // Primary gate: never let > 0.01 ETH network fees reach the wallet UI.
+  if (estimatedNetworkFee > MINT_MAX_NETWORK_FEE_WEI) {
+    throw new Error(ABNORMAL_NETWORK_FEE_MESSAGE);
+  }
+  // Secondary: reject malformed per-gas quotes even if the product is small.
+  if (maxFeePerGas > MINT_MAX_FEE_PER_GAS_WEI) {
+    throw new Error(ABNORMAL_NETWORK_FEE_MESSAGE);
   }
   return estimatedNetworkFee;
 }
@@ -162,8 +177,11 @@ export function formatMintError(error: unknown): string {
     if (/User rejected|denied|rejected the request/i.test(short)) {
       return "Transaction cancelled in wallet.";
     }
-    if (/Gas estimation is abnormal/i.test(short)) {
-      return short;
+    if (
+      /Abnormal network fee detected/i.test(short) ||
+      /Gas estimation is abnormal/i.test(short)
+    ) {
+      return ABNORMAL_NETWORK_FEE_MESSAGE;
     }
     // Prefer custom error names when present in the message.
     const custom = short.match(/\b([A-Z][A-Za-z0-9]+)\b/);
