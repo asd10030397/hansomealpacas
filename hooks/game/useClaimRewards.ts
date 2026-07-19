@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { formatEther } from "viem";
 import {
   useAccount,
+  useChainId,
+  usePublicClient,
   useReadContract,
   useReadContracts,
   useWriteContract,
@@ -26,6 +28,10 @@ import {
   localClaimableRows,
   markLocalClaimed,
 } from "@/lib/game/localSettlement";
+import {
+  formatRobinhoodWriteError,
+  sendRobinhoodContractWrite,
+} from "@/lib/game/robinhoodContractWrite";
 import { canSubmitClaim } from "@/lib/game/settlementStatus";
 import { useGameState } from "@/hooks/game/useGameState";
 import { useOwnedGenesisNfts } from "@/hooks/game/useOwnedGenesisNfts";
@@ -41,6 +47,8 @@ export type ClaimUiState =
 export function useClaimRewards() {
   const { day } = useGameState();
   const { address, isConnected } = useAccount();
+  const walletChainId = useChainId();
+  const publicClient = usePublicClient({ chainId: GAME_CHAIN_ID });
   const owned = useOwnedGenesisNfts();
   const live = isHansomeGameConfigured();
   const game = HANSOME_GAME_ADDRESS;
@@ -164,6 +172,22 @@ export function useClaimRewards() {
       return;
     }
 
+    if (walletChainId !== GAME_CHAIN_ID) {
+      setUiState("failure");
+      setError(
+        `Wrong network. Switch to chain ${GAME_CHAIN_ID} (Robinhood Testnet).`,
+      );
+      setSubmitting(false);
+      return;
+    }
+
+    if (!publicClient) {
+      setUiState("failure");
+      setError("RPC client unavailable for claim simulation.");
+      setSubmitting(false);
+      return;
+    }
+
     const ids = chainRows.map((r) => r.tokenId);
     if (ids.length === 0) {
       setUiState("failure");
@@ -174,16 +198,25 @@ export function useClaimRewards() {
 
     try {
       setUiState("pending");
-      await writeContractAsync({
-        address: distributor,
-        abi: rewardDistributorAbi,
-        functionName: "claimMany",
-        args: [ids.map((id) => BigInt(id))],
-        chainId: GAME_CHAIN_ID,
+      await sendRobinhoodContractWrite({
+        label: "hansome-claim",
+        publicClient,
+        writeContractAsync: writeContractAsync as never,
+        request: {
+          chainId: GAME_CHAIN_ID,
+          address: distributor,
+          abi: rewardDistributorAbi,
+          functionName: "claimMany",
+          args: [ids.map((id) => BigInt(id))],
+          account: address,
+        },
+        extraLog: { tokenIds: ids, day: day.day },
       });
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "Claim failed";
-      const rejected = /user rejected|denied|ACTION_REJECTED|4001/i.test(msg);
+      const msg = formatRobinhoodWriteError(e, "Claim failed");
+      const rejected = /user rejected|denied|cancelled in wallet|ACTION_REJECTED|4001/i.test(
+        msg,
+      );
       setUiState(rejected ? "rejected" : "failure");
       setError(msg);
       setSubmitting(false);
@@ -196,6 +229,8 @@ export function useClaimRewards() {
     distributor,
     isConnected,
     address,
+    walletChainId,
+    publicClient,
     chainRows,
     reset,
     writeContractAsync,

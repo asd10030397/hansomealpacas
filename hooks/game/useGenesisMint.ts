@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { BaseError, ContractFunctionRevertedError, zeroAddress } from "viem";
+import { zeroAddress } from "viem";
 import {
   useAccount,
   useChainId,
@@ -20,8 +20,6 @@ import {
 import {
   assertMintEnvironment,
   assertMintValueMatches,
-  assertSaneMintNetworkFee,
-  buildSafeMintFees,
   computeMintValue,
   formatMintError,
   logMintRequest,
@@ -33,6 +31,7 @@ import {
   type WhitelistProofMap,
 } from "@/lib/game/mintService";
 import { refreshOwnedGenesisInventory } from "@/lib/game/ownedGenesisMetaCache";
+import { sendRobinhoodContractWrite } from "@/lib/game/robinhoodContractWrite";
 import type { MintSaleState } from "@/types/game";
 
 const abi = hansomeGenesisNftAbi;
@@ -41,18 +40,6 @@ type UseGenesisMintOptions = {
   /** Optional merkle proofs for whitelist mint. */
   whitelistProofs?: WhitelistProofMap | null;
 };
-
-function decodeSimulateError(error: unknown): string {
-  if (error instanceof BaseError) {
-    const reverted = error.walk(
-      (e) => e instanceof ContractFunctionRevertedError,
-    ) as ContractFunctionRevertedError | null;
-    if (reverted?.data?.errorName) {
-      return `Contract reverted: ${reverted.data.errorName}`;
-    }
-  }
-  return formatMintError(error);
-}
 
 export function useGenesisMint(options: UseGenesisMintOptions = {}) {
   const { address, isConnected } = useAccount();
@@ -247,34 +234,24 @@ export function useGenesisMint(options: UseGenesisMintOptions = {}) {
       const contract = nft;
       assertMintValueMatches(input.value, mintPrice, input.quantity);
 
-      try {
-        await publicClient.simulateContract({
+      const { prepared: writePrepared } = await sendRobinhoodContractWrite({
+        label: "genesis-mint",
+        publicClient,
+        writeContractAsync: writeContractAsync as never,
+        request: {
+          chainId: GENESIS_CHAIN_ID,
           address: contract,
           abi,
           functionName: input.functionName,
-          args: input.args as never,
-          value: input.value,
+          args: input.args,
           account: address,
-          chain: publicClient.chain,
-        });
-      } catch (e) {
-        throw new Error(decodeSimulateError(e));
-      }
-
-      const gas = await publicClient.estimateContractGas({
-        address: contract,
-        abi,
-        functionName: input.functionName,
-        args: input.args as never,
-        value: input.value,
-        account: address,
+          value: input.value,
+        },
+        extraLog: {
+          quantity: input.quantity,
+          mintPriceWei: mintPrice.toString(),
+        },
       });
-
-      // Robinhood eth_gasPrice is sane (~0.01 gwei). MetaMask's own EIP-1559
-      // feeHistory prediction on this chain is not — pin fees from RPC.
-      const gasPrice = await publicClient.getGasPrice();
-      const safeFees = buildSafeMintFees(gasPrice);
-      const estimatedNetworkFee = assertSaneMintNetworkFee(gas, safeFees.maxFeePerGas);
 
       const prepared: PreparedMintRequest = {
         chainId: GENESIS_CHAIN_ID,
@@ -284,25 +261,12 @@ export function useGenesisMint(options: UseGenesisMintOptions = {}) {
         value: input.value,
         quantity: input.quantity,
         mintPrice,
-        gas,
-        maxFeePerGas: safeFees.maxFeePerGas,
-        maxPriorityFeePerGas: safeFees.maxPriorityFeePerGas,
-        estimatedNetworkFee,
+        gas: writePrepared.gas,
+        maxFeePerGas: writePrepared.maxFeePerGas,
+        maxPriorityFeePerGas: writePrepared.maxPriorityFeePerGas,
+        estimatedNetworkFee: writePrepared.estimatedNetworkFee,
       };
       logMintRequest(prepared, address);
-
-      // Do NOT pass gas/gasLimit — only EIP-1559 fee caps so MetaMask
-      // skips its broken Robinhood feeHistory prediction.
-      await writeContractAsync({
-        address: contract,
-        abi,
-        functionName: input.functionName,
-        args: input.args as never,
-        value: input.value,
-        chainId: GENESIS_CHAIN_ID,
-        maxFeePerGas: safeFees.maxFeePerGas,
-        maxPriorityFeePerGas: safeFees.maxPriorityFeePerGas,
-      });
     },
     [
       address,

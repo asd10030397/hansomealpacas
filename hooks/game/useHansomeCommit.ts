@@ -1,7 +1,13 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import {
+  useAccount,
+  useChainId,
+  usePublicClient,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+} from "wagmi";
 import { hansomeGameAbi } from "@/lib/game/abis/hansomeGame";
 import {
   GAME_CHAIN_ID,
@@ -15,6 +21,10 @@ import {
   type CommitSecretRecord,
 } from "@/lib/game/commitSecret";
 import { playSfx } from "@/lib/game/audio";
+import {
+  formatRobinhoodWriteError,
+  sendRobinhoodContractWrite,
+} from "@/lib/game/robinhoodContractWrite";
 import type { LocationId } from "@/types/game";
 
 export type CommitResult =
@@ -24,9 +34,12 @@ export type CommitResult =
 
 /**
  * Prepare Commit secret and optionally submit HansomeGame.commit when configured.
+ * On-chain path matches Mint: simulate → estimateGas → pin Robinhood fees → write.
  */
 export function useHansomeCommit() {
   const { address, isConnected } = useAccount();
+  const walletChainId = useChainId();
+  const publicClient = usePublicClient({ chainId: GAME_CHAIN_ID });
   const configured = isHansomeGameConfigured();
   const { writeContractAsync, data: hash, isPending, error: writeError, reset } =
     useWriteContract();
@@ -72,18 +85,44 @@ export function useHansomeCommit() {
         return { ok: false, error: "Connect wallet to commit on-chain." };
       }
 
+      if (walletChainId !== GAME_CHAIN_ID) {
+        return {
+          ok: false,
+          error: `Wrong network. Switch to chain ${GAME_CHAIN_ID} (Robinhood Testnet).`,
+        };
+      }
+
+      if (!publicClient) {
+        return { ok: false, error: "RPC client unavailable for commit simulation." };
+      }
+
       try {
-        const txHash = await writeContractAsync({
-          address: HANSOME_GAME_ADDRESS,
-          abi: hansomeGameAbi,
-          functionName: "commit",
-          args: [
-            BigInt(input.tokenId),
-            BigInt(input.day),
-            prepared.commitHash,
-          ],
-          chainId: GAME_CHAIN_ID,
+        const args = [
+          BigInt(input.tokenId),
+          BigInt(input.day),
+          prepared.commitHash,
+        ] as const;
+
+        const { hash: txHash } = await sendRobinhoodContractWrite({
+          label: "hansome-commit",
+          publicClient,
+          writeContractAsync: writeContractAsync as never,
+          request: {
+            chainId: GAME_CHAIN_ID,
+            address: HANSOME_GAME_ADDRESS,
+            abi: hansomeGameAbi,
+            functionName: "commit",
+            args,
+            account: address,
+          },
+          extraLog: {
+            tokenId: input.tokenId,
+            day: input.day,
+            locationId: input.locationId,
+            commitHash: prepared.commitHash,
+          },
         });
+
         const sealed = upsertCommitSecret({
           ...prepared,
           status: "submitted",
@@ -92,13 +131,20 @@ export function useHansomeCommit() {
         playSfx("ui-click");
         return { ok: true, mode: "chain", record: sealed };
       } catch (e) {
-        const message =
-          e instanceof Error ? e.message : "Commit transaction failed.";
+        const message = formatRobinhoodWriteError(e, "Commit transaction failed.");
         setLastError(message);
         return { ok: false, error: message };
       }
     },
-    [address, configured, isConnected, reset, writeContractAsync],
+    [
+      address,
+      configured,
+      isConnected,
+      publicClient,
+      reset,
+      walletChainId,
+      writeContractAsync,
+    ],
   );
 
   return {

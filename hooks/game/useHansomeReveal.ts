@@ -1,7 +1,13 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import {
+  useAccount,
+  useChainId,
+  usePublicClient,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+} from "wagmi";
 import { hansomeGameAbi } from "@/lib/game/abis/hansomeGame";
 import {
   GAME_CHAIN_ID,
@@ -14,6 +20,10 @@ import {
   type CommitSecretRecord,
 } from "@/lib/game/commitSecret";
 import { playSfx } from "@/lib/game/audio";
+import {
+  formatRobinhoodWriteError,
+  sendRobinhoodContractWrite,
+} from "@/lib/game/robinhoodContractWrite";
 
 export type RevealResult =
   | { ok: true; mode: "chain" | "local"; record: CommitSecretRecord }
@@ -21,6 +31,8 @@ export type RevealResult =
 
 export function useHansomeReveal() {
   const { address, isConnected } = useAccount();
+  const walletChainId = useChainId();
+  const publicClient = usePublicClient({ chainId: GAME_CHAIN_ID });
   const configured = isHansomeGameConfigured();
   const { writeContractAsync, data: hash, isPending, error: writeError, reset } =
     useWriteContract();
@@ -59,18 +71,40 @@ export function useHansomeReveal() {
         return { ok: false, error: "Connect wallet to reveal on-chain." };
       }
 
+      if (walletChainId !== GAME_CHAIN_ID) {
+        return {
+          ok: false,
+          error: `Wrong network. Switch to chain ${GAME_CHAIN_ID} (Robinhood Testnet).`,
+        };
+      }
+
+      if (!publicClient) {
+        return { ok: false, error: "RPC client unavailable for reveal simulation." };
+      }
+
       try {
-        const txHash = await writeContractAsync({
-          address: HANSOME_GAME_ADDRESS,
-          abi: hansomeGameAbi,
-          functionName: "reveal",
-          args: [
-            BigInt(input.tokenId),
-            BigInt(input.day),
-            secret.locationId,
-            secret.salt,
-          ],
-          chainId: GAME_CHAIN_ID,
+        const { hash: txHash } = await sendRobinhoodContractWrite({
+          label: "hansome-reveal",
+          publicClient,
+          writeContractAsync: writeContractAsync as never,
+          request: {
+            chainId: GAME_CHAIN_ID,
+            address: HANSOME_GAME_ADDRESS,
+            abi: hansomeGameAbi,
+            functionName: "reveal",
+            args: [
+              BigInt(input.tokenId),
+              BigInt(input.day),
+              secret.locationId,
+              secret.salt,
+            ],
+            account: address,
+          },
+          extraLog: {
+            tokenId: input.tokenId,
+            day: input.day,
+            locationId: secret.locationId,
+          },
         });
         const record = upsertCommitSecret({
           ...secret,
@@ -80,13 +114,20 @@ export function useHansomeReveal() {
         playSfx("ui-click");
         return { ok: true, mode: "chain", record };
       } catch (e) {
-        const message =
-          e instanceof Error ? e.message : "Reveal transaction failed.";
+        const message = formatRobinhoodWriteError(e, "Reveal transaction failed.");
         setLastError(message);
         return { ok: false, error: message };
       }
     },
-    [address, configured, isConnected, reset, writeContractAsync],
+    [
+      address,
+      configured,
+      isConnected,
+      publicClient,
+      reset,
+      walletChainId,
+      writeContractAsync,
+    ],
   );
 
   return {
