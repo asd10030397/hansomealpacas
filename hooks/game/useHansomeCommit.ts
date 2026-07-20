@@ -26,6 +26,10 @@ import {
   sendRobinhoodContractWrite,
 } from "@/lib/game/robinhoodContractWrite";
 import {
+  shouldBlockCommitForVault,
+  VAULT_PERSIST_FAILED_MESSAGE,
+} from "@/lib/game/gaslessCommitGate";
+import {
   isTestnetGaslessResolveEnabled,
   uploadTestnetCommitSecret,
 } from "@/lib/game/testnetGaslessResolve";
@@ -102,6 +106,30 @@ export function useHansomeCommit() {
         return { ok: false, error: "RPC client unavailable for commit simulation." };
       }
 
+      // Gasless path: durable vault must accept the salt before any on-chain commit.
+      // localStorage remains a recovery backup only — relayer reads the server vault.
+      if (isTestnetGaslessResolveEnabled()) {
+        const uploaded = await uploadTestnetCommitSecret({
+          tokenId: prepared.tokenId,
+          day: prepared.day,
+          locationId: prepared.locationId,
+          salt: prepared.salt,
+          commitHash: prepared.commitHash,
+          wallet: address,
+        });
+        const gate = shouldBlockCommitForVault({
+          gaslessEnabled: true,
+          persistOk: uploaded.ok,
+          persistError: uploaded.error
+            ? `${VAULT_PERSIST_FAILED_MESSAGE} (${uploaded.error})`
+            : VAULT_PERSIST_FAILED_MESSAGE,
+        });
+        if (gate.block) {
+          setLastError(gate.error);
+          return { ok: false, error: gate.error };
+        }
+      }
+
       try {
         const args = [
           BigInt(input.tokenId),
@@ -146,21 +174,6 @@ export function useHansomeCommit() {
           txHash,
           wallet: address,
         });
-
-        // Testnet gasless: store salt on the server so Battle resolve needs no localStorage.
-        if (isTestnetGaslessResolveEnabled()) {
-          const uploaded = await uploadTestnetCommitSecret({
-            tokenId: sealed.tokenId,
-            day: sealed.day,
-            locationId: sealed.locationId,
-            salt: sealed.salt,
-            commitHash: sealed.commitHash,
-            wallet: address,
-          });
-          if (!uploaded.ok) {
-            console.warn("[hansome-commit] vault upload failed:", uploaded.error);
-          }
-        }
 
         playSfx("ui-click");
         return { ok: true, mode: "chain", record: sealed };

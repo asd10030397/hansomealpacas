@@ -117,12 +117,16 @@ async function ensureRelayerConfigured(): Promise<boolean> {
 
   statusProbe = (async () => {
     const status = await fetchTestnetResolveStatus();
-    if (!status.relayerConfigured || !status.canResolve) {
+    if (
+      !status.relayerConfigured ||
+      status.vaultConfigured === false ||
+      !status.canResolve
+    ) {
       markServiceUnavailable(
         status.error ??
           (process.env.NODE_ENV === "production"
             ? "Battle settlement service is temporarily unavailable."
-            : "Testnet relayer is not configured on this server."),
+            : "Testnet relayer or commit vault is not configured on this server."),
       );
       return false;
     }

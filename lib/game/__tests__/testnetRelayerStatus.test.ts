@@ -64,10 +64,41 @@ describe("testnetRelayerStatus", () => {
     vi.stubEnv("DEPLOYER_PRIVATE_KEY", FAKE_OTHER_KEY);
     vi.stubEnv("TREASURY_PRIVATE_KEY", FAKE_OTHER_KEY);
     vi.stubEnv("PRIVATE_KEY", FAKE_OTHER_KEY);
+    vi.stubEnv("GAME_TESTNET_COMMIT_VAULT_DRIVER", "memory");
+    vi.stubEnv("GAME_TESTNET_COMMIT_VAULT_KEY", "ab".repeat(32));
+    vi.stubEnv("NEXT_PUBLIC_GAME_CHAIN_ID", "46630");
+    vi.stubEnv(
+      "NEXT_PUBLIC_HANSOME_GAME_ADDRESS",
+      "0x1111111111111111111111111111111111111111",
+    );
 
     const mod = await import("@/lib/game/server/testnetRelayerStatus");
     expect(mod.readRelayerPrivateKey()).toBe(FAKE_RELAYER_KEY);
     expect(mod.isRelayerConfigured()).toBe(true);
+    const status = mod.buildTestnetResolveStatus();
+    expect(status.relayerConfigured).toBe(true);
+    expect(status.vaultConfigured).toBe(true);
+    expect(status.canResolve).toBe(true);
+  });
+
+  it("cannot resolve when vault is missing even if relayer key is set", async () => {
+    vi.stubEnv("GAME_TESTNET_RELAYER_PRIVATE_KEY", FAKE_RELAYER_KEY);
+    vi.stubEnv("GAME_TESTNET_COMMIT_VAULT_KEY", "");
+    vi.stubEnv("KV_REST_API_URL", "");
+    vi.stubEnv("KV_REST_API_TOKEN", "");
+    vi.stubEnv("GAME_TESTNET_COMMIT_VAULT_DRIVER", "");
+    vi.stubEnv("NEXT_PUBLIC_GAME_CHAIN_ID", "46630");
+    vi.stubEnv(
+      "NEXT_PUBLIC_HANSOME_GAME_ADDRESS",
+      "0x1111111111111111111111111111111111111111",
+    );
+
+    const mod = await import("@/lib/game/server/testnetRelayerStatus");
+    const status = mod.buildTestnetResolveStatus();
+    expect(status.relayerConfigured).toBe(true);
+    expect(status.vaultConfigured).toBe(false);
+    expect(status.canResolve).toBe(false);
+    expect(status.code).toBe("VAULT_NOT_CONFIGURED");
   });
 
   it("rejects malformed GAME_TESTNET_RELAYER_PRIVATE_KEY", async () => {

@@ -4,7 +4,6 @@ import {
   createWalletClient,
   decodeEventLog,
   http,
-  isHex,
   keccak256,
   toBytes,
   type Address,
@@ -20,6 +19,7 @@ import {
   HANSOME_GAME_ADDRESS,
 } from "@/lib/game/hansomeGame";
 import {
+  isCommitVaultConfigured,
   listVaultSecretsForDay,
   vaultSecretCountForDay,
 } from "@/lib/game/server/testnetCommitVault";
@@ -27,6 +27,7 @@ import {
   buildTestnetResolveStatus,
   readRelayerPrivateKey,
   RELAYER_NOT_CONFIGURED_CODE,
+  VAULT_NOT_CONFIGURED_CODE,
   relayerUnavailableMessage,
 } from "@/lib/game/server/testnetRelayerStatus";
 import { SettlementTimingTrace } from "@/lib/game/server/settlementTimingLog";
@@ -56,7 +57,7 @@ type RevealItem = {
 
 type Body = {
   day?: number;
-  /** Optional client reveals — vault secrets are preferred / merged. */
+  /** Ignored — relayer reads the durable vault only. Kept for API compat. */
   reveals?: RevealItem[];
   fulfillSeed?: boolean;
   settle?: boolean;
@@ -174,9 +175,36 @@ export async function POST(req: Request) {
         ok: false,
         enabled: true,
         relayerConfigured: false,
+        vaultConfigured: isCommitVaultConfigured(),
         canResolve: false,
         code: RELAYER_NOT_CONFIGURED_CODE,
         error: relayerUnavailableMessage(),
+      },
+      { status: 503 },
+    );
+  }
+
+  if (!isCommitVaultConfigured()) {
+    console.info(
+      "[settlement-timing]",
+      JSON.stringify({
+        ts: new Date().toISOString(),
+        event: "vault_not_configured",
+        ok: false,
+      }),
+    );
+    return NextResponse.json(
+      {
+        ok: false,
+        enabled: true,
+        relayerConfigured: true,
+        vaultConfigured: false,
+        canResolve: false,
+        code: VAULT_NOT_CONFIGURED_CODE,
+        error:
+          process.env.NODE_ENV === "production"
+            ? "Battle settlement service is temporarily unavailable."
+            : "Testnet commit vault is not configured on this server.",
       },
       { status: 503 },
     );
@@ -249,7 +277,7 @@ export async function POST(req: Request) {
     stage,
   });
 
-  const jsonOk = (extra: Record<string, unknown> = {}) => {
+  const jsonOk = async (extra: Record<string, unknown> = {}) => {
     const stage = stageFromResolveFlags({
       alreadySettled,
       finalized: dayFinalized,
@@ -265,6 +293,7 @@ export async function POST(req: Request) {
     if (alreadySettled) timing.markFullySettled({ stage });
     timing.summary(stage);
     lastResolveEndByDay.set(day, performance.now());
+    const vaultCount = await vaultSecretCountForDay(day);
     console.info("[testnet-resolve]", {
       day,
       stage,
@@ -277,7 +306,7 @@ export async function POST(req: Request) {
       revealed,
       revealBatchesRun,
       creditBatchesRun,
-      vaultCount: vaultSecretCountForDay(day),
+      vaultCount,
       requestId: timing.requestId,
     });
     const battleReady = dayFinalized || alreadySettled;
@@ -297,7 +326,7 @@ export async function POST(req: Request) {
       revealTxHash,
       seedTxHash,
       settleTxHash,
-      vaultCount: vaultSecretCountForDay(day),
+      vaultCount,
       stage,
       timings,
       ...extra,
@@ -329,7 +358,7 @@ export async function POST(req: Request) {
         skipped: true,
         detail: "already_settled_early",
       });
-      return jsonOk();
+      return await jsonOk();
     }
 
     const tRand = performance.now();
@@ -438,28 +467,17 @@ export async function POST(req: Request) {
         seedMs = msSince(tSeed);
       }
 
-      // ── 2) Reveal (vault + optional client secrets) ───────────────────
+      // ── 2) Reveal from durable vault only (localStorage is recovery backup) ──
       const byToken = new Map<
         number,
         { tokenId: number; locationId: number; salt: Hex }
       >();
-      for (const v of listVaultSecretsForDay(day)) {
+      for (const v of await listVaultSecretsForDay(day)) {
         byToken.set(v.tokenId, {
           tokenId: v.tokenId,
           locationId: v.locationId,
           salt: v.salt,
         });
-      }
-      for (const item of Array.isArray(body.reveals) ? body.reveals : []) {
-        const tokenId = Number(item.tokenId);
-        const locationId = Number(item.locationId);
-        const salt = item.salt as Hex;
-        if (!Number.isInteger(tokenId) || tokenId < 0) continue;
-        if (!Number.isInteger(locationId) || locationId < 0 || locationId > 4) {
-          continue;
-        }
-        if (!isHex(salt) || salt.length !== 66) continue;
-        byToken.set(tokenId, { tokenId, locationId, salt });
       }
 
       // Refresh dayState once after seed (phase can advance while seed mined).
@@ -799,13 +817,13 @@ export async function POST(req: Request) {
       }
     }
 
-    return jsonOk();
+    return await jsonOk();
   } catch (e) {
     const message = e instanceof Error ? e.message : "testnet-resolve failed";
     if (isIdempotentResolveError(message)) {
       alreadySettled = isAlreadySettledError(message) || alreadySettled;
       seedSkipped = isSeedAlreadySetError(message) || seedSkipped;
-      return jsonOk();
+      return await jsonOk();
     }
     const timings = buildTimings("error");
     timing.log("resolve_error", {

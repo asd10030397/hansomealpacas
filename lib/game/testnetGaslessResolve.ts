@@ -32,6 +32,7 @@ export type TestnetResolveStatus = {
   ok: boolean;
   enabled: boolean;
   relayerConfigured: boolean;
+  vaultConfigured?: boolean;
   canResolve: boolean;
   chainId?: number;
   game?: string | null;
@@ -101,6 +102,7 @@ export async function fetchTestnetResolveStatus(): Promise<TestnetResolveStatus>
       ok: Boolean(data.ok),
       enabled: Boolean(data.enabled),
       relayerConfigured: Boolean(data.relayerConfigured),
+      vaultConfigured: Boolean(data.vaultConfigured),
       canResolve: Boolean(data.canResolve),
       chainId: data.chainId,
       game: data.game,
@@ -111,6 +113,7 @@ export async function fetchTestnetResolveStatus(): Promise<TestnetResolveStatus>
       ok: false,
       enabled: isTestnetGaslessResolveEnabled(),
       relayerConfigured: false,
+      vaultConfigured: false,
       canResolve: false,
       error: e instanceof Error ? e.message : "status check failed",
     };

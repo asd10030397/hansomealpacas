@@ -6,8 +6,10 @@
 import { isHex, type Hex } from "viem";
 import { ROBINHOOD_TESTNET_CHAIN_ID } from "@/lib/chain";
 import { GAME_CHAIN_ID, HANSOME_GAME_ADDRESS } from "@/lib/game/hansomeGame";
+import { isCommitVaultConfigured } from "@/lib/game/server/testnetCommitVault";
 
 export const RELAYER_NOT_CONFIGURED_CODE = "RELAYER_NOT_CONFIGURED" as const;
+export const VAULT_NOT_CONFIGURED_CODE = "VAULT_NOT_CONFIGURED" as const;
 
 /**
  * Read the dedicated Testnet gasless relayer key only.
@@ -44,27 +46,42 @@ export type TestnetResolveStatusPayload = {
   ok: true;
   enabled: boolean;
   relayerConfigured: boolean;
+  vaultConfigured: boolean;
   canResolve: boolean;
   chainId: number;
   game: string | null;
   error?: string;
+  code?: typeof RELAYER_NOT_CONFIGURED_CODE | typeof VAULT_NOT_CONFIGURED_CODE;
 };
 
 export function buildTestnetResolveStatus(): TestnetResolveStatusPayload {
   const enabled = isTestnetGaslessFeatureEnabled();
   const relayerConfigured = isRelayerConfigured();
-  const canResolve = enabled && relayerConfigured;
+  const vaultConfigured = isCommitVaultConfigured();
+  const canResolve = enabled && relayerConfigured && vaultConfigured;
+  let error: string | undefined;
+  let code:
+    | typeof RELAYER_NOT_CONFIGURED_CODE
+    | typeof VAULT_NOT_CONFIGURED_CODE
+    | undefined;
+  if (enabled && !relayerConfigured) {
+    error = relayerUnavailableMessage();
+    code = RELAYER_NOT_CONFIGURED_CODE;
+  } else if (enabled && !vaultConfigured) {
+    error =
+      process.env.NODE_ENV === "production"
+        ? "Battle settlement service is temporarily unavailable."
+        : "Testnet commit vault is not configured on this server.";
+    code = VAULT_NOT_CONFIGURED_CODE;
+  }
   return {
     ok: true,
     enabled,
     relayerConfigured,
+    vaultConfigured,
     canResolve,
     chainId: GAME_CHAIN_ID,
     game: HANSOME_GAME_ADDRESS,
-    ...(relayerConfigured
-      ? {}
-      : enabled
-        ? { error: relayerUnavailableMessage() }
-        : {}),
+    ...(error ? { error, code } : {}),
   };
 }

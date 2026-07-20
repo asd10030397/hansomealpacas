@@ -16,6 +16,7 @@ vi.mock("@/lib/game/testnetGaslessResolve", () => ({
     ok: true,
     enabled: true,
     relayerConfigured: true,
+    vaultConfigured: true,
     canResolve: true,
   })),
   isRelayerNotConfiguredResponse: (r: {
