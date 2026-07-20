@@ -23,6 +23,12 @@ import {
   listVaultSecretsForDay,
   vaultSecretCountForDay,
 } from "@/lib/game/server/testnetCommitVault";
+import {
+  buildTestnetResolveStatus,
+  readRelayerPrivateKey,
+  RELAYER_NOT_CONFIGURED_CODE,
+  relayerUnavailableMessage,
+} from "@/lib/game/server/testnetRelayerStatus";
 import { writeRelayerContract } from "@/lib/game/server/testnetRelayerWrite";
 import { isDefinitelyAlreadyRevealed } from "@/lib/game/homeRevealGuard";
 import {
@@ -92,17 +98,6 @@ async function countRevealedInTx(
   return n;
 }
 
-function relayerPrivateKey(): Hex | null {
-  const raw =
-    process.env.GAME_TESTNET_RELAYER_PRIVATE_KEY?.trim() ||
-    process.env.DEPLOYER_PRIVATE_KEY?.trim() ||
-    process.env.TREASURY_PRIVATE_KEY?.trim() ||
-    "";
-  if (!raw) return null;
-  const key = (raw.startsWith("0x") ? raw : `0x${raw}`) as Hex;
-  return isHex(key) && key.length === 66 ? key : null;
-}
-
 function rpcUrl(): string {
   return (
     process.env.NEXT_PUBLIC_GAME_RPC_URL?.trim() ||
@@ -154,14 +149,16 @@ export async function POST(req: Request) {
     );
   }
 
-  const pk = relayerPrivateKey();
+  const pk = readRelayerPrivateKey();
   if (!pk) {
     return NextResponse.json(
       {
         ok: false,
-        enabled: false,
-        error:
-          "Missing GAME_TESTNET_RELAYER_PRIVATE_KEY (server-only; game owner / randomness provider).",
+        enabled: true,
+        relayerConfigured: false,
+        canResolve: false,
+        code: RELAYER_NOT_CONFIGURED_CODE,
+        error: relayerUnavailableMessage(),
       },
       { status: 503 },
     );
@@ -632,7 +629,12 @@ export async function POST(req: Request) {
       return jsonOk();
     }
     const timings = buildTimings("error");
+    // Log full message server-side only — never echo RPC/config internals to browsers in production.
     console.error("[testnet-resolve]", message, timings);
+    const publicError =
+      process.env.NODE_ENV === "production"
+        ? "Battle settlement failed. Please try again shortly."
+        : message;
     return NextResponse.json(
       {
         ok: false,
@@ -644,7 +646,7 @@ export async function POST(req: Request) {
         settleTxHash,
         stage: "error" as const,
         timings,
-        error: message,
+        error: publicError,
       },
       { status: 500 },
     );
@@ -652,18 +654,5 @@ export async function POST(req: Request) {
 }
 
 export async function GET() {
-  const enabled =
-    GAME_CHAIN_ID === ROBINHOOD_TESTNET_CHAIN_ID &&
-    process.env.NEXT_PUBLIC_TESTNET_GASLESS_RESOLVE?.trim() !== "0" &&
-    process.env.NEXT_PUBLIC_TESTNET_GASLESS_RESOLVE?.trim() !== "false" &&
-    Boolean(relayerPrivateKey()) &&
-    Boolean(HANSOME_GAME_ADDRESS);
-
-  return NextResponse.json({
-    ok: true,
-    enabled,
-    chainId: GAME_CHAIN_ID,
-    game: HANSOME_GAME_ADDRESS,
-    gaslessFlag: process.env.NEXT_PUBLIC_TESTNET_GASLESS_RESOLVE ?? "(default on)",
-  });
+  return NextResponse.json(buildTestnetResolveStatus());
 }

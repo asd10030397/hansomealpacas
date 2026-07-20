@@ -1,7 +1,7 @@
 /**
  * Multi-wallet Testnet gameplay simulation.
  *
- * Relayer (GAME_TESTNET_RELAYER_PRIVATE_KEY / TREASURY): reveal + seed + settle only.
+ * Relayer (GAME_TESTNET_RELAYER_PRIVATE_KEY only): reveal + seed + settle only.
  * Players: `.qa-wallets.local.json` (gitignored) — never logged as keys.
  *
  * Usage:

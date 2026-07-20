@@ -14,7 +14,12 @@ export async function GET() {
     );
   } catch (error) {
     console.error(`[${PROJECT.symbol}] /api/wallets failed:`, error);
-    const message = error instanceof Error ? error.message : "Failed to load wallet balances";
+    const message =
+      process.env.NODE_ENV === "production"
+        ? "Failed to load wallet balances"
+        : error instanceof Error
+          ? error.message
+          : "Failed to load wallet balances";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

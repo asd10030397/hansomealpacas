@@ -12,6 +12,8 @@ import type {
 } from "@/lib/game/testnetResolveStages";
 import type { Hex } from "viem";
 
+export const RELAYER_NOT_CONFIGURED_CODE = "RELAYER_NOT_CONFIGURED";
+
 export type TestnetRevealItem = {
   tokenId: number;
   locationId: number;
@@ -24,6 +26,16 @@ export type TestnetResolveRequest = {
   reveals?: TestnetRevealItem[];
   fulfillSeed?: boolean;
   settle?: boolean;
+};
+
+export type TestnetResolveStatus = {
+  ok: boolean;
+  enabled: boolean;
+  relayerConfigured: boolean;
+  canResolve: boolean;
+  chainId?: number;
+  game?: string | null;
+  error?: string;
 };
 
 export type TestnetResolveResponse = {
@@ -45,6 +57,9 @@ export type TestnetResolveResponse = {
   stage?: TestnetResolveStage;
   /** Per-step wall timings for this pass. */
   timings?: TestnetResolveTimings;
+  relayerConfigured?: boolean;
+  canResolve?: boolean;
+  code?: string;
   error?: string;
   detail?: string;
 };
@@ -55,6 +70,45 @@ export function isTestnetGaslessResolveEnabled(): boolean {
   const flag = process.env.NEXT_PUBLIC_TESTNET_GASLESS_RESOLVE?.trim();
   if (flag === "0" || flag === "false") return false;
   return true;
+}
+
+export function isRelayerNotConfiguredResponse(
+  result: Pick<TestnetResolveResponse, "code" | "relayerConfigured" | "error">,
+): boolean {
+  if (result.relayerConfigured === false) return true;
+  if (result.code === RELAYER_NOT_CONFIGURED_CODE) return true;
+  const err = result.error ?? "";
+  return (
+    /relayer is not configured/i.test(err) ||
+    /settlement service is temporarily unavailable/i.test(err)
+  );
+}
+
+export async function fetchTestnetResolveStatus(): Promise<TestnetResolveStatus> {
+  try {
+    const res = await fetch("/api/game/testnet-resolve", {
+      method: "GET",
+      cache: "no-store",
+    });
+    const data = (await res.json()) as TestnetResolveStatus;
+    return {
+      ok: Boolean(data.ok),
+      enabled: Boolean(data.enabled),
+      relayerConfigured: Boolean(data.relayerConfigured),
+      canResolve: Boolean(data.canResolve),
+      chainId: data.chainId,
+      game: data.game,
+      error: data.error,
+    };
+  } catch (e) {
+    return {
+      ok: false,
+      enabled: isTestnetGaslessResolveEnabled(),
+      relayerConfigured: false,
+      canResolve: false,
+      error: e instanceof Error ? e.message : "status check failed",
+    };
+  }
 }
 
 export async function uploadTestnetCommitSecret(input: {
@@ -105,6 +159,17 @@ export async function requestTestnetResolve(
   }
   if (!res.ok) {
     const err = data.error ?? `HTTP ${res.status}`;
+    if (isRelayerNotConfiguredResponse(data)) {
+      return {
+        ok: false,
+        enabled: data.enabled ?? true,
+        day: body.day,
+        relayerConfigured: false,
+        canResolve: false,
+        code: RELAYER_NOT_CONFIGURED_CODE,
+        error: err,
+      };
+    }
     // Stale builds / races: SeedAlreadySet is success — continue to settle/result.
     if (isSeedAlreadySetError(err) || /AlreadySettled/i.test(err)) {
       return {
@@ -124,6 +189,9 @@ export async function requestTestnetResolve(
       ok: false,
       enabled: data.enabled ?? false,
       day: body.day,
+      relayerConfigured: data.relayerConfigured,
+      canResolve: data.canResolve,
+      code: data.code,
       error: err,
       detail: data.detail,
     };

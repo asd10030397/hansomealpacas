@@ -1,11 +1,29 @@
 /**
- * Copy deployments/<network>-game.json addresses into the Next.js .env.local.
+ * Copy deployments/<network>-game.json public addresses into the Next.js .env.local.
+ *
+ * Never copies or infers private keys. GAME_TESTNET_RELAYER_PRIVATE_KEY must be
+ * set manually to a dedicated relayer — this script only preserves an existing value.
  *
  * Usage: npx hardhat run scripts/sync-game-env.ts --network robinhoodTestnet
  */
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { network } from "hardhat";
+
+function readEnvValue(fileContents: string, key: string): string | null {
+  const re = new RegExp(`^${key}=(.*)$`, "m");
+  const m = fileContents.match(re);
+  if (!m) return null;
+  return (m[1] ?? "").trim();
+}
+
+function upsertEnvLine(fileContents: string, key: string, value: string): string {
+  const re = new RegExp(`^${key}=.*$`, "m");
+  if (re.test(fileContents)) {
+    return fileContents.replace(re, `${key}=${value}`);
+  }
+  return `${fileContents.trimEnd()}\n${key}=${value}\n`;
+}
 
 async function main() {
   const deploymentsDir = join(__dirname, "..", "deployments");
@@ -48,21 +66,6 @@ async function main() {
     NEXT_PUBLIC_TESTNET_GAMEPLAY_TRAITS: "1",
   };
 
-  // Server-only relayer key (never NEXT_PUBLIC_*). Hardhat loads contracts/.env.
-  const pkFromEnv = (
-    process.env.DEPLOYER_PRIVATE_KEY ||
-    process.env.TREASURY_PRIVATE_KEY ||
-    ""
-  ).trim();
-  if (pkFromEnv) {
-    lines.GAME_TESTNET_RELAYER_PRIVATE_KEY = pkFromEnv.startsWith("0x")
-      ? pkFromEnv
-      : `0x${pkFromEnv}`;
-  } else {
-    console.warn(
-      "WARN: set GAME_TESTNET_RELAYER_PRIVATE_KEY in .env.local (game owner key)",
-    );
-  }
   if (thansome) {
     lines.NEXT_PUBLIC_THANSOME_ADDRESS = thansome;
   }
@@ -78,21 +81,36 @@ async function main() {
 
   let next = existing;
   for (const [key, value] of Object.entries(lines)) {
-    const re = new RegExp(`^${key}=.*$`, "m");
-    if (re.test(next)) {
-      next = next.replace(re, `${key}=${value}`);
-    } else {
-      next = `${next.trimEnd()}\n${key}=${value}\n`;
+    next = upsertEnvLine(next, key, value);
+  }
+
+  // Relayer: preserve existing dedicated value only. Never copy deployer/treasury keys.
+  const existingRelayer = readEnvValue(existing, "GAME_TESTNET_RELAYER_PRIVATE_KEY");
+  const relayerPresent = Boolean(existingRelayer);
+  if (!relayerPresent) {
+    // Ensure the key exists as an empty placeholder so operators see the slot.
+    if (!/^GAME_TESTNET_RELAYER_PRIVATE_KEY=/m.test(next)) {
+      next = upsertEnvLine(next, "GAME_TESTNET_RELAYER_PRIVATE_KEY", "");
     }
+    console.warn(
+      "WARN: GAME_TESTNET_RELAYER_PRIVATE_KEY is not set in .env.local. " +
+        "Set a dedicated Testnet gasless relayer key (never reuse deployer/treasury/owner). " +
+        "See docs/HANSOME_Role_Split_and_Ownership_Transfer_Checklist.md",
+    );
   }
 
   writeFileSync(envPath, next.endsWith("\n") ? next : `${next}\n`);
   console.log("Updated", envPath);
-  const publicLines = { ...lines };
-  if (publicLines.GAME_TESTNET_RELAYER_PRIVATE_KEY) {
-    publicLines.GAME_TESTNET_RELAYER_PRIVATE_KEY = "[set]";
-  }
-  console.log(JSON.stringify(publicLines, null, 2));
+  console.log(
+    JSON.stringify(
+      {
+        ...lines,
+        GAME_TESTNET_RELAYER_PRIVATE_KEY: relayerPresent ? "[preserved]" : "[unset]",
+      },
+      null,
+      2,
+    ),
+  );
 }
 
 main().catch((error) => {

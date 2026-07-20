@@ -5,6 +5,8 @@
  */
 
 import {
+  fetchTestnetResolveStatus,
+  isRelayerNotConfiguredResponse,
   requestTestnetResolve,
   type TestnetResolveResponse,
 } from "@/lib/game/testnetGaslessResolve";
@@ -32,6 +34,8 @@ type Listener = () => void;
 
 const FAST_POLL_MS = 1_500;
 const SLOW_POLL_MS = 6_000;
+const BACKOFF_MIN_MS = 1_500;
+const BACKOFF_MAX_MS = 30_000;
 const MAX_SAMPLES = 40;
 
 const snapshots = new Map<number, DayResolveSnapshot>();
@@ -43,6 +47,14 @@ let inFlightDay: number | null = null;
 let loopTimer: ReturnType<typeof setTimeout> | null = null;
 let loopTargets: number[] = [];
 let loopActive = false;
+let failureBackoffMs = BACKOFF_MIN_MS;
+
+/** null = not probed yet; true/false after GET /testnet-resolve */
+let relayerConfigured: boolean | null = null;
+let statusProbe: Promise<boolean> | null = null;
+/** One compact notice for the whole session (not per panel). */
+let serviceNotice: string | null = null;
+let serviceUnavailable = false;
 
 function notify(): void {
   for (const l of listeners) l();
@@ -79,11 +91,62 @@ function recordSample(sample: TestnetResolveTimingSample): void {
   if (samples.length > MAX_SAMPLES) samples.shift();
 }
 
+function markServiceUnavailable(message: string): void {
+  serviceUnavailable = true;
+  relayerConfigured = false;
+  if (!serviceNotice) {
+    serviceNotice = message;
+  }
+  stopTestnetResolveLoop();
+  for (const day of loopTargets) {
+    patch(day, {
+      stage: "error",
+      running: false,
+      lastError: null,
+      lastMessage: null,
+    });
+  }
+  notify();
+}
+
+async function ensureRelayerConfigured(): Promise<boolean> {
+  if (serviceUnavailable) return false;
+  if (relayerConfigured === true) return true;
+  if (relayerConfigured === false) return false;
+  if (statusProbe) return statusProbe;
+
+  statusProbe = (async () => {
+    const status = await fetchTestnetResolveStatus();
+    if (!status.relayerConfigured || !status.canResolve) {
+      markServiceUnavailable(
+        status.error ??
+          (process.env.NODE_ENV === "production"
+            ? "Battle settlement service is temporarily unavailable."
+            : "Testnet relayer is not configured on this server."),
+      );
+      return false;
+    }
+    relayerConfigured = true;
+    return true;
+  })().finally(() => {
+    statusProbe = null;
+  });
+
+  return statusProbe;
+}
+
 function applyResponse(
   day: number,
   result: TestnetResolveResponse,
   timings: TestnetResolveTimings,
 ): void {
+  if (isRelayerNotConfiguredResponse(result)) {
+    markServiceUnavailable(
+      result.error ?? "Testnet relayer is not configured on this server.",
+    );
+    return;
+  }
+
   const creditsDone = Boolean(result.alreadySettled);
   const stage =
     result.ok === false && result.error
@@ -98,6 +161,7 @@ function applyResponse(
 
   if (creditsDone || stage === "completed") {
     settledDays.add(day);
+    failureBackoffMs = BACKOFF_MIN_MS;
   }
 
   let lastMessage: string | null = null;
@@ -115,10 +179,17 @@ function applyResponse(
     lastMessage = "Finalizing settlement…";
   }
 
+  const failed = result.ok === false && Boolean(result.error);
+  if (failed) {
+    failureBackoffMs = Math.min(BACKOFF_MAX_MS, Math.max(BACKOFF_MIN_MS, failureBackoffMs * 2));
+  } else if (result.ok) {
+    failureBackoffMs = BACKOFF_MIN_MS;
+  }
+
   patch(day, {
     stage,
     settled: settledDays.has(day),
-    lastError: result.ok ? null : (result.error ?? "Gasless resolve failed."),
+    lastError: failed ? (result.error ?? "Gasless resolve failed.") : null,
     lastMessage,
     timings,
     running: false,
@@ -134,11 +205,15 @@ function applyResponse(
 }
 
 async function runOne(day: number): Promise<void> {
+  if (serviceUnavailable) return;
   if (settledDays.has(day)) {
     patch(day, { stage: "completed", settled: true, running: false });
     return;
   }
   if (inFlightDay != null) return;
+
+  const ready = await ensureRelayerConfigured();
+  if (!ready) return;
 
   inFlightDay = day;
   patch(day, { stage: "checking", running: true, lastError: null });
@@ -189,13 +264,17 @@ async function runOne(day: number): Promise<void> {
           alreadySettled: /AlreadySettled/i.test(result.error),
           seedSkipped: true,
         },
-        { ...timings, stage: /AlreadySettled/i.test(result.error) ? "completed" : timings.stage },
+        {
+          ...timings,
+          stage: /AlreadySettled/i.test(result.error) ? "completed" : timings.stage,
+        },
       );
       return;
     }
 
     applyResponse(day, result, timings);
   } catch (e) {
+    failureBackoffMs = Math.min(BACKOFF_MAX_MS, Math.max(BACKOFF_MIN_MS, failureBackoffMs * 2));
     patch(day, {
       stage: "error",
       running: false,
@@ -217,15 +296,24 @@ function pickNextTarget(targets: number[]): number | null {
 }
 
 async function loopTick(): Promise<void> {
-  if (!loopActive) return;
+  if (!loopActive || serviceUnavailable) return;
+
+  const ready = await ensureRelayerConfigured();
+  if (!ready) return;
+
   const next = pickNextTarget(loopTargets);
   if (next != null && inFlightDay == null) {
     await runOne(next);
   }
-  if (!loopActive) return;
+  if (!loopActive || serviceUnavailable) return;
 
   const pending = loopTargets.some((d) => !settledDays.has(d));
-  const delay = pending || inFlightDay != null ? FAST_POLL_MS : SLOW_POLL_MS;
+  const lastSnap = next != null ? snapshots.get(next) : null;
+  const hadError = Boolean(lastSnap?.lastError) && !lastSnap?.settled;
+  let delay = SLOW_POLL_MS;
+  if (pending || inFlightDay != null) {
+    delay = hadError ? failureBackoffMs : FAST_POLL_MS;
+  }
   loopTimer = setTimeout(() => {
     void loopTick();
   }, delay);
@@ -238,6 +326,11 @@ async function loopTick(): Promise<void> {
 export function setTestnetResolveTargets(days: number[]): void {
   loopTargets = [...new Set(days)].filter((d) => Number.isInteger(d) && d >= 0);
   for (const d of loopTargets) getOrCreate(d);
+
+  if (serviceUnavailable) {
+    notify();
+    return;
+  }
 
   if (!loopActive) {
     loopActive = true;
@@ -277,6 +370,15 @@ export function getTestnetResolveSamples(): readonly TestnetResolveTimingSample[
   return samples;
 }
 
+/** Compact single notice when relayer cannot run (dev or prod safe copy). */
+export function getTestnetResolveServiceNotice(): string | null {
+  return serviceNotice;
+}
+
+export function isTestnetResolveServiceUnavailable(): boolean {
+  return serviceUnavailable;
+}
+
 /** Test helpers */
 export function __resetTestnetResolveCoordinatorForTests(): void {
   stopTestnetResolveLoop();
@@ -285,9 +387,18 @@ export function __resetTestnetResolveCoordinatorForTests(): void {
   samples.length = 0;
   inFlightDay = null;
   loopTargets = [];
+  failureBackoffMs = BACKOFF_MIN_MS;
+  relayerConfigured = null;
+  statusProbe = null;
+  serviceNotice = null;
+  serviceUnavailable = false;
 }
 
 export function __markSettledForTests(day: number): void {
   settledDays.add(day);
   patch(day, { settled: true, stage: "completed", running: false });
+}
+
+export function __markRelayerUnavailableForTests(message: string): void {
+  markServiceUnavailable(message);
 }

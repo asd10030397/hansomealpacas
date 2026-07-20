@@ -29,7 +29,12 @@ export async function GET() {
     });
   } catch (error) {
     console.error(`[${PROJECT.symbol}] /api/market failed:`, error);
-    const message = error instanceof Error ? error.message : "Failed to load market stats";
+    const message =
+      process.env.NODE_ENV === "production"
+        ? "Failed to load market stats"
+        : error instanceof Error
+          ? error.message
+          : "Failed to load market stats";
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

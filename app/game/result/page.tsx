@@ -221,7 +221,13 @@ export default function ResultPhasePage() {
             : t.result.revealQueueEyebrow
         }
       >
-        {autoReveal.gasless ? (
+        {autoReveal.gasless && autoReveal.serviceUnavailable ? (
+          <GameFeedback tone="info" label={t.result.settleSectionTitle}>
+            {autoReveal.serviceNotice}
+          </GameFeedback>
+        ) : null}
+
+        {autoReveal.gasless && !autoReveal.serviceUnavailable ? (
           <GameFeedback
             tone={autoReveal.revealing ? "pending" : "success"}
             label={t.result.autoRevealTitle}
@@ -284,7 +290,7 @@ export default function ResultPhasePage() {
           </GameFeedback>
         ) : null}
 
-        {autoReveal.lastError ? (
+        {autoReveal.lastError && !autoReveal.serviceUnavailable ? (
           <GameFeedback tone="error" label={t.common.txError}>
             {autoReveal.lastError}
           </GameFeedback>
@@ -361,7 +367,7 @@ export default function ResultPhasePage() {
           </GameFeedback>
         ) : null}
 
-        {settleView.error ? (
+        {settleView.error && !autoReveal.serviceUnavailable ? (
           <GameFeedback tone="error" label={t.common.txError}>
             {settleView.error}
           </GameFeedback>

@@ -45,6 +45,7 @@ import {
 import { isTestnetGaslessResolveEnabled } from "@/lib/game/testnetGaslessResolve";
 import {
   getDayResolveSnapshot,
+  isTestnetResolveServiceUnavailable,
   setTestnetResolveTargets,
   subscribeTestnetResolve,
 } from "@/lib/game/testnetResolveCoordinator";
@@ -865,7 +866,10 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
     void hasDaySeedRead.refetch?.();
     void owned.refetch?.();
     setLocalTick((n) => n + 1);
-    if (resolveSnap.lastError && !resolveSnap.settled) {
+    // Relayer-unavailable is a single shared notice (AutoReveal / result page) — not here.
+    if (isTestnetResolveServiceUnavailable()) {
+      setLocalError(null);
+    } else if (resolveSnap.lastError && !resolveSnap.settled) {
       setLocalError(
         isSeedMissingError(resolveSnap.lastError)
           ? SEED_MISSING_UI_MESSAGE

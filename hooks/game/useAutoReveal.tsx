@@ -22,6 +22,8 @@ import {
 import { isTestnetGaslessResolveEnabled } from "@/lib/game/testnetGaslessResolve";
 import {
   getDayResolveSnapshot,
+  getTestnetResolveServiceNotice,
+  isTestnetResolveServiceUnavailable,
   setTestnetResolveTargets,
   stopTestnetResolveLoop,
   subscribeTestnetResolve,
@@ -41,6 +43,12 @@ export type AutoRevealStatus = {
   gasless: boolean;
   lastMessage: string | null;
   lastError: string | null;
+  /**
+   * Single session notice when the Testnet relayer cannot run.
+   * Prefer this over lastError — shown once (not per panel).
+   */
+  serviceNotice: string | null;
+  serviceUnavailable: boolean;
   /** Current pipeline stage for the battle day being resolved. */
   resolveStage: TestnetResolveStage;
   /** Day the coordinator is primarily reporting (may be previous day in Commit). */
@@ -147,8 +155,14 @@ function useAutoRevealEngine(): AutoRevealStatus {
     if (!gasless) return;
     const snap = getDayResolveSnapshot(resolveDay);
     if (snap.lastMessage) setLastMessage(snap.lastMessage);
-    if (snap.lastError) setRunError(snap.lastError);
-    else if (snap.settled) setRunError(null);
+    // Relayer-unavailable is surfaced via serviceNotice only (one panel).
+    if (isTestnetResolveServiceUnavailable()) {
+      setRunError(null);
+    } else if (snap.lastError) {
+      setRunError(snap.lastError);
+    } else if (snap.settled) {
+      setRunError(null);
+    }
     if (
       snap.settled &&
       snap.stage === "completed" &&
@@ -239,11 +253,16 @@ function useAutoRevealEngine(): AutoRevealStatus {
     return () => window.clearInterval(id);
   }, [gasless, phase]);
 
+  const serviceUnavailable = gasless && isTestnetResolveServiceUnavailable();
+  const serviceNotice = gasless ? getTestnetResolveServiceNotice() : null;
+
   const pendingCount = gasless
-    ? resolveSnapshot.running ||
-      (!resolveSnapshot.settled && resolveSnapshot.stage !== "idle")
-      ? 1
-      : 0
+    ? serviceUnavailable
+      ? 0
+      : resolveSnapshot.running ||
+          (!resolveSnapshot.settled && resolveSnapshot.stage !== "idle")
+        ? 1
+        : 0
     : queue.filter(
         (r) => r.status === "submitted" || r.status === "prepared",
       ).length;
@@ -252,26 +271,33 @@ function useAutoRevealEngine(): AutoRevealStatus {
   return useMemo(
     () => ({
       active:
-        phase === "REVEAL" ||
-        phase === "SETTLEMENT" ||
-        (gasless &&
-          (resolveSnapshot.running ||
-            (!resolveSnapshot.settled &&
-              resolveSnapshot.stage !== "idle" &&
-              resolveSnapshot.stage !== "completed"))),
+        !serviceUnavailable &&
+        (phase === "REVEAL" ||
+          phase === "SETTLEMENT" ||
+          (gasless &&
+            (resolveSnapshot.running ||
+              (!resolveSnapshot.settled &&
+                resolveSnapshot.stage !== "idle" &&
+                resolveSnapshot.stage !== "completed")))),
       revealing:
-        passRunning ||
-        isPending ||
-        pendingCount > 0 ||
-        (gasless && resolveSnapshot.running),
+        !serviceUnavailable &&
+        (passRunning ||
+          isPending ||
+          pendingCount > 0 ||
+          (gasless && resolveSnapshot.running)),
       pendingCount,
       revealedCount,
       noSecrets: gasless ? false : queue.length === 0,
       gasless,
       lastMessage: gasless ? resolveSnapshot.lastMessage ?? lastMessage : lastMessage,
-      lastError: gasless
-        ? resolveSnapshot.lastError
-        : (runError ?? lastError),
+      // Suppress per-panel errors when the shared service notice is shown.
+      lastError: serviceUnavailable
+        ? null
+        : gasless
+          ? resolveSnapshot.lastError
+          : (runError ?? lastError),
+      serviceNotice,
+      serviceUnavailable,
       resolveStage: resolveSnapshot.stage,
       resolveDay,
       resolveSnapshot,
@@ -291,6 +317,9 @@ function useAutoRevealEngine(): AutoRevealStatus {
       refreshQueue,
       resolveSnapshot,
       resolveDay,
+      serviceNotice,
+      serviceUnavailable,
+      resolveTick,
     ],
   );
 }
