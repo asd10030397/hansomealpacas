@@ -390,9 +390,9 @@ export const gameEn: GameMessages = {
       "Final leaderboard scoring is being mathematically balanced and may change before mainnet.",
   },
   commit: {
-    heading: "COMMIT MOVE",
+    heading: "CHOOSE LOCATION",
     blurb:
-      "Choose a location for each NFT. Your choice will remain hidden until the Reveal Move phase.",
+      "Choose a location for each NFT. After you confirm, the move is locked for that round. The battle is resolved automatically when the Battle phase begins.",
     locationTitle: "LOCATION",
     locationEyebrow: "SELECTED FOR THIS ROUND",
     noLocation: "No location selected. Choose one on the Deploy map.",

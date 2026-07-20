@@ -19,8 +19,8 @@ const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 const R = (p) => path.join(rootDir, p);
 const OUT_DIR = R("public/docs");
 fs.mkdirSync(OUT_DIR, { recursive: true });
-/** Versioned filename — busts CDN/browser cache after cover-page fixes. */
-const OUT_PDF = path.join(OUT_DIR, "hansome-player-guide-v1.1.pdf");
+/** Versioned filename — busts CDN/browser cache after gameplay-flow updates. */
+const OUT_PDF = path.join(OUT_DIR, "hansome-player-guide-v1.2.pdf");
 /** Legacy alias kept so old bookmarks still resolve to the fixed file. */
 const OUT_PDF_LEGACY = path.join(OUT_DIR, "HANSOME_Alpacas_Player_Guide_Bilingual.pdf");
 
@@ -44,6 +44,9 @@ async function build() {
     common: dataUri(await commonComposite()),
     special21: fileUri("public/pixel/genesis/special/_SPECIAL-REVIEW.png"),
     cougar: fileUri("public/pixel/cougar/cougar-official-base.png"),
+    chooseLocation: fileUri("public/docs/guide/choose-location.png"),
+    battleResult: fileUri("public/docs/guide/battle-result.png"),
+    claimRewards: fileUri("public/docs/guide/claim-rewards.png"),
   };
 
   const bi = (en, zh) => `<p class="en">${en}</p><p class="zh">${zh}</p>`;
@@ -79,7 +82,7 @@ async function build() {
   const locations = [
     { emoji: "🏠", en: "Home", zh: "家園", w: 1, risk: 0, dEn: "The safest location — Cougars cannot enter. Lowest reward.", dZh: "最安全的地點 — 美洲獅無法進入。最低收益。" },
     { emoji: "⛰️", en: "Mountain", zh: "山區", w: 2, risk: 1, dEn: "Low risk, modest reward.", dZh: "低風險，收益偏低。" },
-    { emoji: "🌿", en: "Grassland", zh: "草原", w: 3, risk: 2, dEn: "Balanced medium risk and reward.", dZh: "中等風險與收益。" },
+    { emoji: "🌾", en: "Grassland", zh: "草原", w: 3, risk: 2, dEn: "Balanced medium risk and reward.", dZh: "中等風險與收益。" },
     { emoji: "🌲", en: "Forest", zh: "森林", w: 5, risk: 3, dEn: "Higher reward with increased hunting risk.", dZh: "較高收益，同時提高狩獵風險。" },
     { emoji: "🌊", en: "River", zh: "河流", w: 8, risk: 4, dEn: "Highest reward. Highest hunting risk.", dZh: "最高收益。最高狩獵風險。" },
   ];
@@ -94,11 +97,32 @@ async function build() {
       <div class="loc-desc">${bi(l.dEn, l.dZh)}</div>
     </div>`;
 
-  const phase = (n, emoji, en, zh, dEn, dZh) => `
+  const phase = (n, emoji, en, zh, dEn, dZh, opts = {}) => {
+    const bullets = (opts.bullets || [])
+      .map(([bEn, bZh]) => `<li><span class="en">${bEn}</span> · <span class="zh">${bZh}</span></li>`)
+      .join("");
+    const shot = opts.image
+      ? `<figure class="phase-shot"><img src="${opts.image}" alt="${en}"/><div class="cap">${opts.capEn || en}<br/><span class="zh">${opts.capZh || zh}</span></div></figure>`
+      : "";
+    return `
     <div class="phase">
       <div class="phase-top"><span class="phase-emoji">${emoji}</span><span class="phase-n">${n}</span></div>
       <h3>${en}</h3><h3 class="zh">${zh}</h3>
       ${bi(dEn, dZh)}
+      ${bullets ? `<ul class="phase-bullets">${bullets}</ul>` : ""}
+      ${shot}
+    </div>`;
+  };
+
+  const coreFlow = `
+    <div class="flow" aria-label="Daily gameplay flow">
+      <div class="flow-step">Choose Location<span class="zh">選擇地點</span></div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Battle Begins<span class="zh">戰鬥開始</span></div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Battle Result<span class="zh">戰鬥結果</span></div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">Claim Anytime<span class="zh">隨時領取</span></div>
     </div>`;
 
   const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"/>
@@ -170,6 +194,7 @@ async function build() {
 
     /* phases */
     .phases{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+    .phases-core{display:grid;grid-template-columns:1fr;gap:14px;margin-top:10px;}
     .phase{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
       border-radius:14px;padding:14px;break-inside:avoid;}
     .phase-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
@@ -177,7 +202,18 @@ async function build() {
     .phase-n{font-size:11px;font-weight:800;color:var(--cyan);border:1px solid rgba(127,214,214,.35);
       border-radius:999px;padding:2px 9px;}
     .phase h3{font-size:14px;} .phase h3.zh{font-size:12.5px;color:var(--zh);margin-bottom:4px;}
-    .phase p{font-size:11px;} 
+    .phase p{font-size:11px;}
+    .phase-bullets{margin:6px 0 0;padding-left:16px;color:var(--mut);font-size:11px;}
+    .phase-bullets li{margin:2px 0;}
+    .phase-shot{margin-top:10px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#0a0d12;}
+    .phase-shot img{width:100%;display:block;}
+    .phase-shot .cap{padding:6px 10px;font-size:10px;color:var(--mut);border-top:1px solid var(--line);}
+    .flow{margin-top:14px;padding:12px 14px;border-radius:12px;text-align:center;
+      background:linear-gradient(180deg,rgba(233,196,106,.08),rgba(22,28,38,.6));
+      border:1px solid rgba(233,196,106,.28);}
+    .flow-step{font-size:13px;font-weight:800;color:var(--ink);margin:2px 0;}
+    .flow-step .zh{display:block;font-size:11px;color:var(--zh);font-weight:700;}
+    .flow-arrow{color:var(--gold);font-size:14px;font-weight:800;line-height:1.2;} 
 
     /* locations */
     .loc{display:grid;grid-template-columns:150px 1fr 1.5fr;gap:12px;align-items:center;
@@ -280,14 +316,76 @@ async function build() {
       </ul>
     </div>
 
+  </section>
+
+  <!-- 2 · Core Gameplay (screenshots — own pages) -->
+  <section class="page break">
     ${sectionHead(2, "Core Gameplay", "核心玩法")}
     <div class="panel">
-      ${bi("Every day is one round. The daily cycle has three phases:", "每天為一個回合。每日循環包含三個階段：")}
-      <div class="phases" style="margin-top:10px">
-        ${phase("01","🔒","Commit Phase","提交階段","Players secretly choose a location. After commitment, the choice cannot be changed.","玩家秘密選擇地點。提交後無法修改。")}
-        ${phase("02","🔎","Reveal Phase","揭示階段","All choices are revealed and hunting results are calculated.","所有玩家揭示選擇，系統計算狩獵結果。")}
-        ${phase("03","🎁","Reward Phase","獎勵階段","Players receive rewards based on location, strategy, and gameplay class.","玩家根據地點選擇、策略以及角色能力獲得獎勵。")}
+      ${bi(
+        "Every day is one round. Players choose a location, then watch the battle resolve automatically, and claim HANSOME anytime.",
+        "每天為一個回合。玩家選擇地點，接著觀看自動結算的戰鬥結果，並可隨時領取 HANSOME。"
+      )}
+      <div class="phases-core">
+        ${phase(
+          "01", "📍", "Choose Location", "選擇地點",
+          "Players choose one location for each NFT before the round begins. Different locations have different risks and reward potential. After confirming, the move is locked for that round.",
+          "回合開始前，玩家為每隻 NFT 選擇一個地點。各地點的風險與收益潛力不同。確認後，該回合的行動即鎖定。",
+          {
+            bullets: [
+              ["🏠 Home", "🏠 家園"],
+              ["⛰ Mountain", "⛰ 山區"],
+              ["🌾 Grassland", "🌾 草原"],
+              ["🌲 Forest", "🌲 森林"],
+              ["🌊 River", "🌊 河流"],
+            ],
+            image: IMG.chooseLocation,
+            capEn: "Choose Location page in HANSOME Game",
+            capZh: "HANSOME 遊戲的選擇地點頁面",
+          },
+        )}
       </div>
+    </div>
+  </section>
+
+  <section class="page break">
+    <div class="panel">
+      <div class="phases-core">
+        ${phase(
+          "02", "⚔️", "Battle Result", "戰鬥結果",
+          "When the Battle phase starts, the result is calculated automatically. The battle is resolved automatically when the Battle phase begins — no manual reveal is required. Players simply watch the battle results.",
+          "戰鬥階段開始時，結果會自動計算。戰鬥階段一開始就會自動結算 — 玩家不需手動揭露行動。只需觀看戰鬥結果。",
+          {
+            bullets: [
+              ["Which Alpacas survived", "哪些羊駝存活"],
+              ["Which Cougars successfully hunted", "哪些美洲獅狩獵成功"],
+              ["Trait abilities (King, Guardian, Runner, Lucky, Farmer)", "特質能力（王者、守護者、奔跑者、幸運、農夫）"],
+              ["Final HANSOME rewards", "最終 HANSOME 獎勵"],
+            ],
+            image: IMG.battleResult,
+            capEn: "Battle Result page in HANSOME Game",
+            capZh: "HANSOME 遊戲的戰鬥結果頁面",
+          },
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section class="page break">
+    <div class="panel">
+      <div class="phases-core">
+        ${phase(
+          "03", "💰", "Claim Rewards", "領取獎勵",
+          "Rewards never expire. Players can claim accumulated HANSOME at any time from the dedicated Claim page. Battle viewing and claiming are separate. Even if you don't claim today, your rewards continue accumulating on-chain.",
+          "獎勵永不過期。玩家可隨時在專屬的領取頁領取累積的 HANSOME。觀看戰鬥與領取獎勵是分開的。即使今天不領，獎勵仍會持續在鏈上累積。",
+          {
+            image: IMG.claimRewards,
+            capEn: "Claim page in HANSOME Game",
+            capZh: "HANSOME 遊戲的領取獎勵頁面",
+          },
+        )}
+      </div>
+      ${coreFlow}
     </div>
   </section>
 
@@ -376,9 +474,9 @@ async function build() {
     <div class="panel">
       <div class="kv"><span class="k">How Cougars Play / 美洲獅怎麼玩</span></div>
       <div class="phases">
-        ${phase("01","🎯","Choose a Hunt","選擇狩獵地點","Commit to a huntable location — Mountain, Grassland, Forest, or River. Cougars can never enter Home.","提交一個可狩獵地點 — 山區、草原、森林或河流。美洲獅永遠無法進入家園。")}
-        ${phase("02","🔎","Reveal","揭示","Locations are revealed together with everyone else's.","與所有玩家一同揭示地點。")}
-        ${phase("03","🩸","Hunt","狩獵結算","If at least one Alpaca is at your location, your hunt succeeds.","只要你的地點至少有一隻羊駝，狩獵即成功。")}
+        ${phase("01","🎯","Choose a Hunt","選擇狩獵地點","Choose a huntable location — Mountain, Grassland, Forest, or River. Cougars can never enter Home. After confirming, the hunt location is locked for that round.","選擇一個可狩獵地點 — 山區、草原、森林或河流。美洲獅永遠無法進入家園。確認後，該回合的狩獵地點即鎖定。")}
+        ${phase("02","⚔️","Battle Result","戰鬥結果","The battle is resolved automatically when the Battle phase begins. You watch the hunt outcome — no manual reveal is required.","戰鬥階段一開始就會自動結算。你只需觀看狩獵結果 — 不需手動揭露行動。")}
+        ${phase("03","🩸","Hunt","狩獵結算","If at least one Alpaca is at your location, your hunt succeeds. Claim your share of HANSOME anytime on the Claim page.","只要你的地點至少有一隻羊駝，狩獵即成功。可隨時在領取頁領取你的 HANSOME 份額。")}
       </div>
       <div class="value" style="grid-template-columns:1fr 1fr;margin-top:12px">
         <div class="v"><div class="vi">🍖</div><h4>Base Pool <span class="zh">基礎獎池</span></h4>${bi("Every valid Cougar shares this equally — even without a catch.","每隻有效參與的美洲獅平均瓜分 — 即使沒抓到也有。")}</div>

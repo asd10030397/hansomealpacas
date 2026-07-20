@@ -30,6 +30,11 @@ export type GuidePhase = {
   emoji: string;
   title: BiText;
   body: BiText;
+  /** Optional bullet lines under the body (bilingual). */
+  bullets?: BiText[];
+  /** Real in-game UI screenshot path (public/). */
+  image?: string;
+  imageAlt?: BiText;
 };
 
 export const PLAYER_GUIDE_IMAGES = {
@@ -42,7 +47,18 @@ export const PLAYER_GUIDE_IMAGES = {
   common: "/pixel/traits/base/normalized/curly.png",
   special21: "/pixel/genesis/special/_SPECIAL-REVIEW.png",
   cougar: "/pixel/cougar/cougar-official-base.png",
+  chooseLocation: "/docs/guide/choose-location.png",
+  battleResult: "/docs/guide/battle-result.png",
+  claimRewards: "/docs/guide/claim-rewards.png",
 } as const;
+
+/** Simple daily loop shown under Core Gameplay cards. */
+export const GUIDE_CORE_FLOW: BiText[] = [
+  { en: "Choose Location", zh: "選擇地點" },
+  { en: "Battle Begins", zh: "戰鬥開始" },
+  { en: "Battle Result", zh: "戰鬥結果" },
+  { en: "Claim Anytime", zh: "隨時領取" },
+];
 
 export const GUIDE_CLASSES: GuideClass[] = [
   {
@@ -171,7 +187,7 @@ export const GUIDE_LOCATIONS: GuideLocation[] = [
     },
   },
   {
-    emoji: "🌿",
+    emoji: "🌾",
     name: { en: "Grassland", zh: "草原" },
     weight: 3,
     risk: 2,
@@ -205,29 +221,60 @@ export const GUIDE_LOCATIONS: GuideLocation[] = [
 export const GUIDE_CORE_PHASES: GuidePhase[] = [
   {
     n: "01",
-    emoji: "🔒",
-    title: { en: "Commit Move Phase", zh: "提交行動階段" },
+    emoji: "📍",
+    title: { en: "Choose Location", zh: "選擇地點" },
     body: {
-      en: "Players secretly choose a location. After commitment, the choice cannot be changed.",
-      zh: "玩家秘密選擇地點。提交後無法修改。",
+      en: "Players choose one location for each NFT before the round begins. Different locations have different risks and reward potential. After confirming, the move is locked for that round.",
+      zh: "回合開始前，玩家為每隻 NFT 選擇一個地點。各地點的風險與收益潛力不同。確認後，該回合的行動即鎖定。",
+    },
+    bullets: [
+      { en: "🏠 Home", zh: "🏠 家園" },
+      { en: "⛰ Mountain", zh: "⛰ 山區" },
+      { en: "🌾 Grassland", zh: "🌾 草原" },
+      { en: "🌲 Forest", zh: "🌲 森林" },
+      { en: "🌊 River", zh: "🌊 河流" },
+    ],
+    image: PLAYER_GUIDE_IMAGES.chooseLocation,
+    imageAlt: {
+      en: "Choose Location page in HANSOME Game",
+      zh: "HANSOME 遊戲的選擇地點頁面",
     },
   },
   {
     n: "02",
-    emoji: "🔎",
-    title: { en: "Reveal Move Phase", zh: "揭露行動階段" },
+    emoji: "⚔️",
+    title: { en: "Battle Result", zh: "戰鬥結果" },
     body: {
-      en: "All committed moves are revealed and hunting results are calculated. (This is not NFT Reveal.)",
-      zh: "所有已提交的行動被揭露，系統計算狩獵結果。（這不是 NFT 揭示。）",
+      en: "When the Battle phase starts, the result is calculated automatically. The battle is resolved automatically when the Battle phase begins — no manual reveal is required. Players simply watch the battle results.",
+      zh: "戰鬥階段開始時，結果會自動計算。戰鬥階段一開始就會自動結算 — 玩家不需手動揭露行動。只需觀看戰鬥結果。",
+    },
+    bullets: [
+      { en: "Which Alpacas survived", zh: "哪些羊駝存活" },
+      { en: "Which Cougars successfully hunted", zh: "哪些美洲獅狩獵成功" },
+      {
+        en: "Trait abilities (King, Guardian, Runner, Lucky, Farmer)",
+        zh: "特質能力（王者、守護者、奔跑者、幸運、農夫）",
+      },
+      { en: "Final HANSOME rewards", zh: "最終 HANSOME 獎勵" },
+    ],
+    image: PLAYER_GUIDE_IMAGES.battleResult,
+    imageAlt: {
+      en: "Battle Result page in HANSOME Game",
+      zh: "HANSOME 遊戲的戰鬥結果頁面",
     },
   },
   {
     n: "03",
-    emoji: "🎁",
-    title: { en: "Claim Rewards Phase", zh: "領取獎勵階段" },
+    emoji: "💰",
+    title: { en: "Claim Rewards", zh: "領取獎勵" },
     body: {
-      en: "Players receive rewards based on location, strategy, and gameplay class.",
-      zh: "玩家根據地點選擇、策略以及角色能力獲得獎勵。",
+      en: "Rewards never expire. Players can claim accumulated HANSOME at any time from the dedicated Claim page. Battle viewing and claiming are separate. Even if you don't claim today, your rewards continue accumulating on-chain.",
+      zh: "獎勵永不過期。玩家可隨時在專屬的領取頁領取累積的 HANSOME。觀看戰鬥與領取獎勵是分開的。即使今天不領，獎勵仍會持續在鏈上累積。",
+    },
+    image: PLAYER_GUIDE_IMAGES.claimRewards,
+    imageAlt: {
+      en: "Claim page in HANSOME Game",
+      zh: "HANSOME 遊戲的領取獎勵頁面",
     },
   },
 ];
@@ -238,17 +285,17 @@ export const GUIDE_COUGAR_PHASES: GuidePhase[] = [
     emoji: "🎯",
     title: { en: "Choose a Hunt", zh: "選擇狩獵地點" },
     body: {
-      en: "Commit to a huntable location — Mountain, Grassland, Forest, or River. Cougars can never enter Home.",
-      zh: "提交一個可狩獵地點 — 山區、草原、森林或河流。美洲獅永遠無法進入家園。",
+      en: "Choose a huntable location — Mountain, Grassland, Forest, or River. Cougars can never enter Home. After confirming, the hunt location is locked for that round.",
+      zh: "選擇一個可狩獵地點 — 山區、草原、森林或河流。美洲獅永遠無法進入家園。確認後，該回合的狩獵地點即鎖定。",
     },
   },
   {
     n: "02",
-    emoji: "🔎",
-    title: { en: "Reveal Move", zh: "揭露行動" },
+    emoji: "⚔️",
+    title: { en: "Battle Result", zh: "戰鬥結果" },
     body: {
-      en: "Locations are revealed together with everyone else's during Reveal Move.",
-      zh: "在揭露行動時段，與所有玩家一同公開地點。",
+      en: "The battle is resolved automatically when the Battle phase begins. You watch the hunt outcome — no manual reveal is required.",
+      zh: "戰鬥階段一開始就會自動結算。你只需觀看狩獵結果 — 不需手動揭露行動。",
     },
   },
   {
@@ -256,8 +303,8 @@ export const GUIDE_COUGAR_PHASES: GuidePhase[] = [
     emoji: "🩸",
     title: { en: "Hunt", zh: "狩獵結算" },
     body: {
-      en: "If at least one Alpaca is at your location, your hunt succeeds.",
-      zh: "只要你的地點至少有一隻羊駝，狩獵即成功。",
+      en: "If at least one Alpaca is at your location, your hunt succeeds. Claim your share of HANSOME anytime on the Claim page.",
+      zh: "只要你的地點至少有一隻羊駝，狩獵即成功。可隨時在領取頁領取你的 HANSOME 份額。",
     },
   },
 ];

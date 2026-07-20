@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   GUIDE_CLASSES,
+  GUIDE_CORE_FLOW,
   GUIDE_CORE_PHASES,
   GUIDE_COUGAR_PHASES,
   GUIDE_COVER_HERO,
@@ -51,7 +52,7 @@ function RiskMeter({ n }: { n: number }) {
 
 function PhaseCard({ phase }: { phase: GuidePhase }) {
   return (
-    <div className="pg-phase">
+    <div className={`pg-phase${phase.image ? " pg-phase--shot" : ""}`}>
       <div className="pg-phase__top">
         <span className="pg-phase__emoji">{phase.emoji}</span>
         <span className="pg-phase__n">{phase.n}</span>
@@ -59,7 +60,57 @@ function PhaseCard({ phase }: { phase: GuidePhase }) {
       <h3>{phase.title.en}</h3>
       <h3 className="zh">{phase.title.zh}</h3>
       <Bi text={phase.body} />
+      {phase.bullets && phase.bullets.length > 0 ? (
+        <ul className="pg-phase__bullets">
+          {phase.bullets.map((b) => (
+            <li key={b.en}>
+              <span className="en">{b.en}</span>
+              <span className="zh"> · {b.zh}</span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {phase.image ? (
+        <figure className="pg-phase__shot">
+          <Image
+            src={phase.image}
+            alt={phase.imageAlt?.en ?? phase.title.en}
+            width={1280}
+            height={900}
+            unoptimized
+          />
+          <figcaption>
+            {phase.imageAlt?.en ?? phase.title.en}
+            {phase.imageAlt?.zh ? (
+              <>
+                <br />
+                <span className="zh">{phase.imageAlt.zh}</span>
+              </>
+            ) : null}
+          </figcaption>
+        </figure>
+      ) : null}
     </div>
+  );
+}
+
+function CoreFlow() {
+  return (
+    <ol className="pg-flow" aria-label="Daily gameplay flow">
+      {GUIDE_CORE_FLOW.map((step, i) => (
+        <li key={step.en} className="pg-flow__step">
+          <div className="pg-flow__label">
+            <b>{step.en}</b>
+            <span className="zh">{step.zh}</span>
+          </div>
+          {i < GUIDE_CORE_FLOW.length - 1 ? (
+            <span className="pg-flow__arrow" aria-hidden>
+              ↓
+            </span>
+          ) : null}
+        </li>
+      ))}
+    </ol>
   );
 }
 
@@ -224,15 +275,16 @@ export function PlayerGuide() {
           <div className="pg-panel">
             <Bi
               text={{
-                en: "Every day is one round. The daily cycle has three phases:",
-                zh: "每天為一個回合。每日循環包含三個階段：",
+                en: "Every day is one round. Players choose a location, then watch the battle resolve automatically, and claim HANSOME anytime.",
+                zh: "每天為一個回合。玩家選擇地點，接著觀看自動結算的戰鬥結果，並可隨時領取 HANSOME。",
               }}
             />
-            <div className="pg-phases">
+            <div className="pg-phases pg-phases--core">
               {GUIDE_CORE_PHASES.map((p) => (
                 <PhaseCard key={p.n} phase={p} />
               ))}
             </div>
+            <CoreFlow />
           </div>
         </section>
 

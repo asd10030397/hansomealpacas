@@ -1,0 +1,63 @@
+{
+  "generatedAt": "2026-07-20T01:38:41.224Z",
+  "network": "hardhat",
+  "genesis": {
+    "alpacas": 500,
+    "cougars": 50,
+    "total": 550
+  },
+  "caps": {
+    "maxRevealBatch": 50,
+    "maxCreditBatch": 50
+  },
+  "relayer": {
+    "revealBatchTxCount": 11,
+    "revealBatchGasEach": [
+      "4167938",
+      "4150850",
+      "4150838",
+      "4150778",
+      "4150802",
+      "4150814",
+      "4150790",
+      "4150778",
+      "4150778",
+      "4150802",
+      "4170776"
+    ],
+    "revealBatchGasAvg": "4154176",
+    "revealBatchGasPeak": "4170776",
+    "revealBatchGasTotal": "45695944",
+    "finalizeDayGas": "7051351",
+    "creditBatchTxCount": 11,
+    "creditBatchGasEach": [
+      "8189024",
+      "8171924",
+      "8171924",
+      "8171924",
+      "8171924",
+      "8171924",
+      "8171924",
+      "8171924",
+      "8171924",
+      "8171924",
+      "8195072"
+    ],
+    "creditBatchGasAvg": "8175582",
+    "creditBatchGasPeak": "8195072",
+    "creditBatchGasTotal": "89931412",
+    "settlementGasTotal": "142678707",
+    "settleWithoutReveal": "96982763",
+    "canFinishAutomatically": true,
+    "notes": "testnetRelayerRevealBatch is owner/relayer-only and Mainnet-forbidden; Mainnet needs vault+relayer or player reveals. finalizeDay + creditBatch are permissionless."
+  },
+  "player": {
+    "commitGasCold": "102438",
+    "commitGasWarmAvg": "102436",
+    "commitGasPeak": "102438",
+    "singleRevealGas": "140444",
+    "claimGas": "78104",
+    "claimMany5Gas": "119111",
+    "claimManyPerToken": "23822"
+  }
+}

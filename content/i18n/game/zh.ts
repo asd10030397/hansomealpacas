@@ -381,8 +381,9 @@ export const gameZh: GameMessages = {
     scoringReviewNotice: "最終排行榜計分正在進行數學平衡，主網上線前可能調整。",
   },
   commit: {
-    heading: "提交行動",
-    blurb: "為每隻 NFT 選擇地點。你的選擇會保持隱藏，直到揭露行動階段。",
+    heading: "選擇地點",
+    blurb:
+      "為每隻 NFT 選擇地點。確認後，該回合的行動即鎖定。戰鬥階段一開始就會自動結算。",
     locationTitle: "地點",
     locationEyebrow: "本回合已選",
     noLocation: "尚未選擇地點。請先到部署地圖選擇。",
