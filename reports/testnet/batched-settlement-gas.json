@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-07-20T01:17:21.813Z",
+  "seed": "0xb2fe3ce68cb7ad942ac3d5dd5065e758de964f51a01e83c8ba79a70187f82c73",
+  "maxRevealBatch": 50,
+  "maxCreditBatch": 50,
+  "rows": [
+    {
+      "n": 50,
+      "cougars": 5,
+      "revealChunks": 1,
+      "revealGasTotal": "6202249",
+      "revealPeak": "140513",
+      "finalizeGas": "796038",
+      "creditBatches": 1,
+      "creditGasTotal": "1954120",
+      "creditPeak": "1954120",
+      "settleWrapperGas": "2421580",
+      "settleWrapperOk": true,
+      "peakTxGas": "1954120"
+    },
+    {
+      "n": 100,
+      "cougars": 10,
+      "revealChunks": 2,
+      "revealGasTotal": "12370298",
+      "revealPeak": "140513",
+      "finalizeGas": "1410031",
+      "creditBatches": 2,
+      "creditGasTotal": "5098944",
+      "creditPeak": "2551316",
+      "settleWrapperGas": "5285106",
+      "settleWrapperOk": true,
+      "peakTxGas": "2551316"
+    },
+    {
+      "n": 250,
+      "cougars": 25,
+      "revealChunks": 5,
+      "revealGasTotal": "30874301",
+      "revealPeak": "140513",
+      "finalizeGas": "3264070",
+      "creditBatches": 5,
+      "creditGasTotal": "21961738",
+      "creditPeak": "4406266",
+      "settleWrapperGas": "0",
+      "settleWrapperOk": false,
+      "peakTxGas": "4406266"
+    },
+    {
+      "n": 550,
+      "cougars": 55,
+      "revealChunks": 11,
+      "revealGasTotal": "67882295",
+      "revealPeak": "140513",
+      "finalizeGas": "7026034",
+      "creditBatches": 11,
+      "creditGasTotal": "89653220",
+      "creditPeak": "8169755",
+      "settleWrapperGas": "0",
+      "settleWrapperOk": false,
+      "peakTxGas": "8169755"
+    }
+  ]
+}

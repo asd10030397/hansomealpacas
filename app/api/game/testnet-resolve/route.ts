@@ -25,9 +25,18 @@ import {
 } from "@/lib/game/server/testnetCommitVault";
 import { writeRelayerContract } from "@/lib/game/server/testnetRelayerWrite";
 import { isDefinitelyAlreadyRevealed } from "@/lib/game/homeRevealGuard";
+import {
+  stageFromResolveFlags,
+  type TestnetResolveStage,
+  type TestnetResolveTimings,
+} from "@/lib/game/testnetResolveStages";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+function msSince(start: number): number {
+  return Math.round(performance.now() - start);
+}
 
 type RevealItem = {
   tokenId: number;
@@ -46,6 +55,11 @@ type Body = {
 // GameTypes.DayState
 const REVEAL_OPEN = 3;
 const REVEAL_CLOSED = 4;
+const CLAIMABLE = 6;
+/** Must match HansomeGame.MAX_REVEAL_BATCH / MAX_CREDIT_BATCH. */
+const MAX_REVEAL_BATCH = 50;
+const MAX_CREDIT_BATCH = 50;
+const MAX_CREDIT_LOOPS = 32;
 
 /** Count Revealed events in a reveal tx (Home cannot be verified via locationOf). */
 async function countRevealedInTx(
@@ -192,7 +206,63 @@ export async function POST(req: Request) {
   let settleTxHash: Hex | null = null;
   let revealed = 0;
   let alreadySettled = false;
+  let dayFinalized = false;
   let seedSkipped = false;
+  let hasSeed: boolean | null = null;
+  let seedMs: number | null = null;
+  let revealMs: number | null = null;
+  let settleMs: number | null = null;
+  const tTotal = performance.now();
+
+  const buildTimings = (stage: TestnetResolveStage): TestnetResolveTimings => ({
+    totalMs: msSince(tTotal),
+    seedMs,
+    revealMs,
+    settleMs,
+    stage,
+  });
+
+  const jsonOk = (extra: Record<string, unknown> = {}) => {
+    const stage = stageFromResolveFlags({
+      alreadySettled,
+      finalized: dayFinalized,
+      settleTxHash,
+      seedTxHash,
+      seedSkipped,
+      revealed,
+      revealTxHash,
+      hasSeed,
+    });
+    const timings = buildTimings(stage);
+    console.info("[testnet-resolve]", {
+      day,
+      stage,
+      totalMs: timings.totalMs,
+      seedMs,
+      revealMs,
+      settleMs,
+      alreadySettled,
+      finalized: dayFinalized,
+      revealed,
+      vaultCount: vaultSecretCountForDay(day),
+    });
+    return NextResponse.json({
+      ok: true,
+      enabled: true,
+      day,
+      alreadySettled,
+      finalized: dayFinalized || alreadySettled,
+      seedSkipped,
+      revealed,
+      revealTxHash,
+      seedTxHash,
+      settleTxHash,
+      vaultCount: vaultSecretCountForDay(day),
+      stage,
+      timings,
+      ...extra,
+    });
+  };
 
   try {
     const settledEarly = await publicClient.readContract({
@@ -202,18 +272,11 @@ export async function POST(req: Request) {
       args: [BigInt(day)],
     });
     if (settledEarly) {
-      return NextResponse.json({
-        ok: true,
-        enabled: true,
-        day,
-        alreadySettled: true,
-        seedSkipped: true,
-        revealed: 0,
-        revealTxHash: null,
-        seedTxHash: null,
-        settleTxHash: null,
-        vaultCount: vaultSecretCountForDay(day),
-      });
+      alreadySettled = true;
+      dayFinalized = true;
+      seedSkipped = true;
+      hasSeed = true;
+      return jsonOk();
     }
 
     const randomness = (await publicClient.readContract({
@@ -222,156 +285,150 @@ export async function POST(req: Request) {
       functionName: "randomness",
     })) as Address;
 
-    let dayState = Number(
-      await publicClient.readContract({
-        address: game,
-        abi: hansomeGameAbi,
-        functionName: "dayState",
-        args: [BigInt(day)],
-      }),
-    );
-
-    // ── 1) Seed: check → fulfill only if needed (idempotent) ──────────
-    let hasSeed = Boolean(
-      await publicClient.readContract({
-        address: randomness,
-        abi: gameRandomnessAbi,
-        functionName: "hasDaySeed",
-        args: [BigInt(day)],
-      }),
-    );
-
-    if (fulfillSeed && !hasSeed && dayState >= REVEAL_OPEN) {
-      // Re-check immediately before send (concurrent resolve race).
-      hasSeed = Boolean(
-        await publicClient.readContract({
+    // Parallel initial reads — cut idle RPC round-trips before first write.
+    {
+      const tSeed = performance.now();
+      const [dayStateRaw, hasSeedRaw] = await Promise.all([
+        publicClient.readContract({
+          address: game,
+          abi: hansomeGameAbi,
+          functionName: "dayState",
+          args: [BigInt(day)],
+        }),
+        publicClient.readContract({
           address: randomness,
           abi: gameRandomnessAbi,
           functionName: "hasDaySeed",
           args: [BigInt(day)],
         }),
-      );
-      if (hasSeed) {
-        seedSkipped = true;
-      } else {
-        const seed = keccak256(
-          toBytes(
-            `hansome-testnet-seed:${day}:${Date.now()}:${account.address}`,
-          ),
-        );
-        try {
-          seedTxHash = await writeRelayerContract({
-            publicClient,
-            walletClient,
-            account,
+      ]);
+      let dayState = Number(dayStateRaw);
+      hasSeed = Boolean(hasSeedRaw);
+
+      // ── 1) Seed: check → fulfill only if needed (idempotent) ──────────
+      if (fulfillSeed && !hasSeed && dayState >= REVEAL_OPEN) {
+        hasSeed = Boolean(
+          await publicClient.readContract({
             address: randomness,
             abi: gameRandomnessAbi,
-            functionName: "fulfillDaySeed",
-            args: [BigInt(day), seed],
-          });
-          hasSeed = true;
-        } catch (e) {
-          const msg = e instanceof Error ? e.message : String(e);
-          if (!isSeedAlreadySetError(msg)) throw e;
-          hasSeed = Boolean(
-            await publicClient.readContract({
-              address: randomness,
-              abi: gameRandomnessAbi,
-              functionName: "hasDaySeed",
-              args: [BigInt(day)],
-            }),
-          );
-          if (!hasSeed) throw e;
-          seedSkipped = true;
-          seedTxHash = null;
-        }
-      }
-    } else if (hasSeed) {
-      seedSkipped = true;
-    }
-
-    // ── 2) Reveal (vault + optional client secrets) ───────────────────
-    const byToken = new Map<
-      number,
-      { tokenId: number; locationId: number; salt: Hex }
-    >();
-    for (const v of listVaultSecretsForDay(day)) {
-      byToken.set(v.tokenId, {
-        tokenId: v.tokenId,
-        locationId: v.locationId,
-        salt: v.salt,
-      });
-    }
-    for (const item of Array.isArray(body.reveals) ? body.reveals : []) {
-      const tokenId = Number(item.tokenId);
-      const locationId = Number(item.locationId);
-      const salt = item.salt as Hex;
-      if (!Number.isInteger(tokenId) || tokenId < 0) continue;
-      if (!Number.isInteger(locationId) || locationId < 0 || locationId > 4) {
-        continue;
-      }
-      if (!isHex(salt) || salt.length !== 66) continue;
-      byToken.set(tokenId, { tokenId, locationId, salt });
-    }
-
-    dayState = Number(
-      await publicClient.readContract({
-        address: game,
-        abi: hansomeGameAbi,
-        functionName: "dayState",
-        args: [BigInt(day)],
-      }),
-    );
-
-    if (byToken.size > 0 && dayState === REVEAL_OPEN) {
-      const entries = [...byToken.values()];
-      // Skip tokens already revealed on-chain (idempotent / concurrent resolve).
-      const pending: typeof entries = [];
-      for (const entry of entries) {
-        const loc = Number(
-          await publicClient.readContract({
-            address: game,
-            abi: hansomeGameAbi,
-            functionName: "locationOf",
-            args: [BigInt(entry.tokenId), BigInt(day)],
+            functionName: "hasDaySeed",
+            args: [BigInt(day)],
           }),
         );
-        // locationOf defaults to 0 — same as Home. Never skip Home on that alone.
-        if (
-          isDefinitelyAlreadyRevealed({
-            locationOf: loc,
-            commitLocationId: entry.locationId,
-          })
-        ) {
-          revealed += 1;
+        if (hasSeed) {
+          seedSkipped = true;
+          seedMs = msSince(tSeed);
         } else {
-          pending.push(entry);
+          const seed = keccak256(
+            toBytes(
+              `hansome-testnet-seed:${day}:${Date.now()}:${account.address}`,
+            ),
+          );
+          try {
+            seedTxHash = await writeRelayerContract({
+              publicClient,
+              walletClient,
+              account,
+              address: randomness,
+              abi: gameRandomnessAbi,
+              functionName: "fulfillDaySeed",
+              args: [BigInt(day), seed],
+            });
+            hasSeed = true;
+            seedMs = msSince(tSeed);
+          } catch (e) {
+            const msg = e instanceof Error ? e.message : String(e);
+            if (!isSeedAlreadySetError(msg)) throw e;
+            hasSeed = Boolean(
+              await publicClient.readContract({
+                address: randomness,
+                abi: gameRandomnessAbi,
+                functionName: "hasDaySeed",
+                args: [BigInt(day)],
+              }),
+            );
+            if (!hasSeed) throw e;
+            seedSkipped = true;
+            seedTxHash = null;
+            seedMs = msSince(tSeed);
+          }
         }
+      } else if (hasSeed) {
+        seedSkipped = true;
+        seedMs = msSince(tSeed);
+      } else {
+        seedMs = msSince(tSeed);
       }
 
-      if (pending.length > 0) {
-        const tokenIds = pending.map((r) => BigInt(r.tokenId));
-        const locationIds = pending.map((r) => r.locationId);
-        const salts = pending.map((r) => r.salt);
+      // ── 2) Reveal (vault + optional client secrets) ───────────────────
+      const byToken = new Map<
+        number,
+        { tokenId: number; locationId: number; salt: Hex }
+      >();
+      for (const v of listVaultSecretsForDay(day)) {
+        byToken.set(v.tokenId, {
+          tokenId: v.tokenId,
+          locationId: v.locationId,
+          salt: v.salt,
+        });
+      }
+      for (const item of Array.isArray(body.reveals) ? body.reveals : []) {
+        const tokenId = Number(item.tokenId);
+        const locationId = Number(item.locationId);
+        const salt = item.salt as Hex;
+        if (!Number.isInteger(tokenId) || tokenId < 0) continue;
+        if (!Number.isInteger(locationId) || locationId < 0 || locationId > 4) {
+          continue;
+        }
+        if (!isHex(salt) || salt.length !== 66) continue;
+        byToken.set(tokenId, { tokenId, locationId, salt });
+      }
 
-        try {
-          revealTxHash = await writeRelayerContract({
-            publicClient,
-            walletClient,
-            account,
-            address: game,
-            abi: hansomeGameAbi,
-            functionName: "testnetRelayerRevealBatch",
-            args: [tokenIds, BigInt(day), locationIds, salts],
-          });
-          revealed += await countRevealedInTx(
-            publicClient,
-            game,
-            revealTxHash,
-            pending.map((p) => p.tokenId),
-          );
-        } catch {
-          for (const entry of pending) {
+      // Refresh dayState once after seed (phase can advance while seed mined).
+      dayState = Number(
+        await publicClient.readContract({
+          address: game,
+          abi: hansomeGameAbi,
+          functionName: "dayState",
+          args: [BigInt(day)],
+        }),
+      );
+
+      if (byToken.size > 0 && dayState === REVEAL_OPEN) {
+        const tReveal = performance.now();
+        const entries = [...byToken.values()];
+        const locs = await Promise.all(
+          entries.map((entry) =>
+            publicClient.readContract({
+              address: game,
+              abi: hansomeGameAbi,
+              functionName: "locationOf",
+              args: [BigInt(entry.tokenId), BigInt(day)],
+            }),
+          ),
+        );
+        const pending: typeof entries = [];
+        for (let i = 0; i < entries.length; i++) {
+          const entry = entries[i]!;
+          const loc = Number(locs[i]);
+          if (
+            isDefinitelyAlreadyRevealed({
+              locationOf: loc,
+              commitLocationId: entry.locationId,
+            })
+          ) {
+            revealed += 1;
+          } else {
+            pending.push(entry);
+          }
+        }
+
+        if (pending.length > 0) {
+          for (let i = 0; i < pending.length; i += MAX_REVEAL_BATCH) {
+            const chunk = pending.slice(i, i + MAX_REVEAL_BATCH);
+            const tokenIds = chunk.map((r) => BigInt(r.tokenId));
+            const locationIds = chunk.map((r) => r.locationId);
+            const salts = chunk.map((r) => r.salt);
             try {
               revealTxHash = await writeRelayerContract({
                 publicClient,
@@ -380,58 +437,95 @@ export async function POST(req: Request) {
                 address: game,
                 abi: hansomeGameAbi,
                 functionName: "testnetRelayerRevealBatch",
-                args: [
-                  [BigInt(entry.tokenId)],
-                  BigInt(day),
-                  [entry.locationId],
-                  [entry.salt],
-                ],
+                args: [tokenIds, BigInt(day), locationIds, salts],
               });
               revealed += await countRevealedInTx(
                 publicClient,
                 game,
                 revealTxHash,
-                [entry.tokenId],
+                chunk.map((p) => p.tokenId),
               );
             } catch {
-              // skip failed token
+              for (const entry of chunk) {
+                try {
+                  revealTxHash = await writeRelayerContract({
+                    publicClient,
+                    walletClient,
+                    account,
+                    address: game,
+                    abi: hansomeGameAbi,
+                    functionName: "testnetRelayerRevealBatch",
+                    args: [
+                      [BigInt(entry.tokenId)],
+                      BigInt(day),
+                      [entry.locationId],
+                      [entry.salt],
+                    ],
+                  });
+                  revealed += await countRevealedInTx(
+                    publicClient,
+                    game,
+                    revealTxHash,
+                    [entry.tokenId],
+                  );
+                } catch {
+                  // skip failed token
+                }
+              }
             }
           }
         }
+        revealMs = msSince(tReveal);
       }
     }
 
-    // ── 3) Settle when eligible ───────────────────────────────────────
+    // ── 3) finalizeDay + creditBatch (bounded; same SettlementLib math) ─
     if (settle) {
-      const settled = await publicClient.readContract({
-        address: game,
-        abi: hansomeGameAbi,
-        functionName: "isSettled",
-        args: [BigInt(day)],
-      });
-      if (settled) {
+      const tSettle = performance.now();
+      let settledNow = Boolean(
+        await publicClient.readContract({
+          address: game,
+          abi: hansomeGameAbi,
+          functionName: "isSettled",
+          args: [BigInt(day)],
+        }),
+      );
+      if (settledNow) {
         alreadySettled = true;
+        hasSeed = true;
+        settleMs = msSince(tSettle);
       } else {
-        const finalState = Number(
-          await publicClient.readContract({
+        const [finalStateRaw, seedReadyRaw, finalizedRaw] = await Promise.all([
+          publicClient.readContract({
             address: game,
             abi: hansomeGameAbi,
             functionName: "dayState",
             args: [BigInt(day)],
           }),
-        );
-        const seedReady = Boolean(
-          await publicClient.readContract({
+          publicClient.readContract({
             address: randomness,
             abi: gameRandomnessAbi,
             functionName: "hasDaySeed",
             args: [BigInt(day)],
           }),
-        );
+          publicClient.readContract({
+            address: game,
+            abi: hansomeGameAbi,
+            functionName: "isFinalized",
+            args: [BigInt(day)],
+          }),
+        ]);
+        const finalState = Number(finalStateRaw);
+        const seedReady = Boolean(seedReadyRaw);
+        let finalized = Boolean(finalizedRaw);
+        hasSeed = seedReady;
 
-        const canSettle =
-          finalState === REVEAL_OPEN || finalState === REVEAL_CLOSED;
-        if (canSettle && seedReady) {
+        const canFinalize =
+          seedReady &&
+          !finalized &&
+          (finalState === REVEAL_OPEN || finalState === REVEAL_CLOSED);
+
+        if (canFinalize) {
           try {
             settleTxHash = await writeRelayerContract({
               publicClient,
@@ -439,50 +533,106 @@ export async function POST(req: Request) {
               account,
               address: game,
               abi: hansomeGameAbi,
-              functionName: "settleDay",
+              functionName: "finalizeDay",
               args: [BigInt(day)],
             });
+            finalized = true;
+            dayFinalized = true;
           } catch (e) {
             const msg = e instanceof Error ? e.message : String(e);
-            if (isAlreadySettledError(msg)) {
+            if (/AlreadyFinalized/i.test(msg)) {
+              finalized = true;
+              dayFinalized = true;
+            } else if (isAlreadySettledError(msg)) {
               alreadySettled = true;
+              dayFinalized = true;
+              settledNow = true;
             } else {
               throw e;
             }
           }
+        } else if (finalized) {
+          dayFinalized = true;
         }
+
+        // After finalize, dayState is Claimable — keep crediting until settled.
+        const canCredit =
+          seedReady &&
+          !settledNow &&
+          (finalized ||
+            finalState === REVEAL_OPEN ||
+            finalState === REVEAL_CLOSED ||
+            finalState === CLAIMABLE);
+
+        if (canCredit && (finalized || finalState === CLAIMABLE)) {
+          if (!finalized) {
+            finalized = Boolean(
+              await publicClient.readContract({
+                address: game,
+                abi: hansomeGameAbi,
+                functionName: "isFinalized",
+                args: [BigInt(day)],
+              }),
+            );
+          }
+          for (let loop = 0; loop < MAX_CREDIT_LOOPS && finalized; loop++) {
+            settledNow = Boolean(
+              await publicClient.readContract({
+                address: game,
+                abi: hansomeGameAbi,
+                functionName: "isSettled",
+                args: [BigInt(day)],
+              }),
+            );
+            if (settledNow) {
+              alreadySettled = true;
+              break;
+            }
+            try {
+              const creditHash = await writeRelayerContract({
+                publicClient,
+                walletClient,
+                account,
+                address: game,
+                abi: hansomeGameAbi,
+                functionName: "creditBatch",
+                args: [BigInt(day), BigInt(MAX_CREDIT_BATCH)],
+              });
+              settleTxHash = creditHash;
+            } catch (e) {
+              const msg = e instanceof Error ? e.message : String(e);
+              if (isAlreadySettledError(msg)) {
+                alreadySettled = true;
+                break;
+              }
+              if (/NotFinalized/i.test(msg)) break;
+              throw e;
+            }
+          }
+          settledNow = Boolean(
+            await publicClient.readContract({
+              address: game,
+              abi: hansomeGameAbi,
+              functionName: "isSettled",
+              args: [BigInt(day)],
+            }),
+          );
+          if (settledNow) alreadySettled = true;
+        }
+        settleMs = msSince(tSettle);
       }
     }
 
-    return NextResponse.json({
-      ok: true,
-      enabled: true,
-      day,
-      alreadySettled,
-      seedSkipped,
-      revealed,
-      revealTxHash,
-      seedTxHash,
-      settleTxHash,
-      vaultCount: vaultSecretCountForDay(day),
-    });
+    return jsonOk();
   } catch (e) {
     const message = e instanceof Error ? e.message : "testnet-resolve failed";
     if (isIdempotentResolveError(message)) {
-      return NextResponse.json({
-        ok: true,
-        enabled: true,
-        day,
-        alreadySettled: isAlreadySettledError(message) || alreadySettled,
-        seedSkipped: isSeedAlreadySetError(message) || seedSkipped,
-        revealed,
-        revealTxHash,
-        seedTxHash,
-        settleTxHash,
-        vaultCount: vaultSecretCountForDay(day),
-      });
+      alreadySettled = isAlreadySettledError(message) || alreadySettled;
+      seedSkipped = isSeedAlreadySetError(message) || seedSkipped;
+      return jsonOk();
     }
-    console.error("[testnet-resolve]", message);
+    const timings = buildTimings("error");
+    console.error("[testnet-resolve]", message, timings);
     return NextResponse.json(
       {
         ok: false,
@@ -492,6 +642,8 @@ export async function POST(req: Request) {
         revealTxHash,
         seedTxHash,
         settleTxHash,
+        stage: "error" as const,
+        timings,
         error: message,
       },
       { status: 500 },

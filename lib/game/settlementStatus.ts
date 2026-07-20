@@ -24,6 +24,8 @@ export type ChainDayState = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 export function deriveSettlementUiStatus(input: {
   dayState: number | null;
   isSettled: boolean | null;
+  /** Outcomes + reward tables ready (credits may still be batching). */
+  isFinalized?: boolean | null;
   settleTxPending?: boolean;
   error?: string | null;
   loading?: boolean;
@@ -37,7 +39,8 @@ export function deriveSettlementUiStatus(input: {
 }): SettlementUiStatus {
   if (input.loading) return "loading";
   if (input.settleTxPending) return "processing";
-  if (input.isSettled === true) return "completed";
+  // Battle-ready as soon as finalizeDay lands (credits may still batch).
+  if (input.isSettled === true || input.isFinalized === true) return "completed";
 
   // Seed gate — prefer dedicated UI over generic contract error.
   if (isSeedMissingError(input.error)) return "waiting_seed";
@@ -62,7 +65,7 @@ export function deriveSettlementUiStatus(input: {
     return "pending";
   }
 
-  // Claimable without isSettled should not happen; treat as completed if claimed path
+  // Claimable dayState after finalize (credits may still be in flight)
   if (input.dayState === 6) return "completed";
 
   if (input.dayState == null) return "unavailable";

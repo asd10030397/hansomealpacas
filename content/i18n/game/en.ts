@@ -459,6 +459,19 @@ export const gameEn: GameMessages = {
     afterRevealBody: (countdown) =>
       `Auto-revealing and settling now. Viewing window ends in ${countdown} — you can leave and return later.`,
     autoSettleHint: "Resolving hunting, skills, survival, and rewards…",
+    resolveStages: {
+      checking: "Checking settlement status…",
+      waiting_seed: "Waiting for random seed…",
+      revealing: "Revealing battle…",
+      settling: "Calculating rewards…",
+      finalizing: "Finalizing settlement…",
+      completed: "Settlement complete.",
+      error: "Settlement hit an error — retrying in background…",
+    },
+    backgroundSettleNote:
+      "Commit is open. Previous-day settlement continues in the background — return here anytime for results.",
+    previousDayBattleNote: (day) =>
+      `Showing Day ${day} battle results (previous round).`,
     arenaEyebrow: "ARENA · BATTLE RESULT",
     revealSectionTitle: "AUTO REVEAL",
     settleSectionTitle: "SETTLEMENT",

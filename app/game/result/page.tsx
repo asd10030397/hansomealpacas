@@ -36,7 +36,9 @@ import {
 } from "@/lib/game/scrollToGameSection";
 import { parseSettlementResultSfxId } from "@/lib/game/settlementResults";
 import { resultSubstep } from "@/lib/game/uiLoopPhase";
+import { battleResultViewDay } from "@/lib/game/battleResultViewDay";
 import { isTestnetGaslessResolveEnabled } from "@/lib/game/testnetGaslessResolve";
+import type { TestnetResolveStage } from "@/lib/game/testnetResolveStages";
 import { getTestnetGameplayIdentity } from "@/lib/game/testnetGameplayTraits";
 
 function resolveOutcomeLabel(
@@ -49,15 +51,35 @@ function resolveOutcomeLabel(
   return outcome;
 }
 
+function resolveStageLabel(
+  stage: TestnetResolveStage | null | undefined,
+  t: ReturnType<typeof useGameI18n>["t"],
+): string | null {
+  if (!stage || stage === "idle") return null;
+  if (stage === "checking") return t.result.resolveStages.checking;
+  if (stage === "waiting_seed") return t.result.resolveStages.waiting_seed;
+  if (stage === "revealing") return t.result.resolveStages.revealing;
+  if (stage === "settling") return t.result.resolveStages.settling;
+  if (stage === "finalizing") return t.result.resolveStages.finalizing;
+  if (stage === "completed") return t.result.resolveStages.completed;
+  if (stage === "error") return t.result.resolveStages.error;
+  return null;
+}
+
 export default function ResultPhasePage() {
   const { t } = useGameI18n();
   const gameHref = useGameHref();
   const { address } = useAccount();
   const { day, now, phaseEndsAt, phase, isMock } = useGameState();
   const autoReveal = useAutoReveal();
-  const settleView = useSettlementView();
+  const viewDay = battleResultViewDay({ currentDay: day.day, phase });
+  const settleView = useSettlementView({ targetDay: viewDay });
   const scrolledRef = useRef(false);
   const walletKey = address ?? "anon";
+  const stageLabel =
+    resolveStageLabel(autoReveal.resolveStage, t) ??
+    resolveStageLabel(settleView.resolveStage, t);
+  const showingPreviousDay = viewDay !== day.day;
 
   const sub = resultSubstep(phase, {
     settled: settleView.status === "completed",
@@ -277,14 +299,37 @@ export default function ResultPhasePage() {
       </PixelPanel>
       </div>
 
-      {showPreparing ? (
+      {showingPreviousDay ? (
+        <div className="mt-4" data-testid="result-previous-day-note">
+          <GameFeedback tone="info" label={t.result.previousDayBattleNote(viewDay)}>
+            {phase === "COMMIT" ? t.result.backgroundSettleNote : null}
+          </GameFeedback>
+        </div>
+      ) : null}
+
+      {showPreparing || (stageLabel && settleView.status !== "completed") ? (
         <div className="mt-4" data-testid="result-post-reveal-staging">
-          <GameFeedback tone="pending" label={t.result.afterRevealTitle}>
-            {phase === "REVEAL"
-              ? t.result.afterRevealBody(settleCountdown)
-              : settleView.status === "waiting_seed"
-                ? t.settlement.waitingSeedBody
-                : t.result.autoSettleHint}
+          <GameFeedback
+            tone="pending"
+            label={stageLabel ?? t.result.afterRevealTitle}
+          >
+            {stageLabel ? (
+              <>
+                <p>{stageLabel}</p>
+                {phase === "REVEAL" ? (
+                  <p className="mt-1">{t.result.afterRevealBody(settleCountdown)}</p>
+                ) : null}
+                {phase === "COMMIT" ? (
+                  <p className="mt-1">{t.result.backgroundSettleNote}</p>
+                ) : null}
+              </>
+            ) : phase === "REVEAL" ? (
+              t.result.afterRevealBody(settleCountdown)
+            ) : settleView.status === "waiting_seed" ? (
+              t.settlement.waitingSeedBody
+            ) : (
+              t.result.autoSettleHint
+            )}
           </GameFeedback>
         </div>
       ) : null}
@@ -294,7 +339,11 @@ export default function ResultPhasePage() {
         title={t.result.settleSectionTitle}
         eyebrow={settleView.live ? "ON-CHAIN" : "MOCK / LOCAL"}
       >
-        <p className="pixel-title text-sm text-[#f0c44a]">{settleStatusLabel}</p>
+        <p className="pixel-title text-sm text-[#f0c44a]">
+          {stageLabel && settleView.status !== "completed"
+            ? stageLabel
+            : settleStatusLabel}
+        </p>
         <p className="mt-2 text-xs text-[var(--hg-muted)]">
           Day {settleView.day} · {settleView.phase}
           {phase === "REVEAL" ? ` · ${settleCountdown}` : null}

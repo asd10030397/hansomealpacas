@@ -42,10 +42,12 @@ import {
   formatRobinhoodWriteError,
   sendRobinhoodContractWrite,
 } from "@/lib/game/robinhoodContractWrite";
+import { isTestnetGaslessResolveEnabled } from "@/lib/game/testnetGaslessResolve";
 import {
-  isTestnetGaslessResolveEnabled,
-  requestTestnetResolve,
-} from "@/lib/game/testnetGaslessResolve";
+  getDayResolveSnapshot,
+  setTestnetResolveTargets,
+  subscribeTestnetResolve,
+} from "@/lib/game/testnetResolveCoordinator";
 import { selectPersonalBattleTokenIds } from "@/lib/game/personalBattleReport";
 import {
   deriveSettlementUiStatus,
@@ -105,19 +107,25 @@ export type SettlementRowView = {
 
 export type { BattleParticipantView };
 
-export function useSettlementView() {
+export type UseSettlementViewOptions = {
+  /** Override which day to display (e.g. previous battle day during Commit). */
+  targetDay?: number;
+};
+
+export function useSettlementView(options?: UseSettlementViewOptions) {
   const { day, phase } = useGameState();
+  const viewDay = options?.targetDay ?? day.day;
   const { address, isConnected } = useAccount();
   const walletChainId = useChainId();
   const publicClient = usePublicClient({ chainId: GAME_CHAIN_ID });
   const owned = useOwnedGenesisNfts();
   const live = isHansomeGameConfigured();
   const game = HANSOME_GAME_ADDRESS;
+  const gasless = isTestnetGaslessResolveEnabled();
 
   const [localTick, setLocalTick] = useState(0);
   const [localError, setLocalError] = useState<string | null>(null);
-  const [gaslessSettlePending, setGaslessSettlePending] = useState(false);
-  const gaslessSettleInFlightRef = useRef(false);
+  const [resolveTick, setResolveTick] = useState(0);
 
   const [cohort, setCohort] = useState<CohortCounts>(emptyCohort);
   const [rollByToken, setRollByToken] = useState<
@@ -133,24 +141,34 @@ export function useSettlementView() {
   useEffect(() => {
     setLocalError(null);
     setLocalTick((n) => n + 1);
-    gaslessSettleInFlightRef.current = false;
-    setGaslessSettlePending(false);
     setCohort(emptyCohort());
     setRollByToken({});
     setDayCreditsByToken({});
     setDayCreditsLoaded(false);
-  }, [address, day.day]);
+  }, [address, viewDay]);
+
+  // Gasless resolve is owned by AutoRevealProvider — only subscribe for instant refetch.
+  useEffect(() => {
+    if (!gasless) return;
+    return subscribeTestnetResolve(() => setResolveTick((n) => n + 1));
+  }, [gasless]);
+
+  const resolveSnap = gasless ? getDayResolveSnapshot(viewDay) : null;
+  void resolveTick;
+  const gaslessSettlePending = Boolean(resolveSnap?.running);
+
+  const unsettledPollMs = gasless ? 2_000 : 4_000;
 
   const dayStateRead = useReadContract({
     address: game ?? undefined,
     abi: hansomeGameAbi,
     functionName: "dayState",
-    args: game ? [BigInt(day.day)] : undefined,
+    args: game ? [BigInt(viewDay)] : undefined,
     chainId: GAME_CHAIN_ID,
     query: {
       enabled: live && !!game,
-      // Detect RevealClosed quickly so battle can resolve without a long idle gap.
-      refetchInterval: 4_000,
+      // Detect settle completion quickly after coordinator finishes a pass.
+      refetchInterval: unsettledPollMs,
     },
   });
 
@@ -158,11 +176,23 @@ export function useSettlementView() {
     address: game ?? undefined,
     abi: hansomeGameAbi,
     functionName: "isSettled",
-    args: game ? [BigInt(day.day)] : undefined,
+    args: game ? [BigInt(viewDay)] : undefined,
     chainId: GAME_CHAIN_ID,
     query: {
       enabled: live && !!game,
-      refetchInterval: 4_000,
+      refetchInterval: unsettledPollMs,
+    },
+  });
+
+  const finalizedRead = useReadContract({
+    address: game ?? undefined,
+    abi: hansomeGameAbi,
+    functionName: "isFinalized",
+    args: game ? [BigInt(viewDay)] : undefined,
+    chainId: GAME_CHAIN_ID,
+    query: {
+      enabled: live && !!game,
+      refetchInterval: unsettledPollMs,
     },
   });
 
@@ -193,11 +223,11 @@ export function useSettlementView() {
     address: randomnessAddress ?? undefined,
     abi: gameRandomnessAbi,
     functionName: "hasDaySeed",
-    args: randomnessAddress ? [BigInt(day.day)] : undefined,
+    args: randomnessAddress ? [BigInt(viewDay)] : undefined,
     chainId: GAME_CHAIN_ID,
     query: {
       enabled: live && !!randomnessAddress,
-      refetchInterval: 4_000,
+      refetchInterval: unsettledPollMs,
     },
   });
 
@@ -205,7 +235,7 @@ export function useSettlementView() {
   const autoSettleArmedRef = useRef(true);
   useEffect(() => {
     autoSettleArmedRef.current = true;
-  }, [day.day]);
+  }, [viewDay]);
 
   const {
     writeContractAsync,
@@ -219,7 +249,6 @@ export function useSettlementView() {
     chainId: GAME_CHAIN_ID,
   });
 
-  const gasless = isTestnetGaslessResolveEnabled();
   const ownedTokenIds = useMemo(
     () => owned.nfts.map((n) => n.tokenId),
     [owned.nfts],
@@ -228,8 +257,8 @@ export function useSettlementView() {
   // resolve itself uses the server vault, but Battle Result needs local
   // locationId before reveal because on-chain locationOf defaults to 0 (Home).
   const secrets = useMemo(
-    () => listOwnedCommitSecretsForDay(day.day, address, ownedTokenIds),
-    [day.day, address, ownedTokenIds, localTick],
+    () => listOwnedCommitSecretsForDay(viewDay, address, ownedTokenIds),
+    [viewDay, address, ownedTokenIds, localTick],
   );
 
   // Read today's commit hashes for every owned NFT, then keep only participants.
@@ -240,7 +269,7 @@ export function useSettlementView() {
       address: game!,
       abi: hansomeGameAbi,
       functionName: "commitHashOf" as const,
-      args: [BigInt(tokenId), BigInt(day.day)] as const,
+      args: [BigInt(tokenId), BigInt(viewDay)] as const,
       chainId: GAME_CHAIN_ID,
     })),
     query: {
@@ -274,7 +303,7 @@ export function useSettlementView() {
       address: game!,
       abi: hansomeGameAbi,
       functionName: "locationOf" as const,
-      args: [BigInt(tokenId), BigInt(day.day)] as const,
+      args: [BigInt(tokenId), BigInt(viewDay)] as const,
       chainId: GAME_CHAIN_ID,
     })),
     query: {
@@ -289,7 +318,7 @@ export function useSettlementView() {
       address: game!,
       abi: hansomeGameAbi,
       functionName: "commitHashOf" as const,
-      args: [BigInt(tokenId), BigInt(day.day)] as const,
+      args: [BigInt(tokenId), BigInt(viewDay)] as const,
       chainId: GAME_CHAIN_ID,
     })),
     query: { enabled: live && !!game && tokenIds.length > 0 },
@@ -309,12 +338,30 @@ export function useSettlementView() {
   });
 
   const settled = Boolean(settledRead.data);
+  const finalized = Boolean(finalizedRead.data);
+  /** Battle outcomes ready — credits may still be batching. */
+  const battleReady = finalized || settled;
   const dayStateNum =
     dayStateRead.data !== undefined ? Number(dayStateRead.data) : null;
   const revealClosed = isRevealPhaseClosed({
     phase,
     dayState: dayStateNum,
-    settled,
+    settled: battleReady,
+  });
+
+  const pendingRewardContracts = useReadContracts({
+    contracts: tokenIds.map((tokenId) => ({
+      address: game!,
+      abi: hansomeGameAbi,
+      functionName: "pendingRewardOf" as const,
+      args: [BigInt(tokenId), BigInt(viewDay)] as const,
+      chainId: GAME_CHAIN_ID,
+    })),
+    query: {
+      enabled:
+        live && !!game && tokenIds.length > 0 && finalized && !settled,
+      refetchInterval: unsettledPollMs,
+    },
   });
 
   // Load this day's Credited amounts from the settle tx (UI reward = day reward).
@@ -332,7 +379,7 @@ export function useSettlementView() {
           publicClient,
           game,
           distributor: distributorAddress,
-          day: day.day,
+          day: viewDay,
           fromBlock: REVEAL_LOG_FROM_BLOCK,
         });
         if (cancelled) return;
@@ -356,7 +403,7 @@ export function useSettlementView() {
     publicClient,
     distributorAddress,
     settled,
-    day.day,
+    viewDay,
     localTick,
   ]);
 
@@ -384,7 +431,7 @@ export function useSettlementView() {
               { name: "side", type: "uint8", indexed: false },
             ],
           },
-          args: { day: BigInt(day.day) },
+          args: { day: BigInt(viewDay) },
           fromBlock: REVEAL_LOG_FROM_BLOCK,
           toBlock: "latest",
         });
@@ -392,7 +439,7 @@ export function useSettlementView() {
         const nextCohort = parseRevealCohort(logs as unknown as RevealLogLike[]);
         setCohort(nextCohort);
 
-        if (!settled || !randomnessAddress || tokenIds.length === 0) {
+        if (!battleReady || !randomnessAddress || tokenIds.length === 0) {
           setRollByToken({});
           return;
         }
@@ -415,7 +462,7 @@ export function useSettlementView() {
                     abi: gameRandomnessAbi,
                     functionName: "bernoulli",
                     args: [
-                      BigInt(day.day),
+                      BigInt(viewDay),
                       BigInt(tokenId),
                       PURPOSE_RUNNER,
                       P_RUNNER_BPS,
@@ -429,7 +476,7 @@ export function useSettlementView() {
                     abi: gameRandomnessAbi,
                     functionName: "bernoulli",
                     args: [
-                      BigInt(day.day),
+                      BigInt(viewDay),
                       BigInt(tokenId),
                       PURPOSE_LUCKY,
                       P_LUCKY_BPS,
@@ -460,8 +507,8 @@ export function useSettlementView() {
     game,
     publicClient,
     revealClosed,
-    settled,
-    day.day,
+    battleReady,
+    viewDay,
     randomnessAddress,
     tokenIds,
     owned.nfts,
@@ -471,6 +518,7 @@ export function useSettlementView() {
     live &&
     (dayStateRead.isLoading ||
       settledRead.isLoading ||
+      finalizedRead.isLoading ||
       locationContracts.isLoading ||
       claimableContracts.isLoading);
 
@@ -499,17 +547,21 @@ export function useSettlementView() {
         dayState: dayStateNum,
         isSettled:
           settledRead.data !== undefined ? Boolean(settledRead.data) : null,
+        isFinalized:
+          finalizedRead.data !== undefined
+            ? Boolean(finalizedRead.data)
+            : null,
         settleTxPending: settleWriting || settleReceipt.isLoading,
         error: chainError,
         loading: chainLoading,
         hasDaySeed,
         phase,
       })
-    : deriveLocalStatus(day.day, phase, localTick);
+    : deriveLocalStatus(viewDay, phase, localTick);
 
   const rows: SettlementRowView[] = useMemo(() => {
     if (!live) {
-      const local = getLocalSettlement(day.day);
+      const local = getLocalSettlement(viewDay);
       if (local?.status === "completed") {
         return local.rows.map((r) => mapLocalRow(r, address ?? null));
       }
@@ -580,7 +632,7 @@ export function useSettlementView() {
       const locationId = resolveBattleLocationId({
         committed,
         revealed,
-        settled,
+        settled: battleReady,
         locationOf: locRaw !== undefined ? Number(locRaw) : null,
         secretLocationId: secret?.locationId,
         cohortLocationId,
@@ -590,7 +642,7 @@ export function useSettlementView() {
       const interpretation = interpretLiveSettlementRow({
         phase,
         dayState: dayStateNum,
-        settled,
+        settled: battleReady,
         committed,
         revealed,
       });
@@ -602,7 +654,7 @@ export function useSettlementView() {
 
       if (missedReveal) {
         outcome = MISSED_REVEAL_OUTCOME;
-      } else if (!settled) {
+      } else if (!battleReady) {
         outcome =
           interpretation.outcomeKey === "awaiting_settlement"
             ? "awaiting_settlement"
@@ -633,18 +685,28 @@ export function useSettlementView() {
         outcome = "Settled on-chain (detail fields not exposed by contract)";
       }
 
-      // Battle Reward = this day's Credited amount (not cumulative claimable).
+      // Battle reward: after finalize use pendingRewardOf; after credits use day Credited.
+      const pendingIdx = tokenIds.indexOf(tokenId);
+      const pendingRaw =
+        pendingIdx >= 0
+          ? pendingRewardContracts.data?.[pendingIdx]?.result
+          : undefined;
+      const pendingWei =
+        typeof pendingRaw === "bigint" ? pendingRaw : null;
+
       const dayRewardWei = missedReveal
         ? 0n
-        : !settled
-          ? null
-          : dayCreditsLoaded
+        : settled
+          ? dayCreditsLoaded
             ? (dayCreditsByToken[tokenId] ?? 0n)
+            : null
+          : finalized
+            ? pendingWei
             : null;
 
       const rewardLabel = missedReveal
         ? "0"
-        : !settled
+        : !battleReady
           ? "Pending"
           : dayRewardWei != null
             ? `${formatHansome(dayRewardWei)} tHANSOME`
@@ -654,7 +716,9 @@ export function useSettlementView() {
       const claimStatus = missedReveal
         ? "No claim"
         : !settled
-          ? "Pending settle"
+          ? finalized
+            ? "Crediting…"
+            : "Pending settle"
           : rewardWei != null && rewardWei > 0n
             ? "Claimable"
             : "No claim";
@@ -684,7 +748,7 @@ export function useSettlementView() {
   }, [
     address,
     live,
-    day.day,
+    viewDay,
     phase,
     dayStateNum,
     status,
@@ -693,7 +757,10 @@ export function useSettlementView() {
     locationContracts.data,
     claimableContracts.data,
     commitHashContracts.data,
+    pendingRewardContracts.data,
     settled,
+    finalized,
+    battleReady,
     localTick,
     owned.nfts,
     cohort,
@@ -706,8 +773,8 @@ export function useSettlementView() {
     setLocalError(null);
     if (!live) {
       const built = completeLocalSettlement(
-        day.day,
-        listOwnedCommitSecretsForDay(day.day, address, ownedTokenIds),
+        viewDay,
+        listOwnedCommitSecretsForDay(viewDay, address, ownedTokenIds),
       );
       if (built.rows.length === 0) {
         setLocalError("No committed NFTs for this day to settle locally.");
@@ -718,48 +785,12 @@ export function useSettlementView() {
     }
     if (!game) return;
 
-    // Testnet gasless: server vault + relayer (no localStorage salts).
-    if (isTestnetGaslessResolveEnabled()) {
-      if (gaslessSettleInFlightRef.current) return;
+    // Testnet gasless: kick shared coordinator (no second parallel pipeline).
+    if (gasless) {
       resetSettle();
-      gaslessSettleInFlightRef.current = true;
-      setGaslessSettlePending(true);
-      try {
-        const result = await requestTestnetResolve({
-          day: day.day,
-          reveals: [],
-          fulfillSeed: true,
-          settle: true,
-        });
-        if (!result.ok) {
-          const msg = result.error ?? "Gasless settle failed.";
-          // AlreadySettled / SeedAlreadySet are success — continue to Battle Result.
-          if (
-            /AlreadySettled/i.test(msg) ||
-            isSeedAlreadySetError(msg)
-          ) {
-            /* soft-ok */
-          } else {
-            setLocalError(
-              isSeedMissingError(msg) ? SEED_MISSING_UI_MESSAGE : msg,
-            );
-            return;
-          }
-        } else {
-          setLocalError(null);
-        }
-        void dayStateRead.refetch?.();
-        void settledRead.refetch?.();
-        void locationContracts.refetch?.();
-        void commitHashContracts.refetch?.();
-        void claimableContracts.refetch?.();
-        void hasDaySeedRead.refetch?.();
-        void owned.refetch?.();
-        setLocalTick((n) => n + 1);
-      } finally {
-        gaslessSettleInFlightRef.current = false;
-        setGaslessSettlePending(false);
-      }
+      setTestnetResolveTargets(
+        viewDay > 0 ? [viewDay, viewDay - 1] : [viewDay],
+      );
       return;
     }
 
@@ -788,10 +819,10 @@ export function useSettlementView() {
           address: game,
           abi: hansomeGameAbi,
           functionName: "settleDay",
-          args: [BigInt(day.day)],
+          args: [BigInt(viewDay)],
           account: address,
         },
-        extraLog: { day: day.day },
+        extraLog: { day: viewDay },
       });
     } catch (e) {
       const msg = formatRobinhoodWriteError(e, "settleDay failed");
@@ -799,21 +830,16 @@ export function useSettlementView() {
     }
   }, [
     live,
-    day.day,
+    viewDay,
     game,
+    gasless,
     isConnected,
     address,
-    owned,
+    ownedTokenIds,
     walletChainId,
     publicClient,
     resetSettle,
     writeContractAsync,
-    dayStateRead,
-    settledRead,
-    locationContracts,
-    commitHashContracts,
-    claimableContracts,
-    hasDaySeedRead,
   ]);
 
   useEffect(() => {
@@ -825,6 +851,33 @@ export function useSettlementView() {
     }
   }, [settleReceipt.isSuccess]);
 
+  // Instant chain refresh when gasless coordinator finishes a pass / settles.
+  useEffect(() => {
+    if (!gasless || !resolveSnap) return;
+    if (resolveTick === 0) return;
+    void dayStateRead.refetch?.();
+    void settledRead.refetch?.();
+    void finalizedRead.refetch?.();
+    void locationContracts.refetch?.();
+    void commitHashContracts.refetch?.();
+    void claimableContracts.refetch?.();
+    void pendingRewardContracts.refetch?.();
+    void hasDaySeedRead.refetch?.();
+    void owned.refetch?.();
+    setLocalTick((n) => n + 1);
+    if (resolveSnap.lastError && !resolveSnap.settled) {
+      setLocalError(
+        isSeedMissingError(resolveSnap.lastError)
+          ? SEED_MISSING_UI_MESSAGE
+          : resolveSnap.lastError,
+      );
+    } else if (resolveSnap.settled) {
+      setLocalError(null);
+    }
+    // Coordinator tick is the trigger; refetch fns are stable enough for UX.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gasless, resolveTick, resolveSnap?.updatedAt, resolveSnap?.settled]);
+
   // Re-arm auto-settle when seed becomes the blocker (retry once seed is ready).
   useEffect(() => {
     if (status === "waiting_seed") {
@@ -833,39 +886,22 @@ export function useSettlementView() {
   }, [status]);
 
   /**
-   * After Reveal closes + seed ready: run settleDay automatically.
-   * Timing windows stay unchanged — this only removes the extra manual wait.
+   * Non-gasless: after Reveal closes + seed ready, run settleDay once.
+   * Gasless settle is owned by AutoRevealProvider / coordinator.
    */
   useEffect(() => {
+    if (gasless) return;
     if (settled) return;
-    if (settleWriting || settleReceipt.isLoading || gaslessSettlePending) return;
-
-    // Testnet gasless: resolve as soon as Battle/Reveal opens (no wallet).
-    if (isTestnetGaslessResolveEnabled()) {
-      const ready =
-        status === "available" ||
-        status === "waiting_seed" ||
-        (status === "pending" && phase === "REVEAL");
-      if (!ready) return;
-      const kick = () => {
-        if (gaslessSettleInFlightRef.current) return;
-        void runSettle();
-      };
-      kick();
-      const id = window.setInterval(kick, 5_000);
-      return () => window.clearInterval(id);
-    }
-
+    if (settleWriting || settleReceipt.isLoading) return;
     if (status !== "available") return;
     if (!autoSettleArmedRef.current) return;
     autoSettleArmedRef.current = false;
     void runSettle();
   }, [
+    gasless,
     status,
-    phase,
     settleWriting,
     settleReceipt.isLoading,
-    gaslessSettlePending,
     settled,
     runSettle,
   ]);
@@ -877,7 +913,7 @@ export function useSettlementView() {
       : chainError;
 
   return {
-    day: day.day,
+    day: viewDay,
     phase,
     live,
     status,
@@ -899,13 +935,16 @@ export function useSettlementView() {
     settleHash,
     error: displayError,
     waitingSeed: status === "waiting_seed",
-    /** True while revealed and still waiting for RevealClosed / settle / seed. */
+    /** True while revealed and still waiting for finalize / seed. */
     battlePending:
-      !settled &&
+      !battleReady &&
       (status === "pending" ||
         status === "available" ||
         status === "waiting_seed" ||
         status === "processing"),
+    isFinalized: finalized,
+    resolveStage: resolveSnap?.stage ?? null,
+    resolveRunning: gaslessSettlePending,
     runSettle,
     refreshLocal: () => setLocalTick((n) => n + 1),
   };

@@ -55,6 +55,16 @@ describe("deriveSettlementUiStatus", () => {
     ).toBe("completed");
   });
 
+  it("treats isFinalized as battle-ready even before credits finish", () => {
+    expect(
+      deriveSettlementUiStatus({
+        dayState: 6,
+        isSettled: false,
+        isFinalized: true,
+      }),
+    ).toBe("completed");
+  });
+
   it("maps commit/reveal windows to pending", () => {
     expect(
       deriveSettlementUiStatus({ dayState: 1, isSettled: false }),
@@ -122,8 +132,8 @@ describe("canSubmitClaim — duplicate prevention", () => {
 
 describe("settlementStatusLabel", () => {
   it("returns stable labels", () => {
-    expect(settlementStatusLabel("available")).toMatch(/settling|Reveal closed/i);
-    expect(settlementStatusLabel("pending")).toMatch(/arena|revealed/i);
+    expect(settlementStatusLabel("available")).toMatch(/settling/i);
+    expect(settlementStatusLabel("pending")).toMatch(/Resolving/i);
     expect(settlementStatusLabel("completed")).toMatch(/Completed/i);
   });
 });

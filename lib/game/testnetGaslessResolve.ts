@@ -6,6 +6,10 @@
 import { GAME_CHAIN_ID } from "@/lib/game/hansomeGame";
 import { ROBINHOOD_TESTNET_CHAIN_ID } from "@/lib/chain";
 import { isSeedAlreadySetError } from "@/lib/game/missedReveal";
+import type {
+  TestnetResolveStage,
+  TestnetResolveTimings,
+} from "@/lib/game/testnetResolveStages";
 import type { Hex } from "viem";
 
 export type TestnetRevealItem = {
@@ -26,13 +30,21 @@ export type TestnetResolveResponse = {
   ok: boolean;
   enabled: boolean;
   day: number;
+  /** True when distributor credits are fully written (isSettled). */
   alreadySettled?: boolean;
+  /** True when finalizeDay has run (battle outcomes ready; credits may remain). */
+  finalized?: boolean;
   seedSkipped?: boolean;
   revealed?: number;
   revealTxHash?: Hex | null;
   seedTxHash?: Hex | null;
+  /** Last finalizeDay or creditBatch tx in this pass. */
   settleTxHash?: Hex | null;
   vaultCount?: number;
+  /** Pipeline stage after this pass (UX). */
+  stage?: TestnetResolveStage;
+  /** Per-step wall timings for this pass. */
+  timings?: TestnetResolveTimings;
   error?: string;
   detail?: string;
 };

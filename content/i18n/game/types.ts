@@ -372,6 +372,18 @@ export type GameMessages = {
     afterRevealTitle: string;
     afterRevealBody: (countdown: string) => string;
     autoSettleHint: string;
+    /** Gasless resolve pipeline stages (Testnet UX). */
+    resolveStages: {
+      checking: string;
+      waiting_seed: string;
+      revealing: string;
+      settling: string;
+      finalizing: string;
+      completed: string;
+      error: string;
+    };
+    backgroundSettleNote: string;
+    previousDayBattleNote: (day: number) => string;
     arenaEyebrow: string;
     revealSectionTitle: string;
     settleSectionTitle: string;

@@ -449,6 +449,18 @@ export const gameZh: GameMessages = {
     afterRevealBody: (countdown) =>
       `正在自動揭露與結算。檢視窗剩餘 ${countdown} — 你可以離開稍後再回來。`,
     autoSettleHint: "正在結算狩獵、技能、生死與獎勵…",
+    resolveStages: {
+      checking: "正在檢查結算狀態…",
+      waiting_seed: "等待隨機種子…",
+      revealing: "正在揭露戰鬥…",
+      settling: "正在計算獎勵…",
+      finalizing: "正在完成結算…",
+      completed: "結算完成。",
+      error: "結算發生錯誤 — 背景自動重試中…",
+    },
+    backgroundSettleNote:
+      "下一輪 Commit 已開始。前一日結算會在背景繼續 — 可隨時回到此頁查看結果。",
+    previousDayBattleNote: (day) => `顯示第 ${day} 日戰鬥結果（上一輪）。`,
     arenaEyebrow: "競技場 · 戰鬥結果",
     revealSectionTitle: "自動揭露",
     settleSectionTitle: "結算",

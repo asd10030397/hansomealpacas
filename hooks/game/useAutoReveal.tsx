@@ -19,15 +19,19 @@ import {
   upsertCommitSecret,
   type CommitSecretRecord,
 } from "@/lib/game/commitSecret";
+import { isTestnetGaslessResolveEnabled } from "@/lib/game/testnetGaslessResolve";
 import {
-  isTestnetGaslessResolveEnabled,
-  requestTestnetResolve,
-} from "@/lib/game/testnetGaslessResolve";
-import { isSeedAlreadySetError } from "@/lib/game/missedReveal";
+  getDayResolveSnapshot,
+  setTestnetResolveTargets,
+  stopTestnetResolveLoop,
+  subscribeTestnetResolve,
+  type DayResolveSnapshot,
+} from "@/lib/game/testnetResolveCoordinator";
+import type { TestnetResolveStage } from "@/lib/game/testnetResolveStages";
 import { playSfx } from "@/lib/game/audio";
 
 export type AutoRevealStatus = {
-  /** Wire RevealOpen / gasless resolve active. */
+  /** Wire RevealOpen / gasless resolve active (incl. background settle). */
   active: boolean;
   revealing: boolean;
   pendingCount: number;
@@ -37,6 +41,11 @@ export type AutoRevealStatus = {
   gasless: boolean;
   lastMessage: string | null;
   lastError: string | null;
+  /** Current pipeline stage for the battle day being resolved. */
+  resolveStage: TestnetResolveStage;
+  /** Day the coordinator is primarily reporting (may be previous day in Commit). */
+  resolveDay: number;
+  resolveSnapshot: DayResolveSnapshot;
   refreshQueue: () => CommitSecretRecord[];
 };
 
@@ -58,7 +67,13 @@ function useAutoRevealEngine(): AutoRevealStatus {
   const [runError, setRunError] = useState<string | null>(null);
   const [passRunning, setPassRunning] = useState(false);
   const [retryTick, setRetryTick] = useState(0);
+  const [resolveTick, setResolveTick] = useState(0);
   const runningRef = useRef(false);
+  const lastSfxDayRef = useRef<number | null>(null);
+
+  /** Prefer previous day during Commit so background settle stays visible. */
+  const resolveDay =
+    gasless && phase === "COMMIT" && day.day > 0 ? day.day - 1 : day.day;
 
   const refreshQueue = useCallback(() => {
     if (gasless) {
@@ -86,84 +101,63 @@ function useAutoRevealEngine(): AutoRevealStatus {
     refreshQueue();
   }, [address, refreshQueue]);
 
-  // —— Testnet gasless: server vault + /api/game/testnet-resolve (no localStorage) ——
+  // —— Testnet gasless: single-flight coordinator (survives Commit) ——
   useEffect(() => {
-    if (!gasless) return;
-    if (phase !== "REVEAL" && phase !== "SETTLEMENT") {
-      runningRef.current = false;
-      setPassRunning(false);
+    if (!gasless) {
+      stopTestnetResolveLoop();
       return;
     }
-    if (runningRef.current) return;
 
-    let cancelled = false;
-    runningRef.current = true;
-    setPassRunning(true);
-    setRunError(null);
+    const targets: number[] = [];
+    // Current day while battle window is open / claimable.
+    if (
+      phase === "REVEAL" ||
+      phase === "SETTLEMENT" ||
+      phase === "CLAIM"
+    ) {
+      targets.push(day.day);
+    }
+    // Always keep previous day settling in the background (never cancel).
+    if (day.day > 0) {
+      targets.push(day.day - 1);
+    }
 
-    void (async () => {
-      const result = await requestTestnetResolve({
-        day: day.day,
-        // Vault is source of truth — do not send localStorage salts.
-        reveals: [],
-        fulfillSeed: true,
-        settle: true,
-      });
-      if (cancelled) return;
-
-      if (!result.ok) {
-        const msg = result.error ?? "Gasless resolve failed.";
-        // Seed already on-chain is not a player-facing failure.
-        if (
-          !isSeedAlreadySetError(msg) &&
-          !/AlreadySettled/i.test(msg)
-        ) {
-          setRunError(msg);
-          runningRef.current = false;
-          setPassRunning(false);
-          return;
-        }
-        setRunError(null);
-      }
-
-      if (result.alreadySettled || result.seedSkipped) {
-        setLastMessage(
-          result.alreadySettled
-            ? "Battle already settled — showing results."
-            : "Day seed ready — settling…",
-        );
-      } else if (result.settleTxHash) {
-        setLastMessage(
-          `Battle resolved (revealed ${result.revealed ?? 0}, vault ${result.vaultCount ?? 0}).`,
-        );
-        playSfx("ui-click");
-      } else if ((result.revealed ?? 0) > 0) {
-        setLastMessage(`Relayer revealed ${result.revealed} NFT(s)…`);
-        playSfx("ui-click");
-      } else {
-        setLastMessage(
-          `Relayer resolving… (vault ${result.vaultCount ?? 0} commit(s))`,
-        );
-      }
-
-      runningRef.current = false;
-      setPassRunning(false);
-    })();
-
+    setTestnetResolveTargets(targets);
     return () => {
-      cancelled = true;
-      runningRef.current = false;
+      /* keep loop alive across phase changes; GameShell unmount stops it */
     };
-  }, [gasless, phase, day.day, retryTick]);
+  }, [gasless, phase, day.day]);
 
   useEffect(() => {
     if (!gasless) return;
-    if (phase !== "REVEAL" && phase !== "SETTLEMENT") return;
-    const id = window.setInterval(() => {
-      if (!runningRef.current) setRetryTick((n) => n + 1);
-    }, 4_000);
-    return () => window.clearInterval(id);
-  }, [gasless, phase]);
+    return subscribeTestnetResolve(() => setResolveTick((n) => n + 1));
+  }, [gasless]);
+
+  useEffect(() => {
+    return () => {
+      if (gasless) stopTestnetResolveLoop();
+    };
+  }, [gasless]);
+
+  const resolveSnapshot = getDayResolveSnapshot(resolveDay);
+  // Touch resolveTick so React re-renders on coordinator updates.
+  void resolveTick;
+
+  useEffect(() => {
+    if (!gasless) return;
+    const snap = getDayResolveSnapshot(resolveDay);
+    if (snap.lastMessage) setLastMessage(snap.lastMessage);
+    if (snap.lastError) setRunError(snap.lastError);
+    else if (snap.settled) setRunError(null);
+    if (
+      snap.settled &&
+      snap.stage === "completed" &&
+      lastSfxDayRef.current !== resolveDay
+    ) {
+      lastSfxDayRef.current = resolveDay;
+      playSfx("ui-click");
+    }
+  }, [gasless, resolveDay, resolveTick, resolveSnapshot.updatedAt]);
 
   // —— Legacy Mainnet / non-gasless: localStorage auto-reveal ——
   useEffect(() => {
@@ -236,8 +230,18 @@ function useAutoRevealEngine(): AutoRevealStatus {
     retryTick,
   ]);
 
+  useEffect(() => {
+    if (gasless) return;
+    if (phase !== "REVEAL") return;
+    const id = window.setInterval(() => {
+      if (!runningRef.current) setRetryTick((n) => n + 1);
+    }, 4_000);
+    return () => window.clearInterval(id);
+  }, [gasless, phase]);
+
   const pendingCount = gasless
-    ? passRunning
+    ? resolveSnapshot.running ||
+      (!resolveSnapshot.settled && resolveSnapshot.stage !== "idle")
       ? 1
       : 0
     : queue.filter(
@@ -247,14 +251,30 @@ function useAutoRevealEngine(): AutoRevealStatus {
 
   return useMemo(
     () => ({
-      active: phase === "REVEAL" || (gasless && phase === "SETTLEMENT"),
-      revealing: passRunning || isPending || pendingCount > 0,
+      active:
+        phase === "REVEAL" ||
+        phase === "SETTLEMENT" ||
+        (gasless &&
+          (resolveSnapshot.running ||
+            (!resolveSnapshot.settled &&
+              resolveSnapshot.stage !== "idle" &&
+              resolveSnapshot.stage !== "completed"))),
+      revealing:
+        passRunning ||
+        isPending ||
+        pendingCount > 0 ||
+        (gasless && resolveSnapshot.running),
       pendingCount,
       revealedCount,
       noSecrets: gasless ? false : queue.length === 0,
       gasless,
-      lastMessage,
-      lastError: runError ?? (!gasless ? lastError : null),
+      lastMessage: gasless ? resolveSnapshot.lastMessage ?? lastMessage : lastMessage,
+      lastError: gasless
+        ? resolveSnapshot.lastError
+        : (runError ?? lastError),
+      resolveStage: resolveSnapshot.stage,
+      resolveDay,
+      resolveSnapshot,
       refreshQueue,
     }),
     [
@@ -269,6 +289,8 @@ function useAutoRevealEngine(): AutoRevealStatus {
       runError,
       lastError,
       refreshQueue,
+      resolveSnapshot,
+      resolveDay,
     ],
   );
 }

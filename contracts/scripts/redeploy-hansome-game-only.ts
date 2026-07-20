@@ -77,7 +77,8 @@ async function main() {
     deployBlockNumber: receipt!.blockNumber,
     deployedAt: new Date().toISOString(),
     deployer: deployer.address,
-    previousGameNote: "redeploy-hansome-game-only (Candidate A π₀ 0/15/25/35/45)",
+    previousGameNote:
+      "redeploy-hansome-game-only (batched finalizeDay + creditBatch execution)",
   };
   writeFileSync(prevPath, `${JSON.stringify(record, null, 2)}\n`);
   console.log("Wrote", prevPath);
