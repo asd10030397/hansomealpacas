@@ -85,16 +85,29 @@ export type CommunityStat = {
   value: string | null;
 };
 
-function readStatEnv(name: string): string | null {
-  const value = process.env[name]?.trim();
-  return value ? value : null;
+/** Static NEXT_PUBLIC reads — Next.js does not inline dynamic process.env[key]. */
+function readHoldersEnv(): string | null {
+  const v = process.env.NEXT_PUBLIC_HOLDERS?.trim();
+  return v || null;
+}
+function readTransactionsEnv(): string | null {
+  const v = process.env.NEXT_PUBLIC_TRANSACTIONS?.trim();
+  return v || null;
+}
+function readLiquidityEnv(): string | null {
+  const v = process.env.NEXT_PUBLIC_LIQUIDITY?.trim();
+  return v || null;
+}
+function readMarketCapEnv(): string | null {
+  const v = process.env.NEXT_PUBLIC_MARKET_CAP?.trim();
+  return v || null;
 }
 
 export function getCommunityStats(): CommunityStat[] {
   return [
-    { key: "holders", value: readStatEnv("NEXT_PUBLIC_HOLDERS") },
-    { key: "transactions", value: readStatEnv("NEXT_PUBLIC_TRANSACTIONS") },
-    { key: "liquidity", value: readStatEnv("NEXT_PUBLIC_LIQUIDITY") },
-    { key: "marketCap", value: readStatEnv("NEXT_PUBLIC_MARKET_CAP") },
+    { key: "holders", value: readHoldersEnv() },
+    { key: "transactions", value: readTransactionsEnv() },
+    { key: "liquidity", value: readLiquidityEnv() },
+    { key: "marketCap", value: readMarketCapEnv() },
   ];
 }

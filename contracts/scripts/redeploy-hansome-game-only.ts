@@ -8,9 +8,25 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { ethers, network } from "hardhat";
 import { resolveGameTiming } from "./lib/game-timing";
+import {
+  assertTestnetOnlyScript,
+  isDryRun,
+  logDeployBanner,
+} from "./lib/deploy-network-guard";
 import { getDeployerSigner } from "./lib/signer";
 
 async function main() {
+  const chainId = Number((await ethers.provider.getNetwork()).chainId);
+  const ctx = { networkName: network.name, chainId };
+  assertTestnetOnlyScript(ctx, "redeploy-hansome-game-only.ts");
+  if (isDryRun()) {
+    logDeployBanner("redeploy-hansome-game-only.ts", ctx, {
+      NOTE: "DRY_RUN — redeploy not executed",
+    });
+    console.log("DRY_RUN complete — no transactions sent.");
+    return;
+  }
+
   const prevPath = join(__dirname, "..", "deployments", `${network.name}-game.json`);
   if (!existsSync(prevPath)) throw new Error(`Missing ${prevPath}`);
   const prev = JSON.parse(readFileSync(prevPath, "utf8")) as {

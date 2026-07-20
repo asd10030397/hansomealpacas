@@ -76,6 +76,14 @@ export const ROBINHOOD_TESTNET_CHAIN_ID = 46630;
 export const DEFAULT_TESTNET_RPC_URL = "https://rpc.testnet.chain.robinhood.com";
 export const DEFAULT_TESTNET_EXPLORER = "https://explorer.testnet.chain.robinhood.com";
 
+/**
+ * Testnet chain definition for wagmi / gasless routes.
+ * When NEXT_PUBLIC_GAME_CHAIN_ID=4663 (Mainnet cutover), do NOT bind
+ * NEXT_PUBLIC_GAME_RPC_URL into this chain — that URL is Mainnet-facing.
+ */
+const gameChainIdEnv = Number(process.env.NEXT_PUBLIC_GAME_CHAIN_ID?.trim() || "0");
+const gameTargetsMainnet = gameChainIdEnv === ROBINHOOD_CHAIN_ID;
+
 export const robinhoodTestnetChain = defineChain({
   id: ROBINHOOD_TESTNET_CHAIN_ID,
   name: "Robinhood Chain Testnet",
@@ -87,15 +95,18 @@ export const robinhoodTestnetChain = defineChain({
   rpcUrls: {
     default: {
       http: [
-        process.env.NEXT_PUBLIC_GAME_RPC_URL?.trim() || DEFAULT_TESTNET_RPC_URL,
+        gameTargetsMainnet
+          ? DEFAULT_TESTNET_RPC_URL
+          : process.env.NEXT_PUBLIC_GAME_RPC_URL?.trim() || DEFAULT_TESTNET_RPC_URL,
       ],
     },
   },
   blockExplorers: {
     default: {
       name: "Blockscout",
-      url:
-        process.env.NEXT_PUBLIC_GAME_EXPLORER?.trim() || DEFAULT_TESTNET_EXPLORER,
+      url: gameTargetsMainnet
+        ? DEFAULT_TESTNET_EXPLORER
+        : process.env.NEXT_PUBLIC_GAME_EXPLORER?.trim() || DEFAULT_TESTNET_EXPLORER,
     },
   },
   testnet: true,

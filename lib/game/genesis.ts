@@ -1,23 +1,21 @@
 import type { Address } from "viem";
-import { robinhoodTestnetChain } from "@/lib/chain";
 import {
   GENESIS_ADDRESS_ENV_KEYS,
   resolveGenesisNftAddress,
   resolveOptionalConfiguredAddress,
 } from "@/lib/game/contractAddresses";
+import {
+  resolveGameChainId,
+  resolveGameExplorerUrl,
+  resolveGameRpcUrl,
+} from "@/lib/game/gameNetwork";
 
-/** Genesis mint targets Robinhood Chain testnet until mainnet deploy. */
-export const GENESIS_CHAIN_ID = Number(
-  process.env.NEXT_PUBLIC_GAME_CHAIN_ID ?? robinhoodTestnetChain.id,
-);
+/** Genesis mint targets the configured game chain (Testnet until Mainnet cutover). */
+export const GENESIS_CHAIN_ID = resolveGameChainId();
 
-export const GENESIS_RPC_URL =
-  process.env.NEXT_PUBLIC_GAME_RPC_URL?.trim() ||
-  robinhoodTestnetChain.rpcUrls.default.http[0];
+export const GENESIS_RPC_URL = resolveGameRpcUrl();
 
-export const GENESIS_EXPLORER =
-  process.env.NEXT_PUBLIC_GAME_EXPLORER?.trim() ||
-  robinhoodTestnetChain.blockExplorers.default.url;
+export const GENESIS_EXPLORER = resolveGameExplorerUrl();
 
 /**
  * Deployed HansomeGenesisNFT — env only

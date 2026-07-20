@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "generate:assets": "node scripts/generate-assets.mjs",
     "generate:litepaper-pdf": "node scripts/generate-litepaper-pdf.mjs",
+    "generate:economic-model-pdf": "node scripts/generate-economic-model-pdf.mjs",
     "release:check": "node scripts/release-check.mjs",
     "test:scoring": "vitest run --config vitest.config.ts",
     "test:scoring:watch": "vitest --config vitest.config.ts",

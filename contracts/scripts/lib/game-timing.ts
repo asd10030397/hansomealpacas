@@ -37,10 +37,44 @@ export type GameTiming = {
   fast: boolean;
 };
 
+function isMainnetNetworkName(networkName: string): boolean {
+  return (
+    networkName === "robinhood" || networkName.toLowerCase().includes("mainnet")
+  );
+}
+
 export function resolveGameTiming(networkName: string): GameTiming {
   const envDay = process.env.GAME_DAY_LENGTH_SEC?.trim();
   const envCommit = process.env.GAME_COMMIT_DURATION_SEC?.trim();
   const envReveal = process.env.GAME_REVEAL_DURATION_SEC?.trim();
+  const mainnet = isMainnetNetworkName(networkName);
+
+  // Mainnet must never inherit Testnet .env fast timings (common local bleed).
+  // Non-GDS Mainnet overrides require an explicit ceremony flag.
+  if (mainnet) {
+    if (process.env.GAME_FAST_TIMING?.trim() === "1") {
+      throw new Error(
+        "REFUSED: GAME_FAST_TIMING=1 is forbidden on Mainnet (mainnet|robinhood).",
+      );
+    }
+    const allowNonGds =
+      process.env.GAME_ALLOW_NON_GDS_TIMING?.trim() === "1";
+    if (!allowNonGds) {
+      if (envDay || envCommit || envReveal) {
+        console.warn(
+          "WARNING: Ignoring GAME_DAY/COMMIT/REVEAL_DURATION_SEC on Mainnet " +
+            "(Testnet .env bleed). Set GAME_ALLOW_NON_GDS_TIMING=1 to override intentionally.",
+        );
+      }
+      return {
+        dayLengthSec: PROD_DAY_LENGTH_SEC,
+        commitDurationSec: PROD_COMMIT_DURATION_SEC,
+        revealDurationSec: PROD_REVEAL_DURATION_SEC,
+        battleDurationSec: 0,
+        fast: false,
+      };
+    }
+  }
 
   if (envDay && envCommit) {
     const dayLengthSec = Number(envDay);
@@ -72,7 +106,8 @@ export function resolveGameTiming(networkName: string): GameTiming {
   const forceFast = process.env.GAME_FAST_TIMING?.trim() === "1";
   const forceProd = process.env.GAME_FAST_TIMING?.trim() === "0";
   const useFast =
-    forceFast || (networkName === "robinhoodTestnet" && !forceProd);
+    !mainnet &&
+    (forceFast || (networkName === "robinhoodTestnet" && !forceProd));
 
   if (useFast) {
     return {

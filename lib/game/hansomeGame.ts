@@ -1,15 +1,13 @@
 import type { Address } from "viem";
-import { robinhoodTestnetChain } from "@/lib/chain";
 import {
   resolveHansomeGameAddress,
   resolveOptionalConfiguredAddress,
   GAME_ADDRESS_ENV_KEYS,
 } from "@/lib/game/contractAddresses";
+import { resolveGameChainId } from "@/lib/game/gameNetwork";
 
-/** Same chain target as Genesis until mainnet game deploy. */
-export const GAME_CHAIN_ID = Number(
-  process.env.NEXT_PUBLIC_GAME_CHAIN_ID ?? robinhoodTestnetChain.id,
-);
+/** Game chain from NEXT_PUBLIC_GAME_CHAIN_ID (defaults Testnet until Mainnet cutover). */
+export const GAME_CHAIN_ID = resolveGameChainId();
 
 /**
  * Deployed HansomeGame — env only (NEXT_PUBLIC_HANSOME_GAME_ADDRESS).

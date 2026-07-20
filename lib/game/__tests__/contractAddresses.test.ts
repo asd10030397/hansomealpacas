@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  assertProductionGameAddresses,
   isSupersededContractAddress,
   resolveGenesisNftAddress,
   resolveHansomeGameAddress,
@@ -60,5 +61,13 @@ describe("contractAddresses fail-closed", () => {
     const r = resolveGenesisNftAddress();
     expect(r.ok).toBe(true);
     if (r.ok) expect(r.address).toBe(CANONICAL_GENESIS);
+  });
+
+  it("assertProductionGameAddresses requires game+genesis on Vercel production", () => {
+    vi.stubEnv("VERCEL_ENV", "production");
+    vi.stubEnv("NEXT_PUBLIC_GAME_CHAIN_ID", "46630");
+    vi.stubEnv("NEXT_PUBLIC_HANSOME_GAME_ADDRESS", CANONICAL_GAME);
+    vi.stubEnv("NEXT_PUBLIC_GENESIS_NFT_ADDRESS", CANONICAL_GENESIS);
+    expect(() => assertProductionGameAddresses()).not.toThrow();
   });
 });

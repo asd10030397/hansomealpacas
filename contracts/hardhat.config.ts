@@ -1,6 +1,7 @@
 import "@nomicfoundation/hardhat-toolbox";
 import { HardhatUserConfig } from "hardhat/config";
 import dotenv from "dotenv";
+import { resolveRobinhoodMainnetRpcUrl } from "./scripts/lib/robinhood-mainnet-rpc";
 
 dotenv.config();
 
@@ -36,8 +37,19 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {},
+    /**
+     * Robinhood Chain Mainnet ONLY (chainId 4663).
+     * RPC: https://rpc.mainnet.chain.robinhood.com
+     * Prefer `--network mainnet`; `robinhood` is an alias.
+     * Never use Testnet 46630 here — that is `robinhoodTestnet`.
+     */
+    mainnet: {
+      url: resolveRobinhoodMainnetRpcUrl(process.env.RH_RPC_URL),
+      chainId: 4663,
+      accounts,
+    },
     robinhood: {
-      url: envOr(process.env.RH_RPC_URL, "https://rpc.mainnet.chain.robinhood.com"),
+      url: resolveRobinhoodMainnetRpcUrl(process.env.RH_RPC_URL),
       chainId: 4663,
       accounts,
     },
@@ -52,10 +64,19 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
+      mainnet: "empty",
       robinhood: "empty",
       robinhoodTestnet: "empty",
     },
     customChains: [
+      {
+        network: "mainnet",
+        chainId: 4663,
+        urls: {
+          apiURL: "https://robinhoodchain.blockscout.com/api",
+          browserURL: "https://robinhoodchain.blockscout.com",
+        },
+      },
       {
         network: "robinhood",
         chainId: 4663,

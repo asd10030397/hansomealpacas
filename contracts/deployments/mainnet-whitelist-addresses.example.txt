@@ -1,0 +1,8 @@
+# Mainnet Genesis whitelist addresses (one per line).
+# Lines starting with # are ignored. Empty lines ignored.
+# Replace with the approved Mainnet list before generating the Merkle tree.
+# Do NOT reuse Testnet addresses or proofs.
+#
+# Example placeholders (NOT for Mainnet sale):
+0x1111111111111111111111111111111111111111
+0x2222222222222222222222222222222222222222

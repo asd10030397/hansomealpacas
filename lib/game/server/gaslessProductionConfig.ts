@@ -69,12 +69,14 @@ export function reportGaslessProductionConfig(): GaslessConfigStatus {
 
   if (status.issues.includes("relayer_key_missing")) {
     console.error(
-      "[hansome-gasless] PRODUCTION MISCONFIG: GAME_TESTNET_RELAYER_PRIVATE_KEY is missing. Gasless resolve is disabled.",
+      "[hansome-gasless] PRODUCTION MISCONFIG: relayer private key missing for active game chain " +
+        "(GAME_TESTNET_RELAYER_PRIVATE_KEY on 46630, GAME_MAINNET_RELAYER_PRIVATE_KEY on 4663). Gasless resolve is disabled.",
     );
   }
   if (status.issues.includes("vault_encryption_key_missing")) {
     console.error(
-      "[hansome-gasless] PRODUCTION MISCONFIG: GAME_TESTNET_COMMIT_VAULT_KEY is missing. Commit vault cannot encrypt salts.",
+      "[hansome-gasless] PRODUCTION MISCONFIG: commit vault key missing for active game chain " +
+        "(GAME_TESTNET_COMMIT_VAULT_KEY on 46630, GAME_MAINNET_COMMIT_VAULT_KEY on 4663). Commit vault cannot encrypt salts.",
     );
   }
   if (status.issues.includes("vault_storage_missing")) {

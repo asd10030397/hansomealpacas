@@ -6,7 +6,10 @@
 import "server-only";
 
 import { isHex, type Hex } from "viem";
-import { ROBINHOOD_TESTNET_CHAIN_ID } from "@/lib/chain";
+import {
+  ROBINHOOD_CHAIN_ID,
+  ROBINHOOD_TESTNET_CHAIN_ID,
+} from "@/lib/chain";
 import { GAME_CHAIN_ID, HANSOME_GAME_ADDRESS } from "@/lib/game/hansomeGame";
 import { isCommitVaultConfigured } from "@/lib/game/server/testnetCommitVaultConfig";
 
@@ -14,12 +17,17 @@ export const RELAYER_NOT_CONFIGURED_CODE = "RELAYER_NOT_CONFIGURED" as const;
 export const VAULT_NOT_CONFIGURED_CODE = "VAULT_NOT_CONFIGURED" as const;
 
 /**
- * Read the dedicated Testnet gasless relayer key only.
+ * Read the dedicated gasless relayer key for the active game chain only.
+ * Mainnet → GAME_MAINNET_RELAYER_PRIVATE_KEY (never Testnet key).
+ * Testnet → GAME_TESTNET_RELAYER_PRIVATE_KEY (never Mainnet key).
  * Never falls back to DEPLOYER / TREASURY / PRIVATE_KEY / owner wallets.
  * Never log or return the raw value to API clients.
  */
 export function readRelayerPrivateKey(): Hex | null {
-  const raw = process.env.GAME_TESTNET_RELAYER_PRIVATE_KEY?.trim() || "";
+  const raw =
+    GAME_CHAIN_ID === ROBINHOOD_CHAIN_ID
+      ? process.env.GAME_MAINNET_RELAYER_PRIVATE_KEY?.trim() || ""
+      : process.env.GAME_TESTNET_RELAYER_PRIVATE_KEY?.trim() || "";
   if (!raw) return null;
   const key = (raw.startsWith("0x") ? raw : `0x${raw}`) as Hex;
   return isHex(key) && key.length === 66 ? key : null;

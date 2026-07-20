@@ -223,7 +223,7 @@ export const zh: Messages = {
     meta: {
       title: "白皮書 | HANSOME ALPACAS",
       description:
-        "HANSOME ALPACAS 白皮書：創辦人的話、願景、代幣經濟學、金庫政策、流動性政策、營收策略、路線圖與常見問題——今天真正做到的事，以及老實說，我們想帶這隻帥羊駝走向哪裡。",
+        "HANSOME ALPACAS 白皮書：創辦人的話、願景、GameFi 經濟模型、代幣經濟學、金庫政策、流動性政策、營收策略、路線圖與常見問題——今天真正做到的事，以及老實說，我們想帶這隻帥羊駝走向哪裡。",
     },
     nav: {
       onThisPage: "本頁目錄",
@@ -233,6 +233,7 @@ export const zh: Messages = {
         vision: "願景",
         philosophy: "核心理念",
         "gameplay-overview": "遊戲簡介",
+        "gamefi-economic-model": "GameFi 經濟模型",
         tokenomics: "代幣經濟學",
         treasury: "金庫政策",
         liquidity: "流動性政策",
@@ -369,6 +370,39 @@ export const zh: Messages = {
         ],
         button: "查看完整遊戲內容",
         href: "/game",
+      },
+    },
+    gamefiEconomicModel: {
+      heading: "GameFi 經濟模型",
+      intro: [
+        "HANSOME：羊駝 VS 美洲獅是部署於 Robinhood Chain 的日結算 GameFi 經濟。每日獎勵由 GameTreasury 持有的 $HANSOME 支付——並非新鑄造。結果取決於參與度、決策、國庫健康度與市場條件。本節不承諾獲利或固定收益。",
+        "完整數學分析——排放階梯、獎池拆分、羊駝與美洲獅經濟、賽局框架、國庫跑道，以及相對於典型 P2E 為何朝向長期永續——已另以獨立報告公開，供玩家與研究者閱讀。",
+      ],
+      highlightsHeading: "模型說明重點",
+      highlights: [
+        "每日獎池 Rd = f(G)，採已實作階梯（當 G ≥ 0.70·G0 時 R0 = 400,000）",
+        "獎池拆分：羊駝 80% · 美洲獅基礎 10% · 狩獵 10%",
+        "守恆：玩家領取 + 懲罰 + 未分配 = Rd",
+        "粗略跑道示意：G0 / R0 ≈ 750 天（實際壽命隨階梯、sinks、Claim 而變）",
+        "雙邊價值：玩家決策與 NFT 效用，以及生態系可持續跑道",
+        "長期設計：固定供應＋國庫支付獎勵、階梯排放、玩家與生態對齊、羊駝／美洲獅相互需求（不保證獲利）",
+      ],
+      disclaimer:
+        "獎勵為有條件發放。未 Reveal、安全模式（G < Gsafe）或族群失衡都可能減少或取消當日收益。非投資建議。",
+      linksHeading: "經濟模型文件",
+      links: {
+        reportEn: "英文報告（Markdown）",
+        reportZh: "中文報告（Markdown）",
+        pdfEn: "下載 PDF（英文）",
+        pdfZh: "下載 PDF（中文）",
+        game: "開啟線上遊戲",
+      },
+      hrefs: {
+        reportEn: "/docs/HANSOME_GAME_ECONOMIC_MODEL_EN.md",
+        reportZh: "/docs/HANSOME_GAME_ECONOMIC_MODEL_ZH.md",
+        pdfEn: "/docs/HANSOME_GAME_ECONOMIC_MODEL_EN.pdf",
+        pdfZh: "/docs/HANSOME_GAME_ECONOMIC_MODEL_ZH.pdf",
+        game: "https://game.hansomealpacas.xyz/",
       },
     },
     tokenomics: {
@@ -686,6 +720,20 @@ export const zh: Messages = {
       heading: "更新紀錄",
       intro: "這裡記錄的是這份文件本身的修訂歷史，不是整個專案的完整歷史。",
       entries: [
+        {
+          version: "v1.7.1",
+          date: "2026 年 7 月",
+          changes: [
+            "經濟模型報告新增「長期永續設計」章節（與傳統 P2E 比較、固定供應、國庫控排放、玩家與生態對齊、羊駝／美洲獅雙邊經濟）。",
+          ],
+        },
+        {
+          version: "v1.7",
+          date: "2026 年 7 月",
+          changes: [
+            "新增「GameFi 經濟模型」章節，並連結雙語數學分析報告與 PDF（排放階梯、獎池拆分、永續性、雙邊價值）。",
+          ],
+        },
         {
           version: "v1.6",
           date: "2026 年 7 月",

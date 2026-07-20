@@ -148,6 +148,28 @@ export type LitepaperMessages = {
       href: string;
     };
   };
+  gamefiEconomicModel: {
+    heading: string;
+    intro: readonly string[];
+    highlightsHeading: string;
+    highlights: readonly string[];
+    disclaimer: string;
+    linksHeading: string;
+    links: {
+      reportEn: string;
+      reportZh: string;
+      pdfEn: string;
+      pdfZh: string;
+      game: string;
+    };
+    hrefs: {
+      reportEn: string;
+      reportZh: string;
+      pdfEn: string;
+      pdfZh: string;
+      game: string;
+    };
+  };
   sustainableEcosystem: {
     heading: string;
     paragraphs: readonly string[];

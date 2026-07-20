@@ -12,6 +12,7 @@ export const LITEPAPER_SECTION_ORDER: readonly string[] = [
   "vision",
   "philosophy",
   "gameplay-overview",
+  "gamefi-economic-model",
   "tokenomics",
   "treasury",
   "liquidity",
@@ -53,4 +54,10 @@ export const LIFECYCLE_LOOP_COUNT = 6;
 export const PDF_DOWNLOAD_PATHS: Record<"en" | "zh", string> = {
   en: "/docs/litepaper-en.pdf",
   zh: "/docs/litepaper-zh.pdf",
+};
+
+/** Standalone GameFi economic model PDFs (EN / ZH). */
+export const ECONOMIC_MODEL_PDF_PATHS: Record<"en" | "zh", string> = {
+  en: "/docs/HANSOME_GAME_ECONOMIC_MODEL_EN.pdf",
+  zh: "/docs/HANSOME_GAME_ECONOMIC_MODEL_ZH.pdf",
 };

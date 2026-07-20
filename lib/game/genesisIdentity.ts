@@ -94,8 +94,28 @@ export const PROD_DAY_LENGTH_SEC = 24 * 60 * 60;
 export const PROD_COMMIT_DURATION_SEC = 20 * 60 * 60;
 export const PROD_REVEAL_DURATION_SEC = 4 * 60 * 60;
 
-function envPositiveInt(name: string): number | null {
-  const raw = process.env[name]?.trim();
+/**
+ * Static NEXT_PUBLIC reads so Next.js inlines them into the browser bundle.
+ * Never use process.env[name] — dynamic keys are undefined client-side.
+ */
+function readPublicTimingSec(
+  key:
+    | "NEXT_PUBLIC_GAME_DAY_LENGTH_SEC"
+    | "NEXT_PUBLIC_GAME_COMMIT_DURATION_SEC"
+    | "NEXT_PUBLIC_GAME_REVEAL_DURATION_SEC",
+): number | null {
+  let raw = "";
+  switch (key) {
+    case "NEXT_PUBLIC_GAME_DAY_LENGTH_SEC":
+      raw = process.env.NEXT_PUBLIC_GAME_DAY_LENGTH_SEC?.trim() || "";
+      break;
+    case "NEXT_PUBLIC_GAME_COMMIT_DURATION_SEC":
+      raw = process.env.NEXT_PUBLIC_GAME_COMMIT_DURATION_SEC?.trim() || "";
+      break;
+    case "NEXT_PUBLIC_GAME_REVEAL_DURATION_SEC":
+      raw = process.env.NEXT_PUBLIC_GAME_REVEAL_DURATION_SEC?.trim() || "";
+      break;
+  }
   if (!raw) return null;
   const n = Number(raw);
   return Number.isFinite(n) && n > 0 ? Math.floor(n) : null;
@@ -103,11 +123,12 @@ function envPositiveInt(name: string): number | null {
 
 /** Day length used by UI countdown when live chain timings are not yet hydrated. */
 export const DAY_LENGTH_SEC =
-  envPositiveInt("NEXT_PUBLIC_GAME_DAY_LENGTH_SEC") ?? PROD_DAY_LENGTH_SEC;
+  readPublicTimingSec("NEXT_PUBLIC_GAME_DAY_LENGTH_SEC") ?? PROD_DAY_LENGTH_SEC;
 export const COMMIT_DURATION_SEC =
-  envPositiveInt("NEXT_PUBLIC_GAME_COMMIT_DURATION_SEC") ?? PROD_COMMIT_DURATION_SEC;
+  readPublicTimingSec("NEXT_PUBLIC_GAME_COMMIT_DURATION_SEC") ??
+  PROD_COMMIT_DURATION_SEC;
 export const REVEAL_DURATION_SEC =
-  envPositiveInt("NEXT_PUBLIC_GAME_REVEAL_DURATION_SEC") ??
+  readPublicTimingSec("NEXT_PUBLIC_GAME_REVEAL_DURATION_SEC") ??
   Math.max(1, DAY_LENGTH_SEC - COMMIT_DURATION_SEC);
 
 /** Production reveal metadata CID (Pinata). Override via env. */

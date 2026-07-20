@@ -11,6 +11,7 @@ import { computeCommitHash } from "@/lib/game/commitHash";
 import { GAME_CHAIN_ID, HANSOME_GAME_ADDRESS } from "@/lib/game/hansomeGame";
 import {
   isCommitVaultConfigured,
+  readVaultEncryptionKeyRaw,
   redisConnectionEnv,
   vaultDriver,
 } from "@/lib/game/server/testnetCommitVaultConfig";
@@ -52,7 +53,7 @@ export function __setCommitVaultKvForTests(kv: VaultKv | null): void {
 }
 
 function readVaultEncryptionKey(): Buffer | null {
-  const raw = process.env.GAME_TESTNET_COMMIT_VAULT_KEY?.trim() || "";
+  const raw = readVaultEncryptionKeyRaw();
   if (!raw) return null;
   if (/^[0-9a-fA-F]{64}$/.test(raw)) {
     return Buffer.from(raw, "hex");

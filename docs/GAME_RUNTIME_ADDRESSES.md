@@ -1,7 +1,26 @@
-# Game runtime addresses & settlement (Testnet)
+# Game runtime addresses & settlement
 
 > **Policy:** Active runtime never silently falls back to superseded deployments.
 > Set env explicitly. See `lib/game/contractAddresses.ts`.
+>
+> **Mainnet game suite:** **NOT DEPLOYED** (as of this document). Only the
+> `$HANSOME` ERC-20 exists on Robinhood Mainnet (`4663`). Do not set
+> `NEXT_PUBLIC_GAME_CHAIN_ID=4663` until verified Mainnet game/genesis/distributor
+> addresses are written here and into Vercel Production.
+>
+> Vercel cutover runbook: [`MAINNET_VERCEL_CUTOVER.md`](./MAINNET_VERCEL_CUTOVER.md).
+
+## Canonical Robinhood Mainnet (partial)
+
+| Role | Address | Status |
+|------|---------|--------|
+| $HANSOME token | `0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875` | Deployed (see `contracts/deployments/robinhood.json`) |
+| HansomeGame | — | **HARD BLOCKER — not deployed** |
+| Genesis NFT | — | **HARD BLOCKER — not deployed** |
+| RewardDistributor | — | **HARD BLOCKER — not deployed** |
+| GameRandomness | — | **HARD BLOCKER — not deployed** |
+
+Chain: `4663` · RPC `https://rpc.mainnet.chain.robinhood.com` · Explorer `https://robinhoodchain.blockscout.com`
 
 ## Canonical Robinhood Testnet suite
 

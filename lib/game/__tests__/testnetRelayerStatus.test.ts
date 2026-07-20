@@ -109,4 +109,27 @@ describe("testnetRelayerStatus", () => {
     expect(mod.readRelayerPrivateKey()).toBeNull();
     expect(mod.isRelayerConfigured()).toBe(false);
   });
+
+  it("Mainnet mode never reads GAME_TESTNET_RELAYER_PRIVATE_KEY", async () => {
+    vi.stubEnv("NEXT_PUBLIC_GAME_CHAIN_ID", "4663");
+    vi.stubEnv("GAME_TESTNET_RELAYER_PRIVATE_KEY", FAKE_RELAYER_KEY);
+    vi.stubEnv("GAME_MAINNET_RELAYER_PRIVATE_KEY", "");
+    vi.stubEnv(
+      "NEXT_PUBLIC_HANSOME_GAME_ADDRESS",
+      "0x1111111111111111111111111111111111111111",
+    );
+
+    const mod = await import("@/lib/game/server/testnetRelayerStatus");
+    expect(mod.readRelayerPrivateKey()).toBeNull();
+    expect(mod.isTestnetGaslessFeatureEnabled()).toBe(false);
+  });
+
+  it("Mainnet mode reads only GAME_MAINNET_RELAYER_PRIVATE_KEY", async () => {
+    vi.stubEnv("NEXT_PUBLIC_GAME_CHAIN_ID", "4663");
+    vi.stubEnv("GAME_TESTNET_RELAYER_PRIVATE_KEY", FAKE_OTHER_KEY);
+    vi.stubEnv("GAME_MAINNET_RELAYER_PRIVATE_KEY", FAKE_RELAYER_KEY);
+
+    const mod = await import("@/lib/game/server/testnetRelayerStatus");
+    expect(mod.readRelayerPrivateKey()).toBe(FAKE_RELAYER_KEY);
+  });
 });

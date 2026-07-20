@@ -1,24 +1,52 @@
 /**
- * Deploy HANSOME gameplay suite on Robinhood Testnet.
+ * Deploy HANSOME gameplay suite (Treasury, Emission, Distributor, GameRandomness,
+ * HansomeGame, SinkRegistry) and wire links.
+ *
+ * Default: Testnet. Mainnet requires ALLOW_MAINNET_DEPLOY + CONFIRM (or DRY_RUN).
  *
  * Env:
  *   GENESIS_NFT_ADDRESS     — default: deployments/<network>-genesis.json
- *   GAME_TOKEN_ADDRESS      — optional existing ERC-20; else deploys HansomeAlpacas to deployer
- *   GAME_DAY_ZERO           — unix seconds; default: start of current commit window
+ *   GAME_TOKEN_ADDRESS      — optional existing ERC-20; else deploys HansomeAlpacas (Testnet only)
+ *                             Mainnet: must be canonical $HANSOME
+ *   GAME_DAY_ZERO           — unix seconds; Mainnet: REQUIRED (no "now" default)
  *   GAME_DAY_LENGTH_SEC / GAME_COMMIT_DURATION_SEC — optional timing overrides
- *   GAME_FAST_TIMING=0|1    — robinhoodTestnet defaults to fast (2m/2m); set 0 for GDS 20h/4h
+ *   GAME_FAST_TIMING=0|1    — robinhoodTestnet defaults to fast (2m/2m); Mainnet must be 0/unset
+ *   RANDOMNESS_PROVIDER     — Mainnet: REQUIRED; set on GameRandomness after deploy
  *   GAME_TREASURY_FUND_ETH  — whole HANSOME to fund treasury (default 300000000 = G0)
  *   SKIP_TREASURY_FUND=1    — skip token transfer into treasury
+ *   DRY_RUN=1               — plan only; write *.dry-run.json; no txs
+ *   ALLOW_MAINNET_DEPLOY=1 / CONFIRM_MAINNET_DEPLOY=I_UNDERSTAND — Mainnet live writes
  *
- * Usage: npx hardhat run scripts/deploy-game.ts --network robinhoodTestnet
+ * Usage:
+ *   npx hardhat run scripts/deploy-game.ts --network robinhoodTestnet
+ *   GAME_FAST_TIMING=0 DRY_RUN=1 npx hardhat run scripts/deploy-game.ts --network mainnet
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { ethers, network } from "hardhat";
 import { resolveGameTiming } from "./lib/game-timing";
+import {
+  assertChainIdMatchesNetwork,
+  assertKnownNetwork,
+  assertMainnetDeployAllowed,
+  deploymentFileStem,
+  explorerBase,
+  isDryRun,
+  isMainnetNetwork,
+  logDeployBanner,
+  logLiveMainnetPreflight,
+} from "./lib/deploy-network-guard";
+import {
+  assertCanonicalMainnetHansome,
+  assertNotTestnetContractAddress,
+  CANONICAL_MAINNET_HANSOME,
+  requireMainnetGameDayZero,
+  requireMainnetRandomnessProvider,
+} from "./lib/mainnet-game-guards";
 import { getDeployerSigner } from "./lib/signer";
 
-const DEFAULT_GENESIS = "0x43c1d6aF194A796EC612F2bAC04085a409A1347C";
+/** Testnet-only fallback — never used when isMainnet=true. */
+const DEFAULT_TESTNET_GENESIS = "0x43c1d6aF194A796EC612F2bAC04085a409A1347C";
 
 type GameDeploymentRecord = {
   network: string;
@@ -33,6 +61,7 @@ type GameDeploymentRecord = {
   distributor: string;
   randomness: string;
   sinks: string;
+  randomnessProvider: string;
   dayZero: number;
   dayLengthSec: number;
   commitDurationSec: number;
@@ -45,43 +74,257 @@ type GameDeploymentRecord = {
   deployer: string;
 };
 
-async function resolveGenesis(): Promise<string> {
+async function resolveGenesis(
+  isMainnet: boolean,
+  fileStem: string,
+): Promise<string> {
+  let resolved: string;
   if (process.env.GENESIS_NFT_ADDRESS?.trim()) {
-    return ethers.getAddress(process.env.GENESIS_NFT_ADDRESS.trim());
+    resolved = ethers.getAddress(process.env.GENESIS_NFT_ADDRESS.trim());
+  } else {
+    const candidates = [
+      join(__dirname, "..", "deployments", `${fileStem}-genesis.json`),
+      join(__dirname, "..", "deployments", `${network.name}-genesis.json`),
+    ];
+    resolved = "";
+    for (const genesisPath of candidates) {
+      if (existsSync(genesisPath)) {
+        const rec = JSON.parse(readFileSync(genesisPath, "utf8")) as {
+          address: string;
+        };
+        resolved = ethers.getAddress(rec.address);
+        break;
+      }
+    }
+    if (!resolved) {
+      if (isMainnet) {
+        throw new Error(
+          "REFUSED: Mainnet deploy-game requires explicit GENESIS_NFT_ADDRESS " +
+            "or deployments/robinhood-genesis.json. No Testnet Genesis fallback.",
+        );
+      }
+      resolved = ethers.getAddress(DEFAULT_TESTNET_GENESIS);
+    }
   }
-  const genesisPath = join(__dirname, "..", "deployments", `${network.name}-genesis.json`);
-  if (existsSync(genesisPath)) {
-    const rec = JSON.parse(readFileSync(genesisPath, "utf8")) as { address: string };
-    return ethers.getAddress(rec.address);
+  if (isMainnet) {
+    assertNotTestnetContractAddress("Genesis NFT", resolved);
   }
-  return ethers.getAddress(DEFAULT_GENESIS);
+  return resolved;
 }
 
 async function main() {
-  const deployer = await getDeployerSigner(ethers.provider);
   const chainId = Number((await ethers.provider.getNetwork()).chainId);
-  const genesis = await resolveGenesis();
+  const ctx = { networkName: network.name, chainId };
+  assertKnownNetwork(ctx.networkName);
+  assertChainIdMatchesNetwork(ctx);
+  if (isMainnetNetwork(ctx)) {
+    assertMainnetDeployAllowed(ctx, "deploy-game.ts");
+  }
 
-  console.log("Network:", network.name, "chainId:", chainId);
-  console.log("Deployer:", deployer.address);
-  console.log("Genesis:", genesis);
+  const fileStem = deploymentFileStem(ctx);
+  const deployer = await getDeployerSigner(ethers.provider);
+  const isMainnet = isMainnetNetwork(ctx);
+
+  if (isMainnet && !process.env.GENESIS_NFT_ADDRESS?.trim()) {
+    const genesisFile = join(
+      __dirname,
+      "..",
+      "deployments",
+      `${fileStem}-genesis.json`,
+    );
+    if (!existsSync(genesisFile)) {
+      throw new Error(
+        "REFUSED: Mainnet requires GENESIS_NFT_ADDRESS (explicit) or deployments/robinhood-genesis.json from deploy-genesis.",
+      );
+    }
+  }
+  if (isMainnet && !process.env.GAME_TOKEN_ADDRESS?.trim()) {
+    throw new Error(
+      `REFUSED: Mainnet requires explicit GAME_TOKEN_ADDRESS (expected ${CANONICAL_MAINNET_HANSOME}).`,
+    );
+  }
+  if (
+    isMainnet &&
+    process.env.SKIP_TREASURY_FUND !== "1" &&
+    !process.env.GAME_TREASURY_FUND_ETH?.trim()
+  ) {
+    throw new Error(
+      "REFUSED: Mainnet requires explicit GAME_TREASURY_FUND_ETH or SKIP_TREASURY_FUND=1 (no silent 300M fund).",
+    );
+  }
+
+  const genesis = await resolveGenesis(isMainnet, fileStem);
+  const timing = resolveGameTiming(network.name);
+
+  if (isMainnet && timing.fast) {
+    throw new Error(
+      "REFUSED: Mainnet must use production GDS timings. Set GAME_FAST_TIMING=0 and unset 120s overrides.",
+    );
+  }
+
+  // Mainnet: explicit GAME_DAY_ZERO required. Testnet may compute later.
+  const mainnetDayZero = isMainnet ? requireMainnetGameDayZero() : null;
+
+  const randomnessProvider = isMainnet
+    ? requireMainnetRandomnessProvider(deployer.address)
+    : ethers.getAddress(
+        process.env.RANDOMNESS_PROVIDER?.trim() || deployer.address,
+      );
+
+  logDeployBanner("deploy-game.ts", ctx, {
+    DEPLOYER: deployer.address,
+    GENESIS: genesis,
+    TOKEN_ENV: process.env.GAME_TOKEN_ADDRESS?.trim() || "(deploy new / default)",
+    TIMING: timing.fast ? "FAST" : "GDS",
+    COMMIT_SEC: timing.commitDurationSec,
+    REVEAL_SEC: timing.revealDurationSec,
+    DAY_SEC: timing.dayLengthSec,
+    DAY_ZERO:
+      mainnetDayZero ??
+      (process.env.GAME_DAY_ZERO?.trim() || "(computed)"),
+    RANDOMNESS_PROVIDER: randomnessProvider,
+    EXPLORER: explorerBase(ctx),
+  });
 
   let tokenAddress: string;
   let tokenDeployed = false;
   if (process.env.GAME_TOKEN_ADDRESS?.trim()) {
     tokenAddress = ethers.getAddress(process.env.GAME_TOKEN_ADDRESS.trim());
+    if (isMainnet) {
+      tokenAddress = assertCanonicalMainnetHansome(tokenAddress);
+    }
     console.log("Using existing token:", tokenAddress);
+  } else if (isMainnet) {
+    tokenAddress = assertCanonicalMainnetHansome(CANONICAL_MAINNET_HANSOME);
   } else {
-    // Deployer has 0 of the public testnet HANSOME; mint a dedicated game-reward token.
-    const tokenFactory = await ethers.getContractFactory("HansomeAlpacas", deployer);
-    const token = await tokenFactory.deploy(deployer.address);
-    await token.waitForDeployment();
-    tokenAddress = await token.getAddress();
-    tokenDeployed = true;
-    console.log("Deployed game reward token:", tokenAddress);
+    if (isDryRun()) {
+      tokenAddress = ethers.ZeroAddress;
+      tokenDeployed = true;
+      console.log("DRY_RUN: would deploy new HansomeAlpacas reward token");
+    } else {
+      const tokenFactory = await ethers.getContractFactory(
+        "HansomeAlpacas",
+        deployer,
+      );
+      const token = await tokenFactory.deploy(deployer.address);
+      await token.waitForDeployment();
+      tokenAddress = await token.getAddress();
+      tokenDeployed = true;
+      console.log("Deployed game reward token:", tokenAddress);
+    }
   }
 
-  const token = await ethers.getContractAt("HansomeAlpacas", tokenAddress, deployer);
+  if (isDryRun()) {
+    let plannedDayZero: number;
+    if (isMainnet) {
+      plannedDayZero = mainnetDayZero as number;
+    } else {
+      const latest = await ethers.provider.getBlock("latest");
+      const now = latest?.timestamp ?? 0;
+      const defaultDayZero = timing.fast
+        ? now
+        : now - (timing.commitDurationSec - 10 * 60);
+      plannedDayZero = process.env.GAME_DAY_ZERO?.trim()
+        ? Number(process.env.GAME_DAY_ZERO.trim())
+        : defaultDayZero;
+    }
+    const plan = {
+      mode: "DRY_RUN",
+      script: "deploy-game.ts",
+      network: ctx.networkName,
+      chainId: ctx.chainId,
+      deploymentFileStem: fileStem,
+      deployer: deployer.address,
+      genesis,
+      token: tokenAddress,
+      tokenDeployed,
+      randomnessProvider,
+      timing,
+      dayZero: plannedDayZero,
+      postDeploy: [
+        randomnessProvider.toLowerCase() === deployer.address.toLowerCase()
+          ? "GameRandomness.randomnessProvider remains deployer (constructor default)"
+          : `GameRandomness.setRandomnessProvider(${randomnessProvider})`,
+      ],
+      deploymentOrder: [
+        "GameTreasury",
+        "EmissionController",
+        "RewardDistributor",
+        "GameRandomness",
+        "HansomeGame",
+        "SinkRegistry",
+        "link treasury+distributor",
+        "setRandomnessProvider (if != deployer)",
+        "optional treasury fund",
+      ],
+      links: [
+        "treasury.setGame(game)",
+        "treasury.setDistributor(distributor)",
+        "treasury.setSinkRegistry(sinks)",
+        "distributor.setGame(game)",
+      ],
+      fundTreasury:
+        process.env.SKIP_TREASURY_FUND === "1"
+          ? "SKIP"
+          : process.env.GAME_TREASURY_FUND_ETH?.trim() ||
+            (timing.fast ? "50000000" : "300000000"),
+      note:
+        "GameRandomness + RewardDistributor are deployed inside this script (no separate scripts).",
+      generatedAt: new Date().toISOString(),
+    };
+    const deploymentsDir = join(__dirname, "..", "deployments");
+    mkdirSync(deploymentsDir, { recursive: true });
+    const outPath = join(deploymentsDir, `${fileStem}-game.dry-run.json`);
+    writeFileSync(outPath, `${JSON.stringify(plan, null, 2)}\n`);
+    console.log("DRY_RUN complete — no transactions sent.");
+    console.log("Wrote", outPath);
+    return;
+  }
+
+  // Live path — resolve dayZero for Testnet if needed.
+  let resolvedDayZero: number;
+  if (isMainnet) {
+    resolvedDayZero = mainnetDayZero as number;
+  } else {
+    const latest = await ethers.provider.getBlock("latest");
+    if (!latest) throw new Error("Missing latest block");
+    const now = latest.timestamp;
+    const defaultDayZero = timing.fast
+      ? now
+      : now - (timing.commitDurationSec - 10 * 60);
+    resolvedDayZero = process.env.GAME_DAY_ZERO?.trim()
+      ? Number(process.env.GAME_DAY_ZERO.trim())
+      : defaultDayZero;
+    if (!Number.isFinite(resolvedDayZero) || resolvedDayZero <= 0) {
+      throw new Error("Invalid GAME_DAY_ZERO");
+    }
+  }
+
+  if (isMainnet) {
+    logLiveMainnetPreflight("deploy-game.ts", ctx, {
+      deployer: deployer.address,
+      genesis,
+      token: tokenAddress,
+      randomnessProvider,
+      commitDurationSec: timing.commitDurationSec,
+      revealDurationSec: timing.revealDurationSec,
+      dayLengthSec: timing.dayLengthSec,
+      dayZero: resolvedDayZero,
+      fundTreasury:
+        process.env.SKIP_TREASURY_FUND === "1"
+          ? "SKIP"
+          : process.env.GAME_TREASURY_FUND_ETH?.trim() || "?",
+      outputJson: `deployments/${fileStem}-game.json`,
+      plannedOwner: process.env.MAINNET_OWNER?.trim() || "(transfer later)",
+    });
+  }
+
+  console.log("CHAIN_ID before tx:", ctx.chainId);
+  const token = await ethers.getContractAt(
+    "HansomeAlpacas",
+    tokenAddress,
+    deployer,
+  );
 
   const treasury = await (
     await ethers.getContractFactory("GameTreasury", deployer)
@@ -95,6 +338,12 @@ async function main() {
   await emission.waitForDeployment();
   console.log("EmissionController:", await emission.getAddress());
 
+  console.log(
+    "RewardDistributor constructor: genesis=",
+    genesis,
+    "treasury=",
+    await treasury.getAddress(),
+  );
   const distributor = await (
     await ethers.getContractFactory("RewardDistributor", deployer)
   ).deploy(genesis, await treasury.getAddress(), deployer.address);
@@ -107,7 +356,6 @@ async function main() {
   await randomness.waitForDeployment();
   console.log("GameRandomness:", await randomness.getAddress());
 
-  const timing = resolveGameTiming(network.name);
   console.log(
     "Timing:",
     timing.fast ? "FAST (testnet QA)" : "PRODUCTION (GDS)",
@@ -117,20 +365,19 @@ async function main() {
     `day=${timing.dayLengthSec}s`,
   );
 
-  const latest = await ethers.provider.getBlock("latest");
-  if (!latest) throw new Error("Missing latest block");
-  const now = latest.timestamp;
-  // Fast: start day 0 now (full commit window). Prod: ~10 min commit remaining.
-  const defaultDayZero = timing.fast
-    ? now
-    : now - (timing.commitDurationSec - 10 * 60);
-  const dayZero = process.env.GAME_DAY_ZERO?.trim()
-    ? Number(process.env.GAME_DAY_ZERO.trim())
-    : defaultDayZero;
-  if (!Number.isFinite(dayZero) || dayZero <= 0) {
-    throw new Error("Invalid GAME_DAY_ZERO");
-  }
-
+  console.log("CHAIN_ID before HansomeGame tx:", ctx.chainId);
+  console.log("HansomeGame constructor targets:", {
+    genesis,
+    treasury: await treasury.getAddress(),
+    emission: await emission.getAddress(),
+    distributor: await distributor.getAddress(),
+    randomness: await randomness.getAddress(),
+    dayZero: resolvedDayZero,
+    dayLengthSec: timing.dayLengthSec,
+    commitDurationSec: timing.commitDurationSec,
+    revealDurationSec: timing.revealDurationSec,
+    owner: deployer.address,
+  });
   const game = await (
     await ethers.getContractFactory("HansomeGame", deployer)
   ).deploy(
@@ -139,7 +386,7 @@ async function main() {
     await emission.getAddress(),
     await distributor.getAddress(),
     await randomness.getAddress(),
-    dayZero,
+    resolvedDayZero,
     timing.dayLengthSec,
     timing.commitDurationSec,
     timing.revealDurationSec,
@@ -153,13 +400,13 @@ async function main() {
   console.log("HansomeGame:", await game.getAddress());
   console.log(
     "dayZero:",
-    dayZero,
+    resolvedDayZero,
     "commitEndsAt:",
-    dayZero + timing.commitDurationSec,
+    resolvedDayZero + timing.commitDurationSec,
     "revealEndsAt:",
-    dayZero + timing.commitDurationSec + timing.revealDurationSec,
+    resolvedDayZero + timing.commitDurationSec + timing.revealDurationSec,
     "dayEndsAt:",
-    dayZero + timing.dayLengthSec,
+    resolvedDayZero + timing.dayLengthSec,
   );
 
   const sinks = await (
@@ -168,14 +415,50 @@ async function main() {
   await sinks.waitForDeployment();
   console.log("SinkRegistry:", await sinks.getAddress());
 
-  await (await treasury.setGame(await game.getAddress())).wait();
-  await (await treasury.setDistributor(await distributor.getAddress())).wait();
-  await (await treasury.setSinkRegistry(await sinks.getAddress())).wait();
-  await (await distributor.setGame(await game.getAddress())).wait();
+  const gameAddr = await game.getAddress();
+  const distAddr = await distributor.getAddress();
+  const sinksAddr = await sinks.getAddress();
+  console.log(
+    "Linking (onlyOwner): treasury.setGame/setDistributor/setSinkRegistry; distributor.setGame",
+  );
+  console.log(
+    "  game=",
+    gameAddr,
+    "distributor=",
+    distAddr,
+    "sinks=",
+    sinksAddr,
+  );
+  await (await treasury.setGame(gameAddr)).wait();
+  await (await treasury.setDistributor(distAddr)).wait();
+  await (await treasury.setSinkRegistry(sinksAddr)).wait();
+  await (await distributor.setGame(gameAddr)).wait();
+  console.log("Linking complete.");
+
+  const currentProvider = ethers.getAddress(
+    await randomness.randomnessProvider(),
+  );
+  if (currentProvider !== randomnessProvider) {
+    console.log(
+      `GameRandomness.setRandomnessProvider(${randomnessProvider}) (was ${currentProvider})`,
+    );
+    await (await randomness.setRandomnessProvider(randomnessProvider)).wait();
+  } else {
+    console.log(
+      "GameRandomness.randomnessProvider already",
+      randomnessProvider,
+      "(constructor default)",
+    );
+  }
+  const finalProvider = ethers.getAddress(await randomness.randomnessProvider());
+  if (finalProvider !== randomnessProvider) {
+    throw new Error(
+      `REFUSED: randomnessProvider mismatch after set — want ${randomnessProvider}, got ${finalProvider}`,
+    );
+  }
 
   let treasuryFundedWei = "0";
   if (process.env.SKIP_TREASURY_FUND !== "1") {
-    // Testnet default 50M (above G_SAFE); production/mainnet still prefers full G0 when set.
     const fundWhole =
       process.env.GAME_TREASURY_FUND_ETH?.trim() ??
       (timing.fast ? "50000000" : "300000000");
@@ -187,12 +470,17 @@ async function main() {
           `Set GAME_TREASURY_FUND_ETH lower, fund the deployer, or SKIP_TREASURY_FUND=1.`,
       );
     }
+    console.log(
+      "Funding GameTreasury (claim payer) with",
+      fundWhole,
+      "tokens →",
+      await treasury.getAddress(),
+    );
     await (await token.transfer(await treasury.getAddress(), fund)).wait();
     treasuryFundedWei = fund.toString();
     console.log("Funded treasury:", ethers.formatEther(fund), "HANSOME");
   }
 
-  // Sanity: day 0 should be CommitOpen with default dayZero.
   const state = await game.dayState(0);
   console.log("dayState(0):", Number(state), "(1=CommitOpen)");
 
@@ -209,7 +497,8 @@ async function main() {
     distributor: await distributor.getAddress(),
     randomness: await randomness.getAddress(),
     sinks: await sinks.getAddress(),
-    dayZero,
+    randomnessProvider: finalProvider,
+    dayZero: resolvedDayZero,
     dayLengthSec: timing.dayLengthSec,
     commitDurationSec: timing.commitDurationSec,
     revealDurationSec: timing.revealDurationSec,
@@ -223,31 +512,48 @@ async function main() {
 
   const deploymentsDir = join(__dirname, "..", "deployments");
   mkdirSync(deploymentsDir, { recursive: true });
-  const outPath = join(deploymentsDir, `${network.name}-game.json`);
+  const outPath = join(deploymentsDir, `${fileStem}-game.json`);
   writeFileSync(outPath, `${JSON.stringify(record, null, 2)}\n`);
   console.log("Wrote", outPath);
+  console.log("Saved addresses:", {
+    game: record.address,
+    distributor: record.distributor,
+    randomness: record.randomness,
+    randomnessProvider: record.randomnessProvider,
+    treasury: record.treasury,
+    genesis: record.genesis,
+    token: record.token,
+  });
 
-  const reportPath = join(deploymentsDir, `${network.name}-game-report.md`);
+  const reportPath = join(deploymentsDir, `${fileStem}-game-report.md`);
   writeFileSync(
     reportPath,
     [
-      `# Game deploy report — ${network.name}`,
+      `# Game deploy report — ${network.name} (stem=${fileStem})`,
       "",
       `- HansomeGame: \`${record.address}\``,
       `- RewardDistributor: \`${record.distributor}\``,
+      `- GameRandomness: \`${record.randomness}\``,
+      `- randomnessProvider: \`${record.randomnessProvider}\``,
       `- GameTreasury: \`${record.treasury}\``,
+      `- SinkRegistry: \`${record.sinks}\``,
       `- Token: \`${record.token}\`${tokenDeployed ? " (deployed for game funding)" : ""}`,
       `- Genesis: \`${record.genesis}\``,
       `- dayZero: \`${record.dayZero}\``,
       `- Timing: commit \`${record.commitDurationSec}s\` / reveal \`${record.revealDurationSec}s\` / day \`${record.dayLengthSec}s\`${record.fastTiming ? " (fast testnet)" : " (production GDS)"}`,
       `- Deploy tx: \`${record.deployTxHash}\``,
       `- Deployer: \`${record.deployer}\``,
-      `- Explorer: https://explorer.testnet.chain.robinhood.com/address/${record.address}`,
+      `- Explorer: ${explorerBase(ctx)}/address/${record.address}`,
       "",
       "Next:",
       "```bash",
-      "npx hardhat run scripts/sync-game-env.ts --network robinhoodTestnet",
-      "npx hardhat run scripts/validate-game-flow.ts --network robinhoodTestnet",
+      isMainnet
+        ? "npx hardhat run scripts/verify-mainnet-game.ts --network mainnet"
+        : "npx hardhat run scripts/sync-game-env.ts --network robinhoodTestnet",
+      isMainnet
+        ? "DRY_RUN=1 MAINNET_OWNER=0x… npx hardhat run scripts/transfer-mainnet-ownership.ts --network mainnet"
+        : "npx hardhat run scripts/validate-game-flow.ts --network robinhoodTestnet",
+      isMainnet ? "# Then Vercel cutover — docs/MAINNET_VERCEL_CUTOVER.md" : "",
       "```",
       "",
     ].join("\n"),

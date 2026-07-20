@@ -6,6 +6,8 @@
 
 import "server-only";
 
+import { isGameMainnetMode } from "@/lib/game/gameNetwork";
+
 function redisUrl(): string {
   return (
     process.env.KV_REST_API_URL?.trim() ||
@@ -26,9 +28,22 @@ export function hasRedisEnv(): boolean {
   return Boolean(redisUrl() && redisToken());
 }
 
-/** True when GAME_TESTNET_COMMIT_VAULT_KEY looks like a 32-byte key. */
+/**
+ * Vault encryption key for the active game chain only.
+ * Mainnet → GAME_MAINNET_COMMIT_VAULT_KEY (never copy Testnet key).
+ * Testnet → GAME_TESTNET_COMMIT_VAULT_KEY.
+ * Never log the raw value.
+ */
+export function readVaultEncryptionKeyRaw(): string {
+  if (isGameMainnetMode()) {
+    return process.env.GAME_MAINNET_COMMIT_VAULT_KEY?.trim() || "";
+  }
+  return process.env.GAME_TESTNET_COMMIT_VAULT_KEY?.trim() || "";
+}
+
+/** True when the active-chain commit vault key looks like a 32-byte key. */
 export function hasVaultEncryptionKey(): boolean {
-  const raw = process.env.GAME_TESTNET_COMMIT_VAULT_KEY?.trim() || "";
+  const raw = readVaultEncryptionKeyRaw();
   if (!raw) return false;
   if (/^[0-9a-fA-F]{64}$/.test(raw)) return true;
   // Standard base64 for 32 bytes is 44 chars with padding.

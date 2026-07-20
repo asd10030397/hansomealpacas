@@ -228,7 +228,7 @@ export const en: Messages = {
     meta: {
       title: "Litepaper | HANSOME ALPACAS",
       description:
-        "The HANSOME ALPACAS litepaper: founder letter, vision, tokenomics, treasury policy, liquidity policy, revenue strategy, roadmap, and FAQ — what's true today, and honestly, where we're hoping to take this handsome alpaca next.",
+        "The HANSOME ALPACAS litepaper: founder letter, vision, GameFi economic model, tokenomics, treasury policy, liquidity policy, revenue strategy, roadmap, and FAQ — what's true today, and honestly, where we're hoping to take this handsome alpaca next.",
     },
     nav: {
       onThisPage: "On this page",
@@ -238,6 +238,7 @@ export const en: Messages = {
         vision: "Vision",
         philosophy: "Core Philosophy",
         "gameplay-overview": "Gameplay Overview",
+        "gamefi-economic-model": "GameFi Economic Model",
         tokenomics: "Tokenomics",
         treasury: "Treasury Policy",
         liquidity: "Liquidity Policy",
@@ -376,6 +377,39 @@ export const en: Messages = {
         ],
         button: "EXPLORE THE GAME",
         href: "/game",
+      },
+    },
+    gamefiEconomicModel: {
+      heading: "GameFi Economic Model",
+      intro: [
+        "HANSOME: Alpacas vs Cougars is a day-settled GameFi economy on Robinhood Chain. Daily rewards are paid from the GameTreasury balance of $HANSOME — they are not newly minted. Outcomes depend on participation, decisions, treasury health, and market conditions. This section does not promise profits or fixed yields.",
+        "The full mathematical analysis — emission bands, pool splits, Alpaca vs Cougar economics, game-theory framing, treasury runway, and why the design targets long-term sustainability versus typical P2E — is published as a standalone report for players and researchers.",
+      ],
+      highlightsHeading: "What the model explains",
+      highlights: [
+        "Daily pool Rd = f(G) with implemented step bands (R0 = 400,000 when G ≥ 0.70·G0)",
+        "Pool split: Alpaca 80% · Cougar base 10% · Hunting 10%",
+        "Conservation: player claims + penalties + unallocated = Rd",
+        "Gross runway illustration: G0 / R0 ≈ 750 days (actual life varies with step-downs, sinks, and claims)",
+        "Two-sided value: player agency and NFT utility alongside sustainable ecosystem runway",
+        "Long-term design: fixed-supply rewards from GameTreasury, step-down emission, player–ecosystem alignment, Alpaca/Cougar mutual demand (no profit guarantees)",
+      ],
+      disclaimer:
+        "Rewards are contingent. Missing Reveal, safe mode (G < Gsafe), or population imbalance can reduce or eliminate a day’s earnings. Not investment advice.",
+      linksHeading: "Economic Model documents",
+      links: {
+        reportEn: "English report (Markdown)",
+        reportZh: "Chinese report (Markdown)",
+        pdfEn: "Download PDF (English)",
+        pdfZh: "Download PDF (Chinese)",
+        game: "Open the live game",
+      },
+      hrefs: {
+        reportEn: "/docs/HANSOME_GAME_ECONOMIC_MODEL_EN.md",
+        reportZh: "/docs/HANSOME_GAME_ECONOMIC_MODEL_ZH.md",
+        pdfEn: "/docs/HANSOME_GAME_ECONOMIC_MODEL_EN.pdf",
+        pdfZh: "/docs/HANSOME_GAME_ECONOMIC_MODEL_ZH.pdf",
+        game: "https://game.hansomealpacas.xyz/",
       },
     },
     tokenomics: {
@@ -712,6 +746,20 @@ export const en: Messages = {
       heading: "Changelog",
       intro: "A record of this document's own revisions — not the whole project's history, just this litepaper.",
       entries: [
+        {
+          version: "v1.7.1",
+          date: "July 2026",
+          changes: [
+            "Expanded the GameFi Economic Model report with a long-term sustainability section (P2E comparison, fixed supply, treasury-gated emission, player–ecosystem alignment, Alpaca/Cougar two-sided economy).",
+          ],
+        },
+        {
+          version: "v1.7",
+          date: "July 2026",
+          changes: [
+            "Added a GameFi Economic Model section with links to the bilingual mathematical analysis report and PDFs (emission bands, pool splits, sustainability, two-sided value).",
+          ],
+        },
         {
           version: "v1.6",
           date: "July 2026",

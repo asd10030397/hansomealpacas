@@ -16,12 +16,10 @@ import {
   getGenesisExplorerAddressUrl,
   getGenesisExplorerTxUrl,
 } from "@/lib/game/genesis";
-import testnetWhitelist from "@/lib/game/testnet/whitelistProofs.TESTNET-ONLY.json";
+import { resolveWhitelistProofs } from "@/lib/game/whitelistProofs";
 
-const testnetProofs =
-  GENESIS_CHAIN_ID === 46630
-    ? (testnetWhitelist.proofs as Record<string, `0x${string}`[]>)
-    : null;
+/** Testnet → TESTNET-ONLY JSON; Mainnet → MAINNET JSON when generated (else null). */
+const whitelistProofs = resolveWhitelistProofs(GENESIS_CHAIN_ID);
 
 export function MintPanel() {
   const { t } = useGameI18n();
@@ -31,7 +29,7 @@ export function MintPanel() {
     switchToGenesisChain,
     isPending: walletPending,
   } = useWalletUi();
-  const mint = useGenesisMint({ whitelistProofs: testnetProofs });
+  const mint = useGenesisMint({ whitelistProofs });
   const [qty, setQty] = useState(1);
 
   useEffect(() => {

@@ -4,7 +4,7 @@
  */
 
 export const VAULT_PERSIST_FAILED_MESSAGE =
-  "Commit secret could not be saved to the battle vault. On-chain commit was not submitted. Check your connection and try again — if this keeps happening, the Testnet vault is misconfigured.";
+  "Commit secret could not be saved to the battle vault. On-chain commit was not submitted. Check your connection and try again — if this keeps happening, the battle vault is temporarily unavailable.";
 
 export type GaslessPersistGateInput = {
   gaslessEnabled: boolean;

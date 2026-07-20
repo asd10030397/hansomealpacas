@@ -17,11 +17,23 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { ethers, network } from "hardhat";
+import {
+  assertTestnetOnlyScript,
+  isDryRun,
+  logDeployBanner,
+} from "./lib/deploy-network-guard";
 import { getDeployerSigner } from "./lib/signer";
 
 async function main() {
-  if (network.name === "robinhood" || network.name.toLowerCase().includes("mainnet")) {
-    throw new Error("REFUSED: do not fund Mainnet with tHANSOME helpers.");
+  const chainId = Number((await ethers.provider.getNetwork()).chainId);
+  const ctx = { networkName: network.name, chainId };
+  assertTestnetOnlyScript(ctx, "fund-test-reward-distributor.ts");
+  if (isDryRun()) {
+    logDeployBanner("fund-test-reward-distributor.ts", ctx, {
+      NOTE: "DRY_RUN — no funding tx",
+    });
+    console.log("DRY_RUN complete — no transactions sent.");
+    return;
   }
 
   const deployer = await getDeployerSigner(ethers.provider);

@@ -4,6 +4,10 @@
  */
 
 import { getAddress, type Address, isAddress, zeroAddress } from "viem";
+import {
+  assertGameNetworkConfig,
+  isGameMainnetMode,
+} from "@/lib/game/gameNetwork";
 
 /** Known superseded Testnet deployments — must not appear as active runtime fallbacks. */
 export const SUPERSEDED_TESTNET_ADDRESSES = [
@@ -17,8 +21,23 @@ export const SUPERSEDED_TESTNET_ADDRESSES = [
   "0x00ba30dFf570367136471aF8F9EF910BB0C81B60",
 ] as const;
 
+/**
+ * Live canonical Robinhood Testnet suite — forbidden when Mainnet mode (4663).
+ * Source: docs/GAME_RUNTIME_ADDRESSES.md / robinhoodTestnet-game.json
+ */
+export const CANONICAL_TESTNET_SUITE_ADDRESSES = [
+  "0x92C8e9CCF67e533438bCCE258D4bEEc6E0559FC5", // HansomeGame
+  "0x43c1d6aF194A796EC612F2bAC04085a409A1347C", // Genesis NFT
+  "0x7Fb2437542041AbaC22E0A88dF2e0A9c3346e1d2", // RewardDistributor
+  "0x45F9FFaC891e06E83a5A315E4fE1B55E5b6b438F", // GameRandomness
+] as const;
+
 export const SUPERSEDED_ADDRESS_SET = new Set(
   SUPERSEDED_TESTNET_ADDRESSES.map((a) => a.toLowerCase()),
+);
+
+export const CANONICAL_TESTNET_SUITE_SET = new Set(
+  CANONICAL_TESTNET_SUITE_ADDRESSES.map((a) => a.toLowerCase()),
 );
 
 export function isSupersededContractAddress(
@@ -26,6 +45,13 @@ export function isSupersededContractAddress(
 ): boolean {
   if (!value || !isAddress(value)) return false;
   return SUPERSEDED_ADDRESS_SET.has(value.toLowerCase());
+}
+
+export function isCanonicalTestnetSuiteAddress(
+  value: string | null | undefined,
+): boolean {
+  if (!value || !isAddress(value)) return false;
+  return CANONICAL_TESTNET_SUITE_SET.has(value.toLowerCase());
 }
 
 export type AddressResolveResult =
@@ -91,7 +117,7 @@ export function resolveConfiguredAddress(
   if (isSupersededContractAddress(address)) {
     return {
       ok: false,
-      error: `${label} address ${address} is a superseded deployment. Use the canonical Testnet suite address.`,
+      error: `${label} address ${address} is a superseded deployment. Use the canonical suite address.`,
     };
   }
   return { ok: true, address };
@@ -151,14 +177,59 @@ export function resolveRandomnessAddress(): Address | null {
   );
 }
 
+function rejectTestnetSuiteOnMainnet(
+  label: string,
+  address: Address,
+): void {
+  if (isCanonicalTestnetSuiteAddress(address)) {
+    throw new Error(
+      `[hansome] Mainnet mode must not use Testnet ${label} address ${address}.`,
+    );
+  }
+}
+
 /**
- * Production fail-closed check. Call from server routes / instrumentation
- * when game config is required — do not throw at module import time.
+ * Production fail-closed check for Vercel Production and Mainnet cutover.
+ * Skips local `next build` / Preview unless chain is Mainnet (4663).
  */
 export function assertProductionGameAddresses(): void {
-  if (process.env.NODE_ENV !== "production") return;
+  const isVercelProduction = process.env.VERCEL_ENV === "production";
+  const isMainnetGame = isGameMainnetMode();
+  if (!isVercelProduction && !isMainnetGame) return;
+
+  assertGameNetworkConfig();
+
   const game = resolveHansomeGameAddress();
   if (!game.ok) {
     throw new Error(`[hansome] ${game.error}`);
+  }
+  const genesis = resolveGenesisNftAddress();
+  if (!genesis.ok) {
+    throw new Error(`[hansome] ${genesis.error}`);
+  }
+
+  if (isMainnetGame) {
+    rejectTestnetSuiteOnMainnet("HansomeGame", game.address);
+    rejectTestnetSuiteOnMainnet("Genesis NFT", genesis.address);
+
+    const distributor = resolveRewardDistributorAddress();
+    if (!distributor.ok) {
+      throw new Error(`[hansome] ${distributor.error}`);
+    }
+    rejectTestnetSuiteOnMainnet("RewardDistributor", distributor.address);
+
+    const randomness = resolveRandomnessAddress();
+    if (!randomness) {
+      throw new Error(
+        "[hansome] Mainnet mode requires NEXT_PUBLIC_RANDOMNESS_ADDRESS.",
+      );
+    }
+    rejectTestnetSuiteOnMainnet("GameRandomness", randomness);
+
+    if (isSupersededContractAddress(game.address)) {
+      throw new Error(
+        `[hansome] Mainnet game address must not be a superseded Testnet deployment.`,
+      );
+    }
   }
 }
