@@ -22,21 +22,25 @@ export type PageBgTheme =
 
 export const PAGE_BG_EVENT = "hansome:page-bg";
 
-/** Primary URLs — WebP for performance. PNG siblings exist for authoring. */
+/**
+ * Primary URLs — WebP for performance.
+ * HOME (`navHome`) + MINT (`home`) keep legacy assets unchanged.
+ * PLAY / battle / nfts / claim / leaderboard / docs use scenic layers.
+ */
 export const PAGE_BG_URLS: Record<PageBgTheme, string> = {
-  world: "/game/backgrounds/world.webp",
+  world: "/game/backgrounds/scenic/play-battlefield.webp",
   home: "/game/backgrounds/home.webp",
-  mountain: "/game/backgrounds/mountain.webp",
-  grassland: "/game/backgrounds/grassland.webp",
-  forest: "/game/backgrounds/forest.webp",
-  river: "/game/backgrounds/river.webp",
-  battle: "/game/backgrounds/battle.webp",
-  reward: "/game/backgrounds/reward.webp",
+  mountain: "/game/maps/mountain.png",
+  grassland: "/game/maps/grassland.png",
+  forest: "/game/maps/forest.png",
+  river: "/game/maps/river.png",
+  battle: "/game/backgrounds/scenic/battle-field.webp",
+  reward: "/game/backgrounds/scenic/claim-vault-v2.webp",
   navHome: "/game/backgrounds/nav-home.webp",
-  nfts: "/game/backgrounds/nfts.webp",
-  rewards: "/game/backgrounds/rewards.webp",
-  leaderboard: "/game/backgrounds/leaderboard.webp",
-  docs: "/game/backgrounds/docs.webp",
+  nfts: "/game/backgrounds/scenic/nfts-ranch.webp",
+  rewards: "/game/backgrounds/scenic/claim-vault-v2.webp",
+  leaderboard: "/game/backgrounds/scenic/leaderboard-hall-v2.webp",
+  docs: "/game/backgrounds/scenic/docs-library.webp",
 };
 
 const LOCATION_THEME: Record<LocationId, PageBgTheme> = {

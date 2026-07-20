@@ -1,0 +1,228 @@
+/**
+ * Layered scenic backgrounds for PLAY / MY NFTs / CLAIM / LEADERBOARD / DOCS.
+ * HOME (navHome) and MINT (home) stay on the legacy CSS image path.
+ */
+
+.game-scenic {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hansome-game-shell {
+  position: relative;
+  isolation: isolate;
+}
+
+.hansome-game-shell .hansome-game-main,
+.hansome-game-shell .game-nav,
+.hansome-game-shell .game-chrome,
+.hansome-game-shell > a {
+  position: relative;
+  z-index: 1;
+}
+
+/* When scenic is active, shell bg image is replaced by layers */
+.hansome-game[data-scenic="on"] {
+  background-image: none !important;
+  background-color: #0e121c;
+  transition: background-color 280ms ease;
+}
+
+.game-scenic__sky,
+.game-scenic__art,
+.game-scenic__clouds,
+.game-scenic__depth,
+.game-scenic__wash {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.game-scenic__sky {
+  transform: scale(1.02);
+}
+
+.game-scenic__art {
+  image-rendering: auto;
+  filter: contrast(1.04) saturate(1.05);
+}
+
+.game-scenic__clouds {
+  background-image: url("/game/backgrounds/scenic/clouds.svg");
+  background-size: 48% auto;
+  background-repeat: repeat-x;
+  background-position: 0 12%;
+  opacity: 0.28;
+  mix-blend-mode: screen;
+}
+
+.game-scenic__clouds--b {
+  background-size: 36% auto;
+  background-position: 20% 22%;
+  opacity: 0.18;
+}
+
+.game-scenic--animated .game-scenic__clouds--a {
+  animation: game-scenic-drift 96s linear infinite;
+}
+
+.game-scenic--animated .game-scenic__clouds--b {
+  animation: game-scenic-drift 140s linear infinite reverse;
+}
+
+@keyframes game-scenic-drift {
+  from {
+    background-position-x: 0;
+  }
+  to {
+    background-position-x: 1200px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-scenic--animated .game-scenic__clouds--a,
+  .game-scenic--animated .game-scenic__clouds--b {
+    animation: none;
+  }
+}
+
+.game-scenic__depth {
+  background: linear-gradient(
+    180deg,
+    rgba(6, 10, 18, 0.15) 0%,
+    transparent 28%,
+    transparent 55%,
+    rgba(6, 10, 18, 0.35) 100%
+  );
+}
+
+/* Readable wash — lighter than the old 0.7–0.9 black overlays */
+.game-scenic__wash {
+  background: linear-gradient(
+    180deg,
+    rgba(8, 11, 18, 0.42) 0%,
+    rgba(10, 14, 22, 0.5) 48%,
+    rgba(8, 11, 18, 0.68) 100%
+  );
+}
+
+/* —— PLAY / Battle —— */
+.game-scenic--play .game-scenic__sky,
+.game-scenic--battle .game-scenic__sky {
+  background: linear-gradient(180deg, #1a2740 0%, #243552 42%, #1c2838 100%);
+}
+
+.game-scenic--play .game-scenic__art {
+  background-image: url("/game/backgrounds/scenic/play-battlefield.webp");
+  background-position: center 40%;
+}
+
+.game-scenic--battle .game-scenic__art {
+  background-image: url("/game/backgrounds/scenic/battle-field.webp");
+  background-position: center 38%;
+}
+
+.game-scenic--battle .game-scenic__wash {
+  background: linear-gradient(
+    180deg,
+    rgba(8, 10, 16, 0.48) 0%,
+    rgba(10, 12, 20, 0.55) 50%,
+    rgba(6, 8, 14, 0.72) 100%
+  );
+}
+
+/* —— MY NFTs / Ranch —— */
+.game-scenic--ranch .game-scenic__sky {
+  background: linear-gradient(180deg, #2a3a28 0%, #3a4a30 50%, #1e281c 100%);
+}
+
+.game-scenic--ranch .game-scenic__art {
+  background-image: url("/game/backgrounds/scenic/nfts-ranch.webp");
+  background-position: center 55%;
+}
+
+.game-scenic--ranch .game-scenic__wash {
+  background: linear-gradient(
+    180deg,
+    rgba(12, 14, 10, 0.4) 0%,
+    rgba(14, 16, 12, 0.52) 50%,
+    rgba(8, 10, 8, 0.7) 100%
+  );
+}
+
+/* —— CLAIM / Vault —— */
+.game-scenic--vault .game-scenic__sky {
+  background: linear-gradient(180deg, #1a1410 0%, #2a1c14 50%, #120e0c 100%);
+}
+
+.game-scenic--vault .game-scenic__art {
+  background-image: url("/game/backgrounds/scenic/claim-vault-v2.webp");
+  background-position: center 45%;
+}
+
+.game-scenic--vault .game-scenic__wash {
+  background: linear-gradient(
+    180deg,
+    rgba(14, 10, 8, 0.45) 0%,
+    rgba(16, 12, 10, 0.55) 50%,
+    rgba(8, 8, 12, 0.72) 100%
+  );
+}
+
+/* —— LEADERBOARD / Hall —— */
+.game-scenic--hall .game-scenic__sky {
+  background: linear-gradient(180deg, #121820 0%, #1a2230 50%, #0e1218 100%);
+}
+
+.game-scenic--hall .game-scenic__art {
+  background-image: url("/game/backgrounds/scenic/leaderboard-hall-v2.webp");
+  background-position: center 42%;
+}
+
+.game-scenic--hall .game-scenic__wash {
+  background: linear-gradient(
+    180deg,
+    rgba(8, 10, 18, 0.48) 0%,
+    rgba(10, 12, 20, 0.56) 50%,
+    rgba(6, 8, 14, 0.74) 100%
+  );
+}
+
+/* —— DOCS / Library —— */
+.game-scenic--library .game-scenic__sky {
+  background: linear-gradient(180deg, #1c1814 0%, #2a221c 50%, #14100e 100%);
+}
+
+.game-scenic--library .game-scenic__art {
+  background-image: url("/game/backgrounds/scenic/docs-library.webp");
+  background-position: center 48%;
+}
+
+.game-scenic--library .game-scenic__wash {
+  /* Stronger wash — docs need clean reading contrast */
+  background: linear-gradient(
+    180deg,
+    rgba(10, 12, 18, 0.55) 0%,
+    rgba(12, 14, 20, 0.62) 45%,
+    rgba(8, 10, 16, 0.78) 100%
+  );
+}
+
+@media (max-width: 639px) {
+  .game-scenic__art {
+    background-position: center center;
+  }
+
+  .game-scenic--ranch .game-scenic__art {
+    background-position: center 48%;
+  }
+
+  .game-scenic__clouds {
+    opacity: 0.2;
+  }
+}

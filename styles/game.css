@@ -76,46 +76,45 @@ html.hansome-game-route body.hansome-game-route {
 }
 
 .hansome-game[data-bg="mountain"] {
-  --hg-bg-image: url("/game/backgrounds/mountain.webp");
+  --hg-bg-image: url("/game/maps/mountain.png");
   --hg-bg-overlay: linear-gradient(
     180deg,
-    rgba(10, 12, 22, 0.66) 0%,
-    rgba(12, 14, 24, 0.74) 50%,
-    rgba(8, 10, 18, 0.88) 100%
+    rgba(10, 12, 22, 0.45) 0%,
+    rgba(12, 14, 24, 0.52) 50%,
+    rgba(8, 10, 18, 0.7) 100%
   );
   background-position: center 40%, center 40%;
 }
 
 .hansome-game[data-bg="grassland"] {
-  --hg-bg-image: url("/game/backgrounds/grassland.webp");
-  /* Brighter art — stronger wash for UI contrast */
+  --hg-bg-image: url("/game/maps/grassland.png");
   --hg-bg-overlay: linear-gradient(
     180deg,
-    rgba(12, 10, 8, 0.72) 0%,
-    rgba(14, 12, 10, 0.78) 45%,
-    rgba(8, 10, 14, 0.9) 100%
+    rgba(12, 10, 8, 0.48) 0%,
+    rgba(14, 12, 10, 0.55) 45%,
+    rgba(8, 10, 14, 0.72) 100%
   );
   background-position: center 55%, center 55%;
 }
 
 .hansome-game[data-bg="forest"] {
-  --hg-bg-image: url("/game/backgrounds/forest.webp");
+  --hg-bg-image: url("/game/maps/forest.png");
   --hg-bg-overlay: linear-gradient(
     180deg,
-    rgba(6, 12, 12, 0.64) 0%,
-    rgba(8, 14, 16, 0.72) 50%,
-    rgba(6, 10, 12, 0.88) 100%
+    rgba(6, 12, 12, 0.45) 0%,
+    rgba(8, 14, 16, 0.52) 50%,
+    rgba(6, 10, 12, 0.7) 100%
   );
   background-position: center, center;
 }
 
 .hansome-game[data-bg="river"] {
-  --hg-bg-image: url("/game/backgrounds/river.webp");
+  --hg-bg-image: url("/game/maps/river.png");
   --hg-bg-overlay: linear-gradient(
     180deg,
-    rgba(6, 10, 20, 0.66) 0%,
-    rgba(8, 12, 22, 0.74) 50%,
-    rgba(6, 8, 16, 0.9) 100%
+    rgba(6, 10, 20, 0.45) 0%,
+    rgba(8, 12, 22, 0.52) 50%,
+    rgba(6, 8, 16, 0.72) 100%
   );
   background-position: center 45%, center 45%;
 }

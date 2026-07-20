@@ -1,0 +1,71 @@
+{
+  "generatedAt": "2026-07-20T01:46:44.074Z",
+  "model": "hybrid-project-pays-reveal-finalize-credit",
+  "rows": [
+    {
+      "n": 50,
+      "alpacas": 45,
+      "cougars": 5,
+      "revealBatchTx": 1,
+      "creditBatchTx": 1,
+      "revealGasTotal": "4190051",
+      "revealGasPeak": "4190051",
+      "finalizeGas": "796038",
+      "creditGasTotal": "1954120",
+      "creditGasPeak": "1954120",
+      "projectGasTotal": "6940209"
+    },
+    {
+      "n": 100,
+      "alpacas": 91,
+      "cougars": 9,
+      "revealBatchTx": 2,
+      "creditBatchTx": 2,
+      "revealGasTotal": "8341129",
+      "revealGasPeak": "4173251",
+      "finalizeGas": "1414931",
+      "creditGasTotal": "5108685",
+      "creditGasPeak": "2556157",
+      "projectGasTotal": "14864745"
+    },
+    {
+      "n": 250,
+      "alpacas": 227,
+      "cougars": 23,
+      "revealBatchTx": 5,
+      "creditBatchTx": 5,
+      "revealGasTotal": "20794297",
+      "revealGasPeak": "4173989",
+      "finalizeGas": "3273944",
+      "creditGasTotal": "22010985",
+      "creditGasPeak": "4416021",
+      "projectGasTotal": "46079226"
+    },
+    {
+      "n": 400,
+      "alpacas": 364,
+      "cougars": 36,
+      "revealBatchTx": 8,
+      "creditBatchTx": 8,
+      "revealGasTotal": "33247600",
+      "revealGasPeak": "4174814",
+      "finalizeGas": "5156098",
+      "creditGasTotal": "50252590",
+      "creditGasPeak": "6298968",
+      "projectGasTotal": "88656288"
+    },
+    {
+      "n": 550,
+      "alpacas": 500,
+      "cougars": 50,
+      "revealBatchTx": 11,
+      "creditBatchTx": 11,
+      "revealGasTotal": "45695956",
+      "revealGasPeak": "4170812",
+      "finalizeGas": "7051351",
+      "creditGasTotal": "89931412",
+      "creditGasPeak": "8195072",
+      "projectGasTotal": "142678719"
+    }
+  ]
+}
