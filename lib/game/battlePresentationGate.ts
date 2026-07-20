@@ -8,7 +8,10 @@
  * React effect cleanup must never clear presentationComplete or force-navigate.
  */
 
-import type { SettlementUiStatus } from "@/lib/game/settlementStatus";
+import {
+  isSettlementBattleReady,
+  type SettlementUiStatus,
+} from "@/lib/game/settlementStatus";
 
 type Listener = () => void;
 
@@ -127,21 +130,23 @@ export function subscribeBattlePresentation(listener: Listener): () => void {
   };
 }
 
-/** Unfinished settlement UI — all non-completed statuses count as preparing. */
+/** Unfinished settlement UI — preparing until battle-ready (not until credits done). */
 export function isBattleSettlementPreparing(input: {
   status: SettlementUiStatus;
   revealing?: boolean;
 }): boolean {
   if (input.revealing) return true;
-  return input.status !== "completed";
+  return !isSettlementBattleReady(input.status);
 }
 
-/** Battle-ready for VFX: UI completed (finalized or settled) with presentable rows. */
+/** Battle-ready for VFX: finalized on-chain (credits may still batch). */
 export function isBattlePresentationDataReady(input: {
   status: SettlementUiStatus;
   hasPresentableRows: boolean;
 }): boolean {
-  return input.status === "completed" && input.hasPresentableRows;
+  return (
+    isSettlementBattleReady(input.status) && input.hasPresentableRows
+  );
 }
 
 export function resetBattlePresentationGateForTests(): void {

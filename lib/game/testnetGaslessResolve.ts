@@ -46,6 +46,12 @@ export type TestnetResolveResponse = {
   alreadySettled?: boolean;
   /** True when finalizeDay has run (battle outcomes ready; credits may remain). */
   finalized?: boolean;
+  /** Alias of finalized — battle outcomes ready for presentation. */
+  battleReady?: boolean;
+  /** Battle ready but creditBatch still in progress. */
+  creditsPending?: boolean;
+  /** Alias of alreadySettled. */
+  fullySettled?: boolean;
   seedSkipped?: boolean;
   revealed?: number;
   revealTxHash?: Hex | null;

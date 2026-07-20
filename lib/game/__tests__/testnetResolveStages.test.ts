@@ -5,13 +5,13 @@ import {
 } from "@/lib/game/testnetResolveStages";
 
 describe("stageFromResolveFlags", () => {
-  it("marks completed only when credits are done", () => {
+  it("marks completed only when credits are done; finalized → crediting", () => {
     expect(
       stageFromResolveFlags({ alreadySettled: true }),
     ).toBe("completed");
     expect(
       stageFromResolveFlags({ settleTxHash: "0xabc", finalized: true }),
-    ).toBe("finalizing");
+    ).toBe("crediting");
   });
 
   it("marks waiting_seed when seed missing", () => {

@@ -9,6 +9,8 @@ export type TestnetResolveStage =
   | "revealing"
   | "settling"
   | "finalizing"
+  /** Battle finalized; creditBatch still running in background. */
+  | "crediting"
   | "completed"
   | "error";
 
@@ -47,8 +49,9 @@ export function stageFromResolveFlags(input: {
   if (input.alreadySettled || input.settledOnChain) {
     return "completed";
   }
+  // Battle-ready: outcomes exist; rewards still crediting.
   if (input.finalized) {
-    return "finalizing";
+    return "crediting";
   }
   if (input.settleTxHash === undefined && input.hasSeed === false) {
     return "waiting_seed";

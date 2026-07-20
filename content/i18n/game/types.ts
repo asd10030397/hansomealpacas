@@ -386,6 +386,8 @@ export type GameMessages = {
     previousDayBattleNote: (day: number) => string;
     /** Failsafe: settle/presentation stuck — do not auto-leave Result. */
     presentationRecoveryNote: string;
+    /** Non-blocking: battle ready, creditBatch still running. */
+    rewardsFinalizingNote: string;
     arenaEyebrow: string;
     revealSectionTitle: string;
     settleSectionTitle: string;

@@ -35,6 +35,10 @@ import {
   setPresentationQueueActive,
   subscribeBattlePresentation,
 } from "@/lib/game/battlePresentationGate";
+import {
+  isSettlementBattleReady,
+  isSettlementRewardProcessing,
+} from "@/lib/game/settlementStatus";
 import { formatCountdown } from "@/lib/game/phaseStatus";
 import {
   GAME_SECTION_IDS,
@@ -67,6 +71,7 @@ function resolveStageLabel(
   if (stage === "revealing") return t.result.resolveStages.revealing;
   if (stage === "settling") return t.result.resolveStages.settling;
   if (stage === "finalizing") return t.result.resolveStages.finalizing;
+  if (stage === "crediting") return t.result.rewardsFinalizingNote;
   if (stage === "completed") return t.result.resolveStages.completed;
   if (stage === "error") return t.result.resolveStages.error;
   return null;
@@ -96,7 +101,7 @@ export default function ResultPhasePage() {
   const showingPreviousDay = viewDay !== day.day;
 
   const sub = resultSubstep(phase, {
-    settled: settleView.status === "completed",
+    settled: isSettlementBattleReady(settleView.status),
   });
 
   const hasPresentableRows = settleView.rows.some(
@@ -132,8 +137,11 @@ export default function ResultPhasePage() {
     setPresentationPreparing(RESULT_PRESENTATION_OWNER, preparing);
     setPresentationQueueActive(RESULT_PRESENTATION_OWNER, queueActive);
 
-    // Authoritative complete: battle presented + cues idle (or no cues to play).
-    if (settleView.status === "completed" && queueStatus === "idle") {
+    // Authoritative complete: battle presented + cues idle (do not wait for credits).
+    if (
+      isSettlementBattleReady(settleView.status) &&
+      queueStatus === "idle"
+    ) {
       markBattlePresentationComplete(walletKey, settleView.day);
     }
 
@@ -332,7 +340,14 @@ export default function ResultPhasePage() {
         </div>
       ) : null}
 
-      {showPreparing || (stageLabel && settleView.status !== "completed") ? (
+      {isSettlementRewardProcessing(settleView.status) ? (
+        <div className="mt-4" data-testid="result-rewards-finalizing">
+          <GameFeedback tone="pending" label={t.result.rewardsFinalizingNote} />
+        </div>
+      ) : null}
+
+      {showPreparing ||
+      (stageLabel && !isSettlementBattleReady(settleView.status)) ? (
         <div className="mt-4" data-testid="result-post-reveal-staging">
           <GameFeedback
             tone="pending"
@@ -365,7 +380,7 @@ export default function ResultPhasePage() {
         eyebrow={settleView.live ? "ON-CHAIN" : "MOCK / LOCAL"}
       >
         <p className="pixel-title text-sm text-[#f0c44a]">
-          {stageLabel && settleView.status !== "completed"
+          {stageLabel && !isSettlementBattleReady(settleView.status)
             ? stageLabel
             : settleStatusLabel}
         </p>

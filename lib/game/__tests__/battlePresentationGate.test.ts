@@ -85,17 +85,20 @@ describe("preparing + battle-ready helpers", () => {
       ).toBe(true);
     }
     expect(
-      isBattleSettlementPreparing({ status: "completed", revealing: false }),
+      isBattleSettlementPreparing({ status: "battle_ready", revealing: false }),
     ).toBe(false);
     expect(
-      isBattleSettlementPreparing({ status: "completed", revealing: true }),
+      isBattleSettlementPreparing({ status: "fully_settled", revealing: false }),
+    ).toBe(false);
+    expect(
+      isBattleSettlementPreparing({ status: "battle_ready", revealing: true }),
     ).toBe(true);
   });
 
-  it("finalized/completed can begin presentation before credits finish", () => {
+  it("battle_ready can begin presentation before credits finish", () => {
     expect(
       isBattlePresentationDataReady({
-        status: "completed",
+        status: "battle_ready",
         hasPresentableRows: true,
       }),
     ).toBe(true);
@@ -107,7 +110,7 @@ describe("preparing + battle-ready helpers", () => {
     ).toBe(false);
     expect(
       isBattlePresentationDataReady({
-        status: "completed",
+        status: "battle_ready",
         hasPresentableRows: false,
       }),
     ).toBe(false);

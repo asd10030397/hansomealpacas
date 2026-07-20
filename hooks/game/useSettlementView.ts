@@ -52,6 +52,7 @@ import {
 import { selectPersonalBattleTokenIds } from "@/lib/game/personalBattleReport";
 import {
   deriveSettlementUiStatus,
+  isSettlementRewardProcessing,
   settlementStatusLabel,
   type SettlementUiStatus,
 } from "@/lib/game/settlementStatus";
@@ -947,6 +948,10 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
         status === "waiting_seed" ||
         status === "processing"),
     isFinalized: finalized,
+    isFullySettled: settled,
+    battleReady,
+    creditsPending: battleReady && !settled,
+    rewardProcessing: isSettlementRewardProcessing(status),
     resolveStage: resolveSnap?.stage ?? null,
     resolveRunning: gaslessSettlePending,
     runSettle,

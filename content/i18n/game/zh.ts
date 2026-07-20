@@ -464,6 +464,7 @@ export const gameZh: GameMessages = {
     previousDayBattleNote: (day) => `顯示第 ${day} 日戰鬥結果（上一輪）。`,
     presentationRecoveryNote:
       "戰鬥結果呈現時間較長。請留在此頁等待完成。準備好後可從選單進入「選擇地點」。",
+    rewardsFinalizingNote: "獎勵正在結算中。",
     arenaEyebrow: "競技場 · 戰鬥結果",
     revealSectionTitle: "自動揭露",
     settleSectionTitle: "結算",

@@ -69,7 +69,13 @@ const CLAIMABLE = 6;
 /** Must match HansomeGame.MAX_REVEAL_BATCH / MAX_CREDIT_BATCH. */
 const MAX_REVEAL_BATCH = 50;
 const MAX_CREDIT_BATCH = 50;
+/** Credits per poll after battle is already ready (background progress). */
 const MAX_CREDIT_LOOPS = 32;
+/**
+ * When this request just ran finalizeDay, return immediately so the client can
+ * show Battle Result. Credits continue on subsequent polls.
+ */
+const CREDIT_LOOPS_AFTER_FRESH_FINALIZE = 0;
 
 /** Count Revealed events in a reveal tx (Home cannot be verified via locationOf). */
 async function countRevealedInTx(
@@ -274,12 +280,18 @@ export async function POST(req: Request) {
       vaultCount: vaultSecretCountForDay(day),
       requestId: timing.requestId,
     });
+    const battleReady = dayFinalized || alreadySettled;
+    const creditsPending = battleReady && !alreadySettled;
     return NextResponse.json({
       ok: true,
       enabled: true,
       day,
       alreadySettled,
-      finalized: dayFinalized || alreadySettled,
+      /** @deprecated use battleReady — true when finalizeDay done. */
+      finalized: battleReady,
+      battleReady,
+      creditsPending,
+      fullySettled: alreadySettled,
       seedSkipped,
       revealed,
       revealTxHash,
@@ -293,29 +305,51 @@ export async function POST(req: Request) {
   };
 
   try {
+    const tRpc0 = performance.now();
+    timing.log("rpc_read_start", { stage: "checking", detail: "isSettled" });
     const settledEarly = await publicClient.readContract({
       address: game,
       abi: hansomeGameAbi,
       functionName: "isSettled",
       args: [BigInt(day)],
     });
+    timing.log("rpc_read_end", {
+      stage: "checking",
+      detail: "isSettled",
+      rpcMs: msSince(tRpc0),
+      ok: true,
+    });
     if (settledEarly) {
       alreadySettled = true;
       dayFinalized = true;
       seedSkipped = true;
       hasSeed = true;
+      timing.log("skipped_call", {
+        stage: "completed",
+        skipped: true,
+        detail: "already_settled_early",
+      });
       return jsonOk();
     }
 
+    const tRand = performance.now();
     const randomness = (await publicClient.readContract({
       address: game,
       abi: hansomeGameAbi,
       functionName: "randomness",
     })) as Address;
+    timing.log("rpc_read_end", {
+      detail: "randomness",
+      rpcMs: msSince(tRand),
+    });
 
     // Parallel initial reads — cut idle RPC round-trips before first write.
     {
       const tSeed = performance.now();
+      timing.log("rpc_read_start", {
+        stage: "waiting_seed",
+        detail: "dayState+hasDaySeed",
+      });
       const [dayStateRaw, hasSeedRaw] = await Promise.all([
         publicClient.readContract({
           address: game,
@@ -330,8 +364,17 @@ export async function POST(req: Request) {
           args: [BigInt(day)],
         }),
       ]);
+      timing.log("rpc_read_end", {
+        stage: "waiting_seed",
+        detail: "dayState+hasDaySeed",
+        rpcMs: msSince(tSeed),
+      });
       let dayState = Number(dayStateRaw);
       hasSeed = Boolean(hasSeedRaw);
+      timing.log("settlement_stage", {
+        stage: hasSeed ? "settling" : "waiting_seed",
+        detail: `dayState=${dayState};hasSeed=${hasSeed}`,
+      });
 
       // ── 1) Seed: check → fulfill only if needed (idempotent) ──────────
       if (fulfillSeed && !hasSeed && dayState >= REVEAL_OPEN) {
@@ -361,12 +404,19 @@ export async function POST(req: Request) {
               abi: gameRandomnessAbi,
               functionName: "fulfillDaySeed",
               args: [BigInt(day), seed],
+              timing,
+              timingLabel: "fulfillDaySeed",
             });
             hasSeed = true;
             seedMs = msSince(tSeed);
           } catch (e) {
             const msg = e instanceof Error ? e.message : String(e);
             if (!isSeedAlreadySetError(msg)) throw e;
+            timing.log("skipped_call", {
+              stage: "waiting_seed",
+              skipped: true,
+              detail: "seed_already_set",
+            });
             hasSeed = Boolean(
               await publicClient.readContract({
                 address: randomness,
@@ -424,6 +474,10 @@ export async function POST(req: Request) {
 
       if (byToken.size > 0 && dayState === REVEAL_OPEN) {
         const tReveal = performance.now();
+        timing.log("reveal_phase_start", {
+          stage: "revealing",
+          batchSize: byToken.size,
+        });
         const entries = [...byToken.values()];
         const locs = await Promise.all(
           entries.map((entry) =>
@@ -450,10 +504,16 @@ export async function POST(req: Request) {
             pending.push(entry);
           }
         }
+        timing.log("reveal_pending_count", {
+          stage: "revealing",
+          batchSize: pending.length,
+          detail: `alreadyRevealed=${revealed}`,
+        });
 
         if (pending.length > 0) {
           for (let i = 0; i < pending.length; i += MAX_REVEAL_BATCH) {
             const chunk = pending.slice(i, i + MAX_REVEAL_BATCH);
+            const batchIndex = Math.floor(i / MAX_REVEAL_BATCH);
             const tokenIds = chunk.map((r) => BigInt(r.tokenId));
             const locationIds = chunk.map((r) => r.locationId);
             const salts = chunk.map((r) => r.salt);
@@ -466,7 +526,12 @@ export async function POST(req: Request) {
                 abi: hansomeGameAbi,
                 functionName: "testnetRelayerRevealBatch",
                 args: [tokenIds, BigInt(day), locationIds, salts],
+                timing,
+                timingLabel: "revealBatch",
+                batchIndex,
+                batchSize: chunk.length,
               });
+              revealBatchesRun += 1;
               revealed += await countRevealedInTx(
                 publicClient,
                 game,
@@ -474,6 +539,13 @@ export async function POST(req: Request) {
                 chunk.map((p) => p.tokenId),
               );
             } catch {
+              timing.log("tx_error", {
+                stage: "revealing",
+                detail: "revealBatch_chunk_failed_fallback_singles",
+                batchIndex,
+                batchSize: chunk.length,
+                ok: false,
+              });
               for (const entry of chunk) {
                 try {
                   revealTxHash = await writeRelayerContract({
@@ -489,7 +561,12 @@ export async function POST(req: Request) {
                       [entry.locationId],
                       [entry.salt],
                     ],
+                    timing,
+                    timingLabel: "revealBatch_single",
+                    batchIndex,
+                    batchSize: 1,
                   });
+                  revealBatchesRun += 1;
                   revealed += await countRevealedInTx(
                     publicClient,
                     game,
@@ -497,13 +574,24 @@ export async function POST(req: Request) {
                     [entry.tokenId],
                   );
                 } catch {
-                  // skip failed token
+                  timing.log("skipped_call", {
+                    stage: "revealing",
+                    skipped: true,
+                    detail: `reveal_token_failed:${entry.tokenId}`,
+                  });
                 }
               }
             }
           }
         }
         revealMs = msSince(tReveal);
+      } else if (byToken.size > 0) {
+        timing.log("skipped_call", {
+          stage: "revealing",
+          skipped: true,
+          detail: `reveal_skipped_dayState=${dayState}_need=${REVEAL_OPEN}`,
+          batchSize: byToken.size,
+        });
       }
     }
 
@@ -553,6 +641,7 @@ export async function POST(req: Request) {
           !finalized &&
           (finalState === REVEAL_OPEN || finalState === REVEAL_CLOSED);
 
+        let finalizedThisRequest = false;
         if (canFinalize) {
           try {
             settleTxHash = await writeRelayerContract({
@@ -563,27 +652,47 @@ export async function POST(req: Request) {
               abi: hansomeGameAbi,
               functionName: "finalizeDay",
               args: [BigInt(day)],
+              timing,
+              timingLabel: "finalizeDay",
             });
             finalized = true;
             dayFinalized = true;
+            finalizedThisRequest = true;
+            timing.markBattleReady({ detail: "finalizeDay_ok" });
           } catch (e) {
             const msg = e instanceof Error ? e.message : String(e);
             if (/AlreadyFinalized/i.test(msg)) {
               finalized = true;
               dayFinalized = true;
+              timing.log("skipped_call", {
+                stage: "finalizing",
+                skipped: true,
+                detail: "already_finalized",
+              });
+              timing.markBattleReady({ detail: "already_finalized" });
             } else if (isAlreadySettledError(msg)) {
               alreadySettled = true;
               dayFinalized = true;
               settledNow = true;
+              timing.markBattleReady({ detail: "already_settled" });
+              timing.markFullySettled({ detail: "already_settled" });
             } else {
               throw e;
             }
           }
         } else if (finalized) {
           dayFinalized = true;
+          timing.markBattleReady({ detail: "was_finalized" });
+        } else {
+          timing.log("skipped_call", {
+            stage: "finalizing",
+            skipped: true,
+            detail: `cannot_finalize_seedReady=${seedReady};finalState=${finalState}`,
+          });
         }
 
-        // After finalize, dayState is Claimable — keep crediting until settled.
+        // After finalize, dayState is Claimable — credit in background polls.
+        // Fresh finalize returns immediately so UI can show Battle Result.
         const canCredit =
           seedReady &&
           !settledNow &&
@@ -592,7 +701,15 @@ export async function POST(req: Request) {
             finalState === REVEAL_CLOSED ||
             finalState === CLAIMABLE);
 
-        if (canCredit && (finalized || finalState === CLAIMABLE)) {
+        const creditLoopBudget = finalizedThisRequest
+          ? CREDIT_LOOPS_AFTER_FRESH_FINALIZE
+          : MAX_CREDIT_LOOPS;
+
+        if (
+          canCredit &&
+          (finalized || finalState === CLAIMABLE) &&
+          creditLoopBudget > 0
+        ) {
           if (!finalized) {
             finalized = Boolean(
               await publicClient.readContract({
@@ -603,7 +720,7 @@ export async function POST(req: Request) {
               }),
             );
           }
-          for (let loop = 0; loop < MAX_CREDIT_LOOPS && finalized; loop++) {
+          for (let loop = 0; loop < creditLoopBudget && finalized; loop++) {
             settledNow = Boolean(
               await publicClient.readContract({
                 address: game,
@@ -625,15 +742,39 @@ export async function POST(req: Request) {
                 abi: hansomeGameAbi,
                 functionName: "creditBatch",
                 args: [BigInt(day), BigInt(MAX_CREDIT_BATCH)],
+                timing,
+                timingLabel: "creditBatch",
+                batchIndex: loop,
+                batchSize: MAX_CREDIT_BATCH,
               });
               settleTxHash = creditHash;
+              creditBatchesRun += 1;
+              timing.log("credit_batch_done", {
+                stage: "finalizing",
+                batchIndex: loop,
+                batchSize: MAX_CREDIT_BATCH,
+                cursor: loop,
+                txHash: creditHash,
+              });
             } catch (e) {
               const msg = e instanceof Error ? e.message : String(e);
               if (isAlreadySettledError(msg)) {
                 alreadySettled = true;
+                timing.log("skipped_call", {
+                  stage: "finalizing",
+                  skipped: true,
+                  detail: "credit_already_settled",
+                });
                 break;
               }
-              if (/NotFinalized/i.test(msg)) break;
+              if (/NotFinalized/i.test(msg)) {
+                timing.log("skipped_call", {
+                  stage: "finalizing",
+                  skipped: true,
+                  detail: "credit_not_finalized",
+                });
+                break;
+              }
               throw e;
             }
           }
@@ -646,6 +787,13 @@ export async function POST(req: Request) {
             }),
           );
           if (settledNow) alreadySettled = true;
+        } else if (finalizedThisRequest && !settledNow) {
+          dayFinalized = true;
+          timing.log("defer_credits", {
+            stage: "crediting",
+            skipped: true,
+            detail: "return_battle_ready_credits_on_next_poll",
+          });
         }
         settleMs = msSince(tSettle);
       }
@@ -660,6 +808,13 @@ export async function POST(req: Request) {
       return jsonOk();
     }
     const timings = buildTimings("error");
+    timing.log("resolve_error", {
+      stage: "error",
+      ok: false,
+      detail: message,
+      ms: timings.totalMs,
+    });
+    lastResolveEndByDay.set(day, performance.now());
     // Log full message server-side only — never echo RPC/config internals to browsers in production.
     console.error("[testnet-resolve]", message, timings);
     const publicError =

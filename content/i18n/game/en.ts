@@ -474,6 +474,7 @@ export const gameEn: GameMessages = {
       `Showing Day ${day} battle results (previous round).`,
     presentationRecoveryNote:
       "Battle presentation is taking longer than usual. Stay on this page — results will finish here. You can open Choose Location from the menu when ready.",
+    rewardsFinalizingNote: "Rewards are being finalized.",
     arenaEyebrow: "ARENA · BATTLE RESULT",
     revealSectionTitle: "AUTO REVEAL",
     settleSectionTitle: "SETTLEMENT",

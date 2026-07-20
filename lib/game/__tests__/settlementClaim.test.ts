@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   canSubmitClaim,
   deriveSettlementUiStatus,
+  isSettlementBattleReady,
+  isSettlementFullySettled,
+  isSettlementRewardProcessing,
   settlementStatusLabel,
 } from "../settlementStatus";
 
@@ -40,7 +43,7 @@ describe("deriveSettlementUiStatus", () => {
     ).toBe("waiting_seed");
   });
 
-  it("maps reveal-closed to available and settled to completed", () => {
+  it("maps reveal-closed to available and settled to fully_settled", () => {
     expect(
       deriveSettlementUiStatus({ dayState: 4, isSettled: false }),
     ).toBe("available");
@@ -49,20 +52,37 @@ describe("deriveSettlementUiStatus", () => {
     ).toBe("available");
     expect(
       deriveSettlementUiStatus({ dayState: 4, isSettled: true }),
-    ).toBe("completed");
+    ).toBe("fully_settled");
     expect(
       deriveSettlementUiStatus({ dayState: 6, isSettled: true }),
-    ).toBe("completed");
+    ).toBe("fully_settled");
   });
 
-  it("treats isFinalized as battle-ready even before credits finish", () => {
+  it("settleDay/finalize complete but credits pending → battle_ready", () => {
     expect(
       deriveSettlementUiStatus({
         dayState: 6,
         isSettled: false,
         isFinalized: true,
       }),
-    ).toBe("completed");
+    ).toBe("battle_ready");
+    expect(
+      isSettlementBattleReady("battle_ready"),
+    ).toBe(true);
+    expect(isSettlementFullySettled("battle_ready")).toBe(false);
+    expect(isSettlementRewardProcessing("battle_ready")).toBe(true);
+  });
+
+  it("credits complete → fully_settled", () => {
+    expect(
+      deriveSettlementUiStatus({
+        dayState: 6,
+        isSettled: true,
+        isFinalized: true,
+      }),
+    ).toBe("fully_settled");
+    expect(isSettlementFullySettled("fully_settled")).toBe(true);
+    expect(isSettlementRewardProcessing("fully_settled")).toBe(false);
   });
 
   it("maps commit/reveal windows to pending", () => {
@@ -89,6 +109,12 @@ describe("deriveSettlementUiStatus", () => {
       deriveSettlementUiStatus({ dayState: null, isSettled: null }),
     ).toBe("unavailable");
   });
+
+  it("claimable dayState without settled flag → battle_ready", () => {
+    expect(
+      deriveSettlementUiStatus({ dayState: 6, isSettled: false }),
+    ).toBe("battle_ready");
+  });
 });
 
 describe("canSubmitClaim — duplicate prevention", () => {
@@ -102,7 +128,24 @@ describe("canSubmitClaim — duplicate prevention", () => {
     ).toBe(true);
   });
 
-  it("blocks when nothing claimable", () => {
+  it("blocks while submitting or pending tx", () => {
+    expect(
+      canSubmitClaim({
+        claimableTotal: 1n,
+        isSubmitting: true,
+        hasPendingTx: false,
+      }),
+    ).toBe(false);
+    expect(
+      canSubmitClaim({
+        claimableTotal: 1n,
+        isSubmitting: false,
+        hasPendingTx: true,
+      }),
+    ).toBe(false);
+  });
+
+  it("blocks zero claimable", () => {
     expect(
       canSubmitClaim({
         claimableTotal: 0n,
@@ -111,29 +154,14 @@ describe("canSubmitClaim — duplicate prevention", () => {
       }),
     ).toBe(false);
   });
-
-  it("blocks while submitting or tx pending", () => {
-    expect(
-      canSubmitClaim({
-        claimableTotal: 100n,
-        isSubmitting: true,
-        hasPendingTx: false,
-      }),
-    ).toBe(false);
-    expect(
-      canSubmitClaim({
-        claimableTotal: 100n,
-        isSubmitting: false,
-        hasPendingTx: true,
-      }),
-    ).toBe(false);
-  });
 });
 
 describe("settlementStatusLabel", () => {
-  it("returns stable labels", () => {
+  it("labels stages", () => {
     expect(settlementStatusLabel("available")).toMatch(/settling/i);
     expect(settlementStatusLabel("pending")).toMatch(/Resolving/i);
-    expect(settlementStatusLabel("completed")).toMatch(/Completed/i);
+    expect(settlementStatusLabel("battle_ready")).toMatch(/Battle ready/i);
+    expect(settlementStatusLabel("fully_settled")).toMatch(/Fully settled/i);
+    expect(settlementStatusLabel("completed")).toMatch(/Fully settled/i);
   });
 });

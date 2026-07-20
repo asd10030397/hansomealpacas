@@ -147,28 +147,32 @@ function applyResponse(
     return;
   }
 
-  const creditsDone = Boolean(result.alreadySettled);
+  const creditsDone = Boolean(result.alreadySettled || result.fullySettled);
+  const battleReady = Boolean(
+    result.battleReady || result.finalized || creditsDone,
+  );
   const stage =
     result.ok === false && result.error
       ? "error"
       : creditsDone
         ? "completed"
-        : timings.stage === "completed"
-          ? "completed"
-          : result.finalized
-            ? "finalizing"
+        : battleReady
+          ? "crediting"
+          : timings.stage === "completed"
+            ? "completed"
             : timings.stage;
 
-  if (creditsDone || stage === "completed") {
+  // Only fullySettled stops the credit loop — battle-ready keeps polling.
+  if (creditsDone) {
     settledDays.add(day);
     failureBackoffMs = BACKOFF_MIN_MS;
   }
 
   let lastMessage: string | null = null;
   if (creditsDone) {
-    lastMessage = "Battle already settled — showing results.";
-  } else if (result.finalized) {
-    lastMessage = "Battle finalized — crediting rewards…";
+    lastMessage = "Battle fully settled — rewards ready to claim.";
+  } else if (battleReady) {
+    lastMessage = "Battle ready — rewards are being finalized…";
   } else if (result.settleTxHash) {
     lastMessage = `Settlement progress (revealed ${result.revealed ?? 0}).`;
   } else if ((result.revealed ?? 0) > 0) {
