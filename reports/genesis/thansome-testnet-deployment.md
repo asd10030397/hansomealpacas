@@ -1,5 +1,8 @@
 # tHANSOME — Robinhood Testnet Deployment Report
 
+> **HISTORICAL / SUPERSEDED** — Addresses in this report may predate the canonical batched game suite.
+> Current game: `0x92C8e9CCF67e533438bCCE258D4bEEc6E0559FC5` — see `docs/GAME_RUNTIME_ADDRESSES.md`.
+
 | Field | Value |
 |-------|--------|
 | Generated | 2026-07-19 |

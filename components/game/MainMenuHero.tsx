@@ -1,6 +1,5 @@
 "use client";
 
-import { MOCK_BANNER } from "@/data/game/mock";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameState } from "@/hooks/game/useGameState";
 import { useWalletUi } from "@/hooks/game/useWalletUi";
@@ -17,7 +16,7 @@ import { TitleScreenBackdrop } from "./TitleScreenBackdrop";
 export function MainMenuHero() {
   const { day, now, phaseEndsAt, phase } = useGameState();
   const gameHref = useGameHref();
-  const { wallet, connectMock, disconnectMock } = useWalletUi();
+  const { wallet, connectWallet, disconnectWallet } = useWalletUi();
   const enterHref = enterGameHref(phase, gameHref);
   const enterSub = isResultPhase(phase) ? "BATTLE RESULT" : "CHOOSE LOCATION";
 
@@ -27,15 +26,16 @@ export function MainMenuHero() {
       <TerritoryHud />
 
       <div className="title-screen__center">
-        <p className="mock-chip title-screen__demo">{MOCK_BANNER}</p>
         <GameTitleLogo />
 
         <nav className="title-screen__menu" aria-label="Main menu">
           <RpgMenuButton
             iconSrc="/assets/icons/menu-wallet.svg"
             variant="gold"
-            subtitle={wallet.connected ? "MOCK · TAP TO DISCONNECT" : "MOCK WALLET · NO TX"}
-            onClick={() => (wallet.connected ? disconnectMock() : connectMock())}
+            subtitle={wallet.connected ? "TAP TO DISCONNECT" : "INJECTED WALLET"}
+            onClick={() =>
+              wallet.connected ? disconnectWallet() : connectWallet()
+            }
           >
             {wallet.connected && wallet.address ? wallet.address : "CONNECT WALLET"}
           </RpgMenuButton>

@@ -71,7 +71,13 @@ import {
 } from "@/lib/game/testnetGameplayTraits";
 import { resolveBattleLocationId } from "@/lib/game/resolveBattleLocation";
 import { resolveBattleDayRewardWei } from "@/lib/game/battleDayReward";
-import { isBattleRevealDetected } from "@/lib/game/battleRevealDetection";
+import { resolveBattleRevealStatus } from "@/lib/game/battleRevealDetection";
+import {
+  DEFAULT_WALLET_CREDIT_BATCH_LIMIT,
+  isBenignSettlementRevert,
+  parseCreditProgress,
+  planWalletSettlementStep,
+} from "@/lib/game/walletBatchedSettlement";
 import type { AbilityEffectId } from "@/lib/game/abilityEffects/catalog";
 import {
   alpacaCountAt,
@@ -131,6 +137,8 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
   const [resolveTick, setResolveTick] = useState(0);
 
   const [cohort, setCohort] = useState<CohortCounts>(emptyCohort);
+  /** null = not indexed yet; true = ready; false = RPC/log failure (do not mark missed). */
+  const [cohortIndexed, setCohortIndexed] = useState<boolean | null>(null);
   const [rollByToken, setRollByToken] = useState<
     Record<number, { runnerSuccess: boolean; luckySuccess: boolean }>
   >({});
@@ -140,6 +148,7 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
     setLocalError(null);
     setLocalTick((n) => n + 1);
     setCohort(emptyCohort());
+    setCohortIndexed(null);
     setRollByToken({});
   }, [address, viewDay]);
 
@@ -365,11 +374,13 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
   useEffect(() => {
     if (!live || !game || !publicClient || !revealClosed) {
       setCohort(emptyCohort());
+      setCohortIndexed(null);
       setRollByToken({});
       return;
     }
 
     let cancelled = false;
+    setCohortIndexed(null);
 
     (async () => {
       try {
@@ -392,6 +403,7 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
         if (cancelled) return;
         const nextCohort = parseRevealCohort(logs as unknown as RevealLogLike[]);
         setCohort(nextCohort);
+        setCohortIndexed(true);
 
         if (!battleReady || !randomnessAddress || tokenIds.length === 0) {
           setRollByToken({});
@@ -448,6 +460,7 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
       } catch {
         if (!cancelled) {
           setCohort(emptyCohort());
+          setCohortIndexed(false);
           setRollByToken({});
         }
       }
@@ -477,7 +490,7 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
       claimableContracts.isLoading);
 
   const settleFormattedError = settleWriteError
-    ? formatRobinhoodWriteError(settleWriteError, "settleDay failed")
+    ? formatRobinhoodWriteError(settleWriteError, "batched settlement failed")
     : null;
 
   const rawChainError =
@@ -588,17 +601,26 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
       const pendingRaw = pendingRewardContracts.data?.[i]?.result;
       const pendingWei =
         typeof pendingRaw === "bigint" ? pendingRaw : null;
+      const locationOfLoaded = locRaw !== undefined;
+      const pendingRewardLoaded =
+        !finalized || pendingRewardContracts.data !== undefined;
 
-      // On-chain locationOf / pendingRewardOf — not only Revealed logs or localStorage.
-      const revealed = isBattleRevealDetected({
+      const revealStatus = resolveBattleRevealStatus({
         committed,
+        revealPhaseClosed: revealClosed,
+        cohortIndexed: revealClosed ? cohortIndexed : null,
         cohortRevealed: cohort.revealedTokenIds.has(tokenId),
         secretRevealed: secret?.status === "revealed",
+        secretLocationId: secret?.locationId,
+        secretStatus: secret?.status,
         locationOf,
+        locationOfLoaded,
         side,
         pendingRewardWei: pendingWei,
+        pendingRewardLoaded,
         battleReady,
       });
+      const revealed = revealStatus === "revealed";
       const cohortLocationId =
         cohort.participants.find((p) => p.tokenId === tokenId)?.locationId ??
         null;
@@ -625,9 +647,12 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
       let outcome: string;
       let ability: string | null = null;
       let activatedAbility: AbilityEffectId | null = null;
-      let missedReveal = interpretation.missedReveal;
+      // Never treat loading/unknown as missed — only affirmative missed status.
+      let missedReveal = revealStatus === "missed";
 
-      if (missedReveal) {
+      if (revealStatus === "loading") {
+        outcome = "awaiting_settlement";
+      } else if (missedReveal) {
         outcome = MISSED_REVEAL_OUTCOME;
       } else if (!battleReady) {
         outcome =
@@ -671,7 +696,7 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
         : !battleReady
           ? "Pending"
           : dayRewardWei != null
-            ? `${formatHansome(dayRewardWei)} tHANSOME`
+            ? `${formatHansome(dayRewardWei)} HANSOME`
             : "…";
 
       // Claim row still reflects pull-claim balance (may include prior days).
@@ -726,7 +751,9 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
     localTick,
     owned.nfts,
     cohort,
+    cohortIndexed,
     rollByToken,
+    revealClosed,
   ]);
 
   const runSettle = useCallback(async () => {
@@ -745,7 +772,7 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
     }
     if (!game) return;
 
-    // Testnet gasless: kick shared coordinator (no second parallel pipeline).
+    // Testnet gasless: kick shared coordinator (finalizeDay + creditBatch).
     if (gasless) {
       resetSettle();
       setTestnetResolveTargets(
@@ -760,7 +787,7 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
     }
     if (walletChainId !== GAME_CHAIN_ID) {
       setLocalError(
-        `Wrong network. Switch to chain ${GAME_CHAIN_ID} (Robinhood Testnet).`,
+        `Wrong network. Switch to chain ${GAME_CHAIN_ID} (Robinhood Chain).`,
       );
       return;
     }
@@ -770,22 +797,67 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
     }
     resetSettle();
     try {
-      await sendRobinhoodContractWrite({
-        label: "hansome-settle",
-        publicClient,
-        writeContractAsync: writeContractAsync as never,
-        request: {
-          chainId: GAME_CHAIN_ID,
+      const dayArg = BigInt(viewDay);
+      const maxLoops = 64;
+      for (let i = 0; i < maxLoops; i++) {
+        const rawProgress = await publicClient.readContract({
           address: game,
           abi: hansomeGameAbi,
-          functionName: "settleDay",
-          args: [BigInt(viewDay)],
-          account: address,
-        },
-        extraLog: { day: viewDay },
-      });
+          functionName: "creditProgress",
+          args: [dayArg],
+        });
+        const progress = parseCreditProgress(
+          rawProgress as unknown as readonly unknown[],
+        );
+        const plan = planWalletSettlementStep({
+          progress,
+          settleEligible: true,
+          batchLimit: DEFAULT_WALLET_CREDIT_BATCH_LIMIT,
+        });
+        if (plan.action === "done" || plan.action === "noop") break;
+
+        try {
+          const { hash } = await sendRobinhoodContractWrite({
+            label:
+              plan.action === "finalize"
+                ? "hansome-finalizeDay"
+                : "hansome-creditBatch",
+            publicClient,
+            writeContractAsync: writeContractAsync as never,
+            request: {
+              chainId: GAME_CHAIN_ID,
+              address: game,
+              abi: hansomeGameAbi,
+              functionName:
+                plan.action === "finalize" ? "finalizeDay" : "creditBatch",
+              args:
+                plan.action === "finalize"
+                  ? [dayArg]
+                  : [dayArg, BigInt(plan.limit)],
+              account: address,
+            },
+            extraLog: { day: viewDay, step: plan.action },
+          });
+          await publicClient.waitForTransactionReceipt({ hash });
+        } catch (stepErr) {
+          const stepMsg = formatRobinhoodWriteError(
+            stepErr,
+            plan.action === "finalize"
+              ? "finalizeDay failed"
+              : "creditBatch failed",
+          );
+          if (!isBenignSettlementRevert(stepMsg)) throw stepErr;
+        }
+      }
+      void dayStateRead.refetch?.();
+      void settledRead.refetch?.();
+      void finalizedRead.refetch?.();
+      void claimableContracts.refetch?.();
+      void pendingRewardContracts.refetch?.();
+      void hasDaySeedRead.refetch?.();
+      setLocalTick((n) => n + 1);
     } catch (e) {
-      const msg = formatRobinhoodWriteError(e, "settleDay failed");
+      const msg = formatRobinhoodWriteError(e, "batched settlement failed");
       setLocalError(isSeedMissingError(msg) ? SEED_MISSING_UI_MESSAGE : msg);
     }
   }, [
@@ -800,13 +872,21 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
     publicClient,
     resetSettle,
     writeContractAsync,
+    dayStateRead,
+    settledRead,
+    finalizedRead,
+    claimableContracts,
+    pendingRewardContracts,
+    hasDaySeedRead,
   ]);
 
   useEffect(() => {
     if (settleReceipt.isSuccess) {
       void dayStateRead.refetch?.();
       void settledRead.refetch?.();
+      void finalizedRead.refetch?.();
       void claimableContracts.refetch?.();
+      void pendingRewardContracts.refetch?.();
       void hasDaySeedRead.refetch?.();
     }
   }, [settleReceipt.isSuccess]);
@@ -841,22 +921,27 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gasless, resolveTick, resolveSnap?.updatedAt, resolveSnap?.settled]);
 
-  // Re-arm auto-settle when seed becomes the blocker (retry once seed is ready).
+  // Re-arm when seed arrives or credits still pending after finalize.
   useEffect(() => {
-    if (status === "waiting_seed") {
+    if (status === "waiting_seed" || (status === "battle_ready" && !settled)) {
       autoSettleArmedRef.current = true;
     }
-  }, [status]);
+  }, [status, settled]);
 
   /**
-   * Non-gasless: after Reveal closes + seed ready, run settleDay once.
+   * Non-gasless: after Reveal closes + seed ready, run finalizeDay + creditBatch.
    * Gasless settle is owned by AutoRevealProvider / coordinator.
    */
   useEffect(() => {
     if (gasless) return;
     if (settled) return;
     if (settleWriting || settleReceipt.isLoading) return;
-    if (status !== "available") return;
+    if (status !== "available" && status !== "battle_ready") return;
+    if (status === "battle_ready" && settled) return;
+    // Auto-run while available (not yet finalized) or battle_ready with credits pending.
+    const shouldAuto =
+      status === "available" || (status === "battle_ready" && !settled);
+    if (!shouldAuto) return;
     if (!autoSettleArmedRef.current) return;
     autoSettleArmedRef.current = false;
     void runSettle();
@@ -892,7 +977,11 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
     })(),
     empty: rows.length === 0,
     isConnected,
-    canSettle: status === "available" || status === "waiting_seed",
+    canSettle:
+      !gasless &&
+      (status === "available" ||
+        status === "waiting_seed" ||
+        (status === "battle_ready" && !settled)),
     settlePending:
       settleWriting || settleReceipt.isLoading || gaslessSettlePending,
     settleHash,

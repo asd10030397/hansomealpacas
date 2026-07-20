@@ -1,5 +1,10 @@
-import { getAddress, type Address, isAddress } from "viem";
+import type { Address } from "viem";
 import { robinhoodTestnetChain } from "@/lib/chain";
+import {
+  GENESIS_ADDRESS_ENV_KEYS,
+  resolveGenesisNftAddress,
+  resolveOptionalConfiguredAddress,
+} from "@/lib/game/contractAddresses";
 
 /** Genesis mint targets Robinhood Chain testnet until mainnet deploy. */
 export const GENESIS_CHAIN_ID = Number(
@@ -14,20 +19,19 @@ export const GENESIS_EXPLORER =
   process.env.NEXT_PUBLIC_GAME_EXPLORER?.trim() ||
   robinhoodTestnetChain.blockExplorers.default.url;
 
-/** Robinhood testnet Genesis (temporary placeholder URI). Override via env. */
-const DEFAULT_TESTNET_GENESIS =
-  "0x43c1d6aF194A796EC612F2bAC04085a409A1347C" as const;
-
-const rawAddress =
-  process.env.NEXT_PUBLIC_GENESIS_NFT_ADDRESS?.trim() ||
-  (Number(process.env.NEXT_PUBLIC_GAME_CHAIN_ID ?? robinhoodTestnetChain.id) ===
-  robinhoodTestnetChain.id
-    ? DEFAULT_TESTNET_GENESIS
-    : "");
-
-/** Deployed HansomeGenesisNFT — empty until env / deployment is set. */
+/**
+ * Deployed HansomeGenesisNFT — env only
+ * (NEXT_PUBLIC_HANSOME_GENESIS_ADDRESS or NEXT_PUBLIC_GENESIS_NFT_ADDRESS).
+ * No silent Testnet default.
+ */
 export const GENESIS_NFT_ADDRESS: Address | null =
-  rawAddress && isAddress(rawAddress) ? getAddress(rawAddress) : null;
+  resolveOptionalConfiguredAddress(GENESIS_ADDRESS_ENV_KEYS, "Genesis NFT");
+
+export function requireGenesisNftAddress(): Address {
+  const r = resolveGenesisNftAddress();
+  if (!r.ok) throw new Error(r.error);
+  return r.address;
+}
 
 export const GENESIS_COLLECTION_NAME = "HANSOME Genesis NFT";
 

@@ -12,7 +12,7 @@ import type {
 export type { LeaderboardBoardId };
 
 /** All values below are DEMO / MOCK — not live chain data. */
-export const MOCK_BANNER = "DEMO DATA — not live blockchain state";
+export const MOCK_BANNER = "Game temporarily unavailable — check back soon.";
 
 export function createMockDayState(now = Date.now()): GameDayState {
   const commitMs = 20 * 60 * 60 * 1000;
@@ -36,11 +36,11 @@ export function createMockDayState(now = Date.now()): GameDayState {
 export const MOCK_TERRITORY: TerritoryStats = {
   cougarsActive: 18,
   huntsToday: 7,
-  huntPoolLabel: "DEMO · Hunting Pool slice",
+  huntPoolLabel: "Hunting Pool",
   territoryPressure: 64,
   alpacasActive: 126,
   survivalsToday: 98,
-  alpacaPoolLabel: "DEMO · Alpaca Pool slice",
+  alpacaPoolLabel: "Alpaca Pool",
   ranchActivity: 71,
 };
 

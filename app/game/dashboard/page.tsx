@@ -21,8 +21,7 @@ export default function GameDashboardPage() {
       </p>
       {!isMock ? (
         <p className="mt-2 text-xs text-[var(--hg-muted)]">
-          Live chain · Day {day.day}
-          {chainDayState != null ? ` · state ${chainDayState}` : ""}
+          Day {day.day}
           {isLoading ? " · syncing…" : ""}
           {day.settled ? " · settled" : ""}
         </p>

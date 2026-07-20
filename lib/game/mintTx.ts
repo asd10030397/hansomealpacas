@@ -138,7 +138,7 @@ export function assertMintEnvironment(input: {
 } {
   if (input.walletChainId !== GENESIS_CHAIN_ID) {
     throw new Error(
-      `Wrong network. Connect to chain ${GENESIS_CHAIN_ID} (Robinhood Testnet).`,
+      `Wrong network. Connect to chain ${GENESIS_CHAIN_ID} (Robinhood Chain).`,
     );
   }
   if (!input.contractAddress || input.contractAddress !== GENESIS_NFT_ADDRESS) {

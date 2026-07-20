@@ -61,7 +61,7 @@ export function NFTCard({ nft, live = false }: { nft: CardNft; live?: boolean })
           <dd className={claimableToday ? "text-[#f0c44a]" : "text-[#f3ebe0]"}>
             {live
               ? claimableToday
-                ? `${claimable} tHANSOME`
+                ? `${claimable} HANSOME`
                 : "No"
               : `${claimable}`}
           </dd>

@@ -175,7 +175,7 @@ export function useClaimRewards() {
     if (walletChainId !== GAME_CHAIN_ID) {
       setUiState("failure");
       setError(
-        `Wrong network. Switch to chain ${GAME_CHAIN_ID} (Robinhood Testnet).`,
+        `Wrong network. Switch to chain ${GAME_CHAIN_ID} (Robinhood Chain).`,
       );
       setSubmitting(false);
       return;

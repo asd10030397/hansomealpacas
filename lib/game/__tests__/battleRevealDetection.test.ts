@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { isBattleRevealDetected } from "@/lib/game/battleRevealDetection";
+import {
+  isBattleRevealDetected,
+  resolveBattleRevealStatus,
+} from "@/lib/game/battleRevealDetection";
 import { resolveBattleLocationId } from "@/lib/game/resolveBattleLocation";
 import { deriveSettlementActivation } from "@/lib/game/settlementActivation";
 import { parseSettlementResultSfxId } from "@/lib/game/settlementResults";
@@ -12,12 +15,11 @@ import { resolveBattleDayRewardWei } from "@/lib/game/battleDayReward";
 
 describe("gasless reveal without localStorage secret", () => {
   it("detects on-chain reveal from locationOf and enables FX", () => {
-    // Relayer revealed on-chain; client has no commit secret / no Revealed logs yet.
     const revealed = isBattleRevealDetected({
       committed: true,
       cohortRevealed: false,
       secretRevealed: false,
-      locationOf: 4, // River
+      locationOf: 4,
       side: "Alpaca",
       pendingRewardWei: null,
       battleReady: true,
@@ -51,16 +53,17 @@ describe("gasless reveal without localStorage secret", () => {
       pendingWei: 32_000n * 10n ** 18n,
     });
 
-    const row = {
-      missedReveal: false,
-      outcome: activation.outcome,
-      locationId,
-      rewardWei,
-      rewardLabel: "32,000 tHANSOME",
-      activatedAbility: activation.activatedAbility,
-    };
-
-    expect(areBattlePresentationRowsReady([row])).toBe(true);
+    expect(
+      areBattlePresentationRowsReady([
+        {
+          missedReveal: false,
+          outcome: activation.outcome,
+          locationId,
+          rewardWei,
+          rewardLabel: "32,000 tHANSOME",
+        },
+      ]),
+    ).toBe(true);
     expect(
       isBattlePresentationDataReady({
         status: "fully_settled",
@@ -69,27 +72,79 @@ describe("gasless reveal without localStorage secret", () => {
     ).toBe(true);
   });
 
-  it("does not mark missedReveal when commit + locationOf prove reveal", () => {
+  it("Day 110-style: server reveal, no local salt, locationOf set → not missed", () => {
     expect(
-      isBattleRevealDetected({
+      resolveBattleRevealStatus({
         committed: true,
-        locationOf: 3,
+        revealPhaseClosed: true,
+        cohortIndexed: true,
+        cohortRevealed: false,
+        secretRevealed: false,
+        locationOf: 2,
+        locationOfLoaded: true,
         side: "Alpaca",
+        pendingRewardWei: 12_000n * 10n ** 18n,
+        pendingRewardLoaded: true,
+        battleReady: true,
       }),
-    ).toBe(true);
-    expect(
-      isBattleRevealDetected({
-        committed: true,
-        locationOf: 0,
-        side: "Alpaca",
-        battleReady: false,
-      }),
-    ).toBe(false);
+    ).toBe("revealed");
   });
-});
 
-describe("presentationComplete gating", () => {
-  it("does not complete while rows lack location/reward (missing frontend data)", () => {
+  it("valid Home location (enum 0) with secret Home is not missed", () => {
+    expect(
+      resolveBattleRevealStatus({
+        committed: true,
+        revealPhaseClosed: true,
+        cohortIndexed: true,
+        cohortRevealed: false,
+        secretRevealed: false,
+        secretLocationId: 0,
+        secretStatus: "submitted",
+        locationOf: 0,
+        locationOfLoaded: true,
+        side: "Alpaca",
+        pendingRewardWei: 0n,
+        pendingRewardLoaded: true,
+        battleReady: true,
+      }),
+    ).toBe("revealed");
+  });
+
+  it("revealed NFT with zero reward (non-Home) is not missed", () => {
+    expect(
+      resolveBattleRevealStatus({
+        committed: true,
+        revealPhaseClosed: true,
+        cohortIndexed: true,
+        cohortRevealed: false,
+        secretRevealed: false,
+        locationOf: 3,
+        locationOfLoaded: true,
+        side: "Alpaca",
+        pendingRewardWei: 0n,
+        pendingRewardLoaded: true,
+        battleReady: true,
+      }),
+    ).toBe("revealed");
+  });
+
+  it("logs loading → loading (not missed; presentationComplete blocked)", () => {
+    expect(
+      resolveBattleRevealStatus({
+        committed: true,
+        revealPhaseClosed: true,
+        cohortIndexed: null,
+        cohortRevealed: false,
+        secretRevealed: false,
+        locationOf: 0,
+        locationOfLoaded: true,
+        side: "Alpaca",
+        pendingRewardWei: null,
+        pendingRewardLoaded: false,
+        battleReady: true,
+      }),
+    ).toBe("loading");
+
     expect(
       canMarkBattlePresentationComplete({
         status: "battle_ready",
@@ -101,7 +156,71 @@ describe("presentationComplete gating", () => {
     ).toBe(false);
   });
 
-  it("completes after presentable rows played (queue idle + FX enabled)", () => {
+  it("true missed reveal after evidence loaded", () => {
+    expect(
+      resolveBattleRevealStatus({
+        committed: true,
+        revealPhaseClosed: true,
+        cohortIndexed: true,
+        cohortRevealed: false,
+        secretRevealed: false,
+        locationOf: 0,
+        locationOfLoaded: true,
+        side: "Alpaca",
+        pendingRewardWei: 0n,
+        pendingRewardLoaded: true,
+        battleReady: true,
+      }),
+    ).toBe("missed");
+  });
+
+  it("Day 103 regression: rewards 32000/20000/12000 not false missed", () => {
+    const cases = [
+      { loc: 4, pending: 32_000n * 10n ** 18n },
+      { loc: 3, pending: 20_000n * 10n ** 18n },
+      { loc: 2, pending: 12_000n * 10n ** 18n },
+    ];
+    for (const c of cases) {
+      expect(
+        resolveBattleRevealStatus({
+          committed: true,
+          revealPhaseClosed: true,
+          cohortIndexed: true,
+          cohortRevealed: false,
+          secretRevealed: false,
+          locationOf: c.loc,
+          locationOfLoaded: true,
+          side: "Alpaca",
+          pendingRewardWei: c.pending,
+          pendingRewardLoaded: true,
+          battleReady: true,
+        }),
+      ).toBe("revealed");
+      expect(
+        resolveBattleDayRewardWei({
+          missedReveal: false,
+          battleReady: true,
+          pendingWei: c.pending,
+        }),
+      ).toBe(c.pending);
+    }
+  });
+});
+
+describe("presentationComplete gating", () => {
+  it("does not complete while rows lack location/reward", () => {
+    expect(
+      canMarkBattlePresentationComplete({
+        status: "battle_ready",
+        queueStatus: "idle",
+        rowsReady: false,
+        hasPresentableRows: false,
+        presentationFxEnabled: false,
+      }),
+    ).toBe(false);
+  });
+
+  it("completes after presentable rows played", () => {
     expect(
       canMarkBattlePresentationComplete({
         status: "fully_settled",

@@ -17,7 +17,7 @@ function shortenAddress(address: string): string {
 }
 
 function networkLabelFor(chainId: number | undefined): string {
-  if (chainId === robinhoodTestnetChain.id) return "ROBINHOOD TESTNET";
+  if (chainId === robinhoodTestnetChain.id) return "ROBINHOOD CHAIN";
   if (chainId === robinhoodChain.id) return "ROBINHOOD CHAIN";
   if (!chainId) return "NO NETWORK";
   return `CHAIN ${chainId}`;

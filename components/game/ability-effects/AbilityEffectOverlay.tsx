@@ -8,6 +8,7 @@ import {
   playAbilitySfx,
   type AbilityEffectId,
 } from "@/lib/game/abilityEffects";
+import { PRESENTATION_REDUCED_MOTION_MS } from "@/lib/game/presentationTiming";
 import {
   FarmerWheatIcon,
   GuardianShieldIcon,
@@ -86,7 +87,7 @@ export function AbilityEffectOverlay({
     }
     setVisible(true);
     playAbilitySfx(abilityId);
-    const ms = reduceMotion ? 900 : def.durationMs;
+    const ms = reduceMotion ? PRESENTATION_REDUCED_MOTION_MS : def.durationMs;
     const t = window.setTimeout(() => {
       setVisible(false);
       onComplete?.();

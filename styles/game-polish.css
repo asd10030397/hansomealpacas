@@ -1,6 +1,8 @@
 /* Season 1 Priority 3 — shared UX polish (presentation only) */
 
 .hansome-game {
+  /* Keep in sync with BATTLE_PRESENTATION_DURATION_MULTIPLIER in presentationTiming.ts */
+  --hg-battle-presentation-scale: 2;
   --hg-radius: 0;
   --hg-space-1: 0.35rem;
   --hg-space-2: 0.65rem;
@@ -356,7 +358,8 @@
   );
   padding: 0.85rem 0.9rem;
   box-shadow: var(--hg-shadow-sm);
-  animation: hg-settle-in 0.68s ease both;
+  animation: hg-settle-in calc(0.68s * var(--hg-battle-presentation-scale, 2))
+    ease both;
   display: grid;
   gap: 0.55rem;
 }
@@ -483,7 +486,9 @@
   color: #f0c44a;
   text-shadow: 0 1px 0 #0d1018;
   pointer-events: none;
-  animation: hg-reward-float 1.8s cubic-bezier(0.22, 0.82, 0.28, 1) both;
+  animation: hg-reward-float
+    calc(1.8s * var(--hg-battle-presentation-scale, 2))
+    cubic-bezier(0.22, 0.82, 0.28, 1) both;
 }
 
 @keyframes hg-reward-float {

@@ -1,24 +1,30 @@
-import { getAddress, type Address, isAddress } from "viem";
+import type { Address } from "viem";
 import { robinhoodTestnetChain } from "@/lib/chain";
+import {
+  resolveHansomeGameAddress,
+  resolveOptionalConfiguredAddress,
+  GAME_ADDRESS_ENV_KEYS,
+} from "@/lib/game/contractAddresses";
 
 /** Same chain target as Genesis until mainnet game deploy. */
 export const GAME_CHAIN_ID = Number(
   process.env.NEXT_PUBLIC_GAME_CHAIN_ID ?? robinhoodTestnetChain.id,
 );
 
-/** Robinhood testnet HansomeGame (tHANSOME-backed suite). Override via env. */
-const DEFAULT_TESTNET_GAME =
-  "0x7b2ce5ECD270Ce55Ac94aCe3BF12d83ef113D0a0" as const;
-
-const rawGame =
-  process.env.NEXT_PUBLIC_HANSOME_GAME_ADDRESS?.trim() ||
-  process.env.NEXT_PUBLIC_GAME_ADDRESS?.trim() ||
-  (GAME_CHAIN_ID === robinhoodTestnetChain.id ? DEFAULT_TESTNET_GAME : "");
-
-/** Deployed HansomeGame — testnet default when chain is Robinhood Testnet. */
+/**
+ * Deployed HansomeGame — env only (NEXT_PUBLIC_HANSOME_GAME_ADDRESS).
+ * No superseded Testnet defaults. Null when unset/invalid (UI shows unconfigured).
+ */
 export const HANSOME_GAME_ADDRESS: Address | null =
-  rawGame && isAddress(rawGame) ? getAddress(rawGame) : null;
+  resolveOptionalConfiguredAddress(GAME_ADDRESS_ENV_KEYS, "HansomeGame");
 
 export function isHansomeGameConfigured(): boolean {
   return HANSOME_GAME_ADDRESS != null;
+}
+
+/** Resolve with explicit error (API / scripts). */
+export function requireHansomeGameAddress(): Address {
+  const r = resolveHansomeGameAddress();
+  if (!r.ok) throw new Error(r.error);
+  return r.address;
 }

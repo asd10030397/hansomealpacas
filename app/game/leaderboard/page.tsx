@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { ComingSoonButton } from "@/components/game/ComingSoonButton";
-import { PixelBadge, PixelButton, PixelPanel } from "@/components/ui/pixel";
-import { MOCK_LEADERBOARDS, type LeaderboardBoardId } from "@/data/game/mock";
+import { PixelButton, PixelPanel } from "@/components/ui/pixel";
+import type { LeaderboardBoardId } from "@/data/game/mock";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { isHansomeGameConfigured } from "@/lib/game/hansomeGame";
 
@@ -17,7 +17,6 @@ const BOARD_ORDER: LeaderboardBoardId[] = [
 export default function LeaderboardPage() {
   const { t } = useGameI18n();
   const [board, setBoard] = useState<LeaderboardBoardId>("season");
-  const rows = MOCK_LEADERBOARDS[board];
 
   return (
     <div className="mx-auto max-w-3xl px-3 py-6">
@@ -65,36 +64,18 @@ export default function LeaderboardPage() {
 
       <PixelPanel
         className="mt-4"
-        title={t.leaderboard.demoPanel}
-        eyebrow={t.leaderboard.demoEyebrow}
+        title={t.leaderboard.boards[board]}
+        eyebrow={t.common.comingSoonTitle}
       >
-        <ol className="space-y-2">
-          {rows.map((row) => (
-            <li
-              key={`${board}-${row.rank}`}
-              className="flex items-center justify-between gap-3 border-2 border-[#2a3348] px-3 py-3"
-            >
-              <div className="flex items-center gap-3">
-                <span className="pixel-title text-[#f0c44a]">#{row.rank}</span>
-                <div>
-                  <p className="pixel-title text-[0.65rem]">{row.label}</p>
-                  <PixelBadge tone={row.side === "Cougar" ? "danger" : "green"}>
-                    {row.side}
-                  </PixelBadge>
-                </div>
-              </div>
-              <div className="text-right text-xs">
-                <p className="text-[var(--hg-muted)]">{t.leaderboard.scoreLabel}</p>
-                <p className="text-[#f0c44a]">
-                  {row.value.toLocaleString()} {row.unit}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ol>
+        <p className="text-sm text-[var(--hg-muted)]">
+          {t.leaderboard.boardHints[board]}
+        </p>
+        <p className="mt-3 text-sm text-[var(--hg-muted)]">
+          {t.common.comingSoonBody1}
+        </p>
         <div className="mt-4">
-          <ComingSoonButton feature="Leaderboard sync" variant="slate">
-            SYNC ON-CHAIN RANKS
+          <ComingSoonButton feature="Live Leaderboard" variant="slate">
+            {t.common.comingSoonTitle}
           </ComingSoonButton>
         </div>
       </PixelPanel>

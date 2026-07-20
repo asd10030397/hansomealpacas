@@ -64,11 +64,6 @@ export default function ClaimPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-3 py-6 sm:px-4">
-      <p className="mock-chip mb-3">
-        {claim.live
-          ? "LIVE — permanently claimable on RewardDistributor"
-          : "LOCAL MOCK — claimable from local settlement only"}
-      </p>
       <h1 className="pixel-title pixel-title-display text-lg text-[#f0c44a] sm:text-xl">
         {t.rewards.heading}
       </h1>
@@ -82,7 +77,7 @@ export default function ClaimPage() {
       <PixelPanel
         className="mt-4"
         title={t.rewards.heading}
-        eyebrow={claim.live ? "ON-CHAIN" : "MOCK / LOCAL"}
+        eyebrow={claim.live ? "ON-CHAIN" : undefined}
       >
         {claim.isLoading || history.loading ? (
           <GameSkeleton rows={4} />
@@ -174,15 +169,14 @@ export default function ClaimPage() {
           )
         ) : claim.mockRows.length === 0 ? (
           <GameEmptyState title={t.common.emptyTitle}>
-            Nothing claimable locally. Complete Commit → Battle Result first.
+            Nothing claimable yet. Complete Choose Location → Battle Result first.
           </GameEmptyState>
         ) : (
           <ul className="space-y-2 text-sm">
             {claim.mockRows.map((r) => (
               <li key={r.tokenId} className="hg-list-row">
                 <span>
-                  #{r.tokenId} · {GAME_LOCATIONS[r.locationId]?.name}{" "}
-                  <span className="text-[0.65rem] text-[var(--hg-muted)]">MOCK</span>
+                  #{r.tokenId} · {GAME_LOCATIONS[r.locationId]?.name}
                 </span>
                 <span className="pixel-title text-[0.7rem] text-[#f0c44a]">
                   {r.rewardHansome} HANSOME

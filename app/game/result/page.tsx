@@ -387,7 +387,7 @@ export default function ResultPhasePage() {
       <PixelPanel
         className="mt-4"
         title={t.result.settleSectionTitle}
-        eyebrow={settleView.live ? "ON-CHAIN" : "MOCK / LOCAL"}
+        eyebrow={settleView.live ? "ON-CHAIN" : undefined}
       >
         <p className="pixel-title text-sm text-[#f0c44a]">
           {stageLabel && !isSettlementBattleReady(settleView.status)

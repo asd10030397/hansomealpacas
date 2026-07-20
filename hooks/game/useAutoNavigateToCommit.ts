@@ -21,18 +21,16 @@ import {
   setBattlePresentationFailsafeNotice,
   subscribeBattlePresentation,
 } from "@/lib/game/battlePresentationGate";
+import { PRESENTATION_FAILSAFE_MS } from "@/lib/game/presentationTiming";
 import type { GamePhase } from "@/types/game";
-
-/**
- * Final recovery only — never force-navigate or discard presentation.
- * Shows a non-blocking notice; Battle Result remains reachable.
- */
-const PRESENTATION_FAILSAFE_MS = 90_000;
 
 /**
  * After a battle day resolves and the next day opens CommitOpen,
  * route once to Choose Location — only when presentationComplete(day-1)
  * and the presentation queue is idle.
+ *
+ * Failsafe uses PRESENTATION_FAILSAFE_MS (presentation-only recovery notice;
+ * never clears presentationComplete or force-navigates).
  */
 export function useAutoNavigateToCommit(): void {
   const { phase, day } = useGameState();

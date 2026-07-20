@@ -372,7 +372,7 @@ export type GameMessages = {
     afterRevealTitle: string;
     afterRevealBody: (countdown: string) => string;
     autoSettleHint: string;
-    /** Gasless resolve pipeline stages (Testnet UX). */
+    /** Gasless resolve pipeline stages (Battle Result UX). */
     resolveStages: {
       checking: string;
       waiting_seed: string;

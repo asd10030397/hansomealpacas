@@ -46,7 +46,7 @@ export default function MyNftsPage() {
       ) : !isConnected ? (
         <div className="my-nfts-wallet-panel mt-6 space-y-3 rounded border border-[#2a3348] bg-[#141a26]/88 px-3 py-4">
           <p className="text-sm text-[var(--hg-muted)]">
-            Connect a wallet on Robinhood Testnet to load your live inventory.
+            Connect a wallet on Robinhood Chain to load your inventory.
           </p>
           <PixelButton
             size="sm"
@@ -60,7 +60,7 @@ export default function MyNftsPage() {
         </div>
       ) : wallet.wrongNetwork ? (
         <div className="mt-6 space-y-3">
-          <p className="text-sm text-[#e07070]">Wrong network. Switch to Robinhood Testnet.</p>
+          <p className="text-sm text-[#e07070]">Wrong network. Switch to Robinhood Chain.</p>
           <PixelButton
             size="sm"
             variant="gold"

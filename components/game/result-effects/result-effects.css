@@ -1,4 +1,5 @@
 /* Settlement result presentation — CSS/SVG, mobile-light */
+/* Durations use --hg-battle-presentation-scale (sync with presentationTiming.ts). */
 
 .hg-result-fx {
   pointer-events: none;
@@ -36,7 +37,7 @@
   background: rgba(10, 14, 22, 0.82);
   border: 1px solid rgba(240, 196, 74, 0.55);
   text-shadow: 0 1px 0 #000;
-  animation: hg-result-banner 1.8s ease both;
+  animation: hg-result-banner calc(1.8s * var(--hg-battle-presentation-scale, 2)) ease both;
   z-index: 4;
 }
 
@@ -67,20 +68,20 @@
 .hg-result-fx--alpaca-hunted .hg-result-fx__claw-group {
   transform-box: fill-box;
   transform-origin: 15% 20%;
-  animation: hg-claw-rake 1.8s cubic-bezier(0.15, 0.85, 0.25, 1) both;
+  animation: hg-claw-rake calc(1.8s * var(--hg-battle-presentation-scale, 2)) cubic-bezier(0.15, 0.85, 0.25, 1) both;
 }
 
 .hg-result-fx--alpaca-hunted .hg-result-fx__claw-group--0 {
   animation-delay: 0ms;
 }
 .hg-result-fx--alpaca-hunted .hg-result-fx__claw-group--1 {
-  animation-delay: 60ms;
+  animation-delay: calc(60ms * var(--hg-battle-presentation-scale, 2));
 }
 .hg-result-fx--alpaca-hunted .hg-result-fx__claw-group--2 {
-  animation-delay: 120ms;
+  animation-delay: calc(120ms * var(--hg-battle-presentation-scale, 2));
 }
 .hg-result-fx--alpaca-hunted .hg-result-fx__claw-group--3 {
-  animation-delay: 180ms;
+  animation-delay: calc(180ms * var(--hg-battle-presentation-scale, 2));
 }
 
 .hg-result-fx--alpaca-hunted .hg-result-fx__trail-glow {
@@ -94,7 +95,7 @@
     transparent 78%
   );
   filter: blur(1px);
-  animation: hg-claw-glow 1.8s ease-out both;
+  animation: hg-claw-glow calc(1.8s * var(--hg-battle-presentation-scale, 2)) ease-out both;
   z-index: 1;
 }
 
@@ -103,7 +104,7 @@
   height: 0.22rem;
   background: #ff6a6a;
   box-shadow: 0 0 5px #ff3030;
-  animation: hg-claw-spark 1.8s ease-out both;
+  animation: hg-claw-spark calc(1.8s * var(--hg-battle-presentation-scale, 2)) ease-out both;
 }
 
 /* ── Alpaca Safe — joyful jump ────────────────────────── */
@@ -111,13 +112,13 @@
   width: 5.25rem;
   height: 5.75rem;
   filter: drop-shadow(0 0 8px rgba(255, 230, 140, 0.45));
-  animation: hg-safe-jump 1.875s cubic-bezier(0.2, 0.85, 0.25, 1) both;
+  animation: hg-safe-jump calc(1.875s * var(--hg-battle-presentation-scale, 2)) cubic-bezier(0.2, 0.85, 0.25, 1) both;
 }
 
 .hg-result-fx--alpaca-safe .hg-result-fx__spark {
   background: #ffe56a;
   box-shadow: 0 0 5px #ffd23a;
-  animation: hg-safe-spark 1.875s ease-out both;
+  animation: hg-safe-spark calc(1.875s * var(--hg-battle-presentation-scale, 2)) ease-out both;
 }
 
 /* ── Cougar Hunt Success — jaws snap shut ─────────────── */
@@ -126,19 +127,19 @@
   height: 6.25rem;
   filter: drop-shadow(0 0 8px rgba(255, 230, 200, 0.35))
     drop-shadow(0 0 14px rgba(180, 80, 30, 0.4));
-  animation: hg-jaws-presence 1.95s ease-out both;
+  animation: hg-jaws-presence calc(1.95s * var(--hg-battle-presentation-scale, 2)) ease-out both;
 }
 
 .hg-result-fx--cougar-hunt-success .hg-result-fx__jaw-upper {
   transform-box: fill-box;
   transform-origin: 50% 100%;
-  animation: hg-jaw-upper-snap 1.95s cubic-bezier(0.15, 0.95, 0.25, 1) both;
+  animation: hg-jaw-upper-snap calc(1.95s * var(--hg-battle-presentation-scale, 2)) cubic-bezier(0.15, 0.95, 0.25, 1) both;
 }
 
 .hg-result-fx--cougar-hunt-success .hg-result-fx__jaw-lower {
   transform-box: fill-box;
   transform-origin: 50% 0%;
-  animation: hg-jaw-lower-snap 1.95s cubic-bezier(0.15, 0.95, 0.25, 1) both;
+  animation: hg-jaw-lower-snap calc(1.95s * var(--hg-battle-presentation-scale, 2)) cubic-bezier(0.15, 0.95, 0.25, 1) both;
 }
 
 .hg-result-fx--cougar-hunt-success .hg-result-fx__impact {
@@ -152,7 +153,7 @@
     rgba(200, 100, 40, 0.12) 50%,
     transparent 70%
   );
-  animation: hg-cougar-impact 1.95s ease-out both;
+  animation: hg-cougar-impact calc(1.95s * var(--hg-battle-presentation-scale, 2)) ease-out both;
   z-index: 1;
 }
 
@@ -161,12 +162,12 @@
   width: 6.25rem;
   height: 4.75rem;
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
-  animation: hg-cougar-leave 2.025s ease-in-out both;
+  animation: hg-cougar-leave calc(2.025s * var(--hg-battle-presentation-scale, 2)) ease-in-out both;
 }
 
 .hg-result-fx--cougar-hunt-failed .hg-result-fx__tail {
   transform-origin: 62px 42px;
-  animation: hg-cougar-tail 2.025s ease-in-out both;
+  animation: hg-cougar-tail calc(2.025s * var(--hg-battle-presentation-scale, 2)) ease-in-out both;
 }
 
 @keyframes hg-result-banner {

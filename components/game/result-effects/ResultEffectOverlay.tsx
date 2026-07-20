@@ -8,6 +8,7 @@ import {
   SETTLEMENT_RESULT_SFX_CATALOG,
   type SettlementResultSfxId,
 } from "@/lib/game/settlementResults";
+import { PRESENTATION_REDUCED_MOTION_MS } from "@/lib/game/presentationTiming";
 import {
   ClawSlashIcon,
   CougarBiteIcon,
@@ -73,7 +74,7 @@ export function ResultEffectOverlay({
     }
     setVisible(true);
     if (playSfx) playSettlementResultSfx(resultId);
-    const ms = reduceMotion ? 900 : def.durationMs;
+    const ms = reduceMotion ? PRESENTATION_REDUCED_MOTION_MS : def.durationMs;
     const t = window.setTimeout(() => {
       setVisible(false);
       onComplete?.();

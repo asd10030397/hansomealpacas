@@ -1,5 +1,8 @@
 # Special Trait Gameplay QA Report
 
+> **HISTORICAL / SUPERSEDED** — Game address below is not the current canonical Testnet suite.
+> Current game: `0x92C8e9CCF67e533438bCCE258D4bEEc6E0559FC5` (see `docs/GAME_RUNTIME_ADDRESSES.md`).
+
 Generated: 2026-07-19T15:46:06.304Z
 Network: robinhoodTestnet
 HansomeGame: `0x7b2ce5ECD270Ce55Ac94aCe3BF12d83ef113D0a0`

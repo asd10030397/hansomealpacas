@@ -98,7 +98,7 @@ export function useHansomeCommit() {
       if (walletChainId !== GAME_CHAIN_ID) {
         return {
           ok: false,
-          error: `Wrong network. Switch to chain ${GAME_CHAIN_ID} (Robinhood Testnet).`,
+          error: `Wrong network. Switch to chain ${GAME_CHAIN_ID} (Robinhood Chain).`,
         };
       }
 

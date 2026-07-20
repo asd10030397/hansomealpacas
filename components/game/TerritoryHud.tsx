@@ -11,11 +11,11 @@ export function TerritoryHud() {
         </header>
         <ul>
           <li>
-            <span>Active (demo)</span>
+            <span>Active</span>
             <strong>{MOCK_TERRITORY.cougarsActive}</strong>
           </li>
           <li>
-            <span>Hunts (demo)</span>
+            <span>Hunts</span>
             <strong>{MOCK_TERRITORY.huntsToday}</strong>
           </li>
           <li>
@@ -23,11 +23,10 @@ export function TerritoryHud() {
             <strong>{MOCK_TERRITORY.huntPoolLabel}</strong>
           </li>
           <li>
-            <span>Pressure (demo)</span>
+            <span>Pressure</span>
             <strong>{MOCK_TERRITORY.territoryPressure}</strong>
           </li>
         </ul>
-        <p className="territory-hud__mock">Demo stats — not live</p>
       </aside>
       <aside className="territory-hud territory-hud--alpaca" aria-label="Alpaca ranch stats">
         <header className="territory-hud__head">
@@ -36,11 +35,11 @@ export function TerritoryHud() {
         </header>
         <ul>
           <li>
-            <span>Active (demo)</span>
+            <span>Active</span>
             <strong>{MOCK_TERRITORY.alpacasActive}</strong>
           </li>
           <li>
-            <span>Survivals (demo)</span>
+            <span>Survivals</span>
             <strong>{MOCK_TERRITORY.survivalsToday}</strong>
           </li>
           <li>
@@ -48,11 +47,10 @@ export function TerritoryHud() {
             <strong>{MOCK_TERRITORY.alpacaPoolLabel}</strong>
           </li>
           <li>
-            <span>Activity (demo)</span>
+            <span>Activity</span>
             <strong>{MOCK_TERRITORY.ranchActivity}</strong>
           </li>
         </ul>
-        <p className="territory-hud__mock">Demo stats — not live</p>
       </aside>
     </>
   );

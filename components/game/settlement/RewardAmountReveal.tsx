@@ -2,7 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useReducedMotion } from "framer-motion";
-import { REWARD_COUNT_UP_RATIO } from "@/lib/game/presentationTiming";
+import {
+  REWARD_COUNT_UP_MIN_MS,
+  REWARD_COUNT_UP_RATIO,
+} from "@/lib/game/presentationTiming";
 
 function parseRewardAmount(label: string): {
   prefix: string;
@@ -61,7 +64,10 @@ export function RewardAmountReveal({
 
     setShowFloat(true);
     const target = parsed.value;
-    const countMs = Math.max(400, Math.round(durationMs * REWARD_COUNT_UP_RATIO));
+    const countMs = Math.max(
+      REWARD_COUNT_UP_MIN_MS,
+      Math.round(durationMs * REWARD_COUNT_UP_RATIO),
+    );
     const started = performance.now();
     let frame = 0;
 

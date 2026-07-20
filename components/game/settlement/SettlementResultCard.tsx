@@ -11,7 +11,10 @@ import {
   shortAddress,
   speciesClassLabel,
 } from "@/lib/game/nftDisplay";
-import { SETTLEMENT_CARD_STAGGER_MS } from "@/lib/game/presentationTiming";
+import {
+  REWARD_REVEAL_FALLBACK_MS,
+  SETTLEMENT_CARD_STAGGER_MS,
+} from "@/lib/game/presentationTiming";
 import type { GameplayClass, NftSide } from "@/types/game";
 
 export type SettlementResultRow = {
@@ -100,10 +103,8 @@ export function SettlementResultCard({
           <p className="hg-settle-card__wallet">
             {t.result.ownerLabel}: {shortAddress(row.ownerAddress)}
           </p>
-          {row.source ? (
-            <span className="hg-settle-card__source">
-              {row.source === "mock" ? "MOCK" : "CHAIN"}
-            </span>
+          {row.source && row.source !== "mock" ? (
+            <span className="hg-settle-card__source">CHAIN</span>
           ) : null}
         </div>
       </div>
@@ -155,7 +156,7 @@ export function SettlementResultCard({
         <RewardAmountReveal
           rewardLabel={reward}
           active={revealActive}
-          durationMs={rewardReveal?.durationMs ?? 1800}
+          durationMs={rewardReveal?.durationMs ?? REWARD_REVEAL_FALLBACK_MS}
         />
       </div>
     </li>

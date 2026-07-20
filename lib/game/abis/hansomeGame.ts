@@ -1,4 +1,4 @@
-/** Minimal HansomeGame ABI for Commit / Reveal / settleDay (Season 1 loop). */
+/** Minimal HansomeGame ABI for Commit / Reveal / finalizeDay + creditBatch (Season 1). */
 export const hansomeGameAbi = [
   { type: "error", name: "WrongPhase", inputs: [] },
   { type: "error", name: "AlreadyCommitted", inputs: [] },

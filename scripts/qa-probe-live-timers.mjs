@@ -1,16 +1,70 @@
 /**
  * Probe live game host for contract address + timer wiring.
- * Usage: node scripts/qa-probe-live-timers.mjs [baseUrl]
+ * Usage:
+ *   NEXT_PUBLIC_HANSOME_GAME_ADDRESS=0x92C8… GAME_RPC_URL=… node scripts/qa-probe-live-timers.mjs [baseUrl]
+ *
+ * Fail-closed: missing/invalid address, RPC, or chainId mismatch aborts.
  */
 import { chromium } from "playwright";
-import { createPublicClient, http, parseAbi, formatEther } from "viem";
+import { createPublicClient, http, parseAbi, isAddress, getAddress } from "viem";
 
-const base = (process.argv[2] || "https://game.hansomealpacas.xyz").replace(/\/$/, "");
-const EXPECTED_GAME = "0xa807b2E830B6ED9Fb2ECc215eC995C4dD0F736B5";
-const RPC = "https://rpc.testnet.chain.robinhood.com";
+const EXPECTED_CHAIN_ID = Number(
+  process.env.NEXT_PUBLIC_GAME_CHAIN_ID || process.env.EXPECTED_CHAIN_ID || 46630,
+);
+
+const rawGame =
+  process.env.NEXT_PUBLIC_HANSOME_GAME_ADDRESS?.trim() ||
+  process.env.HANSOME_GAME_ADDRESS?.trim() ||
+  "";
+
+const RPC =
+  process.env.GAME_RPC_URL?.trim() ||
+  process.env.NEXT_PUBLIC_GAME_RPC_URL?.trim() ||
+  "";
+
+const base = (process.argv[2] || "https://game.hansomealpacas.xyz").replace(
+  /\/$/,
+  "",
+);
+
+function rpcHostname(url) {
+  try {
+    return new URL(url).host;
+  } catch {
+    return "(invalid-rpc-url)";
+  }
+}
+
+function fail(msg) {
+  console.error(`[qa-probe-live-timers] FAIL: ${msg}`);
+  process.exit(1);
+}
+
+if (!rawGame) {
+  fail("Set NEXT_PUBLIC_HANSOME_GAME_ADDRESS (or HANSOME_GAME_ADDRESS).");
+}
+if (!isAddress(rawGame)) {
+  fail(`Invalid game address: ${rawGame}`);
+}
+const EXPECTED_GAME = getAddress(rawGame);
+if (!RPC) {
+  fail("Set GAME_RPC_URL or NEXT_PUBLIC_GAME_RPC_URL.");
+}
 
 async function probeChain(address) {
   const c = createPublicClient({ transport: http(RPC) });
+  const chainIdHex = await c.request({ method: "eth_chainId" });
+  const chainId = Number(chainIdHex);
+  if (chainId !== EXPECTED_CHAIN_ID) {
+    fail(
+      `chainId mismatch: got ${chainId}, expected ${EXPECTED_CHAIN_ID} (Robinhood Testnet).`,
+    );
+  }
+  const code = await c.getBytecode({ address });
+  if (!code || code === "0x") {
+    fail(`No contract bytecode at ${address}`);
+  }
+
   const abi = parseAbi([
     "function dayZero() view returns (uint256)",
     "function dayLength() view returns (uint256)",
@@ -34,8 +88,13 @@ async function probeChain(address) {
       functionName: "dayState",
       args: [currentDay],
     });
+    const block = await c.getBlockNumber();
     return {
       ok: true,
+      chainId,
+      rpcHost: rpcHostname(RPC),
+      game: address,
+      blockNumber: Number(block),
       dayZero: Number(dayZero),
       dayLength: Number(dayLength),
       commitDuration: Number(commitDuration),
@@ -49,109 +108,76 @@ async function probeChain(address) {
 }
 
 async function main() {
+  console.log("[qa-probe-live-timers] config", {
+    chainId: EXPECTED_CHAIN_ID,
+    rpcHost: rpcHostname(RPC),
+    game: EXPECTED_GAME,
+    baseUrl: base,
+  });
+
+  const chainProbe = await probeChain(EXPECTED_GAME);
+  if (!chainProbe.ok) {
+    fail(chainProbe.error || "chain probe failed");
+  }
+  console.log("[qa-probe-live-timers] on-chain", chainProbe);
+
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
   const logs = [];
   page.on("console", (msg) => {
     const t = msg.text();
-    if (/GAME_|hansome|commit|duration|0xa807|0x84f7|0x0c7a/i.test(t)) logs.push(t.slice(0, 300));
+    if (/GAME_|hansome|commit|duration|0x92c8/i.test(t)) logs.push(t.slice(0, 300));
   });
 
   await page.goto(`${base}/dashboard`, { waitUntil: "networkidle", timeout: 90_000 });
   await page.waitForTimeout(3000);
 
-  const html = await page.content();
   const bodyText = await page.locator("body").innerText();
+  const html = await page.content();
 
   const injected = await page.evaluate(() => {
     const scripts = [...document.querySelectorAll("script[src]")].map((s) => s.src);
     return {
       href: location.href,
       scripts: scripts.filter((s) => s.includes("/_next/static")),
-      envFromWindow: {
-        // Next inlines NEXT_PUBLIC_* at build time into chunks; try common globals
-        nextData: window.__NEXT_DATA__?.runtimeConfig || null,
-      },
     };
   });
 
-  // Pull a few JS chunks and search for addresses / duration literals
   const chunkHits = { addresses: new Set(), durations: {} };
   for (const src of injected.scripts.slice(0, 40)) {
     try {
-      const r = await fetch(src, { signal: AbortSignal.timeout(15000) });
-      if (!r.ok) continue;
-      const js = await r.text();
-      for (const m of js.matchAll(/0x[a-fA-F0-9]{40}/g)) {
-        const a = m[0].toLowerCase();
-        if (
-          a.includes("a807b2e") ||
-          a.startsWith("0x84f719") ||
-          a.startsWith("0x0c7adf") ||
-          a.startsWith("0x43c1d6")
-        ) {
-          chunkHits.addresses.add(m[0]);
-        }
+      const res = await fetch(src);
+      const text = await res.text();
+      const re = /0x[a-fA-F0-9]{40}/g;
+      let m;
+      while ((m = re.exec(text))) {
+        chunkHits.addresses.add(m[0]);
       }
-      if (js.includes("43200")) chunkHits.durations.has43200 = true;
-      if (js.includes("72000")) chunkHits.durations.has72000 = true;
-      if (js.includes("14400")) chunkHits.durations.has14400 = true;
-      if (js.includes("86400")) chunkHits.durations.has86400 = true;
-      // look for explicit assignment patterns near COMMIT
-      const m120 = js.match(/COMMIT_DURATION[^0-9]{0,40}(120)\b/);
-      const m43200 = js.match(/COMMIT_DURATION[^0-9]{0,40}(43200)\b/);
-      const m72000 = js.match(/COMMIT_DURATION[^0-9]{0,40}(72000)\b/);
-      if (m120) chunkHits.durations.commitLiteral = 120;
-      if (m43200) chunkHits.durations.commitLiteral = 43200;
-      if (m72000) chunkHits.durations.commitLiteral = 72000;
-      const d240 = js.match(/DAY_LENGTH[^0-9]{0,40}(240)\b/);
-      const d86400 = js.match(/DAY_LENGTH[^0-9]{0,40}(86400)\b/);
-      if (d240) chunkHits.durations.dayLiteral = 240;
-      if (d86400) chunkHits.durations.dayLiteral = 86400;
+      for (const key of ["commitDuration", "revealDuration", "dayLength"]) {
+        const dm = text.match(new RegExp(`${key}[^0-9]{0,40}(\\d{2,})`));
+        if (dm) chunkHits.durations[key] = dm[1];
+      }
     } catch {
-      /* ignore */
+      /* ignore chunk fetch errors */
     }
   }
 
-  // Read UI timer labels
-  const timerBits = {
-    hasCommitEndsIn: /Commit ends in/i.test(bodyText),
-    hasSettlementIn: /Settlement in/i.test(bodyText),
-    hasCommitWindow: /Commit window/i.test(bodyText),
-    countdownMatches: [...bodyText.matchAll(/(\d{2}:\d{2}:\d{2})/g)].map((m) => m[1]).slice(0, 8),
-    phaseSnippet: (bodyText.match(/Current Phase[\s\S]{0,80}/i) || [""])[0].slice(0, 80),
-  };
-
-  const addresses = [...chunkHits.addresses];
-  const gameAddr =
-    addresses.find((a) => a.toLowerCase() === EXPECTED_GAME.toLowerCase()) ||
-    addresses.find((a) => a.toLowerCase().startsWith("0xa807")) ||
-    addresses.find((a) => a.toLowerCase().startsWith("0x84f7")) ||
-    addresses.find((a) => a.toLowerCase().startsWith("0x0c7a")) ||
-    null;
-
-  const chain = gameAddr ? await probeChain(gameAddr) : { ok: false, error: "no game address in bundles" };
-  // Also probe expected regardless
-  const expectedChain = await probeChain(EXPECTED_GAME);
+  const gameInChunks = [...chunkHits.addresses].some(
+    (a) => a.toLowerCase() === EXPECTED_GAME.toLowerCase(),
+  );
 
   console.log(
     JSON.stringify(
       {
         base,
-        finalUrl: injected.href,
         expectedGame: EXPECTED_GAME,
-        gameAddressInBundles: gameAddr,
-        allRelevantAddresses: addresses,
-        durationLiteralsInBundles: chunkHits.durations,
-        ui: timerBits,
-        chainForBundledGame: chain,
-        chainForExpectedGame: expectedChain,
-        htmlHints: {
-          has43200: html.includes("43200"),
-          has72000: html.includes("72000"),
-          has120nearCommit: /commit[^]{0,80}120/i.test(html),
-        },
-        consoleLogs: logs.slice(0, 20),
+        gameInChunks,
+        chainProbe,
+        bodySnippet: bodyText.slice(0, 400),
+        consoleHits: logs.slice(0, 20),
+        durationHints: chunkHits.durations,
+        addressSample: [...chunkHits.addresses].slice(0, 12),
+        htmlHasExpected: html.toLowerCase().includes(EXPECTED_GAME.toLowerCase()),
       },
       null,
       2,
@@ -159,9 +185,14 @@ async function main() {
   );
 
   await browser.close();
+  if (!gameInChunks && !html.toLowerCase().includes(EXPECTED_GAME.toLowerCase())) {
+    console.warn(
+      "[qa-probe-live-timers] WARN: canonical game address not found in page chunks (build may still be on old env).",
+    );
+  }
 }
 
 main().catch((e) => {
   console.error(e);
-  process.exitCode = 1;
+  process.exit(1);
 });

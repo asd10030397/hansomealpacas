@@ -21,7 +21,7 @@ type Body = {
 export async function POST(req: Request) {
   if (GAME_CHAIN_ID !== ROBINHOOD_TESTNET_CHAIN_ID) {
     return NextResponse.json(
-      { ok: false, error: "Testnet-only.", code: "TESTNET_ONLY" },
+      { ok: false, error: "Not available on this network.", code: "TESTNET_ONLY" },
       { status: 403 },
     );
   }

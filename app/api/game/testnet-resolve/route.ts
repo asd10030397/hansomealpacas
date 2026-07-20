@@ -139,7 +139,7 @@ export async function POST(req: Request) {
       {
         ok: false,
         enabled: false,
-        error: "Gasless resolve is Testnet-only.",
+        error: "Gasless resolve is not available on this network.",
       },
       { status: 403 },
     );
@@ -204,7 +204,7 @@ export async function POST(req: Request) {
         error:
           process.env.NODE_ENV === "production"
             ? "Battle settlement service is temporarily unavailable."
-            : "Testnet commit vault is not configured on this server.",
+            : "Commit vault is not configured on this server.",
       },
       { status: 503 },
     );

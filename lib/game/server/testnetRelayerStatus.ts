@@ -73,7 +73,7 @@ export function buildTestnetResolveStatus(): TestnetResolveStatusPayload {
     error =
       process.env.NODE_ENV === "production"
         ? "Battle settlement service is temporarily unavailable."
-        : "Testnet commit vault is not configured on this server.";
+        : "Commit vault is not configured on this server.";
     code = VAULT_NOT_CONFIGURED_CODE;
   }
   return {
