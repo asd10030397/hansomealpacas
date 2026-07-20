@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { FadeIn } from "@/components/FadeIn";
 import { useLocale } from "@/context/LocaleContext";
-import { PDF_DOWNLOAD_PATHS } from "@/content/litepaper";
+import {
+  ECONOMIC_MODEL_PDF_PATHS,
+  PDF_DOWNLOAD_PATHS,
+} from "@/content/litepaper";
 
 export function LitepaperHero() {
   const { t, locale } = useLocale();
@@ -25,13 +28,22 @@ export function LitepaperHero() {
         >
           {t.litepaper.backHome}
         </Link>
-        <a
-          href={PDF_DOWNLOAD_PATHS[locale]}
-          download
-          className="pixel-btn inline-flex items-center gap-1.5 border border-wood bg-[color:var(--lp-surface)] px-3.5 py-1.5 font-[family-name:var(--font-anton)] text-[0.65rem] tracking-[0.1em] text-gold transition-colors"
-        >
-          {t.litepaper.downloadPdf} ↓
-        </a>
+        <div className="flex flex-wrap items-center gap-2">
+          <a
+            href={PDF_DOWNLOAD_PATHS[locale]}
+            download
+            className="pixel-btn inline-flex items-center gap-1.5 border border-wood bg-[color:var(--lp-surface)] px-3.5 py-1.5 font-[family-name:var(--font-anton)] text-[0.65rem] tracking-[0.1em] text-gold transition-colors"
+          >
+            {t.litepaper.downloadPdf} ↓
+          </a>
+          <a
+            href={ECONOMIC_MODEL_PDF_PATHS[locale]}
+            download
+            className="pixel-btn inline-flex items-center gap-1.5 border border-wood bg-[color:var(--lp-surface)] px-3.5 py-1.5 font-[family-name:var(--font-anton)] text-[0.65rem] tracking-[0.1em] text-gold transition-colors"
+          >
+            {t.litepaper.downloadEconomicModelPdf} ↓
+          </a>
+        </div>
       </div>
 
       <p className="lp-eyebrow-chip mt-10 px-3 py-1.5 font-[family-name:var(--font-anton)] text-[0.6rem] tracking-[0.2em]">

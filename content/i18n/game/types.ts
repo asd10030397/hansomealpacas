@@ -454,6 +454,11 @@ export type GameMessages = {
     playerGuide: string;
     playerGuidePdf: string;
     playerGuidePdfNote: string;
+    economicModelTitle: string;
+    economicModelBody: string;
+    economicModelLitepaper: string;
+    economicModelPdfEn: string;
+    economicModelPdfZh: string;
     fullRulesNote: string;
   };
   actions: {

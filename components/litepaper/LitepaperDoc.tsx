@@ -6,6 +6,7 @@ import { LitepaperHero } from "@/components/litepaper/LitepaperHero";
 import { LitepaperDesktopNav, LitepaperMobileNav } from "@/components/litepaper/LitepaperNav";
 import { LitepaperSection } from "@/components/litepaper/LitepaperSection";
 import { LitepaperFaqAccordion } from "@/components/litepaper/LitepaperFaqAccordion";
+import { LitepaperDocumentsLibrary } from "@/components/litepaper/LitepaperDocumentsLibrary";
 import {
   LitepaperActiveSectionProvider,
   useLitepaperActiveSection,
@@ -15,13 +16,14 @@ import { LifecycleDiagram } from "@/components/litepaper/diagrams/LifecycleDiagr
 import { RoadmapTimeline } from "@/components/litepaper/diagrams/RoadmapTimeline";
 import { FlywheelDiagram } from "@/components/litepaper/diagrams/FlywheelDiagram";
 import {
+  ECONOMIC_MODEL_PDF_PATHS,
   GAMEPLAY_OVERVIEW_IMAGE,
   LITEPAPER_SECTION_ORDER,
   REVENUE_STATUS_STYLES,
 } from "@/content/litepaper";
 
 function LitepaperContent() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const lp = t.litepaper;
   const { isTransitioning } = useLitepaperActiveSection();
 
@@ -168,58 +170,31 @@ function LitepaperContent() {
           {lp.gamefiEconomicModel.disclaimer}
         </p>
 
-        <div className="lp-card mt-8 rounded-2xl p-5 sm:p-7">
-          <div className="lp-divider mb-6 w-16" />
-          <h3 className="font-[family-name:var(--font-anton)] text-base tracking-wide text-[color:var(--lp-text)]">
-            {lp.gamefiEconomicModel.linksHeading}
-          </h3>
-          <ul className="mt-4 space-y-2.5 text-[0.875rem] leading-relaxed">
-            <li>
-              <a
-                href={lp.gamefiEconomicModel.hrefs.pdfEn}
-                download
-                className="font-medium text-gold transition-opacity hover:opacity-90"
-              >
-                {lp.gamefiEconomicModel.links.pdfEn} ↓
-              </a>
-            </li>
-            <li>
-              <a
-                href={lp.gamefiEconomicModel.hrefs.pdfZh}
-                download
-                className="font-medium text-gold transition-opacity hover:opacity-90"
-              >
-                {lp.gamefiEconomicModel.links.pdfZh} ↓
-              </a>
-            </li>
-            <li>
-              <a
-                href={lp.gamefiEconomicModel.hrefs.reportEn}
-                className="text-[color:var(--lp-text-muted)] underline-offset-2 hover:underline"
-              >
-                {lp.gamefiEconomicModel.links.reportEn}
-              </a>
-            </li>
-            <li>
-              <a
-                href={lp.gamefiEconomicModel.hrefs.reportZh}
-                className="text-[color:var(--lp-text-muted)] underline-offset-2 hover:underline"
-              >
-                {lp.gamefiEconomicModel.links.reportZh}
-              </a>
-            </li>
-            <li>
-              <a
-                href={lp.gamefiEconomicModel.hrefs.game}
-                className="text-[color:var(--lp-text-muted)] underline-offset-2 hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {lp.gamefiEconomicModel.links.game}
-              </a>
-            </li>
-          </ul>
+        <div className="mt-6">
+          <a
+            href={ECONOMIC_MODEL_PDF_PATHS[locale]}
+            download
+            className="pixel-btn inline-flex items-center border border-wood bg-gradient-to-b from-gold-pale to-gold px-5 py-2.5 font-[family-name:var(--font-anton)] text-[0.7rem] tracking-[0.12em] text-wood-dark transition-opacity hover:opacity-95"
+          >
+            {lp.downloadEconomicModelPdf} ↓
+          </a>
+          <a
+            href={lp.gamefiEconomicModel.hrefs.game}
+            className="ml-3 inline-flex items-center text-sm text-gold underline-offset-2 hover:underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {lp.gamefiEconomicModel.links.game}
+          </a>
         </div>
+
+      </LitepaperSection>
+
+      <LitepaperSection id="documents" eyebrow="DOC" title={lp.documentsLibrary.heading}>
+        <p className="mb-6 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
+          {lp.documentsLibrary.blurb}
+        </p>
+        <LitepaperDocumentsLibrary />
       </LitepaperSection>
 
       <LitepaperSection id="tokenomics" eyebrow="06" title={lp.tokenomics.heading}>

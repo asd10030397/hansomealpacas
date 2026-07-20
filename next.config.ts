@@ -37,6 +37,20 @@ const nextConfig: NextConfig = {
       source: "/token-list/:path*",
       headers: [{ key: "Cache-Control", value: "public, max-age=3600" }],
     },
+    {
+      source: "/docs/:path*.pdf",
+      headers: [
+        { key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" },
+        { key: "Content-Type", value: "application/pdf" },
+      ],
+    },
+    {
+      source: "/docs/:path*.md",
+      headers: [
+        { key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" },
+        { key: "Content-Type", value: "text/markdown; charset=utf-8" },
+      ],
+    },
   ],
 };
 

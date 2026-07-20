@@ -5,6 +5,7 @@ import { PixelPanel } from "@/components/ui/pixel";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { PLAYER_GUIDE_PDF_HREF } from "@/lib/game/playerGuidePdf";
+import { ECONOMIC_MODEL_PDF_PATHS } from "@/content/litepaper";
 
 export default function GameDocsPage() {
   const { t } = useGameI18n();
@@ -90,6 +91,26 @@ export default function GameDocsPage() {
 
       <PixelPanel title={d.locationsTitle}>
         <p className="text-sm text-[var(--hg-muted)]">{d.locationsBody}</p>
+      </PixelPanel>
+
+      <PixelPanel title={d.economicModelTitle}>
+        <p className="text-sm text-[var(--hg-muted)]">{d.economicModelBody}</p>
+        <p className="mt-3 text-sm text-[var(--hg-muted)]">
+          <a
+            href="/litepaper#documents"
+            className="text-[#f0c44a] underline font-semibold"
+          >
+            {d.economicModelLitepaper}
+          </a>
+          {" · "}
+          <a href={ECONOMIC_MODEL_PDF_PATHS.en} download className="text-[#f0c44a] underline">
+            {d.economicModelPdfEn}
+          </a>
+          {" · "}
+          <a href={ECONOMIC_MODEL_PDF_PATHS.zh} download className="text-[#f0c44a] underline">
+            {d.economicModelPdfZh}
+          </a>
+        </p>
       </PixelPanel>
 
       <PixelPanel title={d.moreTitle}>

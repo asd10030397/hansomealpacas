@@ -13,6 +13,7 @@ export const LITEPAPER_SECTION_ORDER: readonly string[] = [
   "philosophy",
   "gameplay-overview",
   "gamefi-economic-model",
+  "documents",
   "tokenomics",
   "treasury",
   "liquidity",
@@ -56,8 +57,54 @@ export const PDF_DOWNLOAD_PATHS: Record<"en" | "zh", string> = {
   zh: "/docs/litepaper-zh.pdf",
 };
 
-/** Standalone GameFi economic model PDFs (EN / ZH). */
+/** Standalone GameFi economic model PDFs (EN / ZH) — served from `public/docs/`. */
 export const ECONOMIC_MODEL_PDF_PATHS: Record<"en" | "zh", string> = {
   en: "/docs/HANSOME_GAME_ECONOMIC_MODEL_EN.pdf",
   zh: "/docs/HANSOME_GAME_ECONOMIC_MODEL_ZH.pdf",
 };
+
+/** Markdown companions for the economic model (also under `public/docs/`). */
+export const ECONOMIC_MODEL_MD_PATHS: Record<"en" | "zh", string> = {
+  en: "/docs/HANSOME_GAME_ECONOMIC_MODEL_EN.md",
+  zh: "/docs/HANSOME_GAME_ECONOMIC_MODEL_ZH.md",
+};
+
+/** Litepaper “Documents” library — static assets under /docs/. */
+export const LITEPAPER_DOC_LIBRARY = [
+  {
+    id: "litepaper-en",
+    kind: "pdf" as const,
+    href: PDF_DOWNLOAD_PATHS.en,
+    localeTag: "EN",
+  },
+  {
+    id: "litepaper-zh",
+    kind: "pdf" as const,
+    href: PDF_DOWNLOAD_PATHS.zh,
+    localeTag: "ZH",
+  },
+  {
+    id: "economic-en-pdf",
+    kind: "pdf" as const,
+    href: ECONOMIC_MODEL_PDF_PATHS.en,
+    localeTag: "EN",
+  },
+  {
+    id: "economic-zh-pdf",
+    kind: "pdf" as const,
+    href: ECONOMIC_MODEL_PDF_PATHS.zh,
+    localeTag: "ZH",
+  },
+  {
+    id: "economic-en-md",
+    kind: "md" as const,
+    href: ECONOMIC_MODEL_MD_PATHS.en,
+    localeTag: "EN",
+  },
+  {
+    id: "economic-zh-md",
+    kind: "md" as const,
+    href: ECONOMIC_MODEL_MD_PATHS.zh,
+    localeTag: "ZH",
+  },
+] as const;

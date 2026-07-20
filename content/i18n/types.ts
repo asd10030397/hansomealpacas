@@ -98,6 +98,18 @@ export type LitepaperMessages = {
   };
   backHome: string;
   downloadPdf: string;
+  downloadEconomicModelPdf: string;
+  documentsLibrary: {
+    heading: string;
+    blurb: string;
+    litepaperEn: string;
+    litepaperZh: string;
+    economicPdfEn: string;
+    economicPdfZh: string;
+    economicMdEn: string;
+    economicMdZh: string;
+    openInBrowser: string;
+  };
   hero: {
     eyebrow: string;
     title: string;

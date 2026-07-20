@@ -570,6 +570,12 @@ export const gameEn: GameMessages = {
     playerGuidePdf: "DOWNLOAD PDF",
     playerGuidePdfNote:
       "For the best mobile reading experience, use the HTML Player Guide.",
+    economicModelTitle: "GAMEFI ECONOMIC MODEL",
+    economicModelBody:
+      "Mathematical emission bands, Alpaca/Cougar pools, treasury runway, and sustainability — official bilingual report.",
+    economicModelLitepaper: "OPEN IN LITEPAPER",
+    economicModelPdfEn: "ENGLISH PDF",
+    economicModelPdfZh: "CHINESE PDF",
     fullRulesNote:
       "Player Guide covers classes, locations, and pool overview. Settlement formulas, trait resolution order (King → Runner → Lucky → Guardian → …), and edge cases are defined in HANSOME GDS v1.1 — not in the Player Guide.",
   },
