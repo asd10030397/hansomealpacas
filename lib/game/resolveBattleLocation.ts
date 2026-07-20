@@ -8,6 +8,7 @@ import type { LocationId, NftSide } from "@/types/game";
 export function resolveBattleLocationId(input: {
   committed: boolean;
   revealed: boolean;
+  /** Kept for call-site compatibility; Home requires `revealed`, not settled alone. */
   settled: boolean;
   /** Raw locationOf(tokenId, day); 0 means unrevealed OR Home. */
   locationOf?: number | null;
@@ -17,6 +18,7 @@ export function resolveBattleLocationId(input: {
   cohortLocationId?: LocationId | null;
   side?: NftSide | null;
 }): LocationId | null {
+  void input.settled;
   if (!input.committed) return null;
 
   if (input.cohortLocationId != null) {
@@ -39,8 +41,9 @@ export function resolveBattleLocationId(input: {
   // Cougars cannot be at Home — locationOf===0 without secret/cohort is unknown.
   if (input.side === "Cougar") return null;
 
-  // Alpaca Home reveal: locationOf stays 0 after reveal/settle.
-  if ((input.revealed || input.settled) && chain === 0) {
+  // Alpaca Home: locationOf stays 0 after reveal. Require reveal evidence —
+  // never invent Home from settled/finalized alone (unrevealed also reads 0).
+  if (input.revealed && chain === 0) {
     return 0;
   }
 

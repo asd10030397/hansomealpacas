@@ -1,6 +1,11 @@
 /**
- * Day-scoped battle rewards from the settle tx Credited logs.
- * RewardDistributor.claimable(tokenId) is cumulative — do not use it as "today's reward".
+ * Legacy helper: Credited logs attached to a DaySettled transaction.
+ *
+ * Batched settlement (finalizeDay + creditBatch) emits DaySettled without
+ * Credited logs — Battle Result must use HansomeGame.pendingRewardOf instead
+ * (see battleDayReward.ts). Keep this for older single-tx settleDay receipts.
+ *
+ * RewardDistributor.claimable(tokenId) is cumulative — never use as "today's reward".
  */
 
 import {

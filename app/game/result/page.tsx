@@ -26,6 +26,8 @@ import {
   shouldScrollAfterAutoNavigate,
 } from "@/lib/game/autoNavigateToBattle";
 import {
+  areBattlePresentationRowsReady,
+  canMarkBattlePresentationComplete,
   getBattlePresentationFailsafeNotice,
   isBattlePresentationDataReady,
   isBattleSettlementPreparing,
@@ -111,10 +113,11 @@ export default function ResultPhasePage() {
         r.activatedAbility ||
         parseAbilityEffectId(r.ability)),
   );
-  // Start VFX only when battle-ready (finalized/settled UI). Credits may still batch.
+  const rowsReady = areBattlePresentationRowsReady(settleView.rows);
+  // Start VFX only when battle-ready rows have decisive outcome/location/reward.
   const showPresentationFx = isBattlePresentationDataReady({
     status: settleView.status,
-    hasPresentableRows,
+    hasPresentableRows: hasPresentableRows && rowsReady,
   });
   const {
     currentAbility: abilityCue,
@@ -137,10 +140,15 @@ export default function ResultPhasePage() {
     setPresentationPreparing(RESULT_PRESENTATION_OWNER, preparing);
     setPresentationQueueActive(RESULT_PRESENTATION_OWNER, queueActive);
 
-    // Authoritative complete: battle presented + cues idle (do not wait for credits).
+    // Complete only after decisive rows + cue queue idle (never while data missing).
     if (
-      isSettlementBattleReady(settleView.status) &&
-      queueStatus === "idle"
+      canMarkBattlePresentationComplete({
+        status: settleView.status,
+        queueStatus,
+        rowsReady,
+        hasPresentableRows,
+        presentationFxEnabled: showPresentationFx,
+      })
     ) {
       markBattlePresentationComplete(walletKey, settleView.day);
     }
@@ -153,6 +161,8 @@ export default function ResultPhasePage() {
     settleView.day,
     showPresentationFx,
     queueStatus,
+    rowsReady,
+    hasPresentableRows,
     autoReveal.revealing,
     walletKey,
   ]);

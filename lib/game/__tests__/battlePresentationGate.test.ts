@@ -1,9 +1,12 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  areBattlePresentationRowsReady,
+  canMarkBattlePresentationComplete,
   canNavigateAfterBattle,
   isBattlePresentationBusy,
   isBattlePresentationComplete,
   isBattlePresentationDataReady,
+  isBattlePresentationRowReady,
   isBattleSettlementPreparing,
   isPresentationQueueIdle,
   markBattlePresentationComplete,
@@ -112,6 +115,46 @@ describe("preparing + battle-ready helpers", () => {
       isBattlePresentationDataReady({
         status: "battle_ready",
         hasPresentableRows: false,
+      }),
+    ).toBe(false);
+  });
+
+  it("rowsReady requires outcome + location + reward (not awaiting)", () => {
+    expect(
+      isBattlePresentationRowReady({
+        outcome: "awaiting_settlement",
+        locationId: 4,
+        rewardWei: 1n,
+      }),
+    ).toBe(false);
+    expect(
+      isBattlePresentationRowReady({
+        outcome: "Safe (no hunt)",
+        locationId: 4,
+        rewardWei: 32_000n * 10n ** 18n,
+        rewardLabel: "32,000 tHANSOME",
+      }),
+    ).toBe(true);
+    expect(
+      areBattlePresentationRowsReady([
+        {
+          missedReveal: true,
+          outcome: "missed_reveal",
+          locationId: null,
+          rewardWei: 0n,
+        },
+      ]),
+    ).toBe(true);
+  });
+
+  it("does not mark complete when presentable rows exist but FX not enabled", () => {
+    expect(
+      canMarkBattlePresentationComplete({
+        status: "battle_ready",
+        queueStatus: "idle",
+        rowsReady: true,
+        hasPresentableRows: true,
+        presentationFxEnabled: false,
       }),
     ).toBe(false);
   });

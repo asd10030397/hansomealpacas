@@ -149,6 +149,74 @@ export function isBattlePresentationDataReady(input: {
   );
 }
 
+export type BattlePresentationRowReadiness = {
+  missedReveal?: boolean;
+  outcome: string;
+  locationId?: number | null;
+  /** null = still loading day reward; 0n is a real zero. */
+  rewardWei?: bigint | null;
+  rewardLabel?: string;
+  activatedAbility?: string | null;
+};
+
+/**
+ * Decisive row for FX / complete: not awaiting placeholders or missing location/reward.
+ * Genuine missed-reveal rows count as ready (no FX to play).
+ */
+export function isBattlePresentationRowReady(
+  row: BattlePresentationRowReadiness,
+): boolean {
+  if (row.missedReveal) return true;
+
+  const o = (row.outcome ?? "").trim().toLowerCase();
+  if (!o || o === "—" || o === "-") return false;
+  if (
+    o.includes("awaiting") ||
+    o.includes("settled on-chain") ||
+    o.includes("not exposed")
+  ) {
+    return false;
+  }
+
+  if (row.locationId == null) return false;
+
+  if (row.rewardWei == null) return false;
+  const label = (row.rewardLabel ?? "").trim();
+  if (label === "…" || /^pending$/i.test(label)) return false;
+
+  return true;
+}
+
+/** All participant rows have decisive presentation data (or there are none). */
+export function areBattlePresentationRowsReady(
+  rows: readonly BattlePresentationRowReadiness[],
+): boolean {
+  if (rows.length === 0) return true;
+  return rows.every(isBattlePresentationRowReady);
+}
+
+/**
+ * Mark presentationComplete only after battle-ready rows are decisive and the
+ * cue queue is idle. Never complete while rows still lack location/outcome/reward
+ * (rowsReady=false). When hasPresentableRows, require FX queue enabled so we do
+ * not complete on the idle stub before cues are armed.
+ */
+export function canMarkBattlePresentationComplete(input: {
+  status: SettlementUiStatus;
+  queueStatus: string;
+  rowsReady: boolean;
+  hasPresentableRows: boolean;
+  /** True while Result page has enabled the presentation queue. */
+  presentationFxEnabled: boolean;
+}): boolean {
+  if (!isSettlementBattleReady(input.status)) return false;
+  if (!input.rowsReady) return false;
+  if (input.queueStatus !== "idle") return false;
+  // All-missed / no-FX: complete when decisive. Presentable: wait until FX armed.
+  if (input.hasPresentableRows && !input.presentationFxEnabled) return false;
+  return true;
+}
+
 export function resetBattlePresentationGateForTests(): void {
   preparingOwners.clear();
   queueOwners.clear();

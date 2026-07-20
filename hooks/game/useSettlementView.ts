@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { formatEther, type Address, type Log, zeroHash } from "viem";
+import { formatEther, type Address, zeroHash } from "viem";
 import {
   useAccount,
   useChainId,
@@ -70,7 +70,8 @@ import {
   isTestnetGameplayTraitsEnabled,
 } from "@/lib/game/testnetGameplayTraits";
 import { resolveBattleLocationId } from "@/lib/game/resolveBattleLocation";
-import { fetchDaySettlementCredits } from "@/lib/game/daySettlementCredits";
+import { resolveBattleDayRewardWei } from "@/lib/game/battleDayReward";
+import { isBattleRevealDetected } from "@/lib/game/battleRevealDetection";
 import type { AbilityEffectId } from "@/lib/game/abilityEffects/catalog";
 import {
   alpacaCountAt,
@@ -133,11 +134,6 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
   const [rollByToken, setRollByToken] = useState<
     Record<number, { runnerSuccess: boolean; luckySuccess: boolean }>
   >({});
-  /** Per-token credits from this day's DaySettled tx (not cumulative claimable). */
-  const [dayCreditsByToken, setDayCreditsByToken] = useState<
-    Record<number, bigint>
-  >({});
-  const [dayCreditsLoaded, setDayCreditsLoaded] = useState(false);
 
   // Drop previous wallet / day battle UI (prevents stale SeedAlreadySet errors).
   useEffect(() => {
@@ -145,8 +141,6 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
     setLocalTick((n) => n + 1);
     setCohort(emptyCohort());
     setRollByToken({});
-    setDayCreditsByToken({});
-    setDayCreditsLoaded(false);
   }, [address, viewDay]);
 
   // Gasless resolve is owned by AutoRevealProvider — only subscribe for instant refetch.
@@ -351,6 +345,8 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
     settled: battleReady,
   });
 
+  // Day reward for Battle Result — pendingRewardOf stays valid after creditBatch.
+  // Do not use DaySettled receipt Credited logs (batched settle has none there).
   const pendingRewardContracts = useReadContracts({
     contracts: tokenIds.map((tokenId) => ({
       address: game!,
@@ -360,54 +356,10 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
       chainId: GAME_CHAIN_ID,
     })),
     query: {
-      enabled:
-        live && !!game && tokenIds.length > 0 && finalized && !settled,
-      refetchInterval: unsettledPollMs,
+      enabled: live && !!game && tokenIds.length > 0 && finalized,
+      refetchInterval: settled ? false : unsettledPollMs,
     },
   });
-
-  // Load this day's Credited amounts from the settle tx (UI reward = day reward).
-  useEffect(() => {
-    if (!live || !game || !publicClient || !distributorAddress || !settled) {
-      setDayCreditsByToken({});
-      setDayCreditsLoaded(false);
-      return;
-    }
-    let cancelled = false;
-    setDayCreditsLoaded(false);
-    void (async () => {
-      try {
-        const { credits } = await fetchDaySettlementCredits({
-          publicClient,
-          game,
-          distributor: distributorAddress,
-          day: viewDay,
-          fromBlock: REVEAL_LOG_FROM_BLOCK,
-        });
-        if (cancelled) return;
-        const next: Record<number, bigint> = {};
-        for (const [tokenId, amount] of credits) next[tokenId] = amount;
-        setDayCreditsByToken(next);
-        setDayCreditsLoaded(true);
-      } catch {
-        if (!cancelled) {
-          setDayCreditsByToken({});
-          setDayCreditsLoaded(false);
-        }
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    live,
-    game,
-    publicClient,
-    distributorAddress,
-    settled,
-    viewDay,
-    localTick,
-  ]);
 
   // Index Revealed(day) once Reveal is closed (missed-reveal + activation cohort).
   useEffect(() => {
@@ -570,8 +522,8 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
       return [];
     }
 
-    // Effective cohort: chain Revealed logs + any owned reveals missing from RPC.
-    const ownedRevealSeed = tokenIds.map((tokenId) => {
+    // Effective cohort: chain Revealed logs + owned reveals (locationOf / secrets).
+    const ownedRevealSeed = tokenIds.map((tokenId, i) => {
       const secret = secrets.find((s) => s.tokenId === tokenId);
       const nft = owned.nfts.find((n) => n.tokenId === tokenId);
       const testnetId = isTestnetGameplayTraitsEnabled()
@@ -582,8 +534,14 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
       const cohortLocationId =
         cohort.participants.find((p) => p.tokenId === tokenId)?.locationId ??
         null;
+      const locRaw = locationContracts.data?.[i]?.result;
+      const locFromChain =
+        locRaw !== undefined && !Number.isNaN(Number(locRaw))
+          ? Number(locRaw)
+          : null;
       const loc =
         cohortLocationId ??
+        (locFromChain != null && locFromChain !== 0 ? locFromChain : null) ??
         (secret &&
         (secret.status === "revealed" || secret.status === "submitted")
           ? secret.locationId
@@ -599,6 +557,8 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
     return tokenIds.map((tokenId, i) => {
       const secret = secrets.find((s) => s.tokenId === tokenId);
       const locRaw = locationContracts.data?.[i]?.result;
+      const locationOf =
+        locRaw !== undefined ? Number(locRaw) : null;
       const claimRaw = claimableContracts.data?.[i]?.result;
       const rewardWei = claimRaw !== undefined ? (claimRaw as bigint) : null;
       const hashRaw = commitHashContracts.data?.[i]?.result as
@@ -624,8 +584,21 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
         secret?.status === "prepared" ||
         secret?.status === "submitted" ||
         secret?.status === "revealed";
-      const revealed =
-        cohort.revealedTokenIds.has(tokenId) || secret?.status === "revealed";
+
+      const pendingRaw = pendingRewardContracts.data?.[i]?.result;
+      const pendingWei =
+        typeof pendingRaw === "bigint" ? pendingRaw : null;
+
+      // On-chain locationOf / pendingRewardOf — not only Revealed logs or localStorage.
+      const revealed = isBattleRevealDetected({
+        committed,
+        cohortRevealed: cohort.revealedTokenIds.has(tokenId),
+        secretRevealed: secret?.status === "revealed",
+        locationOf,
+        side,
+        pendingRewardWei: pendingWei,
+        battleReady,
+      });
       const cohortLocationId =
         cohort.participants.find((p) => p.tokenId === tokenId)?.locationId ??
         null;
@@ -635,7 +608,7 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
         committed,
         revealed,
         settled: battleReady,
-        locationOf: locRaw !== undefined ? Number(locRaw) : null,
+        locationOf,
         secretLocationId: secret?.locationId,
         cohortLocationId,
         side,
@@ -687,24 +660,11 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
         outcome = "Settled on-chain (detail fields not exposed by contract)";
       }
 
-      // Battle reward: after finalize use pendingRewardOf; after credits use day Credited.
-      const pendingIdx = tokenIds.indexOf(tokenId);
-      const pendingRaw =
-        pendingIdx >= 0
-          ? pendingRewardContracts.data?.[pendingIdx]?.result
-          : undefined;
-      const pendingWei =
-        typeof pendingRaw === "bigint" ? pendingRaw : null;
-
-      const dayRewardWei = missedReveal
-        ? 0n
-        : settled
-          ? dayCreditsLoaded
-            ? (dayCreditsByToken[tokenId] ?? 0n)
-            : null
-          : finalized
-            ? pendingWei
-            : null;
+      const dayRewardWei = resolveBattleDayRewardWei({
+        missedReveal,
+        battleReady,
+        pendingWei,
+      });
 
       const rewardLabel = missedReveal
         ? "0"
@@ -767,8 +727,6 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
     owned.nfts,
     cohort,
     rollByToken,
-    dayCreditsByToken,
-    dayCreditsLoaded,
   ]);
 
   const runSettle = useCallback(async () => {

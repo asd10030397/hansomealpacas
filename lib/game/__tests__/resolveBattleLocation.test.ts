@@ -41,7 +41,7 @@ describe("resolveBattleLocationId", () => {
     ).toBeNull();
   });
 
-  it("allows Alpaca Home only after reveal/settle with no contradicting secret", () => {
+  it("allows Alpaca Home only after reveal evidence (not settled alone)", () => {
     expect(
       resolveBattleLocationId({
         committed: true,
@@ -51,6 +51,16 @@ describe("resolveBattleLocationId", () => {
         side: "Alpaca",
       }),
     ).toBe(0);
+    // Unrevealed + finalized must not invent Home from locationOf===0.
+    expect(
+      resolveBattleLocationId({
+        committed: true,
+        revealed: false,
+        settled: true,
+        locationOf: 0,
+        side: "Alpaca",
+      }),
+    ).toBeNull();
   });
 
   it("Day 11 regression: W2/W3 secrets must not collapse to Home", () => {
