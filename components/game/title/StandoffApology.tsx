@@ -14,7 +14,7 @@ export function StandoffApology() {
     <aside className="standoff__apology" aria-label={a.ariaLabel}>
       <div className="standoff__apology-art">
         <Image
-          src="/assets/characters/alpaca-apology-sad.png"
+          src="/assets/characters/alpaca-apology-sad-v2.png"
           alt={a.imageAlt}
           width={280}
           height={280}
