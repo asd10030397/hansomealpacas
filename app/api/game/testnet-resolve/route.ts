@@ -19,10 +19,10 @@ import {
   HANSOME_GAME_ADDRESS,
 } from "@/lib/game/hansomeGame";
 import {
-  isCommitVaultConfigured,
   listVaultSecretsForDay,
   vaultSecretCountForDay,
 } from "@/lib/game/server/testnetCommitVault";
+import { isCommitVaultConfigured } from "@/lib/game/server/testnetCommitVaultConfig";
 import {
   buildTestnetResolveStatus,
   readRelayerPrivateKey,

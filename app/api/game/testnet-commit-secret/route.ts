@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
 import { isAddress, isHex, type Hex } from "viem";
 import { ROBINHOOD_TESTNET_CHAIN_ID } from "@/lib/chain";
-import { computeCommitHash } from "@/lib/game/commitSecret";
+import { computeCommitHash } from "@/lib/game/commitHash";
 import { GAME_CHAIN_ID, HANSOME_GAME_ADDRESS } from "@/lib/game/hansomeGame";
-import {
-  isCommitVaultConfigured,
-  upsertVaultCommitSecret,
-} from "@/lib/game/server/testnetCommitVault";
+import { isCommitVaultConfigured } from "@/lib/game/server/testnetCommitVaultConfig";
+import { upsertVaultCommitSecret } from "@/lib/game/server/testnetCommitVault";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

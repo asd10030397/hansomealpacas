@@ -1,78 +1,49 @@
 /**
  * Server-only Testnet commit secret vault.
- * Encrypted salts are stored in Vercel KV / Upstash Redis so gasless reveal
- * survives redeploys and serverless cold starts. Never use the filesystem.
+ * Encrypted salts live in Vercel KV / Upstash Redis.
+ * node:crypto and @upstash/redis load only inside server functions.
  */
 
-import {
-  createCipheriv,
-  createDecipheriv,
-  randomBytes,
-} from "node:crypto";
-import { Redis } from "@upstash/redis";
+import "server-only";
+
 import { getAddress, isAddress, isHex, type Hex } from "viem";
+import { computeCommitHash } from "@/lib/game/commitHash";
 import { GAME_CHAIN_ID, HANSOME_GAME_ADDRESS } from "@/lib/game/hansomeGame";
+import {
+  isCommitVaultConfigured,
+  redisConnectionEnv,
+  vaultDriver,
+} from "@/lib/game/server/testnetCommitVaultConfig";
+import {
+  memoryVaultKv,
+  resetMemoryVaultForTests,
+} from "@/lib/game/server/testnetCommitVaultMemory";
+import type {
+  StoredVaultRecord,
+  VaultCommitSecret,
+  VaultKv,
+  VaultPersistInput,
+} from "@/lib/game/server/testnetCommitVaultTypes";
 
-export type VaultCommitSecret = {
-  tokenId: number;
-  day: number;
-  locationId: number;
-  salt: Hex;
-  commitHash: Hex;
-  wallet: string;
-  chainId: number;
-  gameAddress: string;
-  updatedAt: number;
-};
-
-export type VaultPersistInput = {
-  tokenId: number;
-  day: number;
-  locationId: number;
-  salt: Hex;
-  commitHash: Hex;
-  wallet: string;
-  chainId?: number;
-  gameAddress?: string;
-};
-
-type StoredVaultRecord = {
-  v: 1;
-  chainId: number;
-  gameAddress: string;
-  wallet: string;
-  day: number;
-  tokenId: number;
-  locationId: number;
-  commitHash: Hex;
-  /** AES-256-GCM encrypted salt (hex without 0x). */
-  iv: string;
-  tag: string;
-  ciphertext: string;
-  updatedAt: number;
-};
-
-export type VaultKv = {
-  get: (key: string) => Promise<string | null>;
-  set: (key: string, value: string) => Promise<void>;
-  sadd: (key: string, member: string) => Promise<void>;
-  smembers: (key: string) => Promise<string[]>;
-};
+export type {
+  VaultCommitSecret,
+  VaultKv,
+  VaultPersistInput,
+} from "@/lib/game/server/testnetCommitVaultTypes";
+export { createMemoryVaultKv } from "@/lib/game/server/testnetCommitVaultMemory";
+export { isCommitVaultConfigured };
 
 const KEY_PREFIX = "hansome:cv:v1";
 
-/** Process-local memory store for tests / explicit local driver. */
-const memoryStrings = new Map<string, string>();
-const memorySets = new Map<string, Set<string>>();
-
 let injectedKv: VaultKv | null = null;
-let redisClient: Redis | null | undefined;
+// Cached Upstash client — typed loosely to avoid top-level Redis import.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let redisClient: any | null | undefined;
 
 export function __resetCommitVaultForTests(): void {
   injectedKv = null;
   redisClient = undefined;
-  memoryStrings.clear();
-  memorySets.clear();
+  resetMemoryVaultForTests();
 }
 
 export function __setCommitVaultKvForTests(kv: VaultKv | null): void {
@@ -80,52 +51,7 @@ export function __setCommitVaultKvForTests(kv: VaultKv | null): void {
   redisClient = undefined;
 }
 
-export function createMemoryVaultKv(
-  strings: Map<string, string> = new Map(),
-  sets: Map<string, Set<string>> = new Map(),
-): VaultKv {
-  return {
-    async get(key) {
-      return strings.get(key) ?? null;
-    },
-    async set(key, value) {
-      strings.set(key, value);
-    },
-    async sadd(key, member) {
-      let set = sets.get(key);
-      if (!set) {
-        set = new Set();
-        sets.set(key, set);
-      }
-      set.add(member);
-    },
-    async smembers(key) {
-      return [...(sets.get(key) ?? [])];
-    },
-  };
-}
-
-function memoryVaultKv(): VaultKv {
-  return createMemoryVaultKv(memoryStrings, memorySets);
-}
-
-function redisUrl(): string {
-  return (
-    process.env.KV_REST_API_URL?.trim() ||
-    process.env.UPSTASH_REDIS_REST_URL?.trim() ||
-    ""
-  );
-}
-
-function redisToken(): string {
-  return (
-    process.env.KV_REST_API_TOKEN?.trim() ||
-    process.env.UPSTASH_REDIS_REST_TOKEN?.trim() ||
-    ""
-  );
-}
-
-export function readVaultEncryptionKey(): Buffer | null {
+function readVaultEncryptionKey(): Buffer | null {
   const raw = process.env.GAME_TESTNET_COMMIT_VAULT_KEY?.trim() || "";
   if (!raw) return null;
   if (/^[0-9a-fA-F]{64}$/.test(raw)) {
@@ -140,47 +66,15 @@ export function readVaultEncryptionKey(): Buffer | null {
   return null;
 }
 
-function vaultDriver(): "redis" | "memory" | "none" {
-  const explicit = process.env.GAME_TESTNET_COMMIT_VAULT_DRIVER?.trim().toLowerCase();
-  if (explicit === "memory") {
-    if (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production") {
-      return "none";
-    }
-    return "memory";
-  }
-  if (explicit === "redis" || explicit === "kv") {
-    return redisUrl() && redisToken() ? "redis" : "none";
-  }
-  if (redisUrl() && redisToken()) return "redis";
-  if (
-    process.env.NODE_ENV !== "production" &&
-    process.env.VERCEL_ENV !== "production" &&
-    readVaultEncryptionKey()
-  ) {
-    // Local/dev convenience when encryption key is set but Redis is not.
-    // Never used in Production.
-    if (explicit === "auto-memory" || process.env.GAME_TESTNET_COMMIT_VAULT_ALLOW_MEMORY === "1") {
-      return "memory";
-    }
-  }
-  return redisUrl() && redisToken() ? "redis" : "none";
-}
-
-export function isCommitVaultConfigured(): boolean {
-  if (!readVaultEncryptionKey()) return false;
-  const driver = vaultDriver();
-  return driver === "redis" || driver === "memory";
-}
-
-function getRedis(): Redis | null {
+async function getRedis() {
   if (redisClient !== undefined) return redisClient;
-  const url = redisUrl();
-  const token = redisToken();
-  if (!url || !token) {
+  const env = redisConnectionEnv();
+  if (!env) {
     redisClient = null;
     return null;
   }
-  redisClient = new Redis({ url, token });
+  const { Redis } = await import("@upstash/redis");
+  redisClient = new Redis({ url: env.url, token: env.token });
   return redisClient;
 }
 
@@ -189,11 +83,11 @@ async function getKv(): Promise<VaultKv | null> {
   const driver = vaultDriver();
   if (driver === "memory") return memoryVaultKv();
   if (driver !== "redis") return null;
-  const redis = getRedis();
+  const redis = await getRedis();
   if (!redis) return null;
   return {
     async get(key) {
-      const value = await redis.get<string>(key);
+      const value = await redis.get(key);
       if (value == null) return null;
       return typeof value === "string" ? value : JSON.stringify(value);
     },
@@ -234,7 +128,11 @@ function dayIndexKey(chainId: number, gameAddress: string, day: number): string 
   return `${KEY_PREFIX}:idx:${chainId}:${normalizeGame(gameAddress)}:${day}`;
 }
 
-function encryptSalt(salt: Hex, key: Buffer): Pick<StoredVaultRecord, "iv" | "tag" | "ciphertext"> {
+async function encryptSalt(
+  salt: Hex,
+  key: Buffer,
+): Promise<Pick<StoredVaultRecord, "iv" | "tag" | "ciphertext">> {
+  const { createCipheriv, randomBytes } = await import("node:crypto");
   const iv = randomBytes(12);
   const cipher = createCipheriv("aes-256-gcm", key, iv);
   const plain = Buffer.from(salt.slice(2), "hex");
@@ -247,10 +145,11 @@ function encryptSalt(salt: Hex, key: Buffer): Pick<StoredVaultRecord, "iv" | "ta
   };
 }
 
-function decryptSalt(
+async function decryptSalt(
   record: Pick<StoredVaultRecord, "iv" | "tag" | "ciphertext">,
   key: Buffer,
-): Hex {
+): Promise<Hex> {
+  const { createDecipheriv } = await import("node:crypto");
   const decipher = createDecipheriv(
     "aes-256-gcm",
     key,
@@ -318,10 +217,6 @@ async function readStored(
   }
 }
 
-/**
- * Persist (or idempotently confirm) an encrypted salt, then read it back and
- * verify the stored salt recomputes the expected commitment.
- */
 export async function upsertVaultCommitSecret(
   input: VaultPersistInput,
 ): Promise<
@@ -377,7 +272,7 @@ export async function upsertVaultCommitSecret(
   if (existing) {
     if (existing.commitHash.toLowerCase() === input.commitHash.toLowerCase()) {
       try {
-        const salt = decryptSalt(existing, keyMaterial);
+        const salt = await decryptSalt(existing, keyMaterial);
         const verified = await verifyStoredRecord(kv, recordKey, input.commitHash);
         if (!verified.ok) {
           return {
@@ -406,7 +301,7 @@ export async function upsertVaultCommitSecret(
     };
   }
 
-  const enc = encryptSalt(input.salt, keyMaterial);
+  const enc = await encryptSalt(input.salt, keyMaterial);
   const stored: StoredVaultRecord = {
     v: 1,
     chainId: scope.chainId,
@@ -457,16 +352,13 @@ async function verifyStoredRecord(
   }
   let salt: Hex;
   try {
-    salt = decryptSalt(stored, keyMaterial);
+    salt = await decryptSalt(stored, keyMaterial);
   } catch {
     return { ok: false, error: "Vault record decrypt failed after write." };
   }
   if (stored.commitHash.toLowerCase() !== expectedCommitHash.toLowerCase()) {
     return { ok: false, error: "Stored commitHash mismatch." };
   }
-  // Lazy import keeps client bundles free of this module's Node crypto path
-  // when only types are imported elsewhere.
-  const { computeCommitHash } = await import("@/lib/game/commitSecret");
   const recomputed = computeCommitHash(
     stored.tokenId,
     stored.day,
@@ -506,7 +398,7 @@ export async function getVaultCommitSecret(input: {
   const stored = await readStored(kv, recordKey);
   if (!stored) return null;
   try {
-    const salt = decryptSalt(stored, keyMaterial);
+    const salt = await decryptSalt(stored, keyMaterial);
     return toPublicSecret(stored, salt);
   } catch {
     return null;

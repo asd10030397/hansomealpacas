@@ -1,12 +1,15 @@
 /**
  * Production / gasless readiness checks for Testnet relayer + commit vault.
- * Safe to call from instrumentation and API status endpoints — never logs secrets.
+ * Safe to call from Node instrumentation — never logs secrets.
  */
 
+import "server-only";
+
 import {
+  hasRedisEnv,
+  hasVaultEncryptionKey,
   isCommitVaultConfigured,
-  readVaultEncryptionKey,
-} from "@/lib/game/server/testnetCommitVault";
+} from "@/lib/game/server/testnetCommitVaultConfig";
 import {
   isRelayerConfigured,
   isTestnetGaslessFeatureEnabled,
@@ -25,18 +28,6 @@ export type GaslessConfigStatus = {
   ready: boolean;
 };
 
-function hasRedisEnv(): boolean {
-  const url =
-    process.env.KV_REST_API_URL?.trim() ||
-    process.env.UPSTASH_REDIS_REST_URL?.trim() ||
-    "";
-  const token =
-    process.env.KV_REST_API_TOKEN?.trim() ||
-    process.env.UPSTASH_REDIS_REST_TOKEN?.trim() ||
-    "";
-  return Boolean(url && token);
-}
-
 function isProductionRuntime(): boolean {
   return (
     process.env.NODE_ENV === "production" ||
@@ -52,11 +43,10 @@ export function getGaslessConfigStatus(): GaslessConfigStatus {
 
   if (gaslessEnabled) {
     if (!relayerConfigured) issues.push("relayer_key_missing");
-    if (!readVaultEncryptionKey()) {
+    if (!hasVaultEncryptionKey()) {
       issues.push("vault_encryption_key_missing");
     }
     if (isProductionRuntime()) {
-      // Production requires durable Redis/KV — memory driver is forbidden there.
       if (!hasRedisEnv()) issues.push("vault_storage_missing");
     } else if (!vaultConfigured) {
       issues.push("vault_storage_missing");

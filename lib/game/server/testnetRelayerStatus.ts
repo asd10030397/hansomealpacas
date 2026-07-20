@@ -3,10 +3,12 @@
  * Never import from client components — keeps private keys off the browser bundle.
  */
 
+import "server-only";
+
 import { isHex, type Hex } from "viem";
 import { ROBINHOOD_TESTNET_CHAIN_ID } from "@/lib/chain";
 import { GAME_CHAIN_ID, HANSOME_GAME_ADDRESS } from "@/lib/game/hansomeGame";
-import { isCommitVaultConfigured } from "@/lib/game/server/testnetCommitVault";
+import { isCommitVaultConfigured } from "@/lib/game/server/testnetCommitVaultConfig";
 
 export const RELAYER_NOT_CONFIGURED_CODE = "RELAYER_NOT_CONFIGURED" as const;
 export const VAULT_NOT_CONFIGURED_CODE = "VAULT_NOT_CONFIGURED" as const;

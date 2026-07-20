@@ -4,8 +4,11 @@
  * Secrets are scoped per wallet so switching accounts cannot leak another user's moves.
  */
 
-import { encodePacked, keccak256, toHex, type Hex } from "viem";
+import { toHex, type Hex } from "viem";
 import type { LocationId } from "@/types/game";
+import { computeCommitHash } from "@/lib/game/commitHash";
+
+export { computeCommitHash };
 
 const STORAGE_KEY = "hansome-commit-secrets-v2";
 /** Legacy unscoped vault — read once for migration, never written. */
@@ -30,20 +33,6 @@ export type CommitSecretRecord = {
 export function normalizeWallet(wallet: string | null | undefined): string | null {
   if (!wallet?.trim()) return null;
   return wallet.trim().toLowerCase();
-}
-
-export function computeCommitHash(
-  tokenId: number,
-  day: number,
-  locationId: LocationId,
-  salt: Hex,
-): Hex {
-  return keccak256(
-    encodePacked(
-      ["uint256", "uint256", "uint8", "bytes32"],
-      [BigInt(tokenId), BigInt(day), locationId, salt],
-    ),
-  );
 }
 
 export function generateSalt(): Hex {
