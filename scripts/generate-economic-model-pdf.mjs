@@ -59,8 +59,25 @@ function mdToHtml(md, lang) {
     inTable = false;
   };
 
-  const inline = (s) =>
+  /** Soft-detex leftovers so PDFs never show raw \( … \) markup. */
+  const softDetex = (s) =>
     s
+      .replace(/\\\(([\s\S]*?)\\\)/g, "$1")
+      .replace(/\\mathrm\{([^}]*)\}/g, "$1")
+      .replace(/\\text\{([^}]*)\}/g, "$1")
+      .replace(/\{,\}/g, ",")
+      .replace(/\\,\s*/g, " ")
+      .replace(/\\ge\b/g, "≥")
+      .replace(/\\le\b/g, "≤")
+      .replace(/\\cdot\b/g, "·")
+      .replace(/\\times\b/g, "×")
+      .replace(/\\pi\b/g, "π")
+      .replace(/\^\{([^}]*)\}/g, "^$1")
+      .replace(/_\{([^}]*)\}/g, "_$1");
+
+  const inline = (s) => {
+    const t = softDetex(s);
+    return t
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
@@ -70,6 +87,7 @@ function mdToHtml(md, lang) {
         /\[([^\]]+)\]\(([^)]+)\)/g,
         '<a href="$2">$1</a>',
       );
+  };
 
   while (i < lines.length) {
     const line = lines[i];
