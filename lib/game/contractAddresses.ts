@@ -33,6 +33,27 @@ export type AddressResolveResult =
   | { ok: false; error: string };
 
 /**
+ * Read NEXT_PUBLIC_* via static property access so Next.js can inline them
+ * into the client bundle. Dynamic `process.env[key]` is undefined in the browser.
+ */
+function readPublicEnv(key: string): string {
+  switch (key) {
+    case "NEXT_PUBLIC_HANSOME_GAME_ADDRESS":
+      return process.env.NEXT_PUBLIC_HANSOME_GAME_ADDRESS?.trim() || "";
+    case "NEXT_PUBLIC_REWARD_DISTRIBUTOR_ADDRESS":
+      return process.env.NEXT_PUBLIC_REWARD_DISTRIBUTOR_ADDRESS?.trim() || "";
+    case "NEXT_PUBLIC_HANSOME_GENESIS_ADDRESS":
+      return process.env.NEXT_PUBLIC_HANSOME_GENESIS_ADDRESS?.trim() || "";
+    case "NEXT_PUBLIC_GENESIS_NFT_ADDRESS":
+      return process.env.NEXT_PUBLIC_GENESIS_NFT_ADDRESS?.trim() || "";
+    case "NEXT_PUBLIC_RANDOMNESS_ADDRESS":
+      return process.env.NEXT_PUBLIC_RANDOMNESS_ADDRESS?.trim() || "";
+    default:
+      return "";
+  }
+}
+
+/**
  * Resolve a contract address from env candidates (first non-empty wins).
  * Fail closed: missing, invalid, zero, or superseded → error (no silent fallback).
  */
@@ -42,7 +63,7 @@ export function resolveConfiguredAddress(
 ): AddressResolveResult {
   let raw = "";
   for (const key of envKeys) {
-    const v = process.env[key]?.trim();
+    const v = readPublicEnv(key);
     if (v) {
       raw = v;
       break;
@@ -80,7 +101,7 @@ export function resolveOptionalConfiguredAddress(
   envKeys: readonly string[],
   label: string,
 ): Address | null {
-  const hasAny = envKeys.some((k) => Boolean(process.env[k]?.trim()));
+  const hasAny = envKeys.some((k) => Boolean(readPublicEnv(k)));
   if (!hasAny) return null;
   const resolved = resolveConfiguredAddress(envKeys, label);
   if (!resolved.ok) return null;

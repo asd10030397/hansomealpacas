@@ -41,7 +41,7 @@ export default function MyNftsPage() {
 
       {!configured ? (
         <p className="mt-6 rounded border border-[#5a4630] bg-[#1a1410]/90 px-3 py-3 text-sm text-[#f0c44a]">
-          Genesis NFT address is not configured.
+          Genesis NFT is temporarily unavailable. Please try again later.
         </p>
       ) : !isConnected ? (
         <div className="my-nfts-wallet-panel mt-6 space-y-3 rounded border border-[#2a3348] bg-[#141a26]/88 px-3 py-4">

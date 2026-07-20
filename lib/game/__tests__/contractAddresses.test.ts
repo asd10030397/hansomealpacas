@@ -1,11 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   isSupersededContractAddress,
+  resolveGenesisNftAddress,
   resolveHansomeGameAddress,
   SUPERSEDED_TESTNET_ADDRESSES,
 } from "@/lib/game/contractAddresses";
 
 const CANONICAL_GAME = "0x92C8e9CCF67e533438bCCE258D4bEEc6E0559FC5";
+const CANONICAL_GENESIS = "0x43c1d6aF194A796EC612F2bAC04085a409A1347C";
 
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -50,5 +52,13 @@ describe("contractAddresses fail-closed", () => {
     );
     const r = resolveHansomeGameAddress();
     expect(r.ok).toBe(false);
+  });
+
+  it("resolves Genesis via NEXT_PUBLIC_GENESIS_NFT_ADDRESS alias", () => {
+    vi.stubEnv("NEXT_PUBLIC_HANSOME_GENESIS_ADDRESS", "");
+    vi.stubEnv("NEXT_PUBLIC_GENESIS_NFT_ADDRESS", CANONICAL_GENESIS);
+    const r = resolveGenesisNftAddress();
+    expect(r.ok).toBe(true);
+    if (r.ok) expect(r.address).toBe(CANONICAL_GENESIS);
   });
 });
