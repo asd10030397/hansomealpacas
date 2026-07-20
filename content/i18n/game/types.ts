@@ -118,6 +118,14 @@ export type GameMessages = {
     cougarTag: string;
     alpacaRanch: string;
     alpacaTag: string;
+    apology: {
+      ariaLabel: string;
+      imageAlt: string;
+      line1: string;
+      line2: string;
+      line3: string;
+      line4: string;
+    };
   };
   dashboard: {
     heading: string;

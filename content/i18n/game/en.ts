@@ -103,13 +103,22 @@ export const gameEn: GameMessages = {
     connectSub: "INJECTED · ROBINHOOD",
     connectSubConnected: "TAP TO DISCONNECT",
     mint: "MINT GENESIS NFT",
-    mintSub: "550 TOTAL SUPPLY",
+    mintSub: "DATE POSTPONED",
     enterGame: "ENTER THE GAME",
     enterGameSub: "DEPLOY · DAILY LOOP",
     cougarTerritory: "COUGAR TERRITORY",
     cougarTag: "HUNT. CLAIM. DOMINATE.",
     alpacaRanch: "ALPACA RANCH",
     alpacaTag: "SURVIVE. DEPLOY. EARN.",
+    apology: {
+      ariaLabel: "Mint postponement notice",
+      imageAlt: "A sad HANSOME alpaca apologizing",
+      line1: "Sorry, everyone.",
+      line2:
+        "Due to an unexpected scam incident, the MINT date will be postponed.",
+      line3: "We apologize for the inconvenience and appreciate your understanding.",
+      line4: "We will keep working hard and provide updates as soon as possible.",
+    },
   },
   dashboard: {
     heading: "DAILY GAME",
