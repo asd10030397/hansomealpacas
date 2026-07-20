@@ -5,6 +5,8 @@ import { MintPanel } from "@/components/mint/MintPanel";
 import { PixelButton, PixelPanel } from "@/components/ui/pixel";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
+import { useGameState } from "@/hooks/game/useGameState";
+import { enterGameHref } from "@/lib/game/uiLoopPhase";
 import "@/styles/genesis-launch.css";
 
 /**
@@ -14,7 +16,9 @@ import "@/styles/genesis-launch.css";
 export function GenesisLaunchPage() {
   const { t } = useGameI18n();
   const gameHref = useGameHref();
+  const { phase } = useGameState();
   const L = t.launch;
+  const enterHref = enterGameHref(phase, gameHref);
 
   return (
     <div className="genesis-launch">
@@ -30,7 +34,7 @@ export function GenesisLaunchPage() {
             >
               {L.ctaMint}
             </a>
-            <PixelButton href={gameHref.explore} variant="green" size="lg" className="w-auto">
+            <PixelButton href={enterHref} variant="green" size="lg" className="w-auto">
               {L.ctaEnter}
             </PixelButton>
             <PixelButton href={gameHref.docs} variant="slate" size="lg" className="w-auto">

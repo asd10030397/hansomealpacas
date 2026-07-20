@@ -4,6 +4,7 @@ import { MOCK_BANNER } from "@/data/game/mock";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameState } from "@/hooks/game/useGameState";
 import { useWalletUi } from "@/hooks/game/useWalletUi";
+import { enterGameHref, isResultPhase } from "@/lib/game/uiLoopPhase";
 import { CompactGameHud } from "./CompactGameHud";
 import { GameTitleLogo } from "./GameTitleLogo";
 import { RpgMenuButton } from "./RpgMenuButton";
@@ -17,6 +18,8 @@ export function MainMenuHero() {
   const { day, now, phaseEndsAt, phase } = useGameState();
   const gameHref = useGameHref();
   const { wallet, connectMock, disconnectMock } = useWalletUi();
+  const enterHref = enterGameHref(phase, gameHref);
+  const enterSub = isResultPhase(phase) ? "BATTLE RESULT" : "CHOOSE LOCATION";
 
   return (
     <section className="title-screen">
@@ -47,10 +50,10 @@ export function MainMenuHero() {
           </RpgMenuButton>
 
           <RpgMenuButton
-            href={gameHref.explore}
+            href={enterHref}
             iconSrc="/assets/icons/menu-explore.svg"
             variant="green"
-            subtitle="DEPLOY · DAILY LOOP"
+            subtitle={enterSub}
           >
             ENTER THE GAME
           </RpgMenuButton>

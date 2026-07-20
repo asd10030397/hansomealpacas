@@ -38,3 +38,17 @@ export function resultSubstep(
 export function isResultPhase(phase: GamePhase): boolean {
   return phase !== "COMMIT";
 }
+
+/**
+ * "ENTER THE GAME" / primary-loop destination.
+ * Answers: what should the player be doing right now?
+ *
+ * - COMMIT → Choose Location (commit)
+ * - REVEAL / SETTLEMENT / CLAIM (battle viewing window, even if settled) → Battle Result
+ */
+export function enterGameHref(
+  phase: GamePhase,
+  hrefs: { commit: string; result: string },
+): string {
+  return isResultPhase(phase) ? hrefs.result : hrefs.commit;
+}

@@ -4,7 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
+import { useGameState } from "@/hooks/game/useGameState";
 import { useWalletUi } from "@/hooks/game/useWalletUi";
+import { enterGameHref, isResultPhase } from "@/lib/game/uiLoopPhase";
 
 /**
  * Center brand + primary game menu.
@@ -13,7 +15,12 @@ import { useWalletUi } from "@/hooks/game/useWalletUi";
 export function StandoffMenu() {
   const { t } = useGameI18n();
   const gameHref = useGameHref();
+  const { phase } = useGameState();
   const { wallet, connectMock, disconnectMock } = useWalletUi();
+  const enterHref = enterGameHref(phase, gameHref);
+  const enterSub = isResultPhase(phase)
+    ? t.dashboard.mainResult
+    : t.dashboard.mainCommit;
 
   return (
     <div className="standoff__foreground">
@@ -67,7 +74,7 @@ export function StandoffMenu() {
           </span>
         </Link>
 
-        <Link href={gameHref.explore} className="standoff__btn standoff__btn--green">
+        <Link href={enterHref} className="standoff__btn standoff__btn--green">
           <Image
             src="/assets/icons/menu-explore.svg"
             alt=""
@@ -78,7 +85,7 @@ export function StandoffMenu() {
           />
           <span className="standoff__btn-label">
             <span>{t.title.enterGame}</span>
-            <span className="standoff__btn-sub">{t.title.enterGameSub}</span>
+            <span className="standoff__btn-sub">{enterSub}</span>
           </span>
         </Link>
       </nav>

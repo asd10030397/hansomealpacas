@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
+  enterGameHref,
   isResultPhase,
   resultSubstep,
   toUiLoopPhase,
   UI_LOOP_FLOW,
 } from "@/lib/game/uiLoopPhase";
+
+const HREFS = { commit: "/game/commit", result: "/game/result" };
 
 describe("uiLoopPhase", () => {
   it("maps wire phases to Choose Location → Battle Result", () => {
@@ -22,5 +25,13 @@ describe("uiLoopPhase", () => {
     expect(resultSubstep("CLAIM")).toBe("battle");
     expect(isResultPhase("COMMIT")).toBe(false);
     expect(isResultPhase("REVEAL")).toBe(true);
+  });
+
+  it("routes ENTER THE GAME to the current gameplay surface", () => {
+    expect(enterGameHref("COMMIT", HREFS)).toBe("/game/commit");
+    expect(enterGameHref("REVEAL", HREFS)).toBe("/game/result");
+    expect(enterGameHref("SETTLEMENT", HREFS)).toBe("/game/result");
+    // Settled but battle viewing window still open (wire CLAIM).
+    expect(enterGameHref("CLAIM", HREFS)).toBe("/game/result");
   });
 });

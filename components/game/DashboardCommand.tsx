@@ -8,7 +8,7 @@ import { GameStatusPanel } from "@/components/game/GameStatusPanel";
 import { PixelPanel } from "@/components/ui/pixel";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
-import { toUiLoopPhase } from "@/lib/game/uiLoopPhase";
+import { enterGameHref, isResultPhase, toUiLoopPhase } from "@/lib/game/uiLoopPhase";
 import type { GameDayState, GamePhase } from "@/types/game";
 import "@/styles/dashboard-command.css";
 
@@ -17,10 +17,11 @@ function mainActionForPhase(
   t: ReturnType<typeof useGameI18n>["t"],
   hrefs: ReturnType<typeof useGameHref>,
 ) {
-  if (phase === "COMMIT") {
+  const href = enterGameHref(phase, hrefs);
+  if (!isResultPhase(phase)) {
     return {
       kind: "link" as const,
-      href: hrefs.explore,
+      href,
       label: t.dashboard.mainCommit,
       feature: t.features.commit,
       variant: "gold" as const,
@@ -29,7 +30,7 @@ function mainActionForPhase(
   // Battle Result viewing — claiming is on the global Claim page.
   return {
     kind: "link" as const,
-    href: hrefs.result,
+    href,
     label: t.dashboard.mainResult,
     feature: t.phases.BATTLE_RESULT,
     variant: "gold" as const,
