@@ -472,6 +472,8 @@ export const gameEn: GameMessages = {
       "Commit is open. Previous-day settlement continues in the background — return here anytime for results.",
     previousDayBattleNote: (day) =>
       `Showing Day ${day} battle results (previous round).`,
+    presentationRecoveryNote:
+      "Battle presentation is taking longer than usual. Stay on this page — results will finish here. You can open Choose Location from the menu when ready.",
     arenaEyebrow: "ARENA · BATTLE RESULT",
     revealSectionTitle: "AUTO REVEAL",
     settleSectionTitle: "SETTLEMENT",

@@ -29,6 +29,7 @@ import {
   RELAYER_NOT_CONFIGURED_CODE,
   relayerUnavailableMessage,
 } from "@/lib/game/server/testnetRelayerStatus";
+import { SettlementTimingTrace } from "@/lib/game/server/settlementTimingLog";
 import { writeRelayerContract } from "@/lib/game/server/testnetRelayerWrite";
 import { isDefinitelyAlreadyRevealed } from "@/lib/game/homeRevealGuard";
 import {
@@ -43,6 +44,9 @@ export const dynamic = "force-dynamic";
 function msSince(start: number): number {
   return Math.round(performance.now() - start);
 }
+
+/** Last resolve request end time per day — poll-gap diagnostics (server process). */
+const lastResolveEndByDay = new Map<number, number>();
 
 type RevealItem = {
   tokenId: number;
@@ -151,6 +155,14 @@ export async function POST(req: Request) {
 
   const pk = readRelayerPrivateKey();
   if (!pk) {
+    console.info(
+      "[settlement-timing]",
+      JSON.stringify({
+        ts: new Date().toISOString(),
+        event: "relayer_not_configured",
+        ok: false,
+      }),
+    );
     return NextResponse.json(
       {
         ok: false,
@@ -184,6 +196,16 @@ export async function POST(req: Request) {
 
   const fulfillSeed = body.fulfillSeed !== false;
   const settle = body.settle === true;
+  const timing = new SettlementTimingTrace(day);
+  const prevEnd = lastResolveEndByDay.get(day);
+  const pollGapMs =
+    prevEnd != null ? Math.round(performance.now() - prevEnd) : undefined;
+  timing.log("resolve_request_received", {
+    stage: "checking",
+    pollGapMs,
+    detail: `fulfillSeed=${fulfillSeed};settle=${settle}`,
+  });
+  timing.log("relayer_configured_ok", { ok: true });
 
   const account = privateKeyToAccount(pk);
   const transport = http(rpcUrl());
@@ -209,6 +231,8 @@ export async function POST(req: Request) {
   let seedMs: number | null = null;
   let revealMs: number | null = null;
   let settleMs: number | null = null;
+  let creditBatchesRun = 0;
+  let revealBatchesRun = 0;
   const tTotal = performance.now();
 
   const buildTimings = (stage: TestnetResolveStage): TestnetResolveTimings => ({
@@ -231,6 +255,10 @@ export async function POST(req: Request) {
       hasSeed,
     });
     const timings = buildTimings(stage);
+    if (dayFinalized || alreadySettled) timing.markBattleReady({ stage });
+    if (alreadySettled) timing.markFullySettled({ stage });
+    timing.summary(stage);
+    lastResolveEndByDay.set(day, performance.now());
     console.info("[testnet-resolve]", {
       day,
       stage,
@@ -241,7 +269,10 @@ export async function POST(req: Request) {
       alreadySettled,
       finalized: dayFinalized,
       revealed,
+      revealBatchesRun,
+      creditBatchesRun,
       vaultCount: vaultSecretCountForDay(day),
+      requestId: timing.requestId,
     });
     return NextResponse.json({
       ok: true,

@@ -3,6 +3,9 @@
  * when the next day enters CommitOpen after a completed battle day.
  *
  * Frontend UX only — does not touch settlement, reveal, or phase timing.
+ *
+ * Authoritative gate: presentationComplete(wallet, battleDay) + queue idle.
+ * Clock COMMIT alone never navigates.
  */
 
 import type { GamePhase } from "@/types/game";
@@ -47,6 +50,11 @@ export function isBattleToCommitTransition(input: {
   if (input.previousDay == null || input.previousPhase == null) return false;
   if (input.currentDay <= input.previousDay) return false;
   return isBattlePhase(input.previousPhase);
+}
+
+/** Previous battle day when global clock is on next-day COMMIT. */
+export function battleDayForCommitNav(currentDay: number): number {
+  return currentDay - 1;
 }
 
 export function isChooseLocationPath(
@@ -120,6 +128,8 @@ export function markAutoNavigateToCommitScrollDone(
 
 /**
  * Decide whether to route to Choose Location on a battle-day → next COMMIT flip.
+ *
+ * Requires presentationComplete + queueIdle. Busy-false alone is never enough.
  */
 export function planAutoNavigateToCommit(input: {
   previousDay: number | null | undefined;
@@ -131,8 +141,10 @@ export function planAutoNavigateToCommit(input: {
   explorePath: string;
   resultPath: string;
   alreadyHandled: boolean;
-  /** False while result VFX/SFX still playing. */
-  presentationIdle: boolean;
+  /** Authoritative: battleDay (= currentDay-1) fully presented. */
+  presentationComplete: boolean;
+  /** Presentation cue queue idle. */
+  queueIdle: boolean;
 }): AutoNavigateCommitPlan {
   if (input.alreadyHandled) return { action: "noop" };
   if (
@@ -145,7 +157,8 @@ export function planAutoNavigateToCommit(input: {
   ) {
     return { action: "noop" };
   }
-  if (!input.presentationIdle) return { action: "noop" };
+  if (!input.presentationComplete) return { action: "noop" };
+  if (!input.queueIdle) return { action: "noop" };
 
   if (
     isChooseLocationPath(input.pathname, [input.commitPath, input.explorePath])
@@ -153,7 +166,6 @@ export function planAutoNavigateToCommit(input: {
     return { action: "mark_only" };
   }
 
-  // Battle Result or any other surface after a battle day → next COMMIT.
   return { action: "navigate" };
 }
 

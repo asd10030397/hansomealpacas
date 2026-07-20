@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  battleDayForCommitNav,
   getAutoNavigatedToCommit,
   isBattleToCommitTransition,
   planAutoNavigateToCommit,
@@ -64,14 +65,12 @@ describe("isBattleToCommitTransition", () => {
         currentPhase: "COMMIT",
       }),
     ).toBe(false);
-    expect(
-      isBattleToCommitTransition({
-        previousDay: 21,
-        currentDay: 22,
-        previousPhase: "CLAIM",
-        currentPhase: "REVEAL",
-      }),
-    ).toBe(false);
+  });
+});
+
+describe("battleDayForCommitNav", () => {
+  it("maps next COMMIT day to previous battle day", () => {
+    expect(battleDayForCommitNav(22)).toBe(21);
   });
 });
 
@@ -86,17 +85,35 @@ describe("planAutoNavigateToCommit", () => {
     explorePath: EXPLORE,
     resultPath: RESULT,
     alreadyHandled: false,
-    presentationIdle: true,
+    presentationComplete: true,
+    queueIdle: true,
   };
 
-  it("navigates from Battle Result when idle", () => {
-    expect(planAutoNavigateToCommit(base)).toEqual({ action: "navigate" });
+  it("COMMIT + presentation incomplete → no navigation", () => {
+    expect(
+      planAutoNavigateToCommit({ ...base, presentationComplete: false }),
+    ).toEqual({ action: "noop" });
   });
 
-  it("waits while presentation is busy", () => {
+  it("COMMIT + busy false alone (incomplete) → no navigation", () => {
+    // queueIdle true mimics busy-false; still blocked without presentationComplete
     expect(
-      planAutoNavigateToCommit({ ...base, presentationIdle: false }),
+      planAutoNavigateToCommit({
+        ...base,
+        presentationComplete: false,
+        queueIdle: true,
+      }),
     ).toEqual({ action: "noop" });
+  });
+
+  it("COMMIT + presentation complete + queue busy → no navigation", () => {
+    expect(
+      planAutoNavigateToCommit({ ...base, queueIdle: false }),
+    ).toEqual({ action: "noop" });
+  });
+
+  it("COMMIT + presentation complete + queue idle → navigate exactly once plan", () => {
+    expect(planAutoNavigateToCommit(base)).toEqual({ action: "navigate" });
   });
 
   it("mark_only when already on Choose Location", () => {
@@ -105,7 +122,7 @@ describe("planAutoNavigateToCommit", () => {
     ).toEqual({ action: "mark_only" });
   });
 
-  it("navigates from other game pages", () => {
+  it("navigates from other game pages when complete", () => {
     expect(
       planAutoNavigateToCommit({ ...base, pathname: "/game" }),
     ).toEqual({ action: "navigate" });
@@ -128,7 +145,7 @@ describe("planAutoNavigateToCommit", () => {
   });
 });
 
-describe("session flags", () => {
+describe("session flags — duplicate polling cannot double-navigate", () => {
   it("pending enables scroll once; done blocks", () => {
     expect(getAutoNavigatedToCommit("0xAb", 22)).toBeNull();
     setAutoNavigatedToCommit("0xAb", 22, "pending");
@@ -136,5 +153,23 @@ describe("session flags", () => {
     setAutoNavigatedToCommit("0xAb", 22, "done");
     expect(shouldScrollAfterAutoNavigateToCommit("0xAb", 22)).toBe(false);
     expect(getAutoNavigatedToCommit("0xab", 22)).toBe("done");
+  });
+
+  it("alreadyHandled plan stays noop across repeated polls", () => {
+    setAutoNavigatedToCommit("0xAb", 22, "pending");
+    const plan = planAutoNavigateToCommit({
+      previousDay: 21,
+      currentDay: 22,
+      previousPhase: "CLAIM",
+      currentPhase: "COMMIT",
+      pathname: RESULT,
+      commitPath: COMMIT,
+      explorePath: EXPLORE,
+      resultPath: RESULT,
+      alreadyHandled: getAutoNavigatedToCommit("0xAb", 22) != null,
+      presentationComplete: true,
+      queueIdle: true,
+    });
+    expect(plan).toEqual({ action: "noop" });
   });
 });

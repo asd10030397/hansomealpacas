@@ -384,6 +384,8 @@ export type GameMessages = {
     };
     backgroundSettleNote: string;
     previousDayBattleNote: (day: number) => string;
+    /** Failsafe: settle/presentation stuck — do not auto-leave Result. */
+    presentationRecoveryNote: string;
     arenaEyebrow: string;
     revealSectionTitle: string;
     settleSectionTitle: string;

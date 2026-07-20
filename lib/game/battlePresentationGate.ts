@@ -1,13 +1,24 @@
 /**
- * Cross-route gate so auto-nav to Commit waits for Battle Result VFX/SFX.
- * Presentation / UX only — not settlement math.
+ * Cross-route gate for Battle Result → Commit auto-navigation.
+ *
+ * Single source of truth for “battle fully presented”:
+ *   presentationComplete(wallet, battleDay)
+ *
+ * Busy / preparing / queue are transient execution signals only.
+ * React effect cleanup must never clear presentationComplete or force-navigate.
  */
+
+import type { SettlementUiStatus } from "@/lib/game/settlementStatus";
 
 type Listener = () => void;
 
-let busy = false;
+const preparingOwners = new Set<string>();
+const queueOwners = new Set<string>();
 const completeKeys = new Set<string>();
 const listeners = new Set<Listener>();
+
+/** Non-blocking recovery copy after failsafe — never implies presentation was discarded. */
+let failsafeNotice = false;
 
 function key(wallet: string, day: number): string {
   return `${(wallet || "anon").toLowerCase()}:${day}`;
@@ -17,18 +28,64 @@ function notify(): void {
   for (const l of listeners) l();
 }
 
-export function isBattlePresentationBusy(): boolean {
-  return busy;
-}
-
-export function setBattlePresentationBusy(next: boolean): void {
-  if (busy === next) return;
-  busy = next;
+function syncBusyFromOwners(): void {
+  // Busy is derived — callers mutate owner sets then notify.
   notify();
 }
 
+/** True while any owner reports preparing or an active presentation queue. */
+export function isBattlePresentationBusy(): boolean {
+  return preparingOwners.size > 0 || queueOwners.size > 0;
+}
+
+/** Queue ownership idle (no active cue owner). */
+export function isPresentationQueueIdle(): boolean {
+  return queueOwners.size === 0;
+}
+
+/**
+ * @deprecated Prefer setPresentationPreparing / setPresentationQueueActive.
+ * Kept for narrow call sites; does not clear presentationComplete.
+ */
+export function setBattlePresentationBusy(next: boolean): void {
+  const owner = "__legacy__";
+  if (next) {
+    preparingOwners.add(owner);
+  } else {
+    preparingOwners.delete(owner);
+    queueOwners.delete(owner);
+  }
+  syncBusyFromOwners();
+}
+
+/** Result page (or other owner) reports settlement still preparing for battleDay. */
+export function setPresentationPreparing(owner: string, preparing: boolean): void {
+  if (preparing) preparingOwners.add(owner);
+  else preparingOwners.delete(owner);
+  syncBusyFromOwners();
+}
+
+/** Result page reports presentation queue actively playing or queued. */
+export function setPresentationQueueActive(owner: string, active: boolean): void {
+  if (active) queueOwners.add(owner);
+  else queueOwners.delete(owner);
+  syncBusyFromOwners();
+}
+
+/** Release all transient ownership for an owner (e.g. Result unmount). Never clears complete. */
+export function releasePresentationOwner(owner: string): void {
+  preparingOwners.delete(owner);
+  queueOwners.delete(owner);
+  syncBusyFromOwners();
+}
+
 export function markBattlePresentationComplete(wallet: string, day: number): void {
-  completeKeys.add(key(wallet, day));
+  const k = key(wallet, day);
+  if (completeKeys.has(k)) {
+    notify();
+    return;
+  }
+  completeKeys.add(k);
   notify();
 }
 
@@ -40,17 +97,27 @@ export function isBattlePresentationComplete(
 }
 
 /**
- * True when it is safe to leave Battle Result for the next COMMIT day:
- * either the day's result cues finished, or nothing is currently playing
- * (user was not watching / already done).
+ * Authoritative navigate permission after battleDay → next COMMIT.
+ * Requires presentationComplete + idle queue. Busy alone is never enough.
  */
 export function canNavigateAfterBattle(
-  _wallet?: string,
-  _battleDay?: number,
+  wallet: string,
+  battleDay: number,
 ): boolean {
-  if (busy) return false;
-  // Day advanced on-chain ⇒ settlement finished; allow if cues idle.
+  if (battleDay < 0) return false;
+  if (!isBattlePresentationComplete(wallet, battleDay)) return false;
+  if (!isPresentationQueueIdle()) return false;
   return true;
+}
+
+export function getBattlePresentationFailsafeNotice(): boolean {
+  return failsafeNotice;
+}
+
+export function setBattlePresentationFailsafeNotice(next: boolean): void {
+  if (failsafeNotice === next) return;
+  failsafeNotice = next;
+  notify();
 }
 
 export function subscribeBattlePresentation(listener: Listener): () => void {
@@ -60,8 +127,27 @@ export function subscribeBattlePresentation(listener: Listener): () => void {
   };
 }
 
+/** Unfinished settlement UI — all non-completed statuses count as preparing. */
+export function isBattleSettlementPreparing(input: {
+  status: SettlementUiStatus;
+  revealing?: boolean;
+}): boolean {
+  if (input.revealing) return true;
+  return input.status !== "completed";
+}
+
+/** Battle-ready for VFX: UI completed (finalized or settled) with presentable rows. */
+export function isBattlePresentationDataReady(input: {
+  status: SettlementUiStatus;
+  hasPresentableRows: boolean;
+}): boolean {
+  return input.status === "completed" && input.hasPresentableRows;
+}
+
 export function resetBattlePresentationGateForTests(): void {
-  busy = false;
+  preparingOwners.clear();
+  queueOwners.clear();
   completeKeys.clear();
+  failsafeNotice = false;
   listeners.clear();
 }

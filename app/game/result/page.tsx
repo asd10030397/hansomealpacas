@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AbilityEffectOverlay } from "@/components/game/ability-effects/AbilityEffectOverlay";
 import { ResultEffectOverlay } from "@/components/game/result-effects/ResultEffectOverlay";
 import { GameStatusPanel } from "@/components/game/GameStatusPanel";
@@ -26,8 +26,14 @@ import {
   shouldScrollAfterAutoNavigate,
 } from "@/lib/game/autoNavigateToBattle";
 import {
+  getBattlePresentationFailsafeNotice,
+  isBattlePresentationDataReady,
+  isBattleSettlementPreparing,
   markBattlePresentationComplete,
-  setBattlePresentationBusy,
+  releasePresentationOwner,
+  setPresentationPreparing,
+  setPresentationQueueActive,
+  subscribeBattlePresentation,
 } from "@/lib/game/battlePresentationGate";
 import { formatCountdown } from "@/lib/game/phaseStatus";
 import {
@@ -66,6 +72,8 @@ function resolveStageLabel(
   return null;
 }
 
+const RESULT_PRESENTATION_OWNER = "result-page";
+
 export default function ResultPhasePage() {
   const { t } = useGameI18n();
   const gameHref = useGameHref();
@@ -76,6 +84,12 @@ export default function ResultPhasePage() {
   const settleView = useSettlementView({ targetDay: viewDay });
   const scrolledRef = useRef(false);
   const walletKey = address ?? "anon";
+  const [failsafeNotice, setFailsafeNotice] = useState(false);
+  useEffect(() => {
+    const sync = () => setFailsafeNotice(getBattlePresentationFailsafeNotice());
+    sync();
+    return subscribeBattlePresentation(sync);
+  }, []);
   const stageLabel =
     resolveStageLabel(autoReveal.resolveStage, t) ??
     resolveStageLabel(settleView.resolveStage, t);
@@ -85,15 +99,18 @@ export default function ResultPhasePage() {
     settled: settleView.status === "completed",
   });
 
-  const showPresentationFx =
-    settleView.status === "completed" &&
-    settleView.rows.some(
-      (r) =>
-        !r.missedReveal &&
-        (parseSettlementResultSfxId(r.outcome) ||
-          r.activatedAbility ||
-          parseAbilityEffectId(r.ability)),
-    );
+  const hasPresentableRows = settleView.rows.some(
+    (r) =>
+      !r.missedReveal &&
+      (parseSettlementResultSfxId(r.outcome) ||
+        r.activatedAbility ||
+        parseAbilityEffectId(r.ability)),
+  );
+  // Start VFX only when battle-ready (finalized/settled UI). Credits may still batch.
+  const showPresentationFx = isBattlePresentationDataReady({
+    status: settleView.status,
+    hasPresentableRows,
+  });
   const {
     currentAbility: abilityCue,
     currentResult: resultCue,
@@ -105,23 +122,23 @@ export default function ResultPhasePage() {
     showPresentationFx,
   );
 
-  // Gate auto-nav back to Commit until settle + reward reveal cues finish.
+  // Own preparing/queue signals — never clear presentationComplete on cleanup.
   useEffect(() => {
-    const preparing =
-      settleView.status !== "completed" &&
-      (settleView.status === "pending" ||
-        settleView.status === "available" ||
-        settleView.status === "waiting_seed" ||
-        settleView.status === "processing" ||
-        autoReveal.revealing);
-    const fxBusy = showPresentationFx && queueStatus !== "idle";
-    const busy = preparing || fxBusy;
-    setBattlePresentationBusy(busy);
-    if (settleView.status === "completed" && !fxBusy) {
+    const preparing = isBattleSettlementPreparing({
+      status: settleView.status,
+      revealing: autoReveal.revealing,
+    });
+    const queueActive = showPresentationFx && queueStatus !== "idle";
+    setPresentationPreparing(RESULT_PRESENTATION_OWNER, preparing);
+    setPresentationQueueActive(RESULT_PRESENTATION_OWNER, queueActive);
+
+    // Authoritative complete: battle presented + cues idle (or no cues to play).
+    if (settleView.status === "completed" && queueStatus === "idle") {
       markBattlePresentationComplete(walletKey, settleView.day);
     }
+
     return () => {
-      setBattlePresentationBusy(false);
+      releasePresentationOwner(RESULT_PRESENTATION_OWNER);
     };
   }, [
     settleView.status,
@@ -134,14 +151,10 @@ export default function ResultPhasePage() {
 
   const settleMsLeft = Math.max(0, phaseEndsAt - now);
   const settleCountdown = formatCountdown(settleMsLeft);
-  // Preparing only while resolve is in flight — not for the full Battle viewing timer.
-  const showPreparing =
-    settleView.status !== "completed" &&
-    (settleView.status === "pending" ||
-      settleView.status === "available" ||
-      settleView.status === "waiting_seed" ||
-      settleView.status === "processing" ||
-      autoReveal.revealing);
+  const showPreparing = isBattleSettlementPreparing({
+    status: settleView.status,
+    revealing: autoReveal.revealing,
+  });
 
   const settleStatusLabel =
     settleView.status === "waiting_seed"
@@ -310,6 +323,12 @@ export default function ResultPhasePage() {
           <GameFeedback tone="info" label={t.result.previousDayBattleNote(viewDay)}>
             {phase === "COMMIT" ? t.result.backgroundSettleNote : null}
           </GameFeedback>
+        </div>
+      ) : null}
+
+      {failsafeNotice ? (
+        <div className="mt-4" data-testid="result-presentation-recovery">
+          <GameFeedback tone="info" label={t.result.presentationRecoveryNote} />
         </div>
       ) : null}
 

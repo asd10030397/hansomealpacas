@@ -10,6 +10,7 @@ import type {
   WalletClient,
   Abi,
 } from "viem";
+import type { SettlementTimingTrace } from "@/lib/game/server/settlementTimingLog";
 
 /** Process-local queue — does not store nonce values. */
 let relayerWriteTail: Promise<void> = Promise.resolve();
@@ -43,6 +44,11 @@ export type RelayerWriteContractParams = {
   /** Max attempts when nonce races (fresh pending nonce each try). */
   maxAttempts?: number;
   waitForReceipt?: boolean;
+  /** Optional structured latency trace (server logs only). */
+  timing?: SettlementTimingTrace;
+  timingLabel?: string;
+  batchIndex?: number;
+  batchSize?: number;
 };
 
 /**
@@ -62,16 +68,39 @@ export async function writeRelayerContract(
     args,
     maxAttempts = 3,
     waitForReceipt = true,
+    timing,
+    timingLabel = functionName,
+    batchIndex,
+    batchSize,
   } = params;
 
+  const lockWaitStart = performance.now();
   return withRelayerWriteLock(async () => {
+    const lockWaitMs = Math.round(performance.now() - lockWaitStart);
+    timing?.log("tx_lock_acquired", {
+      detail: timingLabel,
+      lockWaitMs,
+      batchIndex,
+      batchSize,
+    });
+
     let lastError: unknown;
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      const rpcNonceStart = performance.now();
       const nonce = await publicClient.getTransactionCount({
         address: account.address,
         blockTag: "pending",
       });
+      const rpcMs = Math.round(performance.now() - rpcNonceStart);
       try {
+        const submitStart = performance.now();
+        timing?.log("tx_submit_start", {
+          detail: timingLabel,
+          attempt: attempt + 1,
+          batchIndex,
+          batchSize,
+          rpcMs,
+        });
         const hash = await walletClient.writeContract({
           account,
           address,
@@ -81,13 +110,45 @@ export async function writeRelayerContract(
           nonce,
           chain: walletClient.chain,
         });
+        const submitMs = Math.round(performance.now() - submitStart);
+        timing?.log("tx_hash", {
+          detail: timingLabel,
+          txHash: hash,
+          attempt: attempt + 1,
+          submitMs,
+          batchIndex,
+          batchSize,
+        });
         if (waitForReceipt) {
+          const receiptStart = performance.now();
           await publicClient.waitForTransactionReceipt({ hash });
+          const receiptMs = Math.round(performance.now() - receiptStart);
+          timing?.log("tx_receipt", {
+            detail: timingLabel,
+            txHash: hash,
+            receiptMs,
+            ms: submitMs + receiptMs,
+            attempt: attempt + 1,
+            batchIndex,
+            batchSize,
+            ok: true,
+          });
         }
         return hash;
       } catch (e) {
         lastError = e;
-        if (isNonceTooLowError(e) && attempt < maxAttempts - 1) {
+        const msg = e instanceof Error ? e.message : String(e);
+        const retry = isNonceTooLowError(e) && attempt < maxAttempts - 1;
+        timing?.log(retry ? "tx_retry" : "tx_error", {
+          detail: `${timingLabel}: ${msg}`,
+          attempt: attempt + 1,
+          retries: attempt,
+          errorCode: isNonceTooLowError(e) ? "nonce_too_low" : "write_failed",
+          ok: false,
+          batchIndex,
+          batchSize,
+        });
+        if (retry) {
           continue;
         }
         throw e;

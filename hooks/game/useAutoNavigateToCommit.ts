@@ -6,27 +6,33 @@ import { useAccount } from "wagmi";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameState } from "@/hooks/game/useGameState";
 import {
+  battleDayForCommitNav,
   getAutoNavigatedToCommit,
   isBattleToCommitTransition,
-  isChooseLocationPath,
+  planAutoNavigateToCommit,
   setAutoNavigatedToCommit,
 } from "@/lib/game/autoNavigateToCommit";
 import {
+  canNavigateAfterBattle,
+  getBattlePresentationFailsafeNotice,
   isBattlePresentationBusy,
-  setBattlePresentationBusy,
+  isBattlePresentationComplete,
+  isPresentationQueueIdle,
+  setBattlePresentationFailsafeNotice,
   subscribeBattlePresentation,
 } from "@/lib/game/battlePresentationGate";
 import type { GamePhase } from "@/types/game";
 
-/** Max wait for result VFX before navigating anyway (settlement already done). */
-const PRESENTATION_WAIT_MS = 90_000;
+/**
+ * Final recovery only — never force-navigate or discard presentation.
+ * Shows a non-blocking notice; Battle Result remains reachable.
+ */
+const PRESENTATION_FAILSAFE_MS = 90_000;
 
 /**
  * After a battle day resolves and the next day opens CommitOpen,
- * route once to Choose Location (smooth-scroll on the commit page).
- *
- * Waits for Battle Result presentation to go idle; never fires on initial
- * COMMIT hydration; once per wallet+day.
+ * route once to Choose Location — only when presentationComplete(day-1)
+ * and the presentation queue is idle.
  */
 export function useAutoNavigateToCommit(): void {
   const { phase, day } = useGameState();
@@ -45,15 +51,26 @@ export function useAutoNavigateToCommit(): void {
     });
   }, []);
 
-  // If VFX never clears, unblock after a timeout so the day loop is not stuck.
+  // Failsafe: recovery notice only — never clear presentationComplete or force-nav.
   useEffect(() => {
-    if (pendingDayRef.current == null) return;
-    if (!isBattlePresentationBusy()) return;
+    const targetDay = pendingDayRef.current;
+    if (targetDay == null) return;
+    if (phase !== "COMMIT" || day.day !== targetDay) return;
+
+    const wallet = address ?? "anon";
+    const battleDay = battleDayForCommitNav(targetDay);
+    if (canNavigateAfterBattle(wallet, battleDay)) return;
+    if (getBattlePresentationFailsafeNotice()) return;
+
     const timer = window.setTimeout(() => {
-      setBattlePresentationBusy(false);
-    }, PRESENTATION_WAIT_MS);
+      // Do not fire while cues are still playing / queue owned.
+      if (isBattlePresentationBusy()) return;
+      if (isBattlePresentationComplete(wallet, battleDay)) return;
+      setBattlePresentationFailsafeNotice(true);
+    }, PRESENTATION_FAILSAFE_MS);
+
     return () => window.clearTimeout(timer);
-  }, [phase, day.day, pathname, gateTick]);
+  }, [phase, day.day, address, pathname, gateTick]);
 
   useEffect(() => {
     const currentDay = day.day;
@@ -74,6 +91,7 @@ export function useAutoNavigateToCommit(): void {
       })
     ) {
       pendingDayRef.current = currentDay;
+      setBattlePresentationFailsafeNotice(false);
     }
 
     prevRef.current = { day: currentDay, phase: currentPhase };
@@ -88,17 +106,32 @@ export function useAutoNavigateToCommit(): void {
       return;
     }
 
-    // Wait for Battle Result VFX/SFX (and settle preparing) to finish.
-    if (isBattlePresentationBusy()) return;
+    const battleDay = battleDayForCommitNav(targetDay);
+    const presentationComplete = isBattlePresentationComplete(wallet, battleDay);
+    const queueIdle = isPresentationQueueIdle();
 
-    // Once per new day (`day{N}:REVEAL->COMMIT`). Prefer Commit page section.
+    const plan = planAutoNavigateToCommit({
+      previousDay: battleDay,
+      currentDay: targetDay,
+      previousPhase: "CLAIM",
+      currentPhase: "COMMIT",
+      pathname,
+      commitPath: hrefs.commit,
+      explorePath: hrefs.explore,
+      resultPath: hrefs.result,
+      alreadyHandled: false,
+      presentationComplete,
+      queueIdle,
+    });
+
+    // Authoritative gate (belt + suspenders with planner).
+    if (!canNavigateAfterBattle(wallet, battleDay)) return;
+    if (plan.action === "noop") return;
+
     setAutoNavigatedToCommit(wallet, targetDay, "pending");
     pendingDayRef.current = null;
 
-    if (isChooseLocationPath(pathname, [hrefs.commit])) {
-      // Already on Commit — pending flag triggers mobile-safe scroll once.
-      return;
-    }
+    if (plan.action === "mark_only") return;
 
     router.push(hrefs.commit);
   }, [
@@ -109,6 +142,7 @@ export function useAutoNavigateToCommit(): void {
     router,
     hrefs.commit,
     hrefs.explore,
+    hrefs.result,
     gateTick,
   ]);
 }
