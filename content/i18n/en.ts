@@ -71,6 +71,7 @@ export const en: Messages = {
     subtitle: "Trade ETH and HANSOME on Robinhood Chain via Uniswap Universal Router.",
     backHome: "HOME",
     connectWallet: "CONNECT WALLET",
+    disconnectWallet: "DISCONNECT",
     switchNetwork: "SWITCH TO ROBINHOOD CHAIN",
     youPay: "YOU PAY",
     youReceive: "YOU RECEIVE",
@@ -403,11 +404,12 @@ export const en: Messages = {
       highlightsHeading: "What the model explains",
       highlights: [
         "Daily pool Rd = f(G) with implemented step bands (R0 = 400,000 when G ≥ 0.70·G0)",
+        "Launch Treasury: initially funded with 30,000,000 HANSOME → starting band 80,000/day; higher bands unlock automatically as Treasury grows (60M / 120M / 210M)",
         "Pool split: Alpaca 80% · Cougar base 10% · Hunting 10%",
         "Conservation: player claims + penalties + unallocated = Rd",
-        "Gross runway illustration: G0 / R0 ≈ 750 days (actual life varies with step-downs, sinks, and claims)",
+        "Protocol band reference G0 = 300,000,000 (design scale); gross runway illustration G0 / R0 ≈ 750 days at top band (actual life varies with funding, step-downs, sinks, and claims)",
         "Two-sided value: player agency and NFT utility alongside sustainable ecosystem runway",
-        "Long-term design: fixed-supply rewards from GameTreasury, step-down emission, player–ecosystem alignment, Alpaca/Cougar mutual demand (no profit guarantees)",
+        "Long-term design: fixed-supply rewards from GameTreasury, step-down emission, progressive treasury expansion without contract upgrades, Alpaca/Cougar mutual demand (no profit guarantees)",
       ],
       disclaimer:
         "Rewards are contingent. Missing Reveal, safe mode (G < Gsafe), or population imbalance can reduce or eliminate a day’s earnings. Not investment advice.",

@@ -58,7 +58,12 @@ export type GameMessages = {
     walletHelpTitle: string;
     walletHelpBody: string;
     walletHelpHint: string;
+    /** Inline connect feedback (WalletConnectFeedback). */
+    walletConnectionLabel: string;
+    walletConnectionCancelled: string;
+    walletConnectionFailed: string;
     openInMetaMask: string;
+    /** OKX deep-link CTA — key is `openInOkx` (camelCase). */
     openInOkx: string;
     musicToggleTitle: string;
     sfxToggleTitle: string;

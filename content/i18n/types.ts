@@ -338,6 +338,7 @@ export type Messages = {
     subtitle: string;
     backHome: string;
     connectWallet: string;
+    disconnectWallet: string;
     switchNetwork: string;
     youPay: string;
     youReceive: string;

@@ -70,6 +70,7 @@ export const zh: Messages = {
     subtitle: "在 Robinhood Chain 上透過 Uniswap Universal Router 交易 ETH 與 HANSOME。",
     backHome: "首頁",
     connectWallet: "連接錢包",
+    disconnectWallet: "斷開連接",
     switchNetwork: "切換至 ROBINHOOD CHAIN",
     youPay: "支付",
     youReceive: "收到",
@@ -396,11 +397,12 @@ export const zh: Messages = {
       highlightsHeading: "模型說明重點",
       highlights: [
         "每日獎池 Rd = f(G)，採已實作階梯（當 G ≥ 0.70·G0 時 R0 = 400,000）",
+        "上線國庫：初始注資 30,000,000 HANSOME → 起始檔 80,000／日；國庫成長至 60M／120M／210M 時自動解鎖更高獎勵檔",
         "獎池拆分：羊駝 80% · 美洲獅基礎 10% · 狩獵 10%",
         "守恆：玩家領取 + 懲罰 + 未分配 = Rd",
-        "粗略跑道示意：G0 / R0 ≈ 750 天（實際壽命隨階梯、sinks、Claim 而變）",
+        "協議階梯參考 G0 = 300,000,000（設計尺度）；最高檔粗略跑道示意 G0／R0 ≈ 750 天（實際壽命隨注資、階梯、sinks、Claim 而變）",
         "雙邊價值：玩家決策與 NFT 效用，以及生態系可持續跑道",
-        "長期設計：固定供應＋國庫支付獎勵、階梯排放、玩家與生態對齊、羊駝／美洲獅相互需求（不保證獲利）",
+        "長期設計：固定供應＋國庫支付獎勵、階梯排放、無需升級合約即可逐步擴充國庫、羊駝／美洲獅相互需求（不保證獲利）",
       ],
       disclaimer:
         "獎勵為有條件發放。未 Reveal、安全模式（G < Gsafe）或族群失衡都可能減少或取消當日收益。非投資建議。",
