@@ -85,3 +85,39 @@ export async function getExternalBuyerSigner(provider: Provider): Promise<Wallet
   console.log("Signer:", await signer.getAddress());
   return signer;
 }
+
+/**
+ * Official Liquidity Wallet ops (batched market buys / mint new v4 LP).
+ * Uses LIQUIDITY_PRIVATE_KEY only — no Treasury/Deployer fallback.
+ * If LIQUIDITY_EXPECTED_ADDRESS is set, the derived address must match
+ * (checksum-insensitive) or the script aborts before any tx.
+ */
+export async function getLiquidityWalletSigner(provider: Provider): Promise<Wallet> {
+  const privateKey = resolvePrivateKey(
+    process.env.LIQUIDITY_PRIVATE_KEY,
+    undefined,
+    "LIQUIDITY_PRIVATE_KEY",
+  );
+
+  let signer: Wallet;
+  try {
+    const normalized = privateKey.startsWith("0x") ? privateKey : `0x${privateKey}`;
+    signer = new Wallet(normalized, provider);
+  } catch {
+    throw new Error(
+      "LIQUIDITY_PRIVATE_KEY is not a valid private key — check the value in contracts/.env " +
+        "(details withheld deliberately so the key can never end up in logs).",
+    );
+  }
+
+  const address = await signer.getAddress();
+  const expected = process.env.LIQUIDITY_EXPECTED_ADDRESS?.trim();
+  if (expected && address.toLowerCase() !== expected.toLowerCase()) {
+    throw new Error(
+      `LIQUIDITY_PRIVATE_KEY derives ${address}, but LIQUIDITY_EXPECTED_ADDRESS is ${expected}. Aborting.`,
+    );
+  }
+
+  console.log("Signer:", address);
+  return signer;
+}

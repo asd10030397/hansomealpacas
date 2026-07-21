@@ -59,6 +59,7 @@ export type GameMessages = {
     walletHelpBody: string;
     walletHelpHint: string;
     openInMetaMask: string;
+    openInOkx: string;
     musicToggleTitle: string;
     sfxToggleTitle: string;
     sfxToggleAria: string;

@@ -7,7 +7,7 @@ import {
   classifyConnectFailure,
   hasInjectedEthereum,
   NO_WALLET_CONNECT_MESSAGE,
-  pickInjectedConnector,
+  pickConnectConnector,
   preflightWalletConnect,
   type WalletConnectFailReason,
 } from "@/lib/game/walletConnect";
@@ -19,10 +19,12 @@ export type WalletConnectResult =
   | { ok: false; error: string; reason: WalletConnectFailReason };
 
 /**
- * Single shared wallet-connect action for header, home CTA, mint, My NFTs, etc.
+ * Single shared wallet-connect action for header, home CTA, mint, My NFTs, swap, etc.
  * Never fails silently — always returns / surfaces an error string.
+ *
+ * @param targetChainId — defaults to game/genesis chain; swap passes Robinhood Mainnet id.
  */
-export function useOpenWalletConnect() {
+export function useOpenWalletConnect(targetChainId: number = GENESIS_CHAIN_ID) {
   const { connectAsync, connectors, isPending } = useConnect();
   const [error, setError] = useState<string | null>(null);
   const [helpOpen, setHelpOpen] = useState(false);
@@ -47,7 +49,7 @@ export function useOpenWalletConnect() {
         path: typeof window !== "undefined" ? window.location.pathname : null,
         connectors: connectors.map((c) => c.id),
         hasInjectedProvider: hasProvider,
-        targetChainId: GENESIS_CHAIN_ID,
+        targetChainId,
       });
     }
 
@@ -58,8 +60,8 @@ export function useOpenWalletConnect() {
       return preflight;
     }
 
-    const injected = pickInjectedConnector(connectors);
-    if (!injected) {
+    const connector = pickConnectConnector(connectors, hasProvider);
+    if (!connector) {
       setError(NO_WALLET_CONNECT_MESSAGE);
       setHelpOpen(true);
       return { ok: false, error: NO_WALLET_CONNECT_MESSAGE, reason: "no-connector" };
@@ -67,8 +69,8 @@ export function useOpenWalletConnect() {
 
     try {
       await connectAsync({
-        connector: injected,
-        chainId: GENESIS_CHAIN_ID,
+        connector,
+        chainId: targetChainId,
       });
       setHelpOpen(false);
       return { ok: true };
@@ -78,7 +80,7 @@ export function useOpenWalletConnect() {
       if (reason !== "rejected") setHelpOpen(true);
       return { ok: false, error: message, reason };
     }
-  }, [connectAsync, connectors]);
+  }, [connectAsync, connectors, targetChainId]);
 
   return {
     openWalletConnect,

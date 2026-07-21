@@ -24,7 +24,14 @@ type WalletConnectContextValue = {
 
 const WalletConnectContext = createContext<WalletConnectContextValue | null>(null);
 
-export function WalletConnectProvider({ children }: { children: ReactNode }) {
+export function WalletConnectProvider({
+  children,
+  chainId,
+}: {
+  children: ReactNode;
+  /** Target chain for connectAsync (game defaults to genesis/game chain). */
+  chainId?: number;
+}) {
   const {
     openWalletConnect,
     isConnecting,
@@ -34,7 +41,7 @@ export function WalletConnectProvider({ children }: { children: ReactNode }) {
     closeHelp,
     hasInjectedProvider,
     connectorIds,
-  } = useOpenWalletConnect();
+  } = useOpenWalletConnect(chainId);
 
   const value = useMemo(
     () => ({

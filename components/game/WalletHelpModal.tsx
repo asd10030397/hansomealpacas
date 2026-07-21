@@ -3,7 +3,7 @@
 import { useEffect, useId, useMemo, useRef } from "react";
 import { PixelButton } from "@/components/ui/pixel";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
-import { metamaskDappDeepLink } from "@/lib/game/walletConnect";
+import { metamaskDappDeepLink, okxDappDeepLink } from "@/lib/game/walletConnect";
 import { forceUnlockBodyScroll, lockBodyScroll, unlockBodyScroll } from "@/lib/ui/bodyScrollLock";
 
 export type WalletHelpModalProps = {
@@ -12,12 +12,22 @@ export type WalletHelpModalProps = {
   message?: string | null;
 };
 
+function currentPageUrl(): string | null {
+  if (typeof window === "undefined") return null;
+  return window.location.href;
+}
+
 function metamaskDappLink(): string | null {
   if (typeof window === "undefined") return null;
   return metamaskDappDeepLink(
     window.location.host,
     `${window.location.pathname}${window.location.search}`,
   );
+}
+
+function okxDappLink(): string | null {
+  const page = currentPageUrl();
+  return page ? okxDappDeepLink(page) : null;
 }
 
 /**
@@ -29,6 +39,7 @@ export function WalletHelpModal({ open, onClose, message }: WalletHelpModalProps
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
   const mmLink = useMemo(() => (open ? metamaskDappLink() : null), [open]);
+  const okxLink = useMemo(() => (open ? okxDappLink() : null), [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -83,13 +94,18 @@ export function WalletHelpModal({ open, onClose, message }: WalletHelpModalProps
           <p className="text-[var(--hg-muted)]">{t.common.walletHelpHint}</p>
         </div>
 
-        <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+        <div className="mt-5 flex flex-col gap-2">
           {mmLink ? (
-            <PixelButton variant="gold" className="w-full sm:flex-1" href={mmLink}>
+            <PixelButton variant="gold" className="w-full" href={mmLink}>
               {t.common.openInMetaMask}
             </PixelButton>
           ) : null}
-          <PixelButton variant="slate" className="w-full sm:flex-1" onClick={onClose}>
+          {okxLink ? (
+            <PixelButton variant="slate" className="w-full" href={okxLink}>
+              {t.common.openInOkx}
+            </PixelButton>
+          ) : null}
+          <PixelButton variant="ghost" className="w-full" onClick={onClose}>
             {t.common.close}
           </PixelButton>
         </div>

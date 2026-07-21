@@ -6,13 +6,22 @@ import { getExplorerTxUrl } from "@/lib/chain";
 
 export type TxPhase = "idle" | "loading" | "success" | "failed";
 
+/** Connection failures must not reuse the swap "TRANSACTION FAILED" label. */
+export type TxBannerKind = "transaction" | "connection";
+
 type TxStatusBannerProps = {
   phase: TxPhase;
   message?: string;
   txHash?: string;
+  kind?: TxBannerKind;
 };
 
-export function TxStatusBanner({ phase, message, txHash }: TxStatusBannerProps) {
+export function TxStatusBanner({
+  phase,
+  message,
+  txHash,
+  kind = "transaction",
+}: TxStatusBannerProps) {
   const { t } = useLocale();
 
   if (phase === "idle") return null;
@@ -29,7 +38,9 @@ export function TxStatusBanner({ phase, message, txHash }: TxStatusBannerProps) 
       ? t.swap.status.loading
       : phase === "success"
         ? t.swap.status.success
-        : t.swap.status.failed;
+        : kind === "connection"
+          ? t.swap.status.connectionFailed
+          : t.swap.status.failed;
 
   return (
     <m.div

@@ -22,6 +22,12 @@ const testnetHttp =
     ? http()
     : http(gameRpc || undefined);
 
+/**
+ * Injected only in createConfig — importing `wagmi/connectors` barrel pulls optional
+ * deps that break the Next production build. Mobile browsers without window.ethereum
+ * use WalletHelpModal deep links (MetaMask / OKX) instead of calling injected connect.
+ * WalletConnect QR can be added later via a dedicated import once projectId + deps are set.
+ */
 export const wagmiConfig = createConfig({
   chains: [robinhoodChain, robinhoodTestnetChain],
   connectors: [injected()],

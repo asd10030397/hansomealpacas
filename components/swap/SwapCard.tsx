@@ -15,7 +15,6 @@ import {
 import {
   useBalance,
   useChainId,
-  useConnect,
   useConnection,
   usePublicClient,
   useReadContract,
@@ -26,9 +25,10 @@ import {
 } from "wagmi";
 import { CopyButton } from "@/components/CopyButton";
 import { TokenIcon } from "@/components/swap/TokenIcon";
-import { TxStatusBanner, type TxPhase } from "@/components/swap/TxStatusBanner";
+import { TxStatusBanner, type TxBannerKind, type TxPhase } from "@/components/swap/TxStatusBanner";
 import { PROJECT } from "@/content/project";
 import { useLocale } from "@/context/LocaleContext";
+import { useWalletConnectAction } from "@/context/WalletConnectContext";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useMarketStats } from "@/hooks/useMarketStats";
 import {
@@ -88,7 +88,12 @@ export function SwapCard() {
   const { t } = useLocale();
   const { address, isConnected } = useConnection();
   const chainId = useChainId();
-  const { connectors, connect, isPending: isConnecting, error: connectError } = useConnect();
+  const {
+    openWalletConnect,
+    isConnecting,
+    connectError: walletConnectError,
+    clearError: clearWalletConnectError,
+  } = useWalletConnectAction();
   const { switchChain, isPending: isSwitching } = useSwitchChain();
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient({ chainId: ROBINHOOD_CHAIN_ID });
@@ -101,6 +106,7 @@ export function SwapCard() {
   const [txPhase, setTxPhase] = useState<TxPhase>("idle");
   const [txMessage, setTxMessage] = useState<string | undefined>();
   const [txHash, setTxHash] = useState<string | undefined>();
+  const [bannerKind, setBannerKind] = useState<TxBannerKind>("transaction");
   const [pendingAction, setPendingAction] = useState<"tokenApprove" | "permit2Approve" | "swap" | null>(
     null,
   );
@@ -259,15 +265,18 @@ export function SwapCard() {
     setTxPhase("idle");
     setTxMessage(undefined);
     setTxHash(undefined);
+    setBannerKind("transaction");
     setSwapPhase("idle");
     setPendingAction(null);
     lastHandledHash.current = null;
+    clearWalletConnectError();
     resetWrite();
-  }, [resetWrite]);
+  }, [resetWrite, clearWalletConnectError]);
 
   const failTx = useCallback((error: unknown, fallback: string) => {
     setSwapPhase("idle");
     setPendingAction(null);
+    setBannerKind("transaction");
     setTxPhase("failed");
     setTxMessage(formatRobinhoodWriteError(error, fallback));
   }, []);
@@ -413,17 +422,16 @@ export function SwapCard() {
   }, [writeError, failTx]);
 
   useEffect(() => {
-    if (!connectError) return;
+    if (!walletConnectError) return;
+    setBannerKind("connection");
     setTxPhase("failed");
-    setTxMessage(connectError.message);
-  }, [connectError]);
+    setTxMessage(walletConnectError);
+  }, [walletConnectError]);
 
   const handleConnect = useCallback(() => {
     resetTxState();
-    const connector = connectors[0];
-    if (!connector) return;
-    connect({ connector, chainId: ROBINHOOD_CHAIN_ID });
-  }, [connect, connectors, resetTxState]);
+    void openWalletConnect();
+  }, [openWalletConnect, resetTxState]);
 
   const handleSwitchChain = useCallback(() => {
     resetTxState();
@@ -810,7 +818,7 @@ export function SwapCard() {
         {primaryLabel}
       </m.button>
 
-      <TxStatusBanner phase={txPhase} message={txMessage} txHash={txHash} />
+      <TxStatusBanner phase={txPhase} message={txMessage} txHash={txHash} kind={bannerKind} />
 
       <div className="mt-8 border-t border-border/80 pt-6">
         <div className="flex items-center gap-3">

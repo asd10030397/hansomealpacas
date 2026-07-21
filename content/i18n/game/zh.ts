@@ -49,10 +49,12 @@ export const gameZh: GameMessages = {
     walletRequiredBody: (feature) => `請連接錢包以使用「${feature}」。`,
     walletRequiredDemo: "請連接瀏覽器錢包並使用 Robinhood Chain 進行遊戲。",
     walletHelpTitle: "連接錢包",
-    walletHelpBody: "無法開啟錢包連接。請在 MetaMask 內開啟此頁面，或使用 WalletConnect。",
+    walletHelpBody:
+      "未偵測到相容錢包。請用 MetaMask 或 OKX Wallet 開啟此頁，或在桌面安裝瀏覽器錢包擴充功能。",
     walletHelpHint:
-      "手機 Safari 與 Telegram 內建瀏覽器通常沒有錢包。請用 MetaMask App 開啟本站，或在桌面安裝錢包擴充功能。",
+      "Android Chrome 與手機 Safari 預設沒有錢包。請點下方「在 MetaMask / OKX 開啟」，或在桌面安裝錢包擴充功能。",
     openInMetaMask: "在 METAMASK 開啟",
+    openInOkx: "在 OKX WALLET 開啟",
     musicToggleTitle: "音樂 — Alpaca Warpath",
     sfxToggleTitle: "音效 — 按鈕與遊戲提示音",
     sfxToggleAria: "切換音效",

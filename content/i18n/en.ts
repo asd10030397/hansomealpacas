@@ -94,6 +94,7 @@ export const en: Messages = {
       loading: "TRANSACTION PENDING",
       success: "SWAP SUCCESSFUL",
       failed: "TRANSACTION FAILED",
+      connectionFailed: "WALLET CONNECTION",
       confirming: "Waiting for confirmation…",
       approvingToken: "Approving HANSOME for Permit2…",
       approvingPermit2: "Approving Universal Router…",

@@ -33,7 +33,7 @@ import {
   getSqrtPriceAtTick,
   truncateTickSpacing,
 } from "./lib/v4-math";
-import { getTreasurySigner } from "./lib/signer";
+import { getLiquidityWalletSigner, getTreasurySigner } from "./lib/signer";
 import { resolveHansomeAddress, resolveLpFee, resolveTickSpacing } from "./lib/pool-config";
 
 const ROBINHOOD_CHAIN_ID = 4663;
@@ -128,7 +128,10 @@ async function main() {
     throw new Error(`Wrong network: expected Robinhood Mainnet (${ROBINHOOD_CHAIN_ID}), got ${chainId}`);
   }
 
-  const signer = await getTreasurySigner(ethers.provider);
+  // Prefer official Liquidity Wallet key when set; otherwise Treasury (legacy).
+  const signer = process.env.LIQUIDITY_PRIVATE_KEY?.trim()
+    ? await getLiquidityWalletSigner(ethers.provider)
+    : await getTreasurySigner(ethers.provider);
   const recipient = await signer.getAddress();
 
   const tickLowerRaw = requireEnvInt("MINT_TICK_LOWER");

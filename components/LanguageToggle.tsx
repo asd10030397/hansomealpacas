@@ -7,7 +7,7 @@ import type { Locale } from "@/content/i18n/types";
 import { shouldHideMarketingLanguageToggle } from "@/lib/game/isGameChrome";
 
 const segmentBase =
-  "inline-flex min-h-11 min-w-[4.5rem] items-center justify-center px-6 font-[family-name:var(--font-anton)] text-sm tracking-[0.12em] transition-[opacity,border-color,background-color] duration-200 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-3 focus-visible:outline-foreground sm:min-w-[5rem] sm:px-8 sm:text-base";
+  "inline-flex min-h-10 min-w-[3.25rem] items-center justify-center px-3 font-[family-name:var(--font-anton)] text-xs tracking-[0.12em] transition-[opacity,border-color,background-color] duration-200 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-3 focus-visible:outline-foreground sm:min-h-11 sm:min-w-[5rem] sm:px-8 sm:text-base";
 
 function segmentClass(active: boolean) {
   if (active) {
@@ -51,7 +51,7 @@ export function LanguageToggle() {
       aria-label={t.language.toggleLabel}
       data-language-toggle="true"
       data-marketing-language-toggle="true"
-      className="no-print fixed right-6 top-6 z-40 sm:right-8 sm:top-8"
+      className="no-print fixed right-3 top-3 z-40 sm:right-8 sm:top-8"
     >
       <div
         role="group"

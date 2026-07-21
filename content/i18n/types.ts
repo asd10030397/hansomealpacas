@@ -361,6 +361,7 @@ export type Messages = {
       loading: string;
       success: string;
       failed: string;
+      connectionFailed: string;
       confirming: string;
       approvingToken: string;
       approvingPermit2: string;

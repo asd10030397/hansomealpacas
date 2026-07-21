@@ -93,6 +93,7 @@ export const zh: Messages = {
       loading: "交易處理中",
       success: "兌換成功",
       failed: "交易失敗",
+      connectionFailed: "錢包連線",
       confirming: "等待確認…",
       approvingToken: "正在授權 HANSOME 給 Permit2…",
       approvingPermit2: "正在授權 Universal Router…",

@@ -10,7 +10,7 @@ export default function SwapPage() {
   const { t } = useLocale();
 
   return (
-    <main id="main-content" className="relative min-h-screen overflow-hidden px-6 pb-20 pt-16">
+    <main id="main-content" className="relative min-h-screen overflow-hidden px-6 pb-20 pt-20 sm:pt-16">
       <div aria-hidden="true" className="gold-glow-bg pointer-events-none absolute inset-0" />
 
       <FadeIn as="div" className="relative z-10">

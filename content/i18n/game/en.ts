@@ -50,10 +50,11 @@ export const gameEn: GameMessages = {
       "Connect an injected wallet on Robinhood Chain to play.",
     walletHelpTitle: "Connect a wallet",
     walletHelpBody:
-      "Unable to open wallet connection. Please open this page in MetaMask or use WalletConnect.",
+      "No compatible wallet detected. Open this page in MetaMask or OKX Wallet, or install a browser wallet on desktop.",
     walletHelpHint:
-      "Mobile Safari and Telegram do not include a browser wallet. Open this site inside MetaMask, or install a wallet extension on desktop.",
+      "Android Chrome and mobile Safari do not include a wallet by default. Use Open in MetaMask / OKX below, or install a wallet extension on desktop.",
     openInMetaMask: "OPEN IN METAMASK",
+    openInOkx: "OPEN IN OKX WALLET",
     musicToggleTitle: "Music — Alpaca Warpath",
     sfxToggleTitle: "Sound effects — UI clicks and game cues",
     sfxToggleAria: "Toggle sound effects",
