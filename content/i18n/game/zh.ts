@@ -337,6 +337,7 @@ export const gameZh: GameMessages = {
     commitSuccess: "已將 #{tokenId} 提交至 {location}。",
     committedBadge: "已提交",
     committedCount: "第 {day} 天已密封 {count} 隻",
+    huntPenaltyBadge: "基礎狩獵懲罰 {n}%",
   },
   myNfts: {
     heading: "我的 NFT",

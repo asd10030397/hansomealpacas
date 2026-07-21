@@ -278,6 +278,8 @@ export type GameMessages = {
     commitSuccess: string;
     committedBadge: string;
     committedCount: string;
+    /** Badge on location cards; `{n}` = base hunt penalty % (π₀). */
+    huntPenaltyBadge: string;
   };
   myNfts: {
     heading: string;

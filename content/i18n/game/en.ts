@@ -343,6 +343,7 @@ export const gameEn: GameMessages = {
     commitSuccess: "Committed #{tokenId} to {location}.",
     committedBadge: "Committed",
     committedCount: "{count} sealed for day {day}",
+    huntPenaltyBadge: "Base hunt penalty {n}%",
   },
   myNfts: {
     heading: "MY NFTS",

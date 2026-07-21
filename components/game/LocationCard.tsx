@@ -3,6 +3,7 @@
 import Image from "next/image";
 import type { GameLocation, NftSide } from "@/types/game";
 import { PixelBadge, PixelButton, PixelCard } from "@/components/ui/pixel";
+import { useGameI18n } from "@/hooks/game/useGameI18n";
 
 export function LocationCard({
   location,
@@ -22,6 +23,7 @@ export function LocationCard({
   actionDisabled?: boolean;
   onAction?: (id: GameLocation["id"]) => void;
 }) {
+  const { t } = useGameI18n();
   const allowed =
     side === "Cougar" ? location.cougarAllowed : location.alpacaAllowed;
   const riskTone =
@@ -30,6 +32,10 @@ export function LocationCard({
       : location.riskLabel === "Medium"
         ? "gold"
         : "danger";
+  const huntPenaltyBadge = t.explore.huntPenaltyBadge.replace(
+    "{n}",
+    String(location.pressure),
+  );
 
   return (
     <PixelCard className={selected ? "ring-2 ring-[#f0c44a]" : ""}>
@@ -54,7 +60,7 @@ export function LocationCard({
       </div>
       <div className="mb-3 flex flex-wrap gap-1">
         <PixelBadge tone={riskTone}>RISK {location.riskLabel}</PixelBadge>
-        <PixelBadge tone="blue">HUNT π₀ {location.pressure}%</PixelBadge>
+        <PixelBadge tone="blue">{huntPenaltyBadge}</PixelBadge>
       </div>
       {!allowed ? (
         <p className="text-xs text-[#c44b3a]">Not available for Cougars</p>
