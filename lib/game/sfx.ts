@@ -29,7 +29,8 @@ export const SFX_ASSETS: Partial<
   },
 };
 
-const SFX_VOLUME = 0.35;
+/** Global one-shot level — half of prior 0.35 so UI clicks are quieter. */
+const SFX_VOLUME = 0.175;
 const POOL_SIZE = 4;
 
 const pools = new Map<string, HTMLAudioElement[]>();

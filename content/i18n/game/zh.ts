@@ -53,6 +53,9 @@ export const gameZh: GameMessages = {
       "未偵測到相容錢包。請用 MetaMask 或 OKX Wallet 開啟此頁，或在桌面安裝瀏覽器錢包擴充功能。",
     walletHelpHint:
       "Android Chrome 與手機 Safari 預設沒有錢包。請點下方「在 MetaMask / OKX 開啟」，或在桌面安裝錢包擴充功能。",
+    walletConnectionLabel: "錢包連線",
+    walletConnectionCancelled: "已在錢包中取消連線。",
+    walletConnectionFailed: "錢包連線失敗，請再試一次。",
     openInMetaMask: "在 METAMASK 開啟",
     openInOkx: "在 OKX WALLET 開啟",
     musicToggleTitle: "音樂 — Alpaca Warpath",
@@ -104,7 +107,7 @@ export const gameZh: GameMessages = {
     connectSub: "瀏覽器錢包 · ROBINHOOD",
     connectSubConnected: "點擊斷開",
     mint: "鑄造創世 NFT",
-    mintSub: "日期延期",
+    mintSub: "550 · 創世",
     enterGame: "進入遊戲",
     enterGameSub: "部署 · 每日循環",
     cougarTerritory: "美洲獅領地",

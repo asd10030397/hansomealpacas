@@ -53,6 +53,9 @@ export const gameEn: GameMessages = {
       "No compatible wallet detected. Open this page in MetaMask or OKX Wallet, or install a browser wallet on desktop.",
     walletHelpHint:
       "Android Chrome and mobile Safari do not include a wallet by default. Use Open in MetaMask / OKX below, or install a wallet extension on desktop.",
+    walletConnectionLabel: "WALLET CONNECTION",
+    walletConnectionCancelled: "Connection cancelled in wallet.",
+    walletConnectionFailed: "Wallet connection failed. Please try again.",
     openInMetaMask: "OPEN IN METAMASK",
     openInOkx: "OPEN IN OKX WALLET",
     musicToggleTitle: "Music — Alpaca Warpath",
@@ -104,7 +107,7 @@ export const gameEn: GameMessages = {
     connectSub: "INJECTED · ROBINHOOD",
     connectSubConnected: "TAP TO DISCONNECT",
     mint: "MINT GENESIS NFT",
-    mintSub: "DATE POSTPONED",
+    mintSub: "550 · GENESIS",
     enterGame: "ENTER THE GAME",
     enterGameSub: "DEPLOY · DAILY LOOP",
     cougarTerritory: "COUGAR TERRITORY",

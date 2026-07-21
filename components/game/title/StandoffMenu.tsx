@@ -7,11 +7,10 @@ import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { useGameState } from "@/hooks/game/useGameState";
 import { useWalletUi } from "@/hooks/game/useWalletUi";
 import { enterGameHref, isResultPhase } from "@/lib/game/uiLoopPhase";
-import { StandoffApology } from "./StandoffApology";
 
 /**
  * Center brand + primary game menu.
- * Composition hierarchy: title first, apology notice, actions.
+ * Composition hierarchy: title first, then actions.
  */
 export function StandoffMenu() {
   const { t } = useGameI18n();
@@ -34,8 +33,6 @@ export function StandoffMenu() {
         <div className="standoff__rule" aria-hidden />
         <p className="standoff__tagline">{t.title.tagline}</p>
       </header>
-
-      <StandoffApology />
 
       <nav className="standoff__menu" aria-label={t.title.menuAria}>
         <button
