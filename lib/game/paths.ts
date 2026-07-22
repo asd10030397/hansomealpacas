@@ -26,6 +26,7 @@ export const GAME_INTERNAL = {
   /** @deprecated Alias → claim (legacy deep links / bookmarks). */
   rewards: "/game/claim",
   leaderboard: "/game/leaderboard",
+  forum: "/game/forum",
   docs: "/game/docs",
   playerGuide: "/game/docs/guide",
 } as const;
@@ -45,6 +46,7 @@ export const GAME_PUBLIC = {
   /** @deprecated Alias → claim. */
   rewards: "/claim",
   leaderboard: "/leaderboard",
+  forum: "/forum",
   docs: "/docs",
   playerGuide: "/docs/guide",
 } as const;

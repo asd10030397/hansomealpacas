@@ -13,6 +13,7 @@ const PRETTY_TO_INTERNAL: Record<string, string> = {
   "/claim": "/game/claim",
   "/rewards": "/game/claim",
   "/leaderboard": "/game/leaderboard",
+  "/forum": "/game/forum",
   "/docs": "/game/docs",
   "/commit": "/game/commit",
   "/result": "/game/result",

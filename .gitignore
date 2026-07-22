@@ -63,6 +63,7 @@ next-env.d.ts
 
 # market snapshot history (built automatically in production)
 /data/market-history.json
+/data/forum/store.json
 .env*
 # .env.example files are safe templates (no secrets) and should be
 # committed — without this exception, the broad `.env*` rule above also

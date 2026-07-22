@@ -77,6 +77,7 @@ export function resolvePageBackground(
   if (path === "/claim" || path === "/rewards") return "rewards";
   if (path === "/my-nfts") return "nfts";
   if (path === "/leaderboard") return "leaderboard";
+  if (path === "/forum" || path.startsWith("/forum/")) return "docs";
   if (path === "/docs" || path.startsWith("/docs/")) return "docs";
   if (path === "/mint") return "home";
   if (path === "/explore" || path === "/commit") {

@@ -87,6 +87,7 @@ export type GameMessages = {
     /** @deprecated Prefer `claim` — kept for legacy copy references. */
     rewards: string;
     leaderboard: string;
+    forum: string;
     market: string;
     marketAria: string;
     docs: string;
@@ -96,6 +97,7 @@ export type GameMessages = {
     featureClaim: string;
     featureRewards: string;
     featureLeaderboard: string;
+    featureForum: string;
     /** Header control — go to previous page. */
     back: string;
     backAria: string;
@@ -503,10 +505,62 @@ export type GameMessages = {
     rewards: string;
     claim: string;
     leaderboard: string;
+    forum: string;
+  };
+  forum: {
+    heading: string;
+    blurb: string;
+    gateNote: string;
+    featureName: string;
+    /** @deprecated Prefer `boards.tactics`. */
+    boardName: string;
+    boards: {
+      tactics: string;
+      bugs: string;
+    };
+    bugReportNotice: string;
+    boardSwitcherAria: string;
+    bugsBodyPlaceholder: string;
+    composerTitle: string;
+    threadsTitle: string;
+    repliesTitle: string;
+    commentsTitle: string;
+    bodyLabel: string;
+    bodyPlaceholder: string;
+    replyLabel: string;
+    commentLabel: string;
+    replyPlaceholder: string;
+    commentPlaceholder: string;
+    commentComposerTitle: string;
+    postAsHint: string;
+    selectNftHint: string;
+    signHint: string;
+    likeSignHint: string;
+    signing: string;
+    createThread: string;
+    postReply: string;
+    postComment: string;
+    like: string;
+    unlike: string;
+    likeCountLabel: (count: number) => string;
+    noNftBody: string;
+    emptyThreads: string;
+    emptyReplies: string;
+    emptyComments: string;
+    loadError: string;
+    notFound: string;
+    backToBoard: string;
+    metaLine: (when: string, commentCount: number, likeCount: number) => string;
+    delete: string;
+    deleting: string;
+    deleteSignHint: string;
+    deleteThreadConfirm: string;
+    deleteReplyConfirm: string;
   };
   features: {
     rewards: string;
     leaderboard: string;
+    forum: string;
     genesisMint: string;
     commit: string;
     reveal: string;

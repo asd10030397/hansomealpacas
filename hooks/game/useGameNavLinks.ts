@@ -23,7 +23,9 @@ export function useGameNavLinks() {
               ? t.nav.featureClaim
               : item.id === "leaderboard"
                 ? t.nav.featureLeaderboard
-                : "",
+                : item.id === "forum"
+                  ? t.nav.featureForum
+                  : "",
       })),
     [t, gameHref],
   );

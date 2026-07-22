@@ -47,6 +47,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Pretty forum thread URLs on game host
+  if (pathname.startsWith("/forum/")) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/game${pathname}`;
+    return NextResponse.rewrite(url);
+  }
+
   const map: Record<string, string> = {
     "/": "/game",
     "/mint": "/game/mint",
@@ -55,6 +62,7 @@ export function middleware(request: NextRequest) {
     "/claim": "/game/claim",
     "/rewards": "/game/claim",
     "/leaderboard": "/game/leaderboard",
+    "/forum": "/game/forum",
     "/docs": "/game/docs",
     "/docs/guide": "/game/docs/guide",
     "/dashboard": "/game/dashboard",

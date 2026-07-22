@@ -9,6 +9,7 @@ export type GameNavId =
   | "myNfts"
   | "claim"
   | "leaderboard"
+  | "forum"
   | "market"
   | "docs";
 
@@ -25,6 +26,7 @@ export type GameNavItemDef = {
     | "myNfts"
     | "claim"
     | "leaderboard"
+    | "forum"
     | "market"
     | "docs";
   requiresWallet?: boolean;
@@ -39,6 +41,7 @@ export const GAME_NAV_ITEMS: readonly GameNavItemDef[] = [
   { id: "myNfts", hrefKey: "myNfts", labelKey: "myNfts" },
   { id: "claim", hrefKey: "claim", labelKey: "claim" },
   { id: "leaderboard", hrefKey: "leaderboard", labelKey: "leaderboard" },
+  { id: "forum", hrefKey: "forum", labelKey: "forum" },
   { id: "market", externalHref: OFFICIAL_MARKET_URL, labelKey: "market" },
   { id: "docs", hrefKey: "docs", labelKey: "docs" },
 ] as const;
@@ -55,6 +58,7 @@ export const GAME_DOCK_PRIMARY: readonly GameNavId[] = [
 export const GAME_DOCK_MORE: readonly GameNavId[] = [
   "claim",
   "leaderboard",
+  "forum",
   "market",
   "docs",
 ] as const;

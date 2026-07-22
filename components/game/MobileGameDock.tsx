@@ -34,6 +34,8 @@ function dockLabel(
       return t.dock.claim;
     case "leaderboard":
       return t.nav.leaderboard;
+    case "forum":
+      return t.nav.forum;
     case "market":
       return t.nav.market;
     case "docs":
