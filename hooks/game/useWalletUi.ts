@@ -32,7 +32,12 @@ export function useWalletUi() {
   const chainId = useChainId();
   const { disconnect } = useDisconnect();
   const { switchChain, isPending: isSwitching } = useSwitchChain();
-  const { openWalletConnect, isConnecting, connectError } = useWalletConnectAction();
+  const {
+    openWalletConnect,
+    isConnecting,
+    connectError,
+    connectFailReason,
+  } = useWalletConnectAction();
 
   const wallet: WalletUiState = useMemo(
     () => ({
@@ -68,6 +73,7 @@ export function useWalletUi() {
     switchToGenesisChain,
     isPending: isConnecting || isSwitching,
     connectError,
+    connectFailReason,
     isMock: false as const,
   };
 }

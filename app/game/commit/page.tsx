@@ -14,6 +14,7 @@ import { useGameState } from "@/hooks/game/useGameState";
 import { useHansomeCommit } from "@/hooks/game/useHansomeCommit";
 import { useOwnedGenesisNfts } from "@/hooks/game/useOwnedGenesisNfts";
 import {
+  getAutoNavigatedToCommit,
   markAutoNavigateToCommitScrollDone,
   shouldScrollAfterAutoNavigateToCommit,
 } from "@/lib/game/autoNavigateToCommit";
@@ -67,6 +68,7 @@ export default function CommitPage() {
   const [locationId, setLocationId] = useState<LocationId | null>(null);
   const [selectedToken, setSelectedToken] = useState<number | null>(null);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
+  const [showPrevResultsNotice, setShowPrevResultsNotice] = useState(false);
   const [sealedToday, setSealedToday] = useState(() =>
     listCommitSecretsForDay(day.day, owned.address),
   );
@@ -94,7 +96,14 @@ export default function CommitPage() {
     }
   }, [day.day, owned.address]);
 
-  // Battle→next COMMIT auto-nav: smooth-scroll once to Choose Location panel.
+  // Battle→next COMMIT auto-nav: notice + smooth-scroll once to Choose Location.
+  useEffect(() => {
+    scrolledRef.current = false;
+    setShowPrevResultsNotice(
+      getAutoNavigatedToCommit(walletKey, day.day) === "pending",
+    );
+  }, [walletKey, day.day]);
+
   useEffect(() => {
     if (scrolledRef.current) return;
     if (!shouldScrollAfterAutoNavigateToCommit(walletKey, day.day)) return;
@@ -102,10 +111,6 @@ export default function CommitPage() {
     markAutoNavigateToCommitScrollDone(walletKey, day.day);
     return scrollToGameSectionWithRetry(GAME_SECTION_IDS.commit);
   }, [walletKey, day.day, phase]);
-
-  useEffect(() => {
-    scrolledRef.current = false;
-  }, [day.day]);
 
   const locationLabel = useMemo(() => {
     if (locationId == null) return null;
@@ -169,6 +174,21 @@ export default function CommitPage() {
         <GameStatusPanel day={day} now={now} phaseEndsAt={phaseEndsAt} phase={phase} />
       </div>
 
+      {showPrevResultsNotice ? (
+        <div className="mt-4" data-testid="commit-previous-result-notice">
+          <GameFeedback tone="info" label={t.commit.autoNavPreviousResultNote}>
+            <PixelButton
+              href={gameHref.result}
+              variant="gold"
+              size="sm"
+              className="mt-2 w-auto min-w-[10rem]"
+            >
+              {t.dashboard.previousBattleResult}
+            </PixelButton>
+          </GameFeedback>
+        </div>
+      ) : null}
+
       <div
         id={GAME_SECTION_IDS.commit}
         ref={chooseLocationRef}
@@ -184,9 +204,26 @@ export default function CommitPage() {
         ) : (
           <p className="text-sm text-[var(--hg-muted)]">{t.commit.noLocation}</p>
         )}
-        <PixelButton href={gameHref.explore} variant="green" className="mt-3" size="sm">
-          {t.commit.openMap}
-        </PixelButton>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <PixelButton href={gameHref.explore} variant="green" size="sm">
+            {t.commit.openMap}
+          </PixelButton>
+          {day.day > 0 ? (
+            <PixelButton
+              href={gameHref.result}
+              variant="gold"
+              size="sm"
+              data-testid="commit-view-previous-results"
+            >
+              {t.commit.viewPreviousResults}
+            </PixelButton>
+          ) : null}
+        </div>
+        {day.day > 0 ? (
+          <p className="mt-2 text-xs leading-relaxed text-[var(--hg-muted)]">
+            {t.commit.viewPreviousResultsHint}
+          </p>
+        ) : null}
       </PixelPanel>
 
       <PixelPanel

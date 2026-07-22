@@ -1,6 +1,12 @@
-# Mainnet Genesis whitelist addresses (one per line).
-# Lines starting with # are ignored. Empty lines ignored.
-# Replace with the approved Mainnet list before generating the Merkle tree.
+# EXAMPLE ONLY — not for Mainnet sale.
+# Owner-editable source of truth:
+#   data/mainnet/whitelist-addresses.txt
+# (see data/mainnet/README.md)
+#
+# Legacy ops path (optional):
+#   contracts/deployments/mainnet-whitelist-addresses.txt
+#
+# Format: one address per line; # comments and blanks ignored.
 # Do NOT reuse Testnet addresses or proofs.
 #
 # Example placeholders (NOT for Mainnet sale):

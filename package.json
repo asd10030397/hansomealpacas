@@ -18,7 +18,13 @@
     "generate:ui-sfx": "node scripts/generate-ui-sfx.mjs",
     "generate:ability-sfx": "node scripts/generate-ability-sfx.mjs",
     "promo:king:cutouts": "node scripts/build-king-promo-cutouts.mjs",
-    "promo:king": "node scripts/build-king-promo-cutouts.mjs && node scripts/record-king-promo.mjs"
+    "promo:king": "node scripts/build-king-promo-cutouts.mjs && node scripts/record-king-promo.mjs",
+    "promo:gameplay-trailer": "node scripts/record-gameplay-trailer.mjs",
+    "promo:cinematic-trailer": "node scripts/record-cinematic-trailer.mjs",
+    "promo:cinematic-ad-trailer": "node scripts/record-cinematic-ad-trailer.mjs",
+    "promo:epic-gameplay-trailer": "node scripts/record-epic-gameplay-trailer.mjs",
+    "promo:day-cycle-tutorial": "node scripts/record-day-cycle-tutorial.mjs",
+    "showcase:season1": "node scripts/record-season1-showcase.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.2",

@@ -43,7 +43,7 @@
 | Deployer address (redacted) | `0xcE15…069A` | Present |
 | Deployer ETH | **~0.00398 ETH** (recommend ≥ **0.05 ETH**) | **Blocker** |
 | HANSOME funding wallet | Same deployer EOA; balance **~13,374,569** `$HANSOME` | Present |
-| Recommended Treasury fund | **300,000,000** `$HANSOME` (三億 / \(G_0\)) | **Blocker** — shortfall ~**286,625,431** |
+| Recommended Treasury fund (at audit) | Was **300,000,000**; **superseded 2026-07-21** by approved launch **30,000,000** (initial \(R_d=80k\)/day; protocol \(G_0\) unchanged) | **Blocker vs 30M** if funder &lt; 30M — see [`INITIAL_TREASURY_STRATEGY.md`](./INITIAL_TREASURY_STRATEGY.md) |
 | `RESERVE_MINT_TO` | Set (`0xcE15…069A`) — confirm intentional founder custody | Pass (set) / human confirm |
 | `VRF_OPERATOR` | **Placeholder** `0x0000…0001` | **Blocker** |
 | `RANDOMNESS_PROVIDER` | Set (`0xcE15…069A`) | Pass (set) / human confirm role |
@@ -75,7 +75,7 @@
 | `GAME_FAST_TIMING` | `0` / unset | `0` | Pass |
 | `USE_REVEAL_MOCK` | must not be `1` | unset / not `1` | Pass |
 | `RANDOMNESS_PROVIDER` | real operator address | set (see §2) | Pass (set) |
-| Treasury fund plan | `GAME_TREASURY_FUND_ETH=300000000` or funded skip path | `SKIP_TREASURY_FUND=1`, fund amount unset | Warn — funding still required before commits |
+| Treasury fund plan | Docs `GAME_TREASURY_FUND_HANSOME=30000000`; scripts still `GAME_TREASURY_FUND_ETH=30000000` (HANSOME misnomer) or skip path | `SKIP_TREASURY_FUND=1`, fund amount unset | Warn — funding still required before commits |
 | Live `robinhood-game.json` | Required post-deploy | **Absent** | Warn (not deployed) |
 | Dry-run artifacts | Optional | genesis / game / game-launch dry-run JSON present | Pass |
 
@@ -138,7 +138,7 @@
 | # | Blocker | Owner |
 |---|---------|-------|
 | 1 | Deployer ETH ≈ **0.004** &lt; recommended **0.05** | Ops / Deployer |
-| 2 | Funding funder HANSOME ≈ **13.4M** &lt; recommended **300,000,000** | Treasury |
+| 2 | Funding funder HANSOME ≈ **13.4M** &lt; approved launch **30,000,000** | Treasury |
 | 3 | `VRF_OPERATOR` is placeholder `0x000…0001` | Ops |
 | 4 | `MAINNET_OWNER` unset | Founder / Ops |
 | 5 | `GAME_DAY_ZERO` env (`1800000000`) ≠ approved **`1784894400`** (2026-07-24 12:00 UTC) | Product / Ops |

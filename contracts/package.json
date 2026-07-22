@@ -6,6 +6,7 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
+    "test:mainnet-guards": "hardhat test test/mainnetGuards.unit.ts",
     "test:genesis": "hardhat test test/HansomeGenesisNFT.test.ts",
     "test:game": "hardhat test test/game/SettlementLib.unit.ts test/game/HansomeGame.integration.ts",
     "deploy:genesis": "hardhat run scripts/deploy-genesis.ts",

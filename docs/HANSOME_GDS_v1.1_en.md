@@ -575,6 +575,12 @@ When \(G < G_{\mathrm{safe}}\):
 
 \(G_0 / R_0 = 750\) days (ignoring Sinks, penalty returns, and step-downs).
 
+### 15.4 Launch funding vs protocol \(G_0\) (operational note)
+
+The parameters in §15.1 are **protocol design constants** (implemented in `GameTypes` / `EmissionController`). They are **not** a requirement to fund GameTreasury with \(G_0\) at Mainnet launch.
+
+**Approved launch funding (ops):** GameTreasury is initially funded with **30,000,000** HANSOME from operational Treasury wallet `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` (one-time ceremony transfer; **not** hardcoded in Solidity), which places spendable \(G\) in the **80,000**/day band. Further funding can raise \(G\) through the 60M / 120M / 210M thresholds to unlock higher \(R_d\) **without** contract upgrades. See [`INITIAL_TREASURY_STRATEGY.md`](./INITIAL_TREASURY_STRATEGY.md).
+
 ---
 
 ## 16. Randomness

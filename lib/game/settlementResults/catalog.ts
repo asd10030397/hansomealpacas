@@ -29,6 +29,8 @@ export type SettlementResultSfxDef = {
   durationMs: number;
   /** Short banner shown with the result VFX */
   banner: string;
+  /** Larger dramatic stamp (presentation only; not on-chain) */
+  dramaticLabel: string;
 };
 
 const CACHE_VER = "settle-result-1";
@@ -41,22 +43,25 @@ export const SETTLEMENT_RESULT_SFX_CATALOG: Record<
     id: "alpaca-hunted",
     sourceFolder: "AlpacaHunted",
     publicFolder: "alpaca-hunted",
-    durationMs: scalePresentationMs(1200),
+    durationMs: scalePresentationMs(1400),
     banner: "Hunted!",
+    dramaticLabel: "ELIMINATED",
   },
   "alpaca-safe": {
     id: "alpaca-safe",
     sourceFolder: "AlpacaSafe",
     publicFolder: "alpaca-safe",
-    durationMs: scalePresentationMs(1250),
+    durationMs: scalePresentationMs(1350),
     banner: "Safe!",
+    dramaticLabel: "SURVIVED",
   },
   "cougar-hunt-success": {
     id: "cougar-hunt-success",
     sourceFolder: "CougarHuntSuccess",
     publicFolder: "cougar-hunt-success",
-    durationMs: scalePresentationMs(1300),
+    durationMs: scalePresentationMs(1400),
     banner: "Hunt Success!",
+    dramaticLabel: "VICTORY",
   },
   "cougar-hunt-failed": {
     id: "cougar-hunt-failed",
@@ -64,6 +69,7 @@ export const SETTLEMENT_RESULT_SFX_CATALOG: Record<
     publicFolder: "cougar-hunt-failed",
     durationMs: scalePresentationMs(1350),
     banner: "Hunt Failed",
+    dramaticLabel: "MISSED",
   },
 };
 

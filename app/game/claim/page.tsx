@@ -12,7 +12,11 @@ import { useClaimHistory } from "@/hooks/game/useClaimHistory";
 import { useClaimRewards } from "@/hooks/game/useClaimRewards";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
+import { useGameState } from "@/hooks/game/useGameState";
 import { useSettlementView } from "@/hooks/game/useSettlementView";
+import { useWalletUi } from "@/hooks/game/useWalletUi";
+import { battleResultViewDay } from "@/lib/game/battleResultViewDay";
+import { resolveClaimWalletPrimary } from "@/lib/game/walletConnectUi";
 
 function claimTone(
   state: string,
@@ -51,9 +55,22 @@ function claimStateLabel(state: string): string {
 export default function ClaimPage() {
   const { t } = useGameI18n();
   const gameHref = useGameHref();
+  const { day, phase } = useGameState();
   const claim = useClaimRewards();
   const history = useClaimHistory();
-  const settleView = useSettlementView();
+  const viewDay = battleResultViewDay({ currentDay: day.day, phase });
+  const settleView = useSettlementView({ targetDay: viewDay });
+  const {
+    wallet,
+    connectWallet,
+    switchToGenesisChain,
+    isPending: walletPending,
+  } = useWalletUi();
+
+  const walletPrimary = resolveClaimWalletPrimary({
+    isConnected: wallet.connected,
+    isWrongChain: Boolean(wallet.wrongNetwork),
+  });
 
   const settlementPending =
     settleView.status === "pending" ||
@@ -112,15 +129,39 @@ export default function ClaimPage() {
         )}
 
         <div className="mt-5">
-          <PixelButton
-            variant="green"
-            size="lg"
-            disabled={!claim.canClaim}
-            aria-busy={claim.hasPendingTx || undefined}
-            onClick={() => void claim.claimAll()}
-          >
-            {claim.hasPendingTx ? "CLAIMING…" : t.actions.claim}
-          </PixelButton>
+          {walletPrimary === "connect" ? (
+            <PixelButton
+              variant="gold"
+              size="lg"
+              disabled={walletPending}
+              onClick={connectWallet}
+              data-claim-wallet-cta="connect"
+              data-wallet-entry="claim"
+            >
+              {t.common.connectWallet}
+            </PixelButton>
+          ) : walletPrimary === "switch" ? (
+            <PixelButton
+              variant="gold"
+              size="lg"
+              disabled={walletPending}
+              onClick={switchToGenesisChain}
+              data-claim-wallet-cta="switch"
+            >
+              {t.mint.switchNetwork}
+            </PixelButton>
+          ) : (
+            <PixelButton
+              variant="green"
+              size="lg"
+              disabled={!claim.canClaim}
+              aria-busy={claim.hasPendingTx || undefined}
+              onClick={() => void claim.claimAll()}
+              data-claim-wallet-cta="claim"
+            >
+              {claim.hasPendingTx ? "CLAIMING…" : t.actions.claim}
+            </PixelButton>
+          )}
         </div>
 
         {claim.uiState !== "idle" ? (

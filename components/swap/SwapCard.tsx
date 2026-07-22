@@ -16,6 +16,7 @@ import {
   useBalance,
   useChainId,
   useConnection,
+  useDisconnect,
   usePublicClient,
   useReadContract,
   useSwitchChain,
@@ -91,9 +92,9 @@ export function SwapCard() {
   const {
     openWalletConnect,
     isConnecting,
-    connectError: walletConnectError,
     clearError: clearWalletConnectError,
   } = useWalletConnectAction();
+  const { disconnect } = useDisconnect();
   const { switchChain, isPending: isSwitching } = useSwitchChain();
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient({ chainId: ROBINHOOD_CHAIN_ID });
@@ -421,17 +422,15 @@ export function SwapCard() {
     failTx(writeError, "Swap transaction failed.");
   }, [writeError, failTx]);
 
-  useEffect(() => {
-    if (!walletConnectError) return;
-    setBannerKind("connection");
-    setTxPhase("failed");
-    setTxMessage(walletConnectError);
-  }, [walletConnectError]);
-
   const handleConnect = useCallback(() => {
     resetTxState();
     void openWalletConnect();
   }, [openWalletConnect, resetTxState]);
+
+  /** Clears wagmi account only — does not touch swap quote/tx/routing state. */
+  const handleDisconnect = useCallback(() => {
+    disconnect();
+  }, [disconnect]);
 
   const handleSwitchChain = useCallback(() => {
     resetTxState();
@@ -702,9 +701,19 @@ export function SwapCard() {
           </h1>
         </div>
         {isConnected && address ? (
-          <p className="rounded-full border border-border px-3 py-1 font-mono text-xs text-muted">
-            {shortenAddress(address)}
-          </p>
+          <div className="flex flex-col items-end gap-2">
+            <p className="rounded-full border border-border px-3 py-1 font-mono text-xs text-muted">
+              {shortenAddress(address)}
+            </p>
+            <button
+              type="button"
+              onClick={handleDisconnect}
+              data-swap-disconnect="true"
+              className="font-[family-name:var(--font-anton)] text-[10px] tracking-[0.18em] text-muted underline underline-offset-2 hover:text-foreground"
+            >
+              {t.swap.disconnectWallet}
+            </button>
+          </div>
         ) : null}
       </div>
 

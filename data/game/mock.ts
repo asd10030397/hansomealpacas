@@ -1,3 +1,8 @@
+import {
+  COMMIT_DURATION_SEC,
+  DAY_LENGTH_SEC,
+  REVEAL_DURATION_SEC,
+} from "@/lib/game/genesisIdentity";
 import type {
   GameDayState,
   LeaderboardBoardId,
@@ -15,18 +20,20 @@ export type { LeaderboardBoardId };
 export const MOCK_BANNER = "Game temporarily unavailable — check back soon.";
 
 export function createMockDayState(now = Date.now()): GameDayState {
-  const commitMs = 20 * 60 * 60 * 1000;
-  const revealMs = 4 * 60 * 60 * 1000;
-  const battleMs = 0;
-  // Demo: mid-commit window so Commit is active on first load
-  const dayStart = now - 2 * 60 * 60 * 1000;
+  // Follow NEXT_PUBLIC_* / GDS defaults so Testnet QA mock is not stuck on a 20h clock.
+  const commitMs = COMMIT_DURATION_SEC * 1000;
+  const revealMs = REVEAL_DURATION_SEC * 1000;
+  const dayMs = DAY_LENGTH_SEC * 1000;
+  // Demo: slightly into commit so Commit is active; cap so short Testnet windows stay valid.
+  const elapsed = Math.min(2 * 60 * 60 * 1000, Math.max(1_000, Math.floor(commitMs * 0.1)));
+  const dayStart = now - elapsed;
   return {
     day: 42,
     phase: "COMMIT",
     phaseEndsAt: dayStart + commitMs,
     commitEndsAt: dayStart + commitMs,
     revealEndsAt: dayStart + commitMs + revealMs,
-    dayEndsAt: dayStart + commitMs + revealMs + battleMs,
+    dayEndsAt: dayStart + dayMs,
     settled: false,
     settlementStatus: "Pending",
   };

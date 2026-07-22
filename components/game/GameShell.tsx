@@ -15,6 +15,7 @@ import { useAutoNavigateToBattle } from "@/hooks/game/useAutoNavigateToBattle";
 import { useAutoNavigateToCommit } from "@/hooks/game/useAutoNavigateToCommit";
 import { AutoRevealProvider } from "@/hooks/game/useAutoReveal";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
+import { TutorialCaptureInit } from "@/components/game/TutorialCaptureInit";
 import { forceUnlockBodyScroll } from "@/lib/ui/bodyScrollLock";
 
 /** Client chrome around /game/* pages (nav, dock, i18n skip link). */
@@ -33,6 +34,7 @@ export function GameShell({ children }: { children: React.ReactNode }) {
 
   return (
     <GameVisualShell>
+      <TutorialCaptureInit />
       <GameplayMusic />
       <GameUiSfx />
       <AutoRevealProvider>

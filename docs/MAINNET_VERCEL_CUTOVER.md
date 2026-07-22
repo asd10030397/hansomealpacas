@@ -2,7 +2,7 @@
 
 | Field | Value |
 |------|------|
-| Status | **Prepare only** — do not cut over until Mainnet contracts are deployed + dry-run clean |
+| Status | **Production env updated (2026-07-21)** — Mainnet `NEXT_PUBLIC_*` set on Vercel Production; **redeploy still required** (do not deploy until explicitly approved) |
 | Site | Production on Vercel (`VERCEL_ENV=production`) |
 | Chains | Game Testnet `46630` (current) → Game Mainnet `4663` (cutover) |
 | Related | [`MAINNET_DEPLOYMENT_CHECKLIST.md`](./MAINNET_DEPLOYMENT_CHECKLIST.md), [`GAME_RUNTIME_ADDRESSES.md`](./GAME_RUNTIME_ADDRESSES.md) |
@@ -54,6 +54,7 @@ Swap / token Mainnet vars (`NEXT_PUBLIC_CHAIN_ID=4663`, `NEXT_PUBLIC_RPC_URL`, `
 | Variable | Mainnet value |
 |----------|---------------|
 | `NEXT_PUBLIC_GAME_CHAIN_ID` | `4663` |
+| `NEXT_PUBLIC_GAME_REQUIRE_MAINNET` | `1` (fail-closed if game/mint still on `46630`) |
 | `NEXT_PUBLIC_GAME_RPC_URL` | `https://rpc.mainnet.chain.robinhood.com` |
 | `NEXT_PUBLIC_GAME_EXPLORER` | `https://robinhoodchain.blockscout.com` |
 | `NEXT_PUBLIC_BLOCK_EXPLORER_URL` | Optional alias of explorer (same URL) |
@@ -149,7 +150,7 @@ Use Vercel → Project → Settings → Environment Variables → **Production**
 ### B. Vercel environment changes (manual)
 
 1. Open Vercel Production env for the game project.
-2. Set public chain/RPC/explorer to Mainnet values (§2).
+2. Set public chain/RPC/explorer to Mainnet values (§2), including `NEXT_PUBLIC_GAME_REQUIRE_MAINNET=1`.
 3. Set all four contract addresses from Mainnet deploy JSON.
 4. Set GDS timings (or remove fast Testnet timing vars).
 5. Set `NEXT_PUBLIC_TESTNET_GASLESS_RESOLVE=0` unless Mainnet gasless is approved.

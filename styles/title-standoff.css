@@ -297,6 +297,7 @@
     0 0 0 2px rgba(240, 196, 74, 0.45),
     0 10px 0 rgba(0, 0, 0, 0.35),
     0 0 40px rgba(240, 196, 74, 0.12);
+  animation: standoff-logo-stinger 1.15s cubic-bezier(0.2, 0.85, 0.25, 1) both;
 }
 
 .standoff__eyebrow {
@@ -330,12 +331,37 @@
 .standoff__title-line--top {
   font-size: clamp(2.4rem, 7.5vw, 4.6rem);
   color: #fff8e8;
+  animation: standoff-title-line 0.9s ease both;
 }
 
 .standoff__title-line--bottom {
   margin-top: 0.05em;
   font-size: clamp(2rem, 6.2vw, 3.8rem);
   color: var(--st-gold);
+  animation: standoff-title-line 0.9s ease 0.12s both;
+}
+
+@keyframes standoff-logo-stinger {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: none;
+  }
+}
+
+@keyframes standoff-title-line {
+  from {
+    opacity: 0;
+    letter-spacing: 0.18em;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .standoff__tagline {

@@ -4,88 +4,43 @@
 |------|------|
 | File | `docs/MAINNET_LAUNCH_PROGRESS_TRACKER.md` |
 | Purpose | Track closure of all Mainnet launch blockers |
-| Baseline | [`MAINNET_PRE_LAUNCH_ENV_AUDIT.md`](./MAINNET_PRE_LAUNCH_ENV_AUDIT.md) · [`MAINNET_BLOCKER_CLOSURE_PLAN.md`](./MAINNET_BLOCKER_CLOSURE_PLAN.md) |
 | Mode | **Ops tracker only** — no deployment, no transactions, no secrets |
-| Last board update | 2026-07-21 |
+| Last board update | 2026-07-21 (B7 game-launch dry-run zero blockers; live ceremony still NO-GO) |
 
-**Status values:** `OPEN` · `IN PROGRESS` · `READY` · `VERIFIED`
+**Status values:** `OPEN` · `IN PROGRESS` · `READY` · `VERIFIED` · `VERIFIED WITH OWNER ACKNOWLEDGMENT PENDING`
 
-**Related:** [`MAINNET_OPERATIONS_CONFIG.md`](./MAINNET_OPERATIONS_CONFIG.md) · [`MAINNET_GO_LIVE_APPROVAL.md`](./MAINNET_GO_LIVE_APPROVAL.md) · [`MAINNET_VERCEL_CUTOVER.md`](./MAINNET_VERCEL_CUTOVER.md)
-
-**Hard rules:** Do not paste private keys or secret values. Prefer redacted address prefixes in notes.
+**Related:** [`MAINNET_OWNER_INPUT_FORM.md`](./MAINNET_OWNER_INPUT_FORM.md) · [`MAINNET_B7_LAUNCH_CEREMONY_CHECKLIST.md`](./MAINNET_B7_LAUNCH_CEREMONY_CHECKLIST.md) · [`MAINNET_GO_LIVE_CHECKLIST.md`](./MAINNET_GO_LIVE_CHECKLIST.md)
 
 ---
 
 ## Tracker board
 
-| ID | Blocker | Priority | Current status | Owner | Verification method | Completed date |
-|----|---------|----------|----------------|-------|---------------------|----------------|
-| **B1** | ETH gas funding — deployer ≥ **0.05 ETH** on chainId **4663** (audit ~0.004 ETH) | P0 | OPEN | Ops / Deployer | Explorer balance **or** dry-run `deployer_gas` pass | |
-| **B2** | Treasury HANSOME funding — funder holds approved amount (recommended **300,000,000**; audit ~13.4M) for GameTreasury | P0 | OPEN | Treasury | Read-only `balanceOf(funder)` + game-launch dry-run `treasury_funding` pass | |
-| **B3** | `VRF_OPERATOR` — real address (not `0x000…0001`); custody + runbook | P0 | OPEN | Ops | Genesis / deploy-plan dry-run `vrf_operator` pass; go-live sign-off | |
-| **B4** | `RANDOMNESS_PROVIDER` — role confirmed (day-seed fulfiller); address + runbook | P0 | OPEN | Ops | Game-launch dry-run `randomness_provider` pass; ops config confirmed | |
-| **B5** | `MAINNET_OWNER` — multisig / timelock set; signers + threshold documented | P0 | OPEN | Founder / Ops | Env set; dry-run `ownership_plan` pass; go-live security sign-off | |
-| **B6** | `GAME_DAY_ZERO` — set to approved **`1784894400`** (2026-07-24 12:00 UTC); clear mismatch | P0 | OPEN | Product / Ops | Env equals approved unix; dry-run `day_zero` shows correct ISO | |
-| **B7** | Vercel Production Mainnet cutover preparation — plan + post-deploy env (no Testnet / no `46630`) | P1 | OPEN | Ops / Vercel admin | Cutover checklist signed; after deploy, Production matches Mainnet JSON | |
+| ID | Blocker | Priority | Current status | Owner | Completed date |
+|----|---------|----------|----------------|-------|----------------|
+| **B1** | Deployer ETH ≥ 0.05 | P0 | VERIFIED | Ops | 2026-07-21 |
+| **B2** | GameTreasury 30M plan + funder ready | P0 | VERIFIED | Treasury | 2026-07-21 |
+| **B3** | `VRF_OPERATOR` owner-approved real address | P0 | VERIFIED | Owner / Ops | 2026-07-21 |
+| **B4** | `RANDOMNESS_PROVIDER` + runbook + owner ack | P0 | VERIFIED | Ops / Owner | 2026-07-21 |
+| **B5** | `MAINNET_OWNER` (initial launch owner) | P0 | VERIFIED | Founder / Owner | 2026-07-21 |
+| **B6** | `GAME_DAY_ZERO=1784894400` | P0 | VERIFIED | Product / Ops | 2026-07-21 |
+| **B7** | Vercel Production cutover / launch ceremony | P1 | IN PROGRESS | Ops | |
 
-### Priority legend
+**B4:** Temporary ceremony EOA provider `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` acknowledged (`B4_OWNER_ACK=1`, Project Owner, 2026-07-21). Replacement: decentralized / production-grade randomness when available.
 
-| Priority | Meaning |
-|----------|---------|
-| **P0** | Must close before any live Mainnet ceremony |
-| **P1** | Must be prepared before ceremony; Production cutover only **after** live `robinhood-*.json` + verify |
-
-### How to move status
-
-| From → To | When |
-|-----------|------|
-| OPEN → IN PROGRESS | Owner actively funding / confirming / configuring |
-| IN PROGRESS → READY | Required action done on ops side; awaiting verification pass |
-| READY → VERIFIED | Verification method executed and recorded (date filled) |
+**B7:** Role blockers closed. Game-launch dry-run **zero blockers** (canonical `GAME_TOKEN_ADDRESS`, GDS timing, `SKIP_TREASURY_FUND=1`). Remaining: live ceremony + Vercel cutover + human GO — see [`MAINNET_B7_LAUNCH_CEREMONY_CHECKLIST.md`](./MAINNET_B7_LAUNCH_CEREMONY_CHECKLIST.md). **Does not authorize deploy.**
 
 ---
 
-## Snapshot notes (from audit 2026-07-20 — update when status changes)
-
-| ID | Audit snapshot |
-|----|----------------|
-| B1 | Deployer ETH ~0.00398 |
-| B2 | Funder HANSOME ~13.37M; `SKIP_TREASURY_FUND=1` |
-| B3 | Placeholder `0x000…0001` |
-| B4 | Address set (`0xcE15…069A`) but role not formally confirmed |
-| B5 | Unset |
-| B6 | Env `1800000000` ≠ approved `1784894400` |
-| B7 | Dashboard not verified; cutover blocked until live deploy JSON |
-
----
-
-## Launch readiness percentage
+## Launch readiness
 
 | Metric | Value |
 |--------|--------|
-| Tracked blockers | **7** (B1–B7) |
-| Count **VERIFIED** | **0** |
-| Count **READY** (not yet verified) | **0** |
-| Count **IN PROGRESS** | **0** |
-| Count **OPEN** | **7** |
-| **Launch readiness** | **0 / 7 = 0%** |
+| Count **VERIFIED** (full) | **6** (B1–B6) |
+| Count **IN PROGRESS** | **1** (B7) |
+| Count **OPEN** | **0** |
+| **Launch readiness** | **6 / 7 ≈ 86%** (full VERIFIED only) |
 
-### Formula
-
-```text
-Launch readiness % = (number of blockers with status VERIFIED) / 7 × 100
-```
-
-Optional stretch (not used for GO): treat READY as half-credit only in ops discussion — **GO requires VERIFIED on all P0 (B1–B6)** and B7 at least READY (cutover plan) before ceremony, with B7 VERIFIED before Production cutover.
-
-### Readiness gates
-
-| Gate | Rule |
-|------|------|
-| Ceremony dry-runs | B1–B6 = **VERIFIED** |
-| Live deploy flags | Plus [`MAINNET_GO_LIVE_APPROVAL.md`](./MAINNET_GO_LIVE_APPROVAL.md) = READY |
-| Vercel Production cutover | B7 = **VERIFIED** after contracts exist |
-| **Overall GO** | Readiness **100%** (7/7 VERIFIED) **or** explicit written waiver for B7 timing only |
+**Verdict: NO-GO for live writes** until B7 ceremony dry-runs pass, go-live flags are set, and human GO sign-off is recorded. Role blockers B1–B6 are closed.
 
 ---
 
@@ -93,4 +48,9 @@ Optional stretch (not used for GO): treat READY as half-credit only in ops discu
 
 | Date | Change |
 |------|--------|
-| 2026-07-21 | Initial tracker — all blockers OPEN; readiness 0% |
+| 2026-07-21 | B7 preflight: canonical token + timing cleanup; game-launch dry-run **0 blockers**; live still **NO-GO** |
+| 2026-07-21 | B4 **VERIFIED**; readiness **6/7 ≈ 86%**; B7 ceremony checklist prepared; **NO-GO** for live deploy |
+| 2026-07-21 | B5 **VERIFIED** (initial EOA owner + ACK flags); readiness **5/7 ≈ 71%**; B4 still ack-pending; **NO-GO** |
+| 2026-07-21 | B3 **VERIFIED** (env insert + guard validation); readiness **4/7 ≈ 57%**; B4/B5 still blocking; **NO-GO** |
+| 2026-07-21 | B3 owner approval recorded (temp ceremony EOA); status **IN PROGRESS** (not VERIFIED); readiness **3/7 ≈ 43%**; **NO-GO** |
+| 2026-07-21 | Fail-closed VRF/OWNER guards; LIVE_MAINNET_SEND; B4 ack-pending; readiness **3/7 ≈ 43%**; **NO-GO** |

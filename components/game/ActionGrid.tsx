@@ -26,6 +26,13 @@ export function ActionGrid({ phase }: { phase: GamePhase }) {
 
   const commitActions: SecondaryAction[] = [
     {
+      key: "previous-result",
+      label: t.dashboard.previousBattleResult,
+      feature: t.phases.BATTLE_RESULT,
+      href: gameHref.result,
+      variant: "gold",
+    },
+    {
       key: "nfts",
       label: t.actions.myNfts,
       feature: t.features.myNfts,

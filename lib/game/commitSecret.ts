@@ -115,6 +115,23 @@ export function listOwnedCommitSecretsForDay(
   );
 }
 
+/** Drop a stale local secret (e.g. no matching on-chain commit). */
+export function removeCommitSecret(
+  tokenId: number,
+  day: number,
+  wallet: string | null | undefined,
+): boolean {
+  const w = normalizeWallet(wallet);
+  if (!w) return false;
+  const all = readAll();
+  const kept = all.filter(
+    (r) => !(r.tokenId === tokenId && r.day === day && r.wallet === w),
+  );
+  if (kept.length === all.length) return false;
+  writeAll(kept);
+  return true;
+}
+
 export function upsertCommitSecret(
   input: Omit<CommitSecretRecord, "updatedAt" | "commitHash" | "wallet"> & {
     commitHash?: Hex;

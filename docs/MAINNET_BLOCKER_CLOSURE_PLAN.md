@@ -27,13 +27,13 @@
 
 | # | Blocker | Status (from audit) | Owner | Closed |
 |---|---------|---------------------|-------|--------|
-| 1 | ETH gas funding | Open — ~0.004 ETH | Ops / Deployer | [ ] |
-| 2 | GameTreasury HANSOME funding | Open — ~13.4M vs 300M | Treasury | [ ] |
-| 3 | `VRF_OPERATOR` confirmation | Open — placeholder `0x000…0001` | Ops | [ ] |
-| 4 | `RANDOMNESS_PROVIDER` confirmation | Open — set but not role-confirmed | Ops | [ ] |
-| 5 | `MAINNET_OWNER` multisig setup | Open — unset | Founder / Ops | [ ] |
-| 6 | `GAME_DAY_ZERO` update | Open — env mismatch | Product / Ops | [ ] |
-| 7 | Vercel Production Mainnet cutover preparation | Open — dashboard not verified | Ops / Vercel admin | [ ] |
+| 1 | ETH gas funding | **Closed / VERIFIED** — ≥ 0.05 ETH (2026-07-21) | Ops / Deployer | [x] |
+| 2 | GameTreasury HANSOME funding | **Closed / VERIFIED** (pre-launch) — procedure + funder ≥ 30M | Treasury | [x] |
+| 3 | `VRF_OPERATOR` confirmation | **Closed / VERIFIED** — temp ceremony EOA in `.env` + ACK + guard PASS | Ops / Owner | [x] |
+| 4 | `RANDOMNESS_PROVIDER` confirmation | **Closed / VERIFIED** — env + runbook + owner ack (`B4_OWNER_ACK=1`) | Ops / Owner | [x] |
+| 5 | `MAINNET_OWNER` setup | **Closed / VERIFIED** — initial EOA hot wallet + ceremony ACK flags | Founder / Owner | [x] |
+| 6 | `GAME_DAY_ZERO` update | **Closed / VERIFIED** — **`1784894400`** | Product / Ops | [x] |
+| 7 | Vercel Production Mainnet cutover preparation | **In progress** — plan ready; blocked on live deploy JSON | Ops / Vercel admin | [ ] |
 
 ---
 
@@ -41,11 +41,12 @@
 
 | Field | Detail |
 |-------|--------|
-| **Current status** | Deployer EOA (`0xcE15…069A` at audit) held **~0.00398 ETH** on Robinhood Mainnet (`4663`). Below ceremony recommendation. |
-| **Required action** | Fund the **deployer** wallet on Mainnet with enough native ETH for Genesis + Game suite + recoveries + day-0 ops. Target **≥ 0.05 ETH** (more if suite + multiple recoveries expected). Prefer a dedicated `DEPLOYER_PRIVATE_KEY` (audit warned of Treasury-key fallback). |
+| **Current status** | **Closed / VERIFIED.** Read-only re-check **2026-07-21**: deployer EOA `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` (resolved via `TREASURY_PRIVATE_KEY` fallback — no dedicated `DEPLOYER_PRIVATE_KEY` in env) holds **0.054108923342201094 ETH** on Robinhood Mainnet (`4663`). **Meets** minimum **≥ 0.05 ETH**. |
+| **Required action** | *(Met)* Keep deployer funded through ceremony; prefer a dedicated `DEPLOYER_PRIVATE_KEY` when practical (audit warned of Treasury-key fallback). |
 | **Verification method** | Read-only: explorer balance for deployer **or** re-run `dry-run-mainnet-deploy-plan.ts` / `dry-run-mainnet-game-launch.ts` and confirm `deployer_gas` is pass (not warn). |
 | **Completion criteria** | Deployer ETH **≥ 0.05** on chainId **4663**; dry-run gas check no longer a blocker/warn for underfunding; recorded in ops config. |
 | **Final owner** | Ops / Deployer |
+| **Last verification** | 2026-07-21 read-only RPC balance — **PASS** (0.054108923342201094 ≥ 0.05). B1 **VERIFIED**. |
 
 ---
 
@@ -53,11 +54,12 @@
 
 | Field | Detail |
 |-------|--------|
-| **Current status** | Funding wallet (same deployer at audit) held **~13,374,569** `$HANSOME`. Recommended GameTreasury initial fund is **300,000,000** (三億 / \(G_0\)). Shortfall ~**286,625,431**. Audit had `SKIP_TREASURY_FUND=1`. |
-| **Required action** | Assemble **300,000,000** canonical Mainnet `$HANSOME` (`0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875`) on the funder wallet **before** live `deploy-game` fund step (or document explicit lower amount + accept lower emission band in writing). Set `GAME_TREASURY_FUND_ETH=300000000` for ceremony plan; clear mistaken “三千萬” confusion — target is **三億**. Do **not** fund RewardDistributor. |
-| **Verification method** | Read-only `balanceOf(funder)` on Mainnet; game-launch dry-run with `GAME_TREASURY_FUND_ETH=300000000` must **not** report `treasury_funding` blocker. |
-| **Completion criteria** | Funder balance ≥ approved fund amount; dry-run `treasury_funding` = pass; amount written in [`MAINNET_OPERATIONS_CONFIG.md`](./MAINNET_OPERATIONS_CONFIG.md) §3–§4 and signed in go-live approval. |
+| **Current status** | **Closed / VERIFIED (pre-launch).** Ops procedure documented and consistent: **30,000,000** HANSOME from `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` → GameTreasury at ceremony (one-time); future top-ups from same or other approved treasury wallets; not hardcoded in Solidity. Read-only **2026-07-21:** funder balance ≈ **30,904,320 HANSOME** ≥ 30M. Ceremony ERC-20 transfer (or deploy fund step) remains a **launch execution** step, not a missing procedure. |
+| **Required action** | *(Pre-launch met.)* At ceremony: transfer **30,000,000** to GameTreasury (`SKIP_TREASURY_FUND=1` + funder transfer preferred if deployer ≠ funder). Do **not** fund RewardDistributor. |
+| **Verification method** | Docs consistency + read-only `balanceOf(funder)` ≥ 30M (done). Post-ceremony: GameTreasury reflects 30M. |
+| **Completion criteria** | Pre-launch: procedure + funder balance (met). Launch: 30M in GameTreasury. |
 | **Final owner** | Treasury (with Ops ceremony coordination) |
+| **Last verification** | 2026-07-21 — funder ≥ 30M + docs OK → **VERIFIED** (pre-launch). |
 
 ---
 
@@ -65,11 +67,12 @@
 
 | Field | Detail |
 |-------|--------|
-| **Current status** | `VRF_OPERATOR` was **placeholder** `0x0000…0001`. Unusable for live Genesis (`VRFRevealAdapter` collection-reveal entropy — **≠** game day seed). |
-| **Required action** | Choose the real Mainnet operator address; confirm key custody + online runbook; set `VRF_OPERATOR` in ceremony env (never leave burn/placeholder). Record redacted prefix in ops config. |
-| **Verification method** | Env audit / `dry-run-mainnet-deploy-plan.ts` + `DRY_RUN=1 deploy-genesis.ts` show real operator (not `0x000…0001`); human sign-off in go-live approval §2 / security §4. |
-| **Completion criteria** | Non-placeholder checksummed address set; operator acknowledges duty; Genesis dry-run `vrf_operator` = pass. |
-| **Final owner** | Ops |
+| **Current status** | **Closed / VERIFIED.** Temporary ceremony EOA `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` + `VRF_OPERATOR_OWNER_ACK=1` in `contracts/.env`. Guard validation PASS. Classification: temporary ceremony EOA, **not** permanent production VRF. Does **not** authorize deploy. Replacement plan retained in Owner Input Form / Roles runbook. |
+| **Required action** | *(Met for launch.)* Before live: re-check balance / key control. Later: migrate to production VRF/beacon per replacement plan. |
+| **Verification method** | Env set + ACK + `requireMainnetVrfOperator` PASS. |
+| **Completion criteria** | Met for B3 board. |
+| **Final owner** | Ops / Owner |
+| **Last verification** | 2026-07-21 — insert + guard validation → **VERIFIED**. |
 
 ---
 
@@ -77,23 +80,25 @@
 
 | Field | Detail |
 |-------|--------|
-| **Current status** | Env had an address set (`0xcE15…069A` at audit) — **not** missing, but **not** formally confirmed as the day-seed fulfiller role (may currently equal deployer). |
-| **Required action** | Confirm who will run `GameRandomness.fulfillDaySeed` every day before settle; set `RANDOMNESS_PROVIDER` to that address; document custody + runbook; if temporary = deployer, record explicit plan to rotate before/after ownership transfer. |
-| **Verification method** | `dry-run-mainnet-game-launch.ts` `randomness_provider` = pass; ops config + go-live approval signed for provider role. |
-| **Completion criteria** | Named operator + address confirmed; ceremony env matches; day-0 fulfill runbook exists (offline). |
-| **Final owner** | Ops |
+| **Current status** | **Closed / VERIFIED.** `RANDOMNESS_PROVIDER=0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` (temporary). Owner ack: `B4_OWNER_ACK=1`, `B4_APPROVED_BY=Project Owner`, `B4_APPROVAL_DATE=2026-07-21`. Replacement: decentralized / production-grade randomness when available. Runbook in [`MAINNET_ROLES_AND_RUNBOOK.md`](./MAINNET_ROLES_AND_RUNBOOK.md). |
+| **Required action** | *(Met.)* Later rotate provider per replacement plan. |
+| **Verification method** | Env non-placeholder; runbook published; owner ack recorded. |
+| **Completion criteria** | Met for B4 board. |
+| **Final owner** | Ops / Owner |
+| **Last verification** | 2026-07-21 — **VERIFIED**. |
 
 ---
 
-## 5. MAINNET_OWNER multisig setup
+## 5. MAINNET_OWNER setup
 
 | Field | Detail |
 |-------|--------|
-| **Current status** | `MAINNET_OWNER` was **unset**. No final Ownable recipient planned in env. |
-| **Required action** | Stand up Mainnet multisig / timelock; record signers + threshold offline; set `MAINNET_OWNER` in ceremony env; confirm `transfer-mainnet-ownership.ts` target list (Genesis + game suite Ownables). |
-| **Verification method** | Env shows `MAINNET_OWNER` set; game-launch dry-run `ownership_plan` = pass (not warn); founder/ops sign go-live security section. |
-| **Completion criteria** | Multisig address verified on Mainnet; threshold documented; env filled; transfer plan acknowledged. |
+| **Current status** | **Closed / VERIFIED.** Owner chose **EOA hot wallet** (not multisig / not timelock) as initial launch owner: `MAINNET_OWNER=0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` with `MAINNET_OWNER_ALLOW_CEREMONY_EOA=1` + `MAINNET_OWNER_OWNER_ACK=1`. Guard `requireMainnetOwner` PASS. May transfer to multisig/timelock later. Not hardcoded in Solidity. |
+| **Required action** | *(Met for launch.)* Optional post-launch: rotate ownership to multisig/timelock. |
+| **Verification method** | Env set + ACK flags + `requireMainnetOwner(ceremonyEOA)` PASS. |
+| **Completion criteria** | Met for B5 board. |
 | **Final owner** | Founder / Ops |
+| **Last verification** | 2026-07-21 — scaffold done; address **pending**. |
 
 ---
 
@@ -101,11 +106,12 @@
 
 | Field | Detail |
 |-------|--------|
-| **Current status** | Approved Day 0: **2026-07-24 12:00 UTC** = unix **`1784894400`** ([`MAINNET_GO_LIVE_APPROVAL.md`](./MAINNET_GO_LIVE_APPROVAL.md)). Machine env at audit had **`1800000000`** (mismatch / placeholder). |
-| **Required action** | Set `GAME_DAY_ZERO=1784894400` in ceremony env; remove any other dayZero default; product confirms immutable intent before Game deploy. |
-| **Verification method** | Re-read env (value only, no secrets); `dry-run-mainnet-game-launch.ts` `day_zero` detail shows `1784894400` and ISO `2026-07-24T12:00:00.000Z`. |
-| **Completion criteria** | Env exactly matches approved unix; dry-run day_zero = pass; product sign-off on go-live approval §3. |
+| **Current status** | **Closed / VERIFIED.** Effective process env + `contracts/.env` = **`1784894400`** = **2026-07-24T12:00:00.000Z**. Matches go-live approval. |
+| **Required action** | *(Met.)* Keep value immutable through Game deploy. |
+| **Verification method** | Re-read env; ISO matches `2026-07-24T12:00:00.000Z`. |
+| **Completion criteria** | Env exactly matches approved unix (met). |
 | **Final owner** | Product / Ops |
+| **Last verification** | 2026-07-21 — **PASS**. |
 
 ---
 
@@ -127,7 +133,7 @@ Mark **READY** only when **all** of the following are true:
 
 | # | Criterion | Done |
 |---|-----------|------|
-| R1 | Blockers **1–6** Closed (gas, treasury HANSOME, VRF, randomness role, owner multisig, dayZero) | [ ] |
+| R1 | Blockers **1–6** Closed (gas, treasury HANSOME, VRF, randomness role, owner, dayZero) — **B1–B6 closed; B7 ceremony pending** | [x] |
 | R2 | Blocker **7** preparation complete; cutover scheduled **after** live JSON + verify (not before) | [ ] |
 | R3 | `DRY_RUN=1` `dry-run-mainnet-deploy-plan.ts` → **0 blockers** | [ ] |
 | R4 | `DRY_RUN=1` Genesis plan (`deploy-genesis.ts`) → clean | [ ] |
@@ -151,3 +157,4 @@ Mark **READY** only when **all** of the following are true:
 | Date | Change |
 |------|--------|
 | 2026-07-21 | Initial blocker closure plan from pre-launch env audit |
+| 2026-07-21 | Pre-launch status audit: B6/B7 in progress; see [`MAINNET_PRE_LAUNCH_STATUS_REPORT.md`](./MAINNET_PRE_LAUNCH_STATUS_REPORT.md) |

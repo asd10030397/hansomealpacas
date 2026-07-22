@@ -1,6 +1,9 @@
 export const NO_WALLET_CONNECT_MESSAGE =
   "No compatible wallet detected. Open this page in MetaMask or OKX Wallet, or install a browser wallet.";
 
+/** User dismissed / cancelled the wallet connect prompt. */
+export const CONNECTION_CANCELLED_MESSAGE = "Connection cancelled in wallet.";
+
 export type WalletConnectFailReason =
   | "no-connector"
   | "no-provider"
@@ -58,7 +61,7 @@ export function classifyConnectFailure(error: unknown): {
         ? error
         : "Wallet connection failed.";
   if (/rejected|denied|User rejected/i.test(msg)) {
-    return { message: "Connection cancelled in wallet.", reason: "rejected" };
+    return { message: CONNECTION_CANCELLED_MESSAGE, reason: "rejected" };
   }
   if (/Provider not found|provider|ethereum|Connector not found|does not support/i.test(msg)) {
     return { message: NO_WALLET_CONNECT_MESSAGE, reason: "no-provider" };

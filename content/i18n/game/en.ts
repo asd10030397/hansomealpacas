@@ -131,14 +131,16 @@ export const gameEn: GameMessages = {
     doNowLabel: "What should I do right now?",
     doNow: {
       COMMIT: "Choose where your NFT goes, then submit your move.",
-      REVEAL: "Battle Result — the round is resolving. Come back anytime to view outcomes.",
+      REVEAL:
+        "Battle Result — settlement runs in the background. Results appear during the next Choose Location phase.",
       SETTLEMENT: "Battle Result — view outcomes and history. Live watching not required.",
       CLAIM: "Battle Result is ready — review outcomes anytime. Claim rewards on the Claim page.",
     },
     phaseLabel: "Current Phase",
     phaseExplain: {
       COMMIT: "Select a location and lock today’s move before the timer ends.",
-      REVEAL: "Battle Result viewing window — settlement is not delayed for the timer.",
+      REVEAL:
+        "Settlement continues in the background. Battle results appear during the next Choose Location phase — no need to wait here.",
       SETTLEMENT: "Battle Result — animations and history.",
       CLAIM: "Resolved — review results anytime. Rewards stay claimable on Claim with no deadline.",
     },
@@ -165,6 +167,7 @@ export const gameEn: GameMessages = {
     demoPhaseEyebrow: "LOCAL",
     unclaimedNotice: "You have unclaimed rewards.",
     goToClaim: "Go to Claim →",
+    previousBattleResult: "PREVIOUS BATTLE RESULTS",
   },
   phaseStatus: {
     gameStatus: "GAME STATUS",
@@ -186,7 +189,8 @@ export const gameEn: GameMessages = {
     timelineAria: "Daily phase timeline: Choose Location, Battle Result",
     help: {
       COMMIT: "Choose where your NFT goes and submit. The round resolves automatically.",
-      REVEAL: "Resolving now — you do not need to stay online; return anytime to view results.",
+      REVEAL:
+        "No need to wait on this timer — battle results appear during the next Choose Location phase. Leave anytime and check back then.",
       SETTLEMENT: "Battle Result viewing window — animations and history.",
       CLAIM: "Resolved — review results anytime. Claim HANSOME on the Claim page with no deadline.",
     },
@@ -343,7 +347,7 @@ export const gameEn: GameMessages = {
     commitSuccess: "Committed #{tokenId} to {location}.",
     committedBadge: "Committed",
     committedCount: "{count} sealed for day {day}",
-    huntPenaltyBadge: "Base hunt penalty {n}%",
+    huntPenaltyBadge: "Hunted Alpacas: -{n}% Rewards",
   },
   myNfts: {
     heading: "MY NFTS",
@@ -409,6 +413,9 @@ export const gameEn: GameMessages = {
     locationEyebrow: "SELECTED FOR THIS ROUND",
     noLocation: "No location selected. Choose one on the Deploy map.",
     openMap: "OPEN MAP",
+    viewPreviousResults: "PREVIOUS BATTLE RESULTS",
+    viewPreviousResultsHint:
+      "Missed a wallet confirm last round? Open previous results anytime — settlement and claim stay available.",
     selectNftTitle: "YOUR NFTS",
     submitted: "Submitted",
     sealed: "SEALED",
@@ -423,6 +430,8 @@ export const gameEn: GameMessages = {
     loadingInventory: "Loading inventory…",
     emptyInventory: "No playable Genesis NFTs in this wallet.",
     phaseCommitOnly: "Current phase is {phase}. You can only commit during Commit Move.",
+    autoNavPreviousResultNote:
+      "Previous battle results remain on the Battle Results page — open it anytime.",
   },
   reveal: {
     heading: "REVEAL MOVE",
@@ -447,14 +456,14 @@ export const gameEn: GameMessages = {
     waitingSeedBody:
       "Today’s day seed is not ready yet. Settlement will unlock once randomness is fulfilled — this is not a wallet or contract failure.",
     settling: "SETTLING…",
-    runSettleLive: "RUN FINALIZE + CREDIT BATCH",
+    runSettleLive: "RUN SETTLEMENT",
     runSettleMock: "RUN SETTLEMENT",
     settlePendingBody: "Settlement transaction in progress. Please wait…",
     unavailableBody: "Settlement is not available for this day yet.",
     emptyBodyLive:
-      "Choose a location first. During Battle Result your move reveals automatically, then results appear here.",
+      "Choose a location first. Settlement runs in the background; results appear here during the next Choose Location phase.",
     emptyBodyMock:
-      "Choose a location first. During Battle Result your move reveals automatically, then results appear here.",
+      "Choose a location first. Settlement runs in the background; results appear here during the next Choose Location phase.",
     goClaim: "GO TO CLAIM",
     goReveal: "WATCH BATTLE",
     awaitingReveal: "Committed — revealing automatically from this device…",
@@ -464,12 +473,13 @@ export const gameEn: GameMessages = {
   result: {
     heading: "BATTLE RESULT",
     blurb:
-      "After Choose Location, the round resolves automatically. Come back anytime to view results — you do not need to watch live.",
+      "After Choose Location, the round resolves automatically. Battle results appear during the next Choose Location phase — you do not need to wait on this page.",
     comeBackFeel:
-      "Battle Result is a viewing window for animations and history. Settlement is not delayed for the timer. Claim rewards anytime on Claim.",
+      "The timer marks this viewing window, not when results appear. Check back during the next Choose Location phase. Claim rewards anytime on Claim.",
     afterRevealTitle: "Resolving battle…",
-    afterRevealBody: (countdown) =>
-      `Auto-revealing and settling now. Viewing window ends in ${countdown} — you can leave and return later.`,
+    dontWaitTitle: "No need to wait on the timer",
+    dontWaitBody:
+      "No need to wait on this timer — battle results appear during the next Choose Location phase. Leave anytime and check back then.",
     autoSettleHint: "Resolving hunting, skills, survival, and rewards…",
     resolveStages: {
       checking: "Checking settlement status…",
@@ -484,6 +494,7 @@ export const gameEn: GameMessages = {
       "Commit is open. Previous-day settlement continues in the background — return here anytime for results.",
     previousDayBattleNote: (day) =>
       `Showing Day ${day} battle results (previous round).`,
+    previousRoundMeta: "PREVIOUS ROUND",
     presentationRecoveryNote:
       "Battle presentation is taking longer than usual. Stay on this page — results will finish here. You can open Choose Location from the menu when ready.",
     rewardsFinalizingNote: "Rewards are being finalized.",
@@ -503,8 +514,8 @@ export const gameEn: GameMessages = {
     rewardLabel: "Reward",
     claimStatusLabel: "Claim",
     claimSectionTitle: "CLAIM REWARDS",
-    revealQueueEyebrow: "AUTOMATIC · LOCAL BACKUP",
-    revealQueueEyebrowGasless: "GASLESS · SECURE VAULT",
+    revealQueueEyebrow: "AUTOMATIC REVEAL",
+    revealQueueEyebrowGasless: "AUTOMATIC · NO GAS",
     revealClosedHint:
       "If your move was not confirmed on-chain before settlement, it counts as a missed reveal (0 reward).",
     revealing: "AUTO-REVEALING…",
@@ -512,10 +523,26 @@ export const gameEn: GameMessages = {
     revealAction: "REVEAL MOVE",
     autoRevealTitle: "Revealing your moves",
     autoRevealBody:
-      "Resolving automatically when a local backup is present.",
+      "Your moves reveal automatically when this device has a saved backup.",
     autoRevealBodyGasless:
       "Revealing from the secure vault and settling on-chain — no wallet gas needed for this step.",
     autoRevealWaiting: "Battle Result ready…",
+    manualRevealHint:
+      "Manual reveal only when needed — we preflight gas so absurd “network suggested” fees never reach MetaMask.",
+    revealReminderTitle: "Reveal your moves on-chain",
+    revealReminderBody: (countdown) =>
+      `Confirm each reveal in your wallet before the window closes (${countdown} left). Missing a reveal means zero reward for that NFT.`,
+    revealStatsLine: (revealed, pending, countdown) =>
+      `${revealed} revealed · ${pending} pending · ${countdown}`,
+    revealAllAction: "REVEAL ALL",
+    revealAllRunning: "REVEALING ALL…",
+    revealAllProgress: (current, total, tokenId) =>
+      `${current} of ${total} · confirming #${tokenId} in wallet…`,
+    revealAllStoppedUser:
+      "Stopped — confirm in your wallet to continue, or tap Reveal all again.",
+    revealActionPending: "REVEALING…",
+    abnormalNetworkFeeBlocked:
+      "Abnormal network fee detected — transaction blocked before MetaMask opens.",
     noSecretsTitle: "No local backup on this device",
     noSecretsBody:
       "No commit backup on this browser. Gasless reveal can still complete from the secure vault — wait for on-chain confirmation before assuming a missed reveal.",

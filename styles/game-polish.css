@@ -85,6 +85,31 @@
   color: #8ec8e8;
 }
 
+.hg-feedback--prominent {
+  margin-top: var(--hg-space-3);
+  padding: 1rem 1.1rem;
+  border: var(--hg-border);
+  box-shadow: var(--hg-shadow-sm);
+}
+
+.hg-feedback--prominent .hg-feedback__label {
+  font-size: 0.72rem;
+}
+
+.hg-feedback--prominent .hg-feedback__body {
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.hg-feedback--prominent.hg-feedback--info {
+  border-color: #9a6a12;
+  background: rgba(240, 196, 74, 0.14);
+}
+
+.hg-feedback--prominent.hg-feedback--info .hg-feedback__label {
+  color: #f0c44a;
+}
+
 /* ── Empty / unavailable ─────────────────────────────── */
 .hg-empty {
   display: grid;

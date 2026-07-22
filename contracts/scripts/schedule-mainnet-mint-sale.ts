@@ -7,9 +7,11 @@
  *   GENESIS_MINT_PRICE_ETH     — e.g. 0.05 (explicit; no silent default on Mainnet)
  *   GENESIS_PUBLIC_START       — unix seconds
  *   GENESIS_MERKLE_ROOT        — or load from robinhood-genesis-whitelist.mainnet.json
+ *   SKIP_MERKLE_ROOT=1         — schedule price + publicStart only (no merkle)
  *   DRY_RUN=1                  — default if live flags unset
  *   EXECUTE_AFTER_WAIT=1       — live only: wait ADMIN_TIMELOCK then execute
  *   ALLOW_MAINNET_DEPLOY=1 + CONFIRM_MAINNET_DEPLOY=I_UNDERSTAND
+ *   LIVE_MAINNET_SEND=1        — required for live schedule txs
  *
  * Usage:
  *   DRY_RUN=1 GENESIS_MINT_PRICE_ETH=0.05 GENESIS_PUBLIC_START=… \
@@ -116,7 +118,10 @@ async function main() {
     throw new Error("REFUSED: invalid GENESIS_PUBLIC_START");
   }
   const whitelistStart = publicStart > 3600 ? publicStart - 3600 : 0;
-  const merkleRoot = resolveMerkleRoot();
+  const skipMerkle =
+    process.env.SKIP_MERKLE_ROOT?.trim() === "1" ||
+    process.env.SKIP_MERKLE_ROOT?.trim()?.toUpperCase() === "YES";
+  const merkleRoot = skipMerkle ? null : resolveMerkleRoot();
 
   const nft = await ethers.getContractAt("HansomeGenesisNFT", genesis, deployer);
   const owner = ethers.getAddress(await nft.owner());
@@ -129,7 +134,7 @@ async function main() {
     PRICE_ETH: priceEth,
     PUBLIC_START: publicStart,
     WHITELIST_START: whitelistStart,
-    MERKLE_ROOT: merkleRoot,
+    MERKLE_ROOT: skipMerkle ? "(SKIPPED)" : merkleRoot,
     ADMIN_TIMELOCK_SEC: timelock,
     RESERVED_MINTED: reservedMinted,
     COMMITMENT_LOCKED: commitmentLocked,
@@ -148,12 +153,13 @@ async function main() {
     publicStart,
     whitelistStart,
     merkleRoot,
+    skipMerkleRoot: skipMerkle,
     adminTimelockSeconds: timelock,
     reservedMinted,
     commitmentLocked,
     steps: [
       "scheduleMintPrice",
-      "scheduleWhitelistMerkleRoot",
+      ...(skipMerkle ? [] : ["scheduleWhitelistMerkleRoot"]),
       "schedulePublicStart",
       process.env.EXECUTE_AFTER_WAIT === "1"
         ? "wait timelock + execute*"
@@ -190,7 +196,10 @@ async function main() {
   if (isDryRun()) {
     console.log("DRY_RUN complete — would schedule:");
     console.log("  mintPriceWei:", mintPriceWei.toString());
-    console.log("  merkleRoot:", merkleRoot);
+    console.log(
+      "  merkleRoot:",
+      skipMerkle ? "(SKIPPED — SKIP_MERKLE_ROOT=1)" : merkleRoot,
+    );
     console.log("  publicStart:", publicStart, "→ whitelistStart:", whitelistStart);
     console.log("No transactions sent.");
     return;
@@ -201,31 +210,61 @@ async function main() {
     mintPriceEth: priceEth,
     publicStart,
     whitelistStart,
-    merkleRoot,
+    merkleRoot: skipMerkle ? "(SKIPPED)" : merkleRoot,
     executeAfterWait: process.env.EXECUTE_AFTER_WAIT === "1",
   });
 
   console.log("CHAIN_ID before tx:", ctx.chainId);
-  await (await nft.scheduleMintPrice(mintPriceWei)).wait();
-  console.log("scheduled mintPrice");
-  await (await nft.scheduleWhitelistMerkleRoot(merkleRoot)).wait();
-  console.log("scheduled merkleRoot");
-  await (await nft.schedulePublicStart(publicStart)).wait();
-  console.log("scheduled publicStart");
+  const priceTx = await (await nft.scheduleMintPrice(mintPriceWei)).wait();
+  console.log("scheduled mintPrice tx:", priceTx?.hash);
+
+  let merkleTxHash: string | null = null;
+  if (!skipMerkle) {
+    if (!merkleRoot) {
+      throw new Error("REFUSED: merkleRoot missing while SKIP_MERKLE_ROOT unset");
+    }
+    const merkleTx = await (
+      await nft.scheduleWhitelistMerkleRoot(merkleRoot)
+    ).wait();
+    merkleTxHash = merkleTx?.hash ?? null;
+    console.log("scheduled merkleRoot tx:", merkleTxHash);
+  } else {
+    console.log("SKIP_MERKLE_ROOT=1 — did not schedule whitelistMerkleRoot");
+  }
+
+  const publicTx = await (await nft.schedulePublicStart(publicStart)).wait();
+  console.log("scheduled publicStart tx:", publicTx?.hash);
+
+  const liveResult = {
+    ...plan,
+    mode: "LIVE_SCHEDULE_ONLY",
+    txs: {
+      scheduleMintPrice: priceTx?.hash ?? null,
+      scheduleWhitelistMerkleRoot: merkleTxHash,
+      schedulePublicStart: publicTx?.hash ?? null,
+    },
+    scheduledAt: new Date().toISOString(),
+  };
+  const livePath = join(outDir, `${fileStem}-mint-sale-schedule.json`);
+  writeFileSync(livePath, `${JSON.stringify(liveResult, null, 2)}\n`);
+  console.log("Wrote", livePath);
 
   if (process.env.EXECUTE_AFTER_WAIT === "1") {
     await waitTimelock(nft, "admin ops");
     await (await nft.executeMintPrice(mintPriceWei)).wait();
     console.log("executed mintPrice →", (await nft.mintPrice()).toString());
-    await (await nft.executeWhitelistMerkleRoot(merkleRoot)).wait();
-    console.log("executed merkleRoot →", await nft.whitelistMerkleRoot());
+    if (!skipMerkle && merkleRoot) {
+      await (await nft.executeWhitelistMerkleRoot(merkleRoot)).wait();
+      console.log("executed merkleRoot →", await nft.whitelistMerkleRoot());
+    }
     await (await nft.executePublicStart(publicStart)).wait();
     console.log("executed publicStart →", (await nft.publicStart()).toString());
     console.log("whitelistStart:", (await nft.whitelistStart()).toString());
   } else {
     console.log(
-      "Scheduled only. After ADMIN_TIMELOCK, re-run with EXECUTE_AFTER_WAIT=1 " +
-        "or call executeMintPrice / executeWhitelistMerkleRoot / executePublicStart manually.",
+      "Scheduled only. After ADMIN_TIMELOCK, call executeMintPrice / " +
+        (skipMerkle ? "" : "executeWhitelistMerkleRoot / ") +
+        "executePublicStart manually (do not set EXECUTE_AFTER_WAIT unless approved).",
     );
   }
 }

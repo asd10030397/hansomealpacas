@@ -9,6 +9,7 @@ import {
   type SettlementResultSfxId,
 } from "@/lib/game/settlementResults";
 import { PRESENTATION_REDUCED_MOTION_MS } from "@/lib/game/presentationTiming";
+import { HuntVignette } from "@/components/game/result-effects/HuntVignette";
 import {
   ClawSlashIcon,
   CougarBiteIcon,
@@ -113,6 +114,7 @@ export function ResultEffectOverlay({
           </div>
         </div>
       ) : null}
+      {!reduceMotion ? <HuntVignette resultId={resultId} /> : null}
       <div className="hg-result-fx__stage">
         {resultId === "alpaca-hunted" && !reduceMotion ? (
           <>
@@ -156,6 +158,7 @@ export function ResultEffectOverlay({
           ))}
         <Visual id={resultId} />
         <span className="hg-result-fx__banner">{def.banner}</span>
+        <span className="hg-result-fx__dramatic">{def.dramaticLabel}</span>
       </div>
     </div>
   );

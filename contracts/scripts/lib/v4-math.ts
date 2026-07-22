@@ -44,8 +44,8 @@ function getLiquidityForAmount0(sqrtPriceAX96: bigint, sqrtPriceBX96: bigint, am
     [sqrtA, sqrtB] = [sqrtB, sqrtA];
   }
 
-  const intermediate = mulDiv(sqrtA, sqrtB, Q96);
-  return mulDiv(amount0, intermediate, sqrtB - sqrtA);
+  // Full-precision form — avoids underflow near MIN_TICK where sqrtA*sqrtB < Q96.
+  return (amount0 * sqrtA * sqrtB) / (Q96 * (sqrtB - sqrtA));
 }
 
 function getLiquidityForAmount1(sqrtPriceAX96: bigint, sqrtPriceBX96: bigint, amount1: bigint): bigint {

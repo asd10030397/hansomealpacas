@@ -124,7 +124,12 @@ async function tapConnectAndExpectHelp(page, selector, label) {
     );
   }
   const alertText = await help.locator("[role='alert']").innerText();
-  if (!/Unable to open wallet connection|無法開啟錢包連接/i.test(alertText)) {
+  // Prefer stable copy from walletHelpBody / NO_WALLET_CONNECT_MESSAGE (not legacy phrasing).
+  if (
+    !/No compatible wallet detected|未偵測到相容錢包|無法偵測相容錢包/i.test(
+      alertText,
+    )
+  ) {
     throw new Error(`${label}: unexpected help text: ${alertText}`);
   }
 

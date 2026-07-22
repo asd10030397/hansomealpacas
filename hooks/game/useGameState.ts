@@ -15,6 +15,10 @@ import {
   HANSOME_GAME_ADDRESS,
   isHansomeGameConfigured,
 } from "@/lib/game/hansomeGame";
+import {
+  getTutorialDayState,
+  isTutorialCapture,
+} from "@/lib/game/tutorialCapture";
 import type { GameDayState, GamePhase, TerritoryStats } from "@/types/game";
 
 function derivePhaseFromMock(day: GameDayState, now: number): GamePhase {
@@ -201,7 +205,8 @@ export function useGameState() {
   ]);
 
   const chainReady = live && liveDay != null;
-  const day: GameDayState = chainReady
+  const captureActive = isTutorialCapture();
+  const chainDay: GameDayState = chainReady
     ? liveDay
     : live
       ? {
@@ -216,6 +221,7 @@ export function useGameState() {
           settlementStatus: "Pending",
         }
       : { ...mockDay, phase: derivePhaseFromMock(mockDay, now) };
+  const day: GameDayState = captureActive ? getTutorialDayState(now) : chainDay;
   const phase = day.phase;
 
   // Drop Day N commit secrets / pending location as soon as the clock hits N+1.
@@ -298,7 +304,7 @@ export function useGameState() {
     phase,
     phaseEndsAt,
     territory,
-    isMock: !live,
+    isMock: !live || captureActive,
     isLoading: live && !chainReady,
     chainDayState:
       live && dayStateRead.data !== undefined ? Number(dayStateRead.data) : null,

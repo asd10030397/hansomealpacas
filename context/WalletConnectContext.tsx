@@ -7,16 +7,20 @@ import {
   useMemo,
   type ReactNode,
 } from "react";
+import { WalletConnectFeedback } from "@/components/game/WalletConnectFeedback";
 import { WalletHelpModal } from "@/components/game/WalletHelpModal";
 import {
   useOpenWalletConnect,
   type WalletConnectResult,
 } from "@/hooks/game/useOpenWalletConnect";
+import type { WalletConnectFailReason } from "@/lib/game/walletConnect";
+import { resolveWalletConnectUiSurface } from "@/lib/game/walletConnectUi";
 
 type WalletConnectContextValue = {
   openWalletConnect: () => Promise<WalletConnectResult>;
   isConnecting: boolean;
   connectError: string | null;
+  connectFailReason: WalletConnectFailReason | null;
   clearError: () => void;
   hasInjectedProvider: boolean;
   connectorIds: string[];
@@ -36,6 +40,7 @@ export function WalletConnectProvider({
     openWalletConnect,
     isConnecting,
     connectError,
+    connectFailReason,
     clearError,
     helpOpen,
     closeHelp,
@@ -48,6 +53,7 @@ export function WalletConnectProvider({
       openWalletConnect,
       isConnecting,
       connectError,
+      connectFailReason,
       clearError,
       hasInjectedProvider,
       connectorIds,
@@ -56,15 +62,25 @@ export function WalletConnectProvider({
       openWalletConnect,
       isConnecting,
       connectError,
+      connectFailReason,
       clearError,
       hasInjectedProvider,
       connectorIds,
     ],
   );
 
+  const surface = resolveWalletConnectUiSurface(connectFailReason, helpOpen);
+
   return (
     <WalletConnectContext.Provider value={value}>
       {children}
+      {surface === "feedback" && connectFailReason ? (
+        <WalletConnectFeedback
+          reason={connectFailReason}
+          message={connectError}
+          onDismiss={clearError}
+        />
+      ) : null}
       <WalletHelpModal open={helpOpen} onClose={closeHelp} message={connectError} />
     </WalletConnectContext.Provider>
   );

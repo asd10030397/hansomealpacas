@@ -7,6 +7,8 @@ import {
 } from "@/lib/game/contractAddresses";
 import {
   assertGameNetworkConfig,
+  assertMainnetProductionGameChain,
+  isGameMainnetRequired,
   resolveGameChainId,
   resolveGameExplorerUrl,
   resolveGameRpcUrl,
@@ -63,11 +65,43 @@ describe("Mainnet launch guards", () => {
 
   it("assertGameNetworkConfig refuses Testnet RPC when Mainnet mode is selected", () => {
     vi.stubEnv("NEXT_PUBLIC_GAME_CHAIN_ID", "4663");
+    vi.stubEnv("NEXT_PUBLIC_GAME_REQUIRE_MAINNET", "");
     vi.stubEnv(
       "NEXT_PUBLIC_GAME_RPC_URL",
       "https://rpc.testnet.chain.robinhood.com",
     );
     expect(() => assertGameNetworkConfig()).toThrow(/Testnet RPC/i);
+  });
+
+  it("production Mainnet chain guard rejects Testnet chain configuration", () => {
+    vi.stubEnv("NEXT_PUBLIC_GAME_REQUIRE_MAINNET", "1");
+    vi.stubEnv("NEXT_PUBLIC_GAME_CHAIN_ID", "46630");
+    vi.stubEnv("VERCEL_ENV", "production");
+    expect(isGameMainnetRequired()).toBe(true);
+    expect(() => assertMainnetProductionGameChain()).toThrow(/4663/);
+    expect(() => assertGameNetworkConfig()).toThrow(/Mainnet Production guard/i);
+  });
+
+  it("Testnet development configuration still works without Mainnet require flag", () => {
+    vi.stubEnv("NEXT_PUBLIC_GAME_REQUIRE_MAINNET", "");
+    vi.stubEnv("NEXT_PUBLIC_GAME_CHAIN_ID", "46630");
+    vi.stubEnv("VERCEL_ENV", "");
+    expect(isGameMainnetRequired()).toBe(false);
+    expect(resolveGameChainId()).toBe(ROBINHOOD_TESTNET_CHAIN_ID);
+    expect(() => assertMainnetProductionGameChain()).not.toThrow();
+    expect(() => assertGameNetworkConfig()).not.toThrow();
+  });
+
+  it("Mainnet require flag accepts chainId 4663", () => {
+    vi.stubEnv("NEXT_PUBLIC_GAME_REQUIRE_MAINNET", "true");
+    vi.stubEnv("NEXT_PUBLIC_GAME_CHAIN_ID", "4663");
+    vi.stubEnv("NEXT_PUBLIC_GAME_RPC_URL", DEFAULT_RPC_URL);
+    vi.stubEnv(
+      "NEXT_PUBLIC_GAME_EXPLORER",
+      "https://robinhoodchain.blockscout.com",
+    );
+    expect(() => assertMainnetProductionGameChain()).not.toThrow();
+    expect(() => assertGameNetworkConfig()).not.toThrow();
   });
 
   it("assertProductionGameAddresses fails closed on Mainnet without Genesis", () => {

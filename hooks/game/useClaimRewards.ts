@@ -32,6 +32,11 @@ import {
   formatRobinhoodWriteError,
   sendRobinhoodContractWrite,
 } from "@/lib/game/robinhoodContractWrite";
+import {
+  getTutorialDayNumber,
+  isTutorialCapture,
+} from "@/lib/game/tutorialCapture";
+import { battleResultViewDay } from "@/lib/game/battleResultViewDay";
 import { canSubmitClaim } from "@/lib/game/settlementStatus";
 import { useGameState } from "@/hooks/game/useGameState";
 import { useOwnedGenesisNfts } from "@/hooks/game/useOwnedGenesisNfts";
@@ -45,12 +50,17 @@ export type ClaimUiState =
   | "failure";
 
 export function useClaimRewards() {
-  const { day } = useGameState();
+  const { day, phase } = useGameState();
   const { address, isConnected } = useAccount();
   const walletChainId = useChainId();
   const publicClient = usePublicClient({ chainId: GAME_CHAIN_ID });
   const owned = useOwnedGenesisNfts();
   const live = isHansomeGameConfigured();
+  /** Mock claimables follow previous battle day during COMMIT (same as Battle Result). */
+  const viewDay = battleResultViewDay({ currentDay: day.day, phase });
+  const tutorialLocal =
+    isTutorialCapture() && viewDay === getTutorialDayNumber();
+  const useLocalClaim = !live || tutorialLocal;
   const game = HANSOME_GAME_ADDRESS;
 
   const [uiState, setUiState] = useState<ClaimUiState>("idle");
@@ -73,13 +83,13 @@ export function useClaimRewards() {
 
   const mockRows = useMemo(() => {
     void localTick;
-    return localClaimableRows(day.day);
-  }, [day.day, localTick]);
+    return localClaimableRows(viewDay);
+  }, [viewDay, localTick]);
 
   const tokenIds = useMemo(() => {
-    if (!live) return mockRows.map((r) => r.tokenId);
+    if (useLocalClaim) return mockRows.map((r) => r.tokenId);
     return owned.nfts.map((n) => n.tokenId);
-  }, [live, mockRows, owned.nfts]);
+  }, [useLocalClaim, mockRows, owned.nfts]);
 
   const claimableReads = useReadContracts({
     contracts: tokenIds.map((tokenId) => ({
@@ -89,11 +99,11 @@ export function useClaimRewards() {
       args: [BigInt(tokenId)] as const,
       chainId: GAME_CHAIN_ID,
     })),
-    query: { enabled: live && !!distributor && tokenIds.length > 0 },
+    query: { enabled: live && !tutorialLocal && !!distributor && tokenIds.length > 0 },
   });
 
   const chainRows = useMemo(() => {
-    if (!live) return [];
+    if (useLocalClaim) return [];
     return tokenIds
       .map((tokenId, i) => {
         const amount =
@@ -101,14 +111,14 @@ export function useClaimRewards() {
         return { tokenId, amount };
       })
       .filter((r) => r.amount > 0n);
-  }, [live, tokenIds, claimableReads.data]);
+  }, [useLocalClaim, tokenIds, claimableReads.data]);
 
   const claimableTotal = useMemo(() => {
-    if (!live) {
+    if (useLocalClaim) {
       return BigInt(mockRows.reduce((s, r) => s + r.rewardHansome, 0));
     }
     return chainRows.reduce((s, r) => s + r.amount, 0n);
-  }, [live, mockRows, chainRows]);
+  }, [useLocalClaim, mockRows, chainRows]);
 
   const {
     writeContractAsync,
@@ -135,15 +145,15 @@ export function useClaimRewards() {
     setUiState("confirm");
     reset();
 
-    if (!live) {
-      const settled = getLocalSettlement(day.day);
+    if (useLocalClaim) {
+      const settled = getLocalSettlement(viewDay);
       if (!settled) {
         setUiState("failure");
         setError("No local settlement to claim. Run settlement first.");
         setSubmitting(false);
         return;
       }
-      const ids = localClaimableRows(day.day).map((r) => r.tokenId);
+      const ids = localClaimableRows(viewDay).map((r) => r.tokenId);
       if (ids.length === 0) {
         setUiState("failure");
         setError("Nothing claimable.");
@@ -151,7 +161,7 @@ export function useClaimRewards() {
         return;
       }
       setUiState("pending");
-      markLocalClaimed(day.day, ids);
+      markLocalClaimed(viewDay, ids);
       setLocalTick((n) => n + 1);
       setUiState("success");
       playSfx("ui-click");
@@ -225,6 +235,7 @@ export function useClaimRewards() {
     canClaim,
     submitting,
     live,
+    viewDay,
     day.day,
     distributor,
     isConnected,

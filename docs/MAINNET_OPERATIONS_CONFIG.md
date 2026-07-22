@@ -43,11 +43,13 @@ Fill **checksummed** `0x…` addresses only. Mark role owner. Leave blank until 
 
 | Env / role | Purpose | Address (fill) | Verified by | Date |
 |------------|---------|----------------|-------------|------|
-| **DEPLOYER** | Ceremony hot wallet: deploy Genesis + game suite; temporary Ownable; may fund Treasury | `_TBD_` | | |
-| **RESERVE_MINT_TO** | Receives reserved `#001`–`#010` (founder / cold custody) | `_TBD_` | | |
-| **VRF_OPERATOR** | Operates `VRFRevealAdapter` (Genesis **collection** reveal entropy — ≠ game day seed) | `_TBD_` | | |
-| **RANDOMNESS_PROVIDER** | Calls `GameRandomness.fulfillDaySeed` each day before settle | `_TBD_` | | |
-| **MAINNET_OWNER** | Final Ownable (multisig / timelock) after verify | `_TBD_` | | |
+| **DEPLOYER** | Ceremony hot wallet: deploy Genesis + game suite; temporary Ownable; may fund Treasury | `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` (Treasury-key fallback today) | | |
+| **RESERVE_MINT_TO** | Receives reserved `#001`–`#010` (founder / cold custody) | `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` (launch default; move cold later if needed) | | |
+| **VRF_OPERATOR** | Operates `VRFRevealAdapter` (Genesis **collection** reveal entropy — ≠ game day seed) | **Temp** `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` + `VRF_OPERATOR_OWNER_ACK=1` in `.env` (B3 VERIFIED) — **never** `0x000…0001` | Owner + Ops | 2026-07-21 |
+| **RANDOMNESS_PROVIDER** | Calls `GameRandomness.fulfillDaySeed` each day before settle | `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` (temporary; `B4_OWNER_ACK=1`, Project Owner, 2026-07-21) | Owner + Ops | 2026-07-21 |
+| **MAINNET_OWNER** | Initial Ownable after verify (EOA hot wallet launch; may rotate to multisig/timelock later) | `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` (+ `ALLOW_CEREMONY_EOA=1` + `OWNER_ACK=1`) | Owner + Ops | 2026-07-21 |
+
+Full role / runbook: [`MAINNET_ROLES_AND_RUNBOOK.md`](./MAINNET_ROLES_AND_RUNBOOK.md).
 
 ### Address rules
 
@@ -58,8 +60,8 @@ Fill **checksummed** `0x…` addresses only. Mark role owner. Leave blank until 
 | No canonical **Testnet** suite addresses | [ ] |
 | `RESERVE_MINT_TO` ≠ throwaway; custody plan for `#001`–`#010` agreed | [ ] |
 | `VRF_OPERATOR` key custody + online runbook ready | [ ] |
-| `RANDOMNESS_PROVIDER` key custody + daily fulfill runbook ready | [ ] |
-| `MAINNET_OWNER` multisig signers + threshold documented offline | [ ] |
+| `RANDOMNESS_PROVIDER` key custody + daily fulfill runbook ready + B4 ack | [x] |
+| `MAINNET_OWNER` filled (initial EOA; later multisig optional) | [x] |
 | `DEPLOYER` has its **own** key material (prefer not long-term reuse of treasury key) | [ ] |
 
 **Optional (not required for game smoke):** `MAINNET_RELAYER` — only if Mainnet gasless is deliberately enabled later; **new** key, never copy Testnet relayer.
@@ -72,10 +74,11 @@ Freeze these **before** live Genesis / Game deploy. Record the approved value an
 
 | Decision | Env / field | Approved value (fill) | Notes | Owner | Date |
 |----------|-------------|----------------------|-------|-------|------|
-| **GAME_DAY_ZERO** | `GAME_DAY_ZERO` | `_TBD_unix_` | Unix seconds; **immutable** after Game deploy. No “now” default on Mainnet. Also record ISO-8601 UTC. | Product / Ops | |
+| **GAME_DAY_ZERO** | `GAME_DAY_ZERO` | **`1784894400`** (2026-07-24 12:00 UTC) | Unix seconds; **immutable** after Game deploy. | Product / Ops | 2026-07-21 |
 | **Genesis mint price** | `GENESIS_MINT_PRICE_ETH` (sale schedule) | `_TBD_` | ETH per NFT (sale ceremony; can be after game smoke). See mint ops doc. | Product / Founder | |
 | **Genesis mint date** | Public / WL start (`GENESIS_PUBLIC_START` etc.) | `_TBD_` | Calendar date + unix; WL/public schedule — **not** required to open game smoke. | Product / Ops | |
-| **Treasury initial funding** | `GAME_TREASURY_FUND_ETH` | `_TBD_` | Whole `$HANSOME` tokens to transfer into **GameTreasury**. Recommended **`300000000`** (\(G_0\) = **300,000,000** / 三億). Absolute minimum for commits: **15,000,000** (`G_SAFE`). Top emission band \(R_d = 400{,}000\) needs spendable \(G \ge 210{,}000{,}000\). | Treasury / Ops | |
+| **Treasury initial funding** | `GAME_TREASURY_FUND_HANSOME` (docs) / legacy `GAME_TREASURY_FUND_ETH` (scripts) | **`30000000`** (approved) | Whole `$HANSOME` → **GameTreasury** (**not ETH**). Protocol \(G_0 = 300{,}000{,}000\) unchanged. See §3A / [`INITIAL_TREASURY_STRATEGY.md`](./INITIAL_TREASURY_STRATEGY.md). | Treasury / Ops | |
+| **GameTreasury funder wallet** | Ops (not an env hardcode in Solidity) | **`0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A`** | Holds ≥ 30M `$HANSOME` before ceremony; one-time launch transfer. Future top-ups: same or other approved treasury wallets. | Treasury / Ops | |
 
 ### Decision confirmations
 
@@ -84,8 +87,46 @@ Freeze these **before** live Genesis / Game deploy. Record the approved value an
 | 1 | `GAME_DAY_ZERO` matches the intended Day 0 start (UTC) and is written as unix seconds | [ ] |
 | 2 | Genesis mint **price** approved (or explicitly deferred until after game smoke) | [ ] |
 | 3 | Genesis mint **date** / sale window approved (or explicitly deferred) | [ ] |
-| 4 | Treasury funding amount approved; if below 300M, lower band / runway impact accepted in writing | [ ] |
+| 4 | Treasury launch funding **30,000,000** from `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` approved; initial Rd = 80,000/day; progressive top-up strategy accepted | [ ] |
 | 5 | Funding `$HANSOME` only — never tHANSOME; never fund RewardDistributor | [ ] |
+
+
+---
+
+## 3A. Initial Treasury Strategy
+
+See full write-up: [`INITIAL_TREASURY_STRATEGY.md`](./INITIAL_TREASURY_STRATEGY.md).
+
+| Layer | Statement |
+|-------|-----------|
+| **Protocol design** | \(G_0\) = 300,000,000, bands, \(G_{\mathrm{safe}}\) = 15,000,000 — **unchanged** in Solidity |
+| **Launch operations** | GameTreasury initially funded with **30,000,000** HANSOME → initial \(R_d = 80{,}000\)/day |
+| **Expansion** | Further transfers unlock 160k / 280k / 400k at 60M / 120M / 210M — **no upgrade** |
+
+### Initial Treasury Funding Source
+
+| Item | Value |
+|------|------|
+| **Amount** | **30,000,000** HANSOME |
+| **Source** | `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` |
+| **Destination** | GameTreasury (ceremony) |
+| **Type** | One-time **operational** launch funding transaction |
+| **Solidity** | Address **not** hardcoded |
+| **Future top-ups** | Same wallet or other approved project treasury wallets (treasury policy) |
+
+**Env:** document as `GAME_TREASURY_FUND_HANSOME=30000000`. Deploy scripts still read legacy **`GAME_TREASURY_FUND_ETH=30000000`** (misnomer: value is HANSOME, not ETH) until a future script rename.
+
+---
+
+## 3B. Treasury Operations (ops guidelines — not contract rules)
+
+| Spendable G | Suggested action |
+|-------------|------------------|
+| **30M** | Launch |
+| **20M** | Review treasury status |
+| **17M** | Prepare additional funding |
+| **15M** | SafeMode threshold (on-chain Commit pause if below) |
+
 
 ---
 
@@ -104,12 +145,13 @@ Freeze these **before** live Genesis / Game deploy. Record the approved value an
 | Item | Target | Actual (fill) | OK |
 |------|--------|---------------|-----|
 | Token address | `0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875` | | [ ] |
-| Funder wallet (usually DEPLOYER) | Holds tokens **before** `deploy-game` fund step (or explicit `SKIP_TREASURY_FUND=1` then fund before commits) | `_TBD_` | [ ] |
-| Amount available to transfer | Match §3 Treasury decision (recommended **300,000,000**) | `_TBD_` | [ ] |
+| Funder wallet (ops source) | **`0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A`** — holds ≥ **30,000,000** before ceremony | | [ ] |
+| Amount to transfer | **30,000,000** HANSOME (one-time initial funding) | | [ ] |
 | Destination | **GameTreasury** contract only (after deploy) | | [ ] |
+| Transfer procedure | Prefer: funder signs ERC-20 `transfer` to GameTreasury **or** `SKIP_TREASURY_FUND=1` on deploy then fund from this wallet before commits. Do **not** hardcode this address in Solidity. | | [ ] |
 | RewardDistributor balance | **0** required for funding plan | | [ ] |
 
-**Chinese number check:** recommended funding is **三億 (300,000,000)**, not 三千萬 (30,000,000).
+**Launch vs protocol:** ceremony funds **30,000,000** from `0xcE15…069A`. Protocol band reference \(G_0\) remains **300,000,000** in contracts — do not confuse the two.
 
 ---
 
@@ -124,8 +166,8 @@ Complete **all** boxes before any `ALLOW_MAINNET_DEPLOY=1` live transaction.
 | DEPLOYER filled + explorer-checked on chainId **4663** | [ ] |
 | RESERVE_MINT_TO filled + custody confirmed | [ ] |
 | VRF_OPERATOR filled + operator ready | [ ] |
-| RANDOMNESS_PROVIDER filled + runbook ready | [ ] |
-| MAINNET_OWNER filled + multisig ready | [ ] |
+| RANDOMNESS_PROVIDER filled + runbook ready + B4 ack | [x] |
+| MAINNET_OWNER filled (initial EOA + ACK flags) | [x] |
 
 ### 5.2 No placeholder values
 
@@ -184,3 +226,6 @@ Public Genesis mint (price/date in §3) may remain **after** game smoke.
 | Date | Change |
 |------|--------|
 | 2026-07-20 | Initial operator configuration worksheet |
+| 2026-07-21 | Launch Treasury funding set to **30,000,000**; strategy sections 3A/3B; see INITIAL_TREASURY_STRATEGY.md |
+| 2026-07-21 | Funding source wallet recorded: `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` (ops only) |
+| 2026-07-21 | Docs: `GAME_TREASURY_FUND_HANSOME` preferred; legacy script env `GAME_TREASURY_FUND_ETH`; §3A funding-source block |

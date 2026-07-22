@@ -14,8 +14,9 @@
  *   RESERVE_MINT_TO           — founder wallet receiving #001–#010 (REQUIRED on Mainnet)
  *   TESTNET_WL_SECONDS        — whitelist window length before public (default 600)
  *   DRY_RUN=1                 — validate + log plan; write *.dry-run.json; no txs
- *   ALLOW_MAINNET_DEPLOY=1    — required for --network mainnet|robinhood (with CONFIRM unless DRY_RUN)
- *   CONFIRM_MAINNET_DEPLOY=I_UNDERSTAND — required for live Mainnet writes
+ *   ALLOW_MAINNET_DEPLOY=1    — required for live Mainnet writes
+ *   CONFIRM_MAINNET_DEPLOY=YES|I_UNDERSTAND — required for live writes
+ *   LIVE_MAINNET_SEND=1       — final gate before any live tx
  *
  * Usage:
  *   npx hardhat run scripts/deploy-genesis.ts --network robinhoodTestnet
@@ -38,6 +39,7 @@ import {
   logLiveMainnetPreflight,
 } from "./lib/deploy-network-guard";
 import { getDeployerSigner } from "./lib/signer";
+import { requireMainnetVrfOperator } from "./lib/mainnet-game-guards";
 
 type GenesisDeploymentRecord = {
   network: string;
@@ -129,7 +131,11 @@ async function main() {
   }
 
   const fileStem = deploymentFileStem(ctx);
-  const vrfOperatorEnv = process.env.VRF_OPERATOR?.trim() || "";
+  let vrfOperatorEnv = process.env.VRF_OPERATOR?.trim() || "";
+  if (isMainnetNetwork(ctx) && !useMock) {
+    // Fail-closed: empty / placeholder / bad checksum / unapproved ceremony EOA
+    vrfOperatorEnv = requireMainnetVrfOperator();
+  }
 
   logDeployBanner("deploy-genesis.ts", ctx, {
     DEPLOYER: deployer.address,
@@ -149,11 +155,7 @@ async function main() {
   }
 
   if (isDryRun()) {
-    if (isMainnetNetwork(ctx) && !useMock && !vrfOperatorEnv) {
-      throw new Error(
-        "REFUSED: Mainnet Genesis dry-run requires VRF_OPERATOR (RevealRandomnessMock forbidden).",
-      );
-    }
+    // Mainnet VRF already validated above via requireMainnetVrfOperator when !useMock
     if (isMainnetNetwork(ctx) && !reserveMintToEnv) {
       throw new Error(
         "REFUSED: Mainnet Genesis dry-run requires RESERVE_MINT_TO (founderWallet).",
@@ -216,9 +218,6 @@ async function main() {
   }
 
   if (isMainnetNetwork(ctx)) {
-    if (!vrfOperatorEnv) {
-      throw new Error("REFUSED: Mainnet requires explicit VRF_OPERATOR.");
-    }
     logLiveMainnetPreflight("deploy-genesis.ts", ctx, {
       deployer: deployer.address,
       royaltyReceiver,

@@ -1,0 +1,16 @@
+# Deploy TWO separate Railway services from this directory:
+#   1) settlement-worker-testnet  → env from .env.testnet.example
+#   2) settlement-worker-mainnet → env from .env.mainnet.example (DRY_RUN=1 first)
+#
+# Do not share Redis namespaces or private keys across services.
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+healthcheckPath = "/healthz"
+healthcheckTimeout = 30
+restartPolicyType = "ALWAYS"
+restartPolicyMaxRetries = 10
+# Expose HTTP only for /healthz + /readyz (no write APIs on this service).

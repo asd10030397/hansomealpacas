@@ -4,16 +4,21 @@
  * (OZ StandardMerkleTree of ["address"]).
  *
  * Env:
- *   WHITELIST_ADDRESSES_FILE — path to address list (default:
- *     deployments/mainnet-whitelist-addresses.txt, else .example.txt)
+ *   WHITELIST_ADDRESSES_FILE — path to address list (defaults, in order):
+ *     1) ../../data/mainnet/whitelist-addresses.txt  (owner source of truth)
+ *     2) deployments/mainnet-whitelist-addresses.txt (legacy ops path)
+ *     3) deployments/mainnet-whitelist-addresses.example.txt
  *   OUT_DIR — optional override for output directory
  *
  * Usage:
  *   npx hardhat run scripts/generate-mainnet-whitelist-merkle.ts --network hardhat
+ *   npm run genesis:merkle:mainnet
  *
- * Writes:
+ * Writes (when using a real list, not .example):
  *   deployments/robinhood-genesis-whitelist.mainnet.json
- *   (optional copy) ../../lib/game/mainnet/whitelistProofs.MAINNET.json
+ *   ../../lib/game/mainnet/whitelistProofs.MAINNET.json
+ *
+ * Does NOT schedule or execute on-chain merkle. See MAINNET_LAUNCH_RUNBOOK §5.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -23,13 +28,43 @@ import { ethers } from "hardhat";
 function resolveAddressesFile(): string {
   const fromEnv = process.env.WHITELIST_ADDRESSES_FILE?.trim();
   if (fromEnv) return fromEnv;
-  const primary = join(
+
+  const ownerCanonical = join(
+    __dirname,
+    "..",
+    "..",
+    "data",
+    "mainnet",
+    "whitelist-addresses.txt",
+  );
+  if (existsSync(ownerCanonical)) {
+    const raw = readFileSync(ownerCanonical, "utf8");
+    const hasAddress = raw.split(/\r?\n/).some((line) => {
+      const t = line.trim();
+      return t.length > 0 && !t.startsWith("#");
+    });
+    if (hasAddress) return ownerCanonical;
+  }
+
+  const legacyOps = join(
     __dirname,
     "..",
     "deployments",
     "mainnet-whitelist-addresses.txt",
   );
-  if (existsSync(primary)) return primary;
+  if (existsSync(legacyOps)) {
+    const raw = readFileSync(legacyOps, "utf8");
+    const hasAddress = raw.split(/\r?\n/).some((line) => {
+      const t = line.trim();
+      return t.length > 0 && !t.startsWith("#");
+    });
+    if (hasAddress) return legacyOps;
+  }
+
+  // Prefer canonical path in error messages even when still empty (owner edits here).
+  if (existsSync(ownerCanonical)) return ownerCanonical;
+  if (existsSync(legacyOps)) return legacyOps;
+
   return join(
     __dirname,
     "..",
@@ -122,8 +157,8 @@ async function main() {
       "WARNING: Used example address list — did NOT overwrite lib/game/mainnet/whitelistProofs.MAINNET.json.",
     );
     console.warn(
-      "Copy deployments/mainnet-whitelist-addresses.example.txt → mainnet-whitelist-addresses.txt, " +
-        "edit the real list, then re-run to write production JSON + frontend proofs.",
+      "Edit data/mainnet/whitelist-addresses.txt (owner source of truth), " +
+        "then re-run to write production JSON + frontend proofs.",
     );
   } else {
     const feDir = join(__dirname, "..", "..", "lib", "game", "mainnet");

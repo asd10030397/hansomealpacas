@@ -577,6 +577,12 @@ R_0 = 400{,}000,\quad G_0 = 300{,}000{,}000
 
 \(G_0 / R_0 = 750\) 日（不計 Sink／懲罰回流／降階）。
 
+### 15.4 上線注資 vs 協議 \(G_0\)（營運備註）
+
+§15.1 參數為**協議設計常數**（實作於 `GameTypes`／`EmissionController`），**並非**要求 Mainnet 上線時必須將 GameTreasury 注滿 \(G_0\)。
+
+**已核准上線注資（營運）：** GameTreasury 初始注資 **30,000,000** HANSOME，來自營運國庫錢包 `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A`（發射典禮一次性轉帳；**未**寫死於 Solidity），使可動用 \(G\) 落在 **80,000**／日檔。後續可再注資，使 \(G\) 跨越 60M／120M／210M 門檻以解鎖更高 \(R_d\)，**無需**升級合約。見 [`INITIAL_TREASURY_STRATEGY.md`](./INITIAL_TREASURY_STRATEGY.md)。
+
 ---
 
 ## 16. Randomness（隨機數）

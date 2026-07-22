@@ -88,10 +88,35 @@ export function looksLikeTestnetExplorerUrl(url: string): boolean {
 }
 
 /**
+ * Opt-in Mainnet Production lock (set at Vercel cutover).
+ * Does NOT force Mainnet in development, Preview, or current Testnet Production.
+ */
+export function isGameMainnetRequired(): boolean {
+  const raw = process.env.NEXT_PUBLIC_GAME_REQUIRE_MAINNET?.trim().toLowerCase();
+  return raw === "1" || raw === "true" || raw === "yes";
+}
+
+/**
+ * When Mainnet cutover flag is on, refuse Testnet game/mint chainId 46630.
+ * Local/dev and pre-cutover Testnet Production remain on 46630.
+ */
+export function assertMainnetProductionGameChain(): void {
+  if (!isGameMainnetRequired()) return;
+  const chainId = resolveGameChainId();
+  if (chainId === ROBINHOOD_CHAIN_ID) return;
+  throw new Error(
+    `[hansome] Mainnet Production guard: NEXT_PUBLIC_GAME_CHAIN_ID must be ${ROBINHOOD_CHAIN_ID}, got ${chainId}. ` +
+      `Unset NEXT_PUBLIC_GAME_REQUIRE_MAINNET for Testnet development.`,
+  );
+}
+
+/**
  * Fail-closed network checks when Mainnet game mode is selected.
  * Safe to call from Node instrumentation — never logs secrets.
  */
 export function assertGameNetworkConfig(): void {
+  assertMainnetProductionGameChain();
+
   const chainId = resolveGameChainId();
   if (chainId !== ROBINHOOD_CHAIN_ID) return;
 

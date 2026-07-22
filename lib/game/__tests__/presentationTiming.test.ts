@@ -29,7 +29,7 @@ describe("presentationTiming — 2× Battle Result presentation", () => {
     expect(PRESENTATION_DURATION_SCALE).toBe(3);
     // Previous UX (1.5×): 1200 → 1800; now 2× that → 3600
     expect(scalePresentationMs(1200)).toBe(3600);
-    expect(SETTLEMENT_RESULT_SFX_CATALOG["alpaca-safe"].durationMs).toBe(3750);
+    expect(SETTLEMENT_RESULT_SFX_CATALOG["alpaca-safe"].durationMs).toBe(4050);
     expect(ABILITY_EFFECT_CATALOG.king.durationMs).toBe(4200);
   });
 
@@ -50,9 +50,9 @@ describe("presentationTiming — 2× Battle Result presentation", () => {
     const cue = SETTLEMENT_RESULT_SFX_CATALOG["alpaca-safe"].durationMs;
     const gap = PRESENTATION_INTER_CUE_GAP_MS;
     const total = cue + gap;
-    // Previous: 1875 + 225 = 2100; doubled ≈ 4200
-    expect(total).toBe(3750 + 450);
-    expect(total).toBe(4200);
+    // Baseline 1350 cue + doubled gap (450) = 4500
+    expect(total).toBe(4050 + 450);
+    expect(total).toBe(4500);
   });
 });
 

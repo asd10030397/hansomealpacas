@@ -12,7 +12,7 @@
  *   GAME_DAY_LENGTH_SEC / GAME_COMMIT_DURATION_SEC — optional timing overrides
  *   GAME_FAST_TIMING=0|1    — robinhoodTestnet defaults to fast (2m/2m); Mainnet must be 0/unset
  *   RANDOMNESS_PROVIDER     — Mainnet: REQUIRED; set on GameRandomness after deploy
- *   GAME_TREASURY_FUND_ETH  — whole HANSOME to fund treasury (default 300000000 = G0)
+ *   GAME_TREASURY_FUND_ETH  — whole HANSOME to fund treasury (Mainnet default 30000000 launch; protocol G0 remains 300000000)
  *   SKIP_TREASURY_FUND=1    — skip token transfer into treasury
  *   DRY_RUN=1               — plan only; write *.dry-run.json; no txs
  *   ALLOW_MAINNET_DEPLOY=1 / CONFIRM_MAINNET_DEPLOY=I_UNDERSTAND — Mainnet live writes
@@ -267,7 +267,7 @@ async function main() {
         process.env.SKIP_TREASURY_FUND === "1"
           ? "SKIP"
           : process.env.GAME_TREASURY_FUND_ETH?.trim() ||
-            (timing.fast ? "50000000" : "300000000"),
+            (timing.fast ? "50000000" : "30000000"),
       note:
         "GameRandomness + RewardDistributor are deployed inside this script (no separate scripts).",
       generatedAt: new Date().toISOString(),
@@ -461,7 +461,7 @@ async function main() {
   if (process.env.SKIP_TREASURY_FUND !== "1") {
     const fundWhole =
       process.env.GAME_TREASURY_FUND_ETH?.trim() ??
-      (timing.fast ? "50000000" : "300000000");
+      (timing.fast ? "50000000" : "30000000");
     const fund = ethers.parseEther(fundWhole);
     const bal = await token.balanceOf(deployer.address);
     if (bal < fund) {

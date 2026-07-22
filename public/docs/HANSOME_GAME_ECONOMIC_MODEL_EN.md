@@ -231,9 +231,39 @@ Lifetime_gross ≈ G_0 / R_0
 | Safe mode G < G_safe | R_d=0, Commit paused → freeze until rebuilt |
 | Activity level | Low participation → more unallocated; high participation → more `playerTotal` reserved |
 
-### 5.3 Funding intent
+### 5.3 Protocol design vs launch funding
 
-Operational launch planning targets GameTreasury near G_0 = 300,000,000 so early days sit in the R_d = R_0 band, subject to actual funded amount and subsequent dynamics.
+| Layer | Amount / effect |
+|-------|-----------------|
+| **Protocol design** (\(G_0\)) | **300,000,000** HANSOME — immutable band **reference** in `GameTypes` / GDS §15 |
+| **Launch operations** | **30,000,000** HANSOME — approved Mainnet launch funding (not a change to \(G_0\)) |
+| **Initial reward band** | **80,000** HANSOME/day (`G_SAFE ≤ G < 0.20·G0`) |
+
+#### Initial Treasury Funding Source (ops)
+
+- **30,000,000 HANSOME** transferred from `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` → GameTreasury at Mainnet launch ceremony.
+- One-time **operational** launch funding; wallet **not** hardcoded in Solidity.
+- Future top-ups may use this wallet or other approved project treasury wallets.
+
+The protocol is designed for progressive treasury expansion as the ecosystem grows. Additional funding automatically unlocks higher reward bands without requiring any contract upgrades.
+
+Full ops write-up: see project docs `INITIAL_TREASURY_STRATEGY.md`.
+
+### 5.4 Initial Treasury Strategy
+
+1. Launch begins with **30,000,000** HANSOME — an intentional operational decision (not a change to \(G_0\)).
+2. Treasury may be increased later by transferring more `$HANSOME` into GameTreasury.
+3. Crossing **60M / 120M / 210M** spendable automatically raises \(R_d\) to **160k / 280k / 400k**.
+4. No contract upgrade is required.
+
+### 5.5 Treasury Operations (guidelines — not smart-contract rules)
+
+| Spendable \(G\) | Suggested ops action |
+|-----------------|----------------------|
+| **30M** | Launch |
+| **20M** | Review treasury status |
+| **17M** | Prepare additional funding |
+| **15M** | SafeMode threshold (on-chain) |
 
 ---
 

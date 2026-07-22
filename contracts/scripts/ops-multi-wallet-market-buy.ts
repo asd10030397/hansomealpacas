@@ -1,22 +1,33 @@
 /**
- * Five wallets each execute one ETH→HANSOME market-buy batch.
+ * N wallets each execute one ETH→HANSOME market-buy batch.
  *
  * Env:
- *   BUYER_1_PRIVATE_KEY ... BUYER_5_PRIVATE_KEY
- *   BUY_BATCHES=0.271,0.318,0.294,0.387,0.430   (exactly 5; sum ≈ budget)
- *   MAX_SLIPPAGE_BPS=200
- *   SHUFFLE_BUYERS=1          (random wallet order + shuffle amounts onto wallets)
- *   BATCH_WINDOW_MS=60000     (all 5 buys finish within this window; random gaps)
+ *   BUYER_START=1 BUYER_COUNT=5   or BUYER_INDICES=6,7,8,9,10
+ *   BUYER_N_PRIVATE_KEY for each index
+ *   BUY_BATCHES=0.271,0.318,...   (length must match buyer count; sum ≈ budget)
+ *   MAX_SLIPPAGE_BPS=200          (tx minOut guard)
+ *   MAX_LEG_SLIPPAGE_BPS=2500     (pre-trade spot slip; shrink/stop if exceeded)
+ *   AUTO_SHRINK_LEG=1             (cut ethIn until under MAX_LEG_SLIPPAGE_BPS)
+ *   FIT_TO_BALANCE=1              (cap ethIn to wallet bal − gas cushion)
+ *   BUYER_ETH_GAS_CUSHION=0.005
+ *   MIN_BUY_ETH=0.05
+ *   MAX_BUYS=5                    (run only first N scheduled legs — wave control)
+ *   SHUFFLE_BUYERS=1              (set 0 to keep Buyer i ↔ BUY_BATCHES[i])
+ *   BATCH_WINDOW_MS=60000
  *   DRY_RUN=1
+ *
+ * Adaptive ops: each leg re-quotes live pool state. If slip is high, shrink or
+ * stop remaining buys so you can edit BUY_BATCHES / MAX_BUYS and continue.
  *
  * Run:
  *   DRY_RUN=1 npx hardhat run scripts/ops-multi-wallet-market-buy.ts --network robinhood
- *   npx hardhat run scripts/ops-multi-wallet-market-buy.ts --network robinhood
+ *   BUYER_START=6 BUYER_COUNT=5 MAX_BUYS=1 npx hardhat run scripts/ops-multi-wallet-market-buy.ts --network robinhood
  */
 import { AbiCoder, Contract, Wallet, formatEther, formatUnits, parseEther, solidityPacked, ZeroAddress } from "ethers";
 import { ethers, network } from "hardhat";
 import { computePoolId } from "./lib/v4-math";
 import { resolveHansomeAddress, resolveLpFee, resolveTickSpacing } from "./lib/pool-config";
+import { parseEthAmountList, resolveBuyerIndices } from "./lib/buyer-indices";
 
 const ROBINHOOD_CHAIN_ID = 4663;
 
@@ -52,14 +63,6 @@ function walletFromEnv(envName: string): Wallet {
   } catch {
     throw new Error(`${envName} is not a valid private key (details withheld).`);
   }
-}
-
-function parseBatches(raw: string): bigint[] {
-  const parts = raw.split(",").map((s) => s.trim()).filter(Boolean);
-  if (parts.length !== 5) {
-    throw new Error(`BUY_BATCHES must have exactly 5 amounts, got ${parts.length}`);
-  }
-  return parts.map((p) => parseEther(p));
 }
 
 function sleep(ms: number): Promise<void> {
@@ -112,21 +115,30 @@ async function main() {
   }
 
   const isDryRun = process.env.DRY_RUN === "1";
-  const batches = parseBatches(requireEnv("BUY_BATCHES"));
+  const buyerIndices = resolveBuyerIndices();
+  const batches = parseEthAmountList(requireEnv("BUY_BATCHES"), buyerIndices.length, "BUY_BATCHES");
   const maxSlippageBps = process.env.MAX_SLIPPAGE_BPS ? Number(process.env.MAX_SLIPPAGE_BPS) : 200;
-  const shuffle = process.env.SHUFFLE_BUYERS !== "0";
+  const maxLegSlippageBps = process.env.MAX_LEG_SLIPPAGE_BPS
+    ? Number(process.env.MAX_LEG_SLIPPAGE_BPS)
+    : 2500;
+  const autoShrinkLeg = process.env.AUTO_SHRINK_LEG !== "0";
+  const fitToBalance = process.env.FIT_TO_BALANCE !== "0";
+  const buyerGasCushion = parseEther(process.env.BUYER_ETH_GAS_CUSHION?.trim() || "0.005");
+  const minBuyEth = parseEther(process.env.MIN_BUY_ETH?.trim() || "0.05");
+  const maxBuys = process.env.MAX_BUYS ? Number(process.env.MAX_BUYS) : buyerIndices.length;
+  const shuffle = process.env.SHUFFLE_BUYERS === "1"; // default OFF so fund amounts match buys
   const windowMs = process.env.BATCH_WINDOW_MS
     ? Number(process.env.BATCH_WINDOW_MS)
     : process.env.BATCH_DELAY_MS
       ? Number(process.env.BATCH_DELAY_MS)
       : 60_000;
 
-  const buyers = [1, 2, 3, 4, 5].map((i) => walletFromEnv(`BUYER_${i}_PRIVATE_KEY`));
+  const buyers = buyerIndices.map((i) => walletFromEnv(`BUYER_${i}_PRIVATE_KEY`));
   const buyerAddrs = await Promise.all(buyers.map((b) => b.getAddress()));
 
   // Pair buyer i with batch i, then shuffle pairs so order + amount assignment look organic.
   const pairs = buyers.map((signer, i) => ({
-    index: i + 1,
+    index: buyerIndices[i]!,
     signer,
     address: buyerAddrs[i]!,
     ethIn: batches[i]!,
@@ -141,7 +153,7 @@ async function main() {
     }
   }
 
-  const schedule = randomScheduleMs(windowMs, 5);
+  const schedule = randomScheduleMs(windowMs, buyerIndices.length);
   const jobs: Job[] = pairs.map((p, i) => ({
     ...p,
     atMs: schedule[i]!,
@@ -176,24 +188,29 @@ async function main() {
   const decimals: number = await hansomeToken.decimals();
   const totalEth = batches.reduce((a, b) => a + b, 0n);
 
-  console.log("Multi-wallet market buys (random order, ~1 min window)");
+  const jobsToRun = jobs.slice(0, Math.max(1, Math.min(jobs.length, maxBuys)));
+
+  console.log("Multi-wallet market buys (adaptive; re-quote each leg)");
   console.log(`  Network:  ${network.name} (${chainId})`);
   console.log(`  PoolId:   ${poolId}`);
-  console.log(`  Total:    ${formatEther(totalEth)} ETH`);
+  console.log(`  Total:    ${formatEther(totalEth)} ETH (planned)`);
+  console.log(`  This run: ${jobsToRun.length} leg(s) (MAX_BUYS=${maxBuys})`);
   console.log(`  Shuffle:  ${shuffle}`);
   console.log(`  Window:   ${windowMs}ms`);
+  console.log(`  Leg slip: max ${maxLegSlippageBps} bps | autoShrink=${autoShrinkLeg}`);
   console.log(`  Mode:     ${isDryRun ? "DRY_RUN" : "LIVE"}`);
   console.log("");
   console.log("Schedule (this run):");
-  for (const j of jobs) {
+  for (const j of jobsToRun) {
     console.log(`  t+${(j.atMs / 1000).toFixed(1)}s  Buyer ${j.index} ${j.address}  ${formatEther(j.ethIn)} ETH`);
   }
   console.log("");
 
   const started = Date.now();
+  let stoppedEarly = false;
 
-  for (let i = 0; i < jobs.length; i++) {
-    const job = jobs[i]!;
+  for (let i = 0; i < jobsToRun.length; i++) {
+    const job = jobsToRun[i]!;
     const waitUntil = started + job.atMs;
     const waitMs = waitUntil - Date.now();
     if (!isDryRun && waitMs > 0) {
@@ -201,13 +218,26 @@ async function main() {
       await sleep(waitMs);
     }
 
+    let ethIn = job.ethIn;
     const ethBal = await ethers.provider.getBalance(job.address);
     console.log(
-      `--- t+${((Date.now() - started) / 1000).toFixed(1)}s Buyer ${job.index}: ${job.address} | ${formatEther(job.ethIn)} ETH (bal ${formatEther(ethBal)}) ---`,
+      `--- t+${((Date.now() - started) / 1000).toFixed(1)}s Buyer ${job.index}: ${job.address} | plan ${formatEther(job.ethIn)} ETH (bal ${formatEther(ethBal)}) ---`,
     );
 
-    if (!isDryRun && ethBal < job.ethIn) {
-      throw new Error(`Buyer ${job.index} insufficient ETH: have ${formatEther(ethBal)}, need ${formatEther(job.ethIn)} + gas`);
+    if (fitToBalance) {
+      const affordable = ethBal > buyerGasCushion ? ethBal - buyerGasCushion : 0n;
+      if (affordable < minBuyEth) {
+        console.log(
+          `  SKIP: balance ${formatEther(ethBal)} below min buy + cushion (already spent or underfunded)`,
+        );
+        continue;
+      }
+      if (ethIn > affordable) {
+        console.log(
+          `  FIT_TO_BALANCE: ${formatEther(ethIn)} → ${formatEther(affordable)} ETH`,
+        );
+        ethIn = affordable;
+      }
     }
 
     const [slot0, poolLiquidity, hansomeBefore] = await Promise.all([
@@ -221,16 +251,66 @@ async function main() {
 
     const sqrtCurrent = JSBI.BigInt(slot0.sqrtPriceX96.toString());
     const liquidityJ = JSBI.BigInt(poolLiquidity.toString());
-    const ethInAfterFee = JSBI.divide(
-      JSBI.multiply(JSBI.BigInt(job.ethIn.toString()), JSBI.BigInt(1_000_000 - lpFee)),
-      JSBI.BigInt(1_000_000),
-    );
-    const sqrtNext = SqrtPriceMath.getNextSqrtPriceFromInput(sqrtCurrent, liquidityJ, ethInAfterFee, true);
-    const expectedHansomeOut = BigInt(SqrtPriceMath.getAmount1Delta(sqrtNext, sqrtCurrent, liquidityJ, false).toString());
-    const amountOutMin = (expectedHansomeOut * BigInt(10_000 - maxSlippageBps)) / 10_000n;
+    const spotTokenPerEthNum = Number(slot0.sqrtPriceX96) / Number(2n ** 96n);
+    const spotTokenPerEth = spotTokenPerEthNum * spotTokenPerEthNum;
 
-    console.log(`  tick ${slot0.tick} → ~${TickMath.getTickAtSqrtRatio(sqrtNext)}`);
-    console.log(`  expected ~${formatUnits(expectedHansomeOut, decimals)} HANSOME`);
+    const quoteLeg = (amountIn: bigint) => {
+      const ethInAfterFee = JSBI.divide(
+        JSBI.multiply(JSBI.BigInt(amountIn.toString()), JSBI.BigInt(1_000_000 - lpFee)),
+        JSBI.BigInt(1_000_000),
+      );
+      const sqrtNext = SqrtPriceMath.getNextSqrtPriceFromInput(
+        sqrtCurrent,
+        liquidityJ,
+        ethInAfterFee,
+        true,
+      );
+      const expectedOut = BigInt(
+        SqrtPriceMath.getAmount1Delta(sqrtNext, sqrtCurrent, liquidityJ, false).toString(),
+      );
+      const spotOut = Number(formatEther(amountIn)) * spotTokenPerEth;
+      const actualOut = Number(formatUnits(expectedOut, decimals));
+      const slipBps =
+        spotOut > 0 ? Math.round((1 - actualOut / spotOut) * 10_000) : 0;
+      return { sqrtNext, expectedOut, slipBps };
+    };
+
+    let quote = quoteLeg(ethIn);
+    while (quote.slipBps > maxLegSlippageBps && ethIn > minBuyEth) {
+      if (!autoShrinkLeg) break;
+      const next = (ethIn * 7n) / 10n;
+      if (next < minBuyEth) break;
+      console.log(
+        `  slip ${quote.slipBps} bps > ${maxLegSlippageBps} — shrink ${formatEther(ethIn)} → ${formatEther(next)} ETH`,
+      );
+      ethIn = next;
+      quote = quoteLeg(ethIn);
+    }
+
+    if (quote.slipBps > maxLegSlippageBps) {
+      console.log(
+        `  STOP: leg slip ${quote.slipBps} bps still > ${maxLegSlippageBps}. ` +
+          `Edit BUY_BATCHES / MAX_BUYS and re-run for remaining buyers.`,
+      );
+      stoppedEarly = true;
+      break;
+    }
+
+    if (!isDryRun && ethBal < ethIn) {
+      throw new Error(
+        `Buyer ${job.index} insufficient ETH: have ${formatEther(ethBal)}, need ${formatEther(ethIn)} + gas`,
+      );
+    }
+
+    // Single-tick quotes can overestimate once price has moved — keep a wide floor.
+    const minOutBps = Math.min(
+      9_500,
+      Math.max(maxSlippageBps, quote.slipBps * 2 + maxSlippageBps, 3_000),
+    );
+    let amountOutMin = (quote.expectedOut * BigInt(10_000 - minOutBps)) / 10_000n;
+    console.log(`  tick ${slot0.tick} → ~${TickMath.getTickAtSqrtRatio(quote.sqrtNext)}`);
+    console.log(`  use ${formatEther(ethIn)} ETH | est slip ${quote.slipBps} bps | minOut cushion ${minOutBps} bps`);
+    console.log(`  expected ~${formatUnits(quote.expectedOut, decimals)} HANSOME`);
 
     const ur = new Contract(
       ADDR.universalRouter,
@@ -238,29 +318,61 @@ async function main() {
       job.signer,
     );
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 1200);
-    const swapInput = buildEthToHansomeInput(poolKey, hansomeAddress, job.ethIn, amountOutMin);
     const commands = solidityPacked(["uint8"], [0x10]);
 
-    if (isDryRun) {
-      if (ethBal >= job.ethIn) {
-        await ur.execute.staticCall(commands, [swapInput], deadline, { value: job.ethIn });
-        console.log("  staticCall: PASSED");
-      } else {
-        console.log("  SKIP staticCall (buyer needs ETH) — fund before live run");
+    const tryCall = async (minOut: bigint) => {
+      const swapInput = buildEthToHansomeInput(poolKey, hansomeAddress, ethIn, minOut);
+      if (isDryRun) {
+        if (ethBal >= ethIn) {
+          await ur.execute.staticCall(commands, [swapInput], deadline, { value: ethIn });
+          console.log("  staticCall: PASSED");
+        } else {
+          console.log("  SKIP staticCall (buyer needs ETH) — fund before live run");
+        }
+        return null;
       }
-    } else {
-      const tx = await ur.execute(commands, [swapInput], deadline, { value: job.ethIn });
-      const receipt = await tx.wait();
-      if (!receipt) throw new Error("No receipt");
-      const hansomeAfter: bigint = await hansomeToken.balanceOf(job.address);
-      console.log(`  tx: ${receipt.hash}`);
-      console.log(`  received: ${formatUnits(hansomeAfter - hansomeBefore, decimals)}`);
-      console.log(`  https://robinhoodchain.blockscout.com/tx/${receipt.hash}`);
+      await ur.execute.staticCall(commands, [swapInput], deadline, { value: ethIn });
+      const tx = await ur.execute(commands, [swapInput], deadline, { value: ethIn });
+      return tx.wait();
+    };
+
+    try {
+      if (isDryRun) {
+        await tryCall(amountOutMin);
+      } else {
+        let receipt;
+        try {
+          receipt = await tryCall(amountOutMin);
+        } catch (e1) {
+          // Retry once with looser minOut (multi-tick / quote drift).
+          amountOutMin = quote.expectedOut / 2n;
+          console.log(`  staticCall/send failed — retry minOut=50% expected`);
+          receipt = await tryCall(amountOutMin);
+        }
+        if (!receipt) throw new Error("No receipt");
+        const hansomeAfter: bigint = await hansomeToken.balanceOf(job.address);
+        console.log(`  tx: ${receipt.hash}`);
+        console.log(`  received: ${formatUnits(hansomeAfter - hansomeBefore, decimals)}`);
+        console.log(`  https://robinhoodchain.blockscout.com/tx/${receipt.hash}`);
+      }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.log(`  FAILED: ${msg.split("\n")[0]}`);
+      console.log("  Continuing remaining buyers…");
+      continue;
     }
   }
 
   console.log("");
-  console.log(isDryRun ? "DRY_RUN complete." : "All 5 buys submitted.");
+  if (stoppedEarly) {
+    console.log(
+      isDryRun
+        ? "DRY_RUN stopped early on slip gate — adjust batches before live."
+        : "Stopped early on slip gate — remaining buyers not submitted.",
+    );
+  } else {
+    console.log(isDryRun ? "DRY_RUN complete." : `Submitted ${jobsToRun.length} buy(s).`);
+  }
 }
 
 main().catch((e) => {

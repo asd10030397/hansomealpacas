@@ -53,20 +53,41 @@ async function main() {
   const envPath = join(__dirname, "..", "..", ".env.local");
   const existing = existsSync(envPath) ? readFileSync(envPath, "utf8") : "";
 
+  const isMainnet = Number(record.chainId) === 4663;
   const lines: Record<string, string> = {
     NEXT_PUBLIC_HANSOME_GAME_ADDRESS: record.address,
     NEXT_PUBLIC_REWARD_DISTRIBUTOR_ADDRESS: record.distributor,
     NEXT_PUBLIC_GENESIS_NFT_ADDRESS: record.genesis,
     NEXT_PUBLIC_GAME_CHAIN_ID: String(record.chainId),
-    NEXT_PUBLIC_GAME_RPC_URL: "https://rpc.testnet.chain.robinhood.com",
-    NEXT_PUBLIC_GAME_EXPLORER: "https://explorer.testnet.chain.robinhood.com",
+    NEXT_PUBLIC_GAME_RPC_URL: isMainnet
+      ? "https://rpc.mainnet.chain.robinhood.com"
+      : "https://rpc.testnet.chain.robinhood.com",
+    NEXT_PUBLIC_GAME_EXPLORER: isMainnet
+      ? "https://robinhoodchain.blockscout.com"
+      : "https://explorer.testnet.chain.robinhood.com",
     // Client flag: use /api/game/testnet-resolve (server key required separately).
-    NEXT_PUBLIC_TESTNET_GASLESS_RESOLVE: "1",
+    // Off on Mainnet until gasless Mainnet is explicitly approved.
+    NEXT_PUBLIC_TESTNET_GASLESS_RESOLVE: isMainnet ? "0" : "1",
     // Client: treat sale NFTs as playable via Testnet trait deck (pre-collection reveal).
-    NEXT_PUBLIC_TESTNET_GAMEPLAY_TRAITS: "1",
+    NEXT_PUBLIC_TESTNET_GAMEPLAY_TRAITS: isMainnet ? "0" : "1",
   };
 
-  if (thansome) {
+  if (isMainnet) {
+    lines.NEXT_PUBLIC_GAME_REQUIRE_MAINNET = "1";
+    lines.NEXT_PUBLIC_HANSOME_GENESIS_ADDRESS = record.genesis;
+    if (record.token?.trim()) {
+      lines.NEXT_PUBLIC_CONTRACT = record.token.trim();
+    }
+  }
+
+  // Randomness is required in Mainnet mode; optional on Testnet.
+  const randomness =
+    (record as { randomness?: string }).randomness?.trim() || "";
+  if (randomness) {
+    lines.NEXT_PUBLIC_RANDOMNESS_ADDRESS = randomness;
+  }
+
+  if (thansome && !isMainnet) {
     lines.NEXT_PUBLIC_THANSOME_ADDRESS = thansome;
   }
   if (record.dayLengthSec != null) {

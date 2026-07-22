@@ -34,6 +34,7 @@
 .game-scenic__sky,
 .game-scenic__art,
 .game-scenic__clouds,
+.game-scenic__sun,
 .game-scenic__depth,
 .game-scenic__wash {
   position: absolute;
@@ -41,6 +42,80 @@
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  transition:
+    filter 1.2s ease,
+    opacity 1.2s ease,
+    background 1.2s ease;
+}
+
+/* Day / dusk / night — driven by data-tod from live game phase */
+.game-scenic__sun {
+  background: radial-gradient(
+    circle at 72% 18%,
+    rgba(255, 220, 120, 0.55) 0%,
+    rgba(255, 180, 60, 0.18) 12%,
+    transparent 38%
+  );
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.game-scenic[data-tod="dusk"] .game-scenic__sky {
+  filter: hue-rotate(-12deg) saturate(1.25) brightness(0.92);
+}
+
+.game-scenic[data-tod="dusk"] .game-scenic__art {
+  filter: contrast(1.06) saturate(1.2) sepia(0.18) brightness(0.9);
+}
+
+.game-scenic[data-tod="dusk"] .game-scenic__sun {
+  background: radial-gradient(
+    circle at 78% 42%,
+    rgba(255, 140, 60, 0.7) 0%,
+    rgba(220, 60, 40, 0.25) 18%,
+    transparent 42%
+  );
+  opacity: 1;
+}
+
+.game-scenic[data-tod="dusk"] .game-scenic__wash {
+  background: linear-gradient(
+    180deg,
+    rgba(40, 18, 12, 0.35) 0%,
+    rgba(20, 12, 18, 0.55) 50%,
+    rgba(8, 8, 16, 0.75) 100%
+  );
+}
+
+.game-scenic[data-tod="night"] .game-scenic__sky {
+  filter: brightness(0.45) saturate(0.75) hue-rotate(20deg);
+}
+
+.game-scenic[data-tod="night"] .game-scenic__art {
+  filter: contrast(1.08) saturate(0.7) brightness(0.55);
+}
+
+.game-scenic[data-tod="night"] .game-scenic__sun {
+  background: radial-gradient(
+    circle at 68% 14%,
+    rgba(220, 230, 255, 0.45) 0%,
+    rgba(120, 140, 200, 0.12) 10%,
+    transparent 28%
+  );
+  opacity: 0.9;
+}
+
+.game-scenic[data-tod="night"] .game-scenic__clouds {
+  opacity: 0.12;
+}
+
+.game-scenic[data-tod="night"] .game-scenic__wash {
+  background: linear-gradient(
+    180deg,
+    rgba(4, 8, 20, 0.55) 0%,
+    rgba(6, 10, 22, 0.65) 50%,
+    rgba(2, 4, 12, 0.82) 100%
+  );
 }
 
 .game-scenic__sky {

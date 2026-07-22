@@ -37,6 +37,12 @@ import {
   ROBINHOOD_MAINNET_CHAIN_ID,
 } from "./lib/deploy-network-guard";
 import { getDeployerSigner } from "./lib/signer";
+import {
+  isForbiddenPlaceholderAddress,
+  requireMainnetVrfOperator,
+  requireValidatedRoleAddress,
+  CEREMONY_CANDIDATE_EOA,
+} from "./lib/mainnet-game-guards";
 
 const CANONICAL_MAINNET_HANSOME =
   "0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875";
@@ -159,34 +165,61 @@ async function main() {
   });
 
   const useMock = process.env.USE_REVEAL_MOCK === "1";
-  const vrfOperator = process.env.VRF_OPERATOR?.trim() || null;
+  let vrfOperator: string | null = null;
+  let vrfDetail = "";
+  try {
+    vrfOperator = requireMainnetVrfOperator();
+    vrfDetail = `VRF_OPERATOR=${vrfOperator}`;
+  } catch (e) {
+    vrfDetail = e instanceof Error ? e.message : String(e);
+  }
   push({
     id: "genesis_no_mock",
     ok: !useMock,
     severity: useMock ? "blocker" : "pass",
     detail: useMock
       ? "USE_REVEAL_MOCK=1 is forbidden on Mainnet"
-      : "USE_REVEAL_MOCK unset (good)",
+      : "USE_REVEAL_MOCK unset/0 (good)",
   });
   push({
     id: "vrf_operator",
     ok: Boolean(vrfOperator),
     severity: vrfOperator ? "pass" : "blocker",
-    detail: vrfOperator
-      ? `VRF_OPERATOR=${vrfOperator}`
-      : "Set VRF_OPERATOR for VRFRevealAdapter (Genesis NFT reveal randomness)",
+    detail: vrfDetail,
   });
 
-  const owner = process.env.MAINNET_OWNER?.trim() || null;
+  const ownerRaw = process.env.MAINNET_OWNER?.trim() || null;
+  let owner: string | null = null;
+  let ownerDetail = "";
+  const ownerIsPlaceholder = isForbiddenPlaceholderAddress(ownerRaw);
+  if (!ownerRaw) {
+    ownerDetail =
+      "MAINNET_OWNER unset — set multisig/timelock (see MAINNET_ROLES_AND_RUNBOOK.md)";
+  } else if (ownerIsPlaceholder) {
+    ownerDetail = `REFUSED placeholder MAINNET_OWNER=${ownerRaw}`;
+  } else {
+    try {
+      owner = requireValidatedRoleAddress("MAINNET_OWNER", ownerRaw);
+      if (owner.toLowerCase() === CEREMONY_CANDIDATE_EOA.toLowerCase()) {
+        ownerDetail =
+          `MAINNET_OWNER=${owner} (ceremony EOA candidate — requires MAINNET_OWNER_ALLOW_CEREMONY_EOA=1 + MAINNET_OWNER_OWNER_ACK=1; prefer multisig)`;
+      } else {
+        ownerDetail = `MAINNET_OWNER=${owner}`;
+      }
+    } catch (e) {
+      ownerDetail = e instanceof Error ? e.message : String(e);
+    }
+  }
   const relayer = process.env.MAINNET_RELAYER?.trim() || null;
-  const randomnessProvider = process.env.RANDOMNESS_PROVIDER?.trim() || null;
+  const randomnessProviderRaw = process.env.RANDOMNESS_PROVIDER?.trim() || null;
+  const rpIsPlaceholder = isForbiddenPlaceholderAddress(randomnessProviderRaw);
+  const randomnessProvider =
+    randomnessProviderRaw && !rpIsPlaceholder ? randomnessProviderRaw : null;
   push({
     id: "mainnet_owner",
     ok: Boolean(owner),
     severity: owner ? "pass" : "warn",
-    detail: owner
-      ? `MAINNET_OWNER=${owner}`
-      : "MAINNET_OWNER unset — plan multisig/timelock before ownership transfer",
+    detail: ownerDetail,
   });
   push({
     id: "relayer_role",
@@ -200,9 +233,11 @@ async function main() {
     id: "game_randomness_provider",
     ok: Boolean(randomnessProvider),
     severity: randomnessProvider ? "pass" : "warn",
-    detail: randomnessProvider
-      ? `RANDOMNESS_PROVIDER=${randomnessProvider}`
-      : "RANDOMNESS_PROVIDER unset — after deploy, call GameRandomness.setRandomnessProvider",
+    detail: rpIsPlaceholder
+      ? `REFUSED placeholder RANDOMNESS_PROVIDER=${randomnessProviderRaw}`
+      : randomnessProvider
+        ? `RANDOMNESS_PROVIDER=${randomnessProvider}`
+        : "RANDOMNESS_PROVIDER unset — after deploy, call GameRandomness.setRandomnessProvider",
   });
 
   const fundWhole = process.env.GAME_TREASURY_FUND_ETH?.trim() || null;

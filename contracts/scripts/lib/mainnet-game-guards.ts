@@ -55,6 +55,131 @@ export function assertNotTestnetContractAddress(
   return addr;
 }
 
+/** Known burn / dummy addresses that must never be used as live Mainnet role keys. */
+export const FORBIDDEN_PLACEHOLDER_ADDRESSES = [
+  "0x0000000000000000000000000000000000000001",
+  "0x0000000000000000000000000000000000000000",
+  "0x1111111111111111111111111111111111111111",
+  "0xdeaddeaddeaddeaddeaddeaddeaddeaddeaddead",
+] as const;
+
+const PLACEHOLDER_SET = new Set(
+  FORBIDDEN_PLACEHOLDER_ADDRESSES.map((a) => a.toLowerCase()),
+);
+
+export function isForbiddenPlaceholderAddress(
+  value: string | null | undefined,
+): boolean {
+  if (!value || !isAddress(value)) return false;
+  return PLACEHOLDER_SET.has(value.toLowerCase());
+}
+
+/** Abort if address is a known placeholder / burn dummy. */
+export function assertNotPlaceholderAddress(label: string, value: string): string {
+  const addr = getAddress(value);
+  if (isForbiddenPlaceholderAddress(addr)) {
+    throw new Error(
+      `REFUSED: ${label} ${addr} is a forbidden placeholder. ` +
+        `Set a real Mainnet operator / owner address (see docs/MAINNET_ROLES_AND_RUNBOOK.md).`,
+    );
+  }
+  return addr;
+}
+
+/**
+ * Ceremony hot-wallet EOA currently used as deployer/Treasury fallback.
+ * May be a *candidate* for VRF_OPERATOR / temporary RANDOMNESS_PROVIDER only after
+ * explicit project-owner acknowledgment — never auto-approved as production owner.
+ */
+export const CEREMONY_CANDIDATE_EOA =
+  "0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A";
+
+function envFlagTrue(name: string): boolean {
+  const v = process.env[name]?.trim();
+  return v === "1" || v === "true" || v === "yes" || v === "YES";
+}
+
+/**
+ * Parse + EIP-55 normalize a Mainnet role address.
+ * Fail-closed on empty, invalid format, bad checksum, placeholder, zero address.
+ */
+export function requireValidatedRoleAddress(label: string, raw: string | undefined | null): string {
+  const trimmed = raw?.trim() || "";
+  if (!trimmed) {
+    throw new Error(
+      `REFUSED: ${label} is empty. Set a checksummed Mainnet address ` +
+        `(see docs/MAINNET_ROLES_AND_RUNBOOK.md).`,
+    );
+  }
+  if (!isAddress(trimmed)) {
+    throw new Error(
+      `REFUSED: ${label} is not a valid Ethereum address format: "${trimmed}".`,
+    );
+  }
+  let addr: string;
+  try {
+    addr = getAddress(trimmed);
+  } catch {
+    throw new Error(
+      `REFUSED: ${label} failed EIP-55 checksum validation: "${trimmed}". ` +
+        `Use a correctly checksummed address.`,
+    );
+  }
+  assertNotPlaceholderAddress(label, addr);
+  return addr;
+}
+
+/**
+ * Mainnet VRF_OPERATOR — required for Genesis VRFRevealAdapter (no mock).
+ * If set to the ceremony candidate EOA, requires VRF_OPERATOR_OWNER_ACK=1.
+ */
+export function requireMainnetVrfOperator(): string {
+  const addr = requireValidatedRoleAddress(
+    "VRF_OPERATOR",
+    process.env.VRF_OPERATOR,
+  );
+  if (addr.toLowerCase() === CEREMONY_CANDIDATE_EOA.toLowerCase()) {
+    if (!envFlagTrue("VRF_OPERATOR_OWNER_ACK")) {
+      throw new Error(
+        `REFUSED: VRF_OPERATOR=${addr} is the ceremony candidate EOA and is NOT auto-approved. ` +
+          `Project owner must set VRF_OPERATOR_OWNER_ACK=1 after explicit written approval, ` +
+          `or set a dedicated operator address.`,
+      );
+    }
+  }
+  return addr;
+}
+
+/**
+ * Mainnet MAINNET_OWNER — prefer multisig/timelock.
+ * Rejects empty/placeholder. Rejects deployer/ceremony EOA unless
+ * MAINNET_OWNER_ALLOW_CEREMONY_EOA=1 and MAINNET_OWNER_OWNER_ACK=1.
+ */
+export function requireMainnetOwner(deployerAddress: string): string {
+  const addr = requireValidatedRoleAddress(
+    "MAINNET_OWNER",
+    process.env.MAINNET_OWNER,
+  );
+  const deployer = getAddress(deployerAddress);
+  const isCeremonyOrDeployer =
+    addr.toLowerCase() === deployer.toLowerCase() ||
+    addr.toLowerCase() === CEREMONY_CANDIDATE_EOA.toLowerCase();
+  if (isCeremonyOrDeployer) {
+    if (
+      !envFlagTrue("MAINNET_OWNER_ALLOW_CEREMONY_EOA") ||
+      !envFlagTrue("MAINNET_OWNER_OWNER_ACK")
+    ) {
+      throw new Error(
+        `REFUSED: MAINNET_OWNER=${addr} equals deployer/ceremony EOA. ` +
+          `Production owner should be a multisig or timelock. ` +
+          `To override (discouraged), set MAINNET_OWNER_ALLOW_CEREMONY_EOA=1 and MAINNET_OWNER_OWNER_ACK=1 ` +
+          `after explicit project-owner approval.`,
+      );
+    }
+  }
+  return addr;
+}
+
 /** Abort unless token is canonical Mainnet $HANSOME. */
 export function assertCanonicalMainnetHansome(tokenAddress: string): string {
   const addr = getAddress(tokenAddress);
@@ -104,6 +229,7 @@ export function requireMainnetRandomnessProvider(
     );
   }
   const provider = getAddress(raw);
+  assertNotPlaceholderAddress("RANDOMNESS_PROVIDER", provider);
   assertNotTestnetContractAddress("RANDOMNESS_PROVIDER", provider);
   return provider;
 }

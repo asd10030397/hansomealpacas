@@ -56,7 +56,10 @@ import {
   settlementStatusLabel,
   type SettlementUiStatus,
 } from "@/lib/game/settlementStatus";
-import { deriveSettlementActivation } from "@/lib/game/settlementActivation";
+import {
+  getTutorialDayNumber,
+  isTutorialCapture,
+} from "@/lib/game/tutorialCapture";
 import { interpretLiveSettlementRow } from "@/lib/game/interpretSettlementRow";
 import {
   isRevealPhaseClosed,
@@ -72,12 +75,14 @@ import {
 import { resolveBattleLocationId } from "@/lib/game/resolveBattleLocation";
 import { resolveBattleDayRewardWei } from "@/lib/game/battleDayReward";
 import { resolveBattleRevealStatus } from "@/lib/game/battleRevealDetection";
+import { deriveSettlementActivation } from "@/lib/game/settlementActivation";
 import {
   DEFAULT_WALLET_CREDIT_BATCH_LIMIT,
   isBenignSettlementRevert,
   parseCreditProgress,
   planWalletSettlementStep,
 } from "@/lib/game/walletBatchedSettlement";
+import { isWalletAutoSettleEnabled } from "@/lib/game/walletAutoSettle";
 import type { AbilityEffectId } from "@/lib/game/abilityEffects/catalog";
 import {
   alpacaCountAt,
@@ -129,6 +134,9 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
   const publicClient = usePublicClient({ chainId: GAME_CHAIN_ID });
   const owned = useOwnedGenesisNfts();
   const live = isHansomeGameConfigured();
+  const tutorialLocal =
+    isTutorialCapture() && viewDay === getTutorialDayNumber();
+  const useLocalSettlement = !live || tutorialLocal;
   const game = HANSOME_GAME_ADDRESS;
   const gasless = isTestnetGaslessResolveEnabled();
 
@@ -509,8 +517,9 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
   const hasDaySeed =
     hasDaySeedRead.data !== undefined ? Boolean(hasDaySeedRead.data) : null;
 
-  const status: SettlementUiStatus = live
-    ? deriveSettlementUiStatus({
+  const status: SettlementUiStatus = useLocalSettlement
+    ? deriveLocalStatus(viewDay, phase, localTick)
+    : deriveSettlementUiStatus({
         dayState: dayStateNum,
         isSettled:
           settledRead.data !== undefined ? Boolean(settledRead.data) : null,
@@ -523,11 +532,10 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
         loading: chainLoading,
         hasDaySeed,
         phase,
-      })
-    : deriveLocalStatus(viewDay, phase, localTick);
+      });
 
   const rows: SettlementRowView[] = useMemo(() => {
-    if (!live) {
+    if (useLocalSettlement) {
       const local = getLocalSettlement(viewDay);
       if (local?.status === "completed") {
         return local.rows.map((r) => mapLocalRow(r, address ?? null));
@@ -929,11 +937,14 @@ export function useSettlementView(options?: UseSettlementViewOptions) {
   }, [status, settled]);
 
   /**
-   * Non-gasless: after Reveal closes + seed ready, run finalizeDay + creditBatch.
+   * Non-gasless: optionally auto-run finalizeDay + creditBatch via wallet.
    * Gasless settle is owned by AutoRevealProvider / coordinator.
+   * When wallet auto-settle is off (Testnet UI-only / Railway worker), do not
+   * spam MetaMask — settlement stays with the permissionless worker.
    */
   useEffect(() => {
     if (gasless) return;
+    if (!isWalletAutoSettleEnabled()) return;
     if (settled) return;
     if (settleWriting || settleReceipt.isLoading) return;
     if (status !== "available" && status !== "battle_ready") return;

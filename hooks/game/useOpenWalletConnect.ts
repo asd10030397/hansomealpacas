@@ -27,15 +27,22 @@ export type WalletConnectResult =
 export function useOpenWalletConnect(targetChainId: number = GENESIS_CHAIN_ID) {
   const { connectAsync, connectors, isPending } = useConnect();
   const [error, setError] = useState<string | null>(null);
+  const [failReason, setFailReason] = useState<WalletConnectFailReason | null>(
+    null,
+  );
   const [helpOpen, setHelpOpen] = useState(false);
 
-  const clearError = useCallback(() => setError(null), []);
+  const clearError = useCallback(() => {
+    setError(null);
+    setFailReason(null);
+  }, []);
   const closeHelp = useCallback(() => {
     setHelpOpen(false);
   }, []);
 
   const openWalletConnect = useCallback(async (): Promise<WalletConnectResult> => {
     setError(null);
+    setFailReason(null);
 
     const ethereum =
       typeof window !== "undefined"
@@ -56,6 +63,7 @@ export function useOpenWalletConnect(targetChainId: number = GENESIS_CHAIN_ID) {
     const preflight = preflightWalletConnect({ connectors, hasProvider });
     if (!preflight.ok) {
       setError(preflight.error);
+      setFailReason(preflight.reason);
       setHelpOpen(true);
       return preflight;
     }
@@ -63,6 +71,7 @@ export function useOpenWalletConnect(targetChainId: number = GENESIS_CHAIN_ID) {
     const connector = pickConnectConnector(connectors, hasProvider);
     if (!connector) {
       setError(NO_WALLET_CONNECT_MESSAGE);
+      setFailReason("no-connector");
       setHelpOpen(true);
       return { ok: false, error: NO_WALLET_CONNECT_MESSAGE, reason: "no-connector" };
     }
@@ -77,6 +86,8 @@ export function useOpenWalletConnect(targetChainId: number = GENESIS_CHAIN_ID) {
     } catch (e) {
       const { message, reason } = classifyConnectFailure(e);
       setError(message);
+      setFailReason(reason);
+      // Reject/cancel → non-modal feedback only (not silent, not help modal).
       if (reason !== "rejected") setHelpOpen(true);
       return { ok: false, error: message, reason };
     }
@@ -86,6 +97,7 @@ export function useOpenWalletConnect(targetChainId: number = GENESIS_CHAIN_ID) {
     openWalletConnect,
     isConnecting: isPending,
     connectError: error,
+    connectFailReason: failReason,
     clearError,
     helpOpen,
     closeHelp,

@@ -1,0 +1,46 @@
+# HANSOME Mainnet Genesis whitelist — owner editable source of truth
+# =====================================================================
+# 格式 Format:
+#   - 每行一個以太坊地址（checksum 或小寫皆可；產生時會正規化）
+#   - One address per line (checksum or lowercase; normalized on generate)
+#   - 以 # 開頭的行與空行會被忽略 / Lines starting with # and blanks are ignored
+#   - 勿重複地址；腳本會跳過重複 / Duplicates are skipped with a warning
+#
+# 產品上限 Product limits:
+#   - WL 窗口：Public 開賣前 1 小時（T−1h）
+#   - 鏈上 WL mint 上限：100（每錢包最多 1）
+#   - 名單人數建議 ≤ 100；超過仍可產生 Merkle，但鏈上仍只允許 100 次 WL mint
+#
+# 工作流程 Workflow（離線，不會送交易）:
+#   1) 在本檔貼上核准地址（owner 自行維護，直到名單定稿）
+#   2) cd contracts && npm run genesis:merkle:mainnet
+#   3) 檢查產出的 merkleRoot
+#   4) 之後再 scheduleWhitelistMerkleRoot（最晚 2026-07-23 11:00 UTC）
+#
+# 注意:
+#   - 不要沿用 Testnet 地址或 proofs
+#   - 本檔目前故意沒有真實地址；請 owner 貼上後再產生 Merkle
+#   - 產生腳本不會上鏈；上鏈需另依 MAINNET_LAUNCH_RUNBOOK §5
+#
+# --- 在下方貼上地址（一行一個）Paste addresses below (one per line) ---
+0xDCaEdEcBFAB49d997447Dc988D7aB56720E550B0
+0x805E1344e997c6e70a7F96B8e6a506a45bb3757C
+0x9B45DD4B3e3b015eA825d6F793ddFbeC588Cb249
+0x1cB73d67A991A08D6E9281373042b8d376465bF5
+0xB052B7d389F66A5F32Bbc42aE8c35A8eb4d61f83
+0x63C996F829E438C12D8F79721428263633cD5230
+0x73efA353C5766C76E5cF8F78b7a0CcFE9DFaC935
+0xF336542139DefF54cfEdB4887AB43b2db9550215
+0x9C7Ba9b5902534F2D32244226b80bB9Eef589c4c
+0x17997A2B9a00CD9F74958196C2fF3D1f6c0e588A
+0x6B6Ac2013B5d92E8e59851fbC892C286d410c67A
+0xa08387B4e26C584B385e6aCfbDC6623B20B2Ac9F
+0x0cdeC9c823616306B84F9e1318f2813f4Be68375
+0x9384Dedc2514048714451Fa81BfA38F94AB50796
+# Buyer 6–10 (from contracts/.env addresses)
+0x378231f78A2137916f8e67c60643e6562F758085
+0x8359EC7824aD5676de8b5cb72382bDb74A0c02Bc
+0xB16E54206f8306A8E06aE222C128Bec8238AFefe
+0x5f815390260F8893c65AE65cDd116210ebF032ce
+0x85B4c85952350990ce94B12A600C8eC898D2C7BA
+0x68AEaC66106D5EeaCDEa3c039682ca8263d4BE86

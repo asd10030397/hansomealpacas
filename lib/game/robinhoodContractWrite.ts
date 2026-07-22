@@ -144,6 +144,13 @@ function extractRevertSignature(text: string): string | null {
   return m?.[1]?.toLowerCase() ?? null;
 }
 
+export function isNotCommittedWriteError(
+  message: string | null | undefined,
+): boolean {
+  if (!message) return false;
+  return /NotCommitted/i.test(message);
+}
+
 export function formatRobinhoodWriteError(error: unknown, fallback: string): string {
   if (!error) return fallback;
   if (typeof error === "string") return error;
@@ -223,18 +230,33 @@ export async function sendRobinhoodContractWrite(input: {
     throw new Error(formatRobinhoodWriteError(e, "Simulation failed."));
   }
 
-  const gas = await publicClient.estimateContractGas({
-    address: request.address,
-    abi: request.abi,
-    functionName: request.functionName,
-    args: request.args as never,
-    account: request.account,
-    value: request.value,
-  });
+  let gas: bigint;
+  try {
+    gas = await publicClient.estimateContractGas({
+      address: request.address,
+      abi: request.abi,
+      functionName: request.functionName,
+      args: request.args as never,
+      account: request.account,
+      value: request.value,
+    });
+  } catch (e) {
+    // Failed / absurd estimates must never open MetaMask (shows "Network suggested" multi-ETH).
+    throw new Error(formatRobinhoodWriteError(e, ABNORMAL_NETWORK_FEE_MESSAGE));
+  }
 
-  const gasPrice = await publicClient.getGasPrice();
-  const safeFees = buildSafeMintFees(gasPrice);
-  const estimatedNetworkFee = assertSaneMintNetworkFee(gas, safeFees.maxFeePerGas);
+  let gasPrice: bigint;
+  let safeFees: { maxFeePerGas: bigint; maxPriorityFeePerGas: bigint };
+  let estimatedNetworkFee: bigint;
+  try {
+    gasPrice = await publicClient.getGasPrice();
+    safeFees = buildSafeMintFees(gasPrice);
+    estimatedNetworkFee = assertSaneMintNetworkFee(gas, safeFees.maxFeePerGas);
+  } catch (e) {
+    throw new Error(
+      e instanceof Error ? e.message : ABNORMAL_NETWORK_FEE_MESSAGE,
+    );
+  }
 
   const prepared: RobinhoodWritePrepared = {
     ...request,

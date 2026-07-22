@@ -187,35 +187,63 @@ export function assertTestnetOnlyScript(
   }
 }
 
+/** Live confirm accepts legacy I_UNDERSTAND or YES (case-insensitive). */
+export function isMainnetLiveConfirmSet(): boolean {
+  const c = process.env.CONFIRM_MAINNET_DEPLOY?.trim() || "";
+  return c === "I_UNDERSTAND" || c.toUpperCase() === "YES";
+}
+
 /**
- * Mainnet write scripts must set both flags. DRY_RUN never requires confirm.
+ * Mainnet write scripts must set ALLOW + CONFIRM + LIVE_MAINNET_SEND.
+ * DRY_RUN never requires confirm and never sends txs.
  */
 export function assertMainnetDeployAllowed(
   ctx: DeployNetworkContext,
   scriptName: string,
 ): void {
   assertChainIdMatchesNetwork(ctx);
-  assertExplicitMainnetNetwork(ctx);
   if (!isMainnetNetwork(ctx)) {
     throw new Error(
       `REFUSED: ${scriptName} expected Mainnet (mainnet|robinhood / ${ROBINHOOD_MAINNET_CHAIN_ID}), ` +
         `got network=${ctx.networkName} chainId=${ctx.chainId}.`,
     );
   }
+  if (ctx.networkName !== "mainnet" && ctx.networkName !== "robinhood") {
+    throw new Error(
+      `REFUSED: Mainnet deploy requires explicit --network mainnet (preferred) or --network robinhood. ` +
+        `Got network=${ctx.networkName} chainId=${ctx.chainId}.`,
+    );
+  }
+  assertNotTestnetChainId(ctx);
+  if (ctx.chainId !== ROBINHOOD_MAINNET_CHAIN_ID) {
+    throw new Error(
+      `REFUSED: Mainnet deploy requires provider chainId ${ROBINHOOD_MAINNET_CHAIN_ID}, got ${ctx.chainId}.`,
+    );
+  }
   if (isDryRun()) {
     console.log(`[${scriptName}] DRY_RUN=1 — no transactions will be sent.`);
     return;
   }
+  // Live path: confirm gates first (fail-closed), then RPC host check
   if (process.env.ALLOW_MAINNET_DEPLOY?.trim() !== "1") {
     throw new Error(
       `REFUSED: ${scriptName} on Mainnet requires ALLOW_MAINNET_DEPLOY=1 (and prefer DRY_RUN=1 first).`,
     );
   }
-  if (process.env.CONFIRM_MAINNET_DEPLOY?.trim() !== "I_UNDERSTAND") {
+  if (!isMainnetLiveConfirmSet()) {
     throw new Error(
-      `REFUSED: ${scriptName} on Mainnet requires CONFIRM_MAINNET_DEPLOY=I_UNDERSTAND when not in DRY_RUN.`,
+      `REFUSED: ${scriptName} on Mainnet requires CONFIRM_MAINNET_DEPLOY=YES ` +
+        `(or legacy CONFIRM_MAINNET_DEPLOY=I_UNDERSTAND) when not in DRY_RUN.`,
     );
   }
+  const liveSend = process.env.LIVE_MAINNET_SEND?.trim();
+  if (liveSend !== "1" && liveSend?.toUpperCase() !== "YES") {
+    throw new Error(
+      `REFUSED: ${scriptName} on Mainnet requires LIVE_MAINNET_SEND=1 (final gate before any live tx). ` +
+        `Re-check chainId / deployer / VRF_OPERATOR / MAINNET_OWNER / treasury plan, then set the flag.`,
+    );
+  }
+  assertRobinhoodMainnetRpc();
 }
 
 export function logDeployBanner(
@@ -266,7 +294,11 @@ export function logLiveMainnetPreflight(
   console.log(
     `CONFIRM_MAINNET_DEPLOY:${process.env.CONFIRM_MAINNET_DEPLOY?.trim()}`,
   );
+  console.log(`LIVE_MAINNET_SEND:     ${process.env.LIVE_MAINNET_SEND?.trim()}`);
   console.log("--- constructor / target addresses ---");
+  console.log(
+    "Re-check every address above. Abort the process now if anything is wrong.",
+  );
   for (const [k, v] of Object.entries(targets)) {
     if (v === undefined) continue;
     console.log(`  ${k}: ${v}`);

@@ -3,26 +3,39 @@
 > **Policy:** Active runtime never silently falls back to superseded deployments.
 > Set env explicitly. See `lib/game/contractAddresses.ts`.
 >
-> **Mainnet game suite:** **NOT DEPLOYED** (as of this document). Only the
-> `$HANSOME` ERC-20 exists on Robinhood Mainnet (`4663`). Do not set
-> `NEXT_PUBLIC_GAME_CHAIN_ID=4663` until verified Mainnet game/genesis/distributor
-> addresses are written here and into Vercel Production.
->
 > Vercel cutover runbook: [`MAINNET_VERCEL_CUTOVER.md`](./MAINNET_VERCEL_CUTOVER.md).
 
-## Canonical Robinhood Mainnet (partial)
+## Canonical Robinhood Mainnet (live — B7 ceremony)
 
 | Role | Address | Status |
 |------|---------|--------|
-| $HANSOME token | `0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875` | Deployed (see `contracts/deployments/robinhood.json`) |
-| HansomeGame | — | **HARD BLOCKER — not deployed** |
-| Genesis NFT | — | **HARD BLOCKER — not deployed** |
-| RewardDistributor | — | **HARD BLOCKER — not deployed** |
-| GameRandomness | — | **HARD BLOCKER — not deployed** |
+| $HANSOME token | `0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875` | Live (`NEXT_PUBLIC_CONTRACT`) |
+| HansomeGame | `0xb8dad421881171f4485523d109C94dc650ecB7Eb` | Live |
+| Genesis NFT | `0x6eBb78FDB40CF6f6b8B33a235eF321AD15107cb0` | Live |
+| GameTreasury | `0x96EB6d545ce877115e83273293eC22bC8d2336CF` | Live (on-chain link; no frontend env) |
+| EmissionController | `0x69e6933afb5656967C51E2f295ba40359d3A7312` | Live (on-chain link; no frontend env) |
+| RewardDistributor | `0x0f9683287F91698B84Da4A3A90366a75EaF93520` | Live |
+| GameRandomness | `0x134f3CE4006a04C2C5DaD0E654d1C4228dd15791` | Live |
+| SinkRegistry | `0x41E6c8314A6664a1c8d9093a5DEc5F50F399e423` | Live (on-chain link; no frontend env) |
+| VRFRevealAdapter | `0xeb4Ed2A22974A348a48583658daea3C080e05900` | Live (Genesis randomnessProvider) |
 
 Chain: `4663` · RPC `https://rpc.mainnet.chain.robinhood.com` · Explorer `https://robinhoodchain.blockscout.com`
 
-## Canonical Robinhood Testnet suite
+Source: `contracts/deployments/robinhood-game.json` + `robinhood-genesis.json`
+
+### Frontend env names (Production)
+
+| Ops name | Env variable consumed by app |
+|----------|------------------------------|
+| CHAIN_ID (game) | `NEXT_PUBLIC_GAME_CHAIN_ID=4663` (+ `NEXT_PUBLIC_GAME_REQUIRE_MAINNET=1`) |
+| GENESIS_NFT | `NEXT_PUBLIC_HANSOME_GENESIS_ADDRESS` or `NEXT_PUBLIC_GENESIS_NFT_ADDRESS` |
+| HANSOME_GAME | `NEXT_PUBLIC_HANSOME_GAME_ADDRESS` |
+| HANSOME_TOKEN | `NEXT_PUBLIC_CONTRACT` (swap/token; defaults to canonical if unset) |
+| REWARD_DISTRIBUTOR | `NEXT_PUBLIC_REWARD_DISTRIBUTOR_ADDRESS` |
+| GAME_RANDOMNESS | `NEXT_PUBLIC_RANDOMNESS_ADDRESS` |
+| GAME_TREASURY / EMISSION / SINK | **Not read from env** — resolved on-chain via game suite |
+
+## Canonical Robinhood Testnet suite (Preview / local QA only)
 
 | Role | Address |
 |------|---------|
@@ -33,15 +46,17 @@ Chain: `4663` · RPC `https://rpc.mainnet.chain.robinhood.com` · Explorer `http
 
 Source: `contracts/deployments/robinhoodTestnet-game.json`
 
+**Do not** set these on Vercel Production after Mainnet cutover.
+
 ## Required env (no silent defaults)
 
 - `NEXT_PUBLIC_HANSOME_GAME_ADDRESS`
-- `NEXT_PUBLIC_REWARD_DISTRIBUTOR_ADDRESS` (optional if UI reads `game.distributor()`)
+- `NEXT_PUBLIC_REWARD_DISTRIBUTOR_ADDRESS` (required in Mainnet mode)
 - `NEXT_PUBLIC_HANSOME_GENESIS_ADDRESS` or `NEXT_PUBLIC_GENESIS_NFT_ADDRESS`
-- `NEXT_PUBLIC_RANDOMNESS_ADDRESS` (optional; UI can read `game.randomness()`)
-- `NEXT_PUBLIC_TESTNET_GASLESS_RESOLVE` (default on when unset)
+- `NEXT_PUBLIC_RANDOMNESS_ADDRESS` (required in Mainnet mode)
+- `NEXT_PUBLIC_TESTNET_GASLESS_RESOLVE=0` on Mainnet until gasless Mainnet is approved
 
-Server gasless:
+Server gasless (Testnet / Preview):
 
 - `GAME_TESTNET_RELAYER_PRIVATE_KEY`
 - `GAME_TESTNET_COMMIT_VAULT_KEY`

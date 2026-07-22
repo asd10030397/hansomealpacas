@@ -37,9 +37,10 @@ describe("settlement result SFX catalog", () => {
     }
   });
 
-  it("exposes a presentation banner for each result", () => {
+  it("exposes a presentation banner and dramatic label for each result", () => {
     for (const id of SETTLEMENT_RESULT_SFX_IDS) {
       expect(SETTLEMENT_RESULT_SFX_CATALOG[id].banner.length).toBeGreaterThan(0);
+      expect(SETTLEMENT_RESULT_SFX_CATALOG[id].dramaticLabel.length).toBeGreaterThan(0);
       // 2× Battle Result presentation: Season-1 baselines × 1.5 × 2
       expect(SETTLEMENT_RESULT_SFX_CATALOG[id].durationMs).toBeGreaterThanOrEqual(3000);
       expect(SETTLEMENT_RESULT_SFX_CATALOG[id].durationMs).toBeLessThanOrEqual(4200);

@@ -163,7 +163,7 @@ Outputs (canonical stem `robinhood`):
 2. **Deployer ETH too low** — suite deploy will fail mid-way.
 3. **Gasless = onlyOwner** — do not leave hot relayer as sole owner without multisig plan.
 4. **No separate Randomness/Distributor scripts** — operators must use `deploy-game.ts` order.
-5. **Silent fund amounts forbidden** — Mainnet needs `GAME_TREASURY_FUND_ETH` or `SKIP_TREASURY_FUND=1`.
+5. **Silent fund amounts forbidden** — Mainnet needs an explicit fund amount or `SKIP_TREASURY_FUND=1`. Docs: `GAME_TREASURY_FUND_HANSOME=30000000`. Scripts still require legacy `GAME_TREASURY_FUND_ETH=30000000` (value = whole **HANSOME**, not ETH). Initial 30M from ops wallet `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` (not in Solidity); prefer skip+manual transfer when deployer ≠ funder.
 6. **Testnet `.env` timing bleed** — ignored on Mainnet unless `GAME_ALLOW_NON_GDS_TIMING=1`.
 7. **Ownership left on deployer** — run ownership transfer ASAP after `verify-mainnet-game.ts`.
 8. **Frontend cutover before JSON** — forbidden.

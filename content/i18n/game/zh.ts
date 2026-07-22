@@ -129,14 +129,16 @@ export const gameZh: GameMessages = {
     doNowLabel: "現在該做什麼？",
     doNow: {
       COMMIT: "選擇 NFT 要去的地點，然後提交行動。",
-      REVEAL: "戰鬥結果 — 回合正在自動結算；可稍後回來觀看結果。",
+      REVEAL:
+        "戰鬥結果 — 結算在背景進行。結果會在隔日「選擇地點」階段顯示。",
       SETTLEMENT: "戰鬥結果 — 觀看結果與歷史（不必即時在線）。",
       CLAIM: "戰鬥結果已就緒 — 可隨時回顧。領獎請前往「領取」頁。",
     },
     phaseLabel: "目前階段",
     phaseExplain: {
       COMMIT: "選擇地點，並在倒數結束前鎖定今日行動。",
-      REVEAL: "戰鬥結果檢視窗 — 結算不會為了倒數而延遲。",
+      REVEAL:
+        "結算在背景繼續。戰鬥結果會在隔日「選擇地點」階段顯示 — 不必在此等待。",
       SETTLEMENT: "戰鬥結果 — 動畫與歷史。",
       CLAIM: "已結算 — 可隨時回顧。獎勵永久可領，無期限，請至「領取」頁提領。",
     },
@@ -163,6 +165,7 @@ export const gameZh: GameMessages = {
     demoPhaseEyebrow: "本機",
     unclaimedNotice: "你有尚未領取的獎勵。",
     goToClaim: "前往領取 →",
+    previousBattleResult: "上一輪戰鬥結果",
   },
   phaseStatus: {
     gameStatus: "遊戲狀態",
@@ -184,7 +187,8 @@ export const gameZh: GameMessages = {
     timelineAria: "每日階段時間軸：選擇地點、戰鬥結果",
     help: {
       COMMIT: "選擇 NFT 要去的地點並提交。回合會自動結算。",
-      REVEAL: "回合正在自動結算 — 不必即時在線；稍後可回來查看結果。",
+      REVEAL:
+        "不必等此倒數 — 戰鬥結果會在隔日「選擇地點」階段顯示。可先離開，到時再回來查看。",
       SETTLEMENT: "戰鬥結果檢視窗 — 動畫與歷史。",
       CLAIM: "已結算 — 可隨時回顧。請至「領取」頁提領 HANSOME，無期限。",
     },
@@ -337,7 +341,7 @@ export const gameZh: GameMessages = {
     commitSuccess: "已將 #{tokenId} 提交至 {location}。",
     committedBadge: "已提交",
     committedCount: "第 {day} 天已密封 {count} 隻",
-    huntPenaltyBadge: "基礎狩獵懲罰 {n}%",
+    huntPenaltyBadge: "被獵羊駝：獎勵 -{n}%",
   },
   myNfts: {
     heading: "我的 NFT",
@@ -397,6 +401,9 @@ export const gameZh: GameMessages = {
     locationEyebrow: "本回合已選",
     noLocation: "尚未選擇地點。請先到部署地圖選擇。",
     openMap: "開啟地圖",
+    viewPreviousResults: "上一輪戰鬥結果",
+    viewPreviousResultsHint:
+      "上一輪若沒來得及按錢包授權，仍可隨時查看戰鬥結果；結算與領獎不會因此消失。",
     selectNftTitle: "你的 NFT",
     submitted: "已提交",
     sealed: "已鎖定",
@@ -411,6 +418,8 @@ export const gameZh: GameMessages = {
     loadingInventory: "載入背包中…",
     emptyInventory: "此錢包沒有可遊玩的 Genesis NFT。",
     phaseCommitOnly: "目前階段為 {phase}。僅能在提交行動時段提交。",
+    autoNavPreviousResultNote:
+      "上一輪戰鬥結果仍可在「戰鬥結果」頁查看 — 隨時可開啟。",
   },
   reveal: {
     heading: "揭露行動",
@@ -433,14 +442,14 @@ export const gameZh: GameMessages = {
     waitingSeedBody:
       "今日的 day seed 尚未就緒。隨機數完成後即可結算 — 這不是錢包或合約故障。",
     settling: "結算中…",
-    runSettleLive: "執行 finalize + creditBatch",
+    runSettleLive: "執行結算",
     runSettleMock: "執行結算",
     settlePendingBody: "結算交易進行中，請稍候…",
     unavailableBody: "本日尚無法結算。",
     emptyBodyLive:
-      "請先選擇地點。戰鬥結果期間會自動揭露行動，然後顯示結果。",
+      "請先選擇地點。結算在背景進行；結果會在隔日「選擇地點」階段顯示於此。",
     emptyBodyMock:
-      "請先選擇地點。戰鬥結果期間會自動揭露行動，然後顯示結果。",
+      "請先選擇地點。結算在背景進行；結果會在隔日「選擇地點」階段顯示於此。",
     goClaim: "前往領取",
     goReveal: "觀看戰鬥",
     awaitingReveal: "已提交 — 正在從此裝置自動揭露…",
@@ -450,12 +459,13 @@ export const gameZh: GameMessages = {
   result: {
     heading: "戰鬥結果",
     blurb:
-      "選擇地點後，回合會自動結算。可隨時回來查看結果 — 不必即時在線觀看。",
+      "選擇地點後，回合會自動結算。戰鬥結果會在隔日「選擇地點」階段顯示 — 不必在此頁等待。",
     comeBackFeel:
-      "戰鬥結果是檢視窗：動畫與歷史。結算不會為了倒數而延遲。領獎請至「領取」頁，無期限。",
+      "倒數是檢視窗計時，不代表結果出現時間。請在隔日「選擇地點」階段回來查看。領獎請至「領取」頁，無期限。",
     afterRevealTitle: "正在結算戰鬥…",
-    afterRevealBody: (countdown) =>
-      `正在自動揭露與結算。檢視窗剩餘 ${countdown} — 你可以離開稍後再回來。`,
+    dontWaitTitle: "不必等倒數",
+    dontWaitBody:
+      "不必等此倒數 — 戰鬥結果會在隔日「選擇地點」階段顯示。可先離開，到時再回來查看。",
     autoSettleHint: "正在結算狩獵、技能、生死與獎勵…",
     resolveStages: {
       checking: "正在檢查結算狀態…",
@@ -469,6 +479,7 @@ export const gameZh: GameMessages = {
     backgroundSettleNote:
       "下一輪 Commit 已開始。前一日結算會在背景繼續 — 可隨時回到此頁查看結果。",
     previousDayBattleNote: (day) => `顯示第 ${day} 日戰鬥結果（上一輪）。`,
+    previousRoundMeta: "上一輪",
     presentationRecoveryNote:
       "戰鬥結果呈現時間較長。請留在此頁等待完成。準備好後可從選單進入「選擇地點」。",
     rewardsFinalizingNote: "獎勵正在結算中。",
@@ -486,17 +497,33 @@ export const gameZh: GameMessages = {
     rewardLabel: "獎勵",
     claimStatusLabel: "領獎",
     claimSectionTitle: "領取獎勵",
-    revealQueueEyebrow: "自動 · 本機備份",
-    revealQueueEyebrowGasless: "免 Gas · 安全 vault",
+    revealQueueEyebrow: "自動揭露",
+    revealQueueEyebrowGasless: "自動 · 免 Gas",
     revealClosedHint:
       "若結算前鏈上未確認揭露，視為錯過揭露（獎勵為 0）。",
     revealing: "自動揭露中…",
     revealed: "已揭露",
     revealAction: "揭露行動",
     autoRevealTitle: "正在揭露你的行動",
-    autoRevealBody: "有本機備份時會自動結算。",
+    autoRevealBody: "此裝置有備份時會自動揭露你的行動。",
     autoRevealBodyGasless: "正從安全 vault 揭露並完成鏈上結算 — 此步驟無需錢包 Gas。",
     autoRevealWaiting: "戰鬥結果已就緒…",
+    manualRevealHint:
+      "僅在需要時手動揭露 — 我們會先檢查 Gas 是否合理，避免 MetaMask 顯示異常「建議網路費用」。",
+    revealReminderTitle: "請在時限內鏈上揭露",
+    revealReminderBody: (countdown) =>
+      `請在視窗關閉前於錢包確認每一筆揭露（剩餘 ${countdown}）。錯過揭露該 NFT 本輪獎勵為 0。`,
+    revealStatsLine: (revealed, pending, countdown) =>
+      `已揭露 ${revealed} · 待揭露 ${pending} · ${countdown}`,
+    revealAllAction: "一鍵全部揭露",
+    revealAllRunning: "正在全部揭露…",
+    revealAllProgress: (current, total, tokenId) =>
+      `${current} / ${total} · 請在錢包確認 #${tokenId}…`,
+    revealAllStoppedUser:
+      "已停止 — 請在錢包確認以繼續，或再按「一鍵全部揭露」。",
+    revealActionPending: "揭露中…",
+    abnormalNetworkFeeBlocked:
+      "偵測到異常網路費用 — 已阻擋交易，不會開啟 MetaMask 天價提示。",
     noSecretsTitle: "此裝置沒有本機備份",
     noSecretsBody:
       "此瀏覽器沒有 commit 備份。免 Gas 揭露仍可由安全 vault 完成 — 請等鏈上確認，勿先假定錯過揭露。",

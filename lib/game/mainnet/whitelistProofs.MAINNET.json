@@ -1,5 +1,5 @@
 {
-  "warning": "PLACEHOLDER — replace by running contracts/scripts/generate-mainnet-whitelist-merkle.ts with deployments/mainnet-whitelist-addresses.txt (not the .example file). Do not use Testnet proofs.",
+  "warning": "PLACEHOLDER — edit data/mainnet/whitelist-addresses.txt then run: cd contracts && npm run genesis:merkle:mainnet (offline; no txs). Do not use Testnet proofs.",
   "network": "mainnet",
   "chainId": 4663,
   "merkleRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",

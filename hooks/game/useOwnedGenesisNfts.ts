@@ -61,6 +61,11 @@ import {
   REWARD_DISTRIBUTOR_ADDRESS,
   isRewardDistributorConfigured,
 } from "@/lib/game/rewardDistributor";
+import {
+  getTutorialDayNumber,
+  isTutorialCapture,
+  mergeTutorialOwnedNfts,
+} from "@/lib/game/tutorialCapture";
 import type { MockNft } from "@/types/game";
 
 export type OwnedGenesisNft = MockNft & {
@@ -520,6 +525,23 @@ export function useOwnedGenesisNfts() {
     metaEpoch,
   ]);
 
+  const displayNfts = useMemo(() => {
+    if (!isTutorialCapture()) return nfts;
+    const merged = mergeTutorialOwnedNfts(nfts);
+    return merged.map((m) => {
+      const existing = nfts.find((n) => n.tokenId === m.tokenId);
+      if (existing) return existing;
+      const deck = getTestnetGameplayIdentity(m.tokenId);
+      return {
+        ...m,
+        ability: deck?.ability ?? abilityLabelFor(m.side, m.gameplayClass),
+        claimableWei: 0n,
+        metadataUri: null,
+        trait: deck?.ability ?? abilityLabelFor(m.side, m.gameplayClass),
+      };
+    });
+  }, [nfts]);
+
   // Testnet gameplay: do not block Commit/Battle on metadata fetch — trait deck is enough.
   const waitForMeta =
     !isTestnetGameplayTraitsEnabled() && (metaIncomplete || metaFetching);
@@ -539,7 +561,7 @@ export function useOwnedGenesisNfts() {
     address: address ?? null,
     balance: Number(balance.data ?? 0n),
     totalMinted: minted,
-    nfts,
+    nfts: displayNfts,
     isLoading,
     isError: Boolean(ownerReads.isError || detailReads.isError),
     error:

@@ -7,10 +7,11 @@
  *   MAINNET_OWNER              — required multisig/timelock recipient
  *   DRY_RUN=1                  — default recommended; plan only
  *   ALLOW_MAINNET_DEPLOY=1
- *   CONFIRM_MAINNET_DEPLOY=I_UNDERSTAND
+ *   CONFIRM_MAINNET_DEPLOY=YES|I_UNDERSTAND
+ *   LIVE_MAINNET_SEND=1
  *
  * Usage:
- *   DRY_RUN=1 MAINNET_OWNER=0x… npx hardhat run scripts/transfer-mainnet-ownership.ts --network mainnet
+ *   DRY_RUN=1 npx hardhat run scripts/transfer-mainnet-ownership.ts --network mainnet
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -20,10 +21,12 @@ import {
   deploymentFileStem,
   explorerBase,
   isDryRun,
+  isMainnetLiveConfirmSet,
   logDeployBanner,
   logLiveMainnetPreflight,
 } from "./lib/deploy-network-guard";
 import { getDeployerSigner } from "./lib/signer";
+import { requireMainnetOwner } from "./lib/mainnet-game-guards";
 
 const OWNABLE_ABI = [
   "function owner() view returns (address)",
@@ -31,11 +34,13 @@ const OWNABLE_ABI = [
 ] as const;
 
 async function main() {
-  // Force dry-run unless live flags present — safer default for ownership.
-  if (
-    process.env.ALLOW_MAINNET_DEPLOY?.trim() !== "1" ||
-    process.env.CONFIRM_MAINNET_DEPLOY?.trim() !== "I_UNDERSTAND"
-  ) {
+  // Force dry-run unless full live gate present — safer default for ownership.
+  const liveSend = process.env.LIVE_MAINNET_SEND?.trim();
+  const liveGate =
+    process.env.ALLOW_MAINNET_DEPLOY?.trim() === "1" &&
+    isMainnetLiveConfirmSet() &&
+    (liveSend === "1" || liveSend?.toUpperCase() === "YES");
+  if (!liveGate) {
     process.env.DRY_RUN = process.env.DRY_RUN?.trim() || "1";
   }
 
@@ -44,12 +49,8 @@ async function main() {
   assertMainnetDeployAllowed(ctx, "transfer-mainnet-ownership.ts");
 
   const fileStem = deploymentFileStem(ctx);
-  const newOwnerRaw = process.env.MAINNET_OWNER?.trim();
-  if (!newOwnerRaw) {
-    throw new Error("REFUSED: set MAINNET_OWNER to the multisig/timelock address.");
-  }
-  const newOwner = ethers.getAddress(newOwnerRaw);
   const deployer = await getDeployerSigner(ethers.provider);
+  const newOwner = requireMainnetOwner(deployer.address);
 
   const genesisPath = join(__dirname, "..", "deployments", `${fileStem}-genesis.json`);
   const gamePath = join(__dirname, "..", "deployments", `${fileStem}-game.json`);

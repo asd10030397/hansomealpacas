@@ -15,15 +15,22 @@ export function GameFeedback({
   label,
   children,
   meta,
+  prominent,
 }: {
   tone: GameFeedbackTone;
   label?: string;
   children?: ReactNode;
   meta?: ReactNode;
+  /** Larger callout for player guidance (e.g. don't wait on timer). */
+  prominent?: boolean;
 }) {
   const role = tone === "error" ? "alert" : "status";
   return (
-    <div className={`hg-feedback hg-feedback--${tone}`} role={role} aria-live="polite">
+    <div
+      className={`hg-feedback hg-feedback--${tone}${prominent ? " hg-feedback--prominent" : ""}`}
+      role={role}
+      aria-live="polite"
+    >
       <p className="hg-feedback__label">{label ?? LABELS[tone]}</p>
       {children ? <div className="hg-feedback__body">{children}</div> : null}
       {meta ? <div className="hg-feedback__meta">{meta}</div> : null}

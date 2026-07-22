@@ -19,6 +19,8 @@
 - **使用者若沒有明確要求，不要寫 Solidity、不要改數值平衡、不要開新系統。**
 - 你的預設工作是：**完成日循環 → 特質能力 → UX 打磨 → SFX → 效能與修 bug**（遊戲 BGM 已定案，勿再動）。
 
+手機錢包連線現況見 [`docs/WALLET_MOBILE_CONNECT.md`](WALLET_MOBILE_CONNECT.md)（注入錢包 + MetaMask/OKX deep link；**尚未**接 WalletConnect QR）。
+
 若使用者說「開始實作／寫合約／做前端」，再進入實作模式，並以本文 §0.1 優先序與 §5 為準。
 
 ---

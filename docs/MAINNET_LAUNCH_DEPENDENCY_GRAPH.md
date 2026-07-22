@@ -17,7 +17,7 @@
 | ID | Name | What “done” means |
 |----|------|-------------------|
 | **B1** | ETH funding | Deployer (ceremony signer) holds enough **ETH on chainId 4663** for gas (tracker target ≥ **0.05 ETH**) |
-| **B2** | Treasury funding | Funder holds approved `$HANSOME` for **GameTreasury** (recommended **300,000,000**; not RewardDistributor) |
+| **B2** | Treasury funding | Funder `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` holds approved **30,000,000** `$HANSOME` for **GameTreasury** (not RewardDistributor) |
 | **B3** | `VRF_OPERATOR` | Real operator address (not placeholder); custody + Genesis reveal runbook |
 | **B4** | `RANDOMNESS_PROVIDER` | Day-seed fulfiller role confirmed; address + game randomness runbook |
 | **B5** | `MAINNET_OWNER` | Multisig / timelock chosen; signers + threshold documented; env set for ownership transfer plan |
@@ -179,7 +179,7 @@ B6 ∥ B3 ∥ B4 ∥ B5 ∥ B7plan ∥ (B1 ∥ B2)
 Longest chain that determines “time to GO” (assuming funding is the slowest physical constraint):
 
 ```text
-B2 (assemble ~300M HANSOME on funder)
+B2 (assemble 30M HANSOME on funder 0xcE15…069A)
   → Game LIVE fund step
   → verifies
   → B7 Production cutover

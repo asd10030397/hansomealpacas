@@ -33,10 +33,10 @@ describe("settlement presentation queue timing (2×)", () => {
 
   it("does not mark presentation complete before doubled cue window", () => {
     const durationMs = SETTLEMENT_RESULT_SFX_CATALOG["alpaca-safe"].durationMs;
-    expect(durationMs).toBe(3750);
+    expect(durationMs).toBe(4050);
 
     let complete = false;
-    const prevDuration = 1875; // pre-2× alpaca-safe
+    const prevDuration = 2025; // pre-2× alpaca-safe (1350 baseline × 1.5)
     setTimeout(() => {
       complete = true;
     }, durationMs);
@@ -60,10 +60,9 @@ describe("settlement presentation queue timing (2×)", () => {
       },
     ];
     const total = estimateQueueMs(cues);
-    // Old (1.5× only): 1875 + 225 + 2100 = 4200
-    const previousTotal = 1875 + 225 + 2100;
-    expect(total).toBe(3750 + PRESENTATION_INTER_CUE_GAP_MS + 4200);
-    expect(total).toBe(previousTotal * 2);
+    // alpaca-safe (4050) + gap (450) + king (4200)
+    expect(total).toBe(4050 + PRESENTATION_INTER_CUE_GAP_MS + 4200);
+    expect(total).toBe(8700);
   });
 
   it("gap between cues is doubled (225 → 450)", () => {

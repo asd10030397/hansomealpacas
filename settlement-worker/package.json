@@ -1,0 +1,32 @@
+{
+  "name": "hansome-settlement-worker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "24/7 battle settlement worker for HANSOME (fulfillDaySeed → finalizeDay → creditBatch). Isolated Testnet/Mainnet processes.",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "start:testnet": "node --env-file=.env.testnet dist/index.js",
+    "start:mainnet": "node --env-file=.env.mainnet dist/index.js",
+    "dev:testnet": "tsx --env-file=.env.testnet src/index.ts",
+    "dev:mainnet": "tsx --env-file=.env.mainnet src/index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "viem": "^2.31.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.1",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2",
+    "vitest": "^4.1.10"
+  }
+}

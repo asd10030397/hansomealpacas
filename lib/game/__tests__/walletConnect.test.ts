@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   classifyConnectFailure,
+  CONNECTION_CANCELLED_MESSAGE,
   hasInjectedEthereum,
   metamaskDappDeepLink,
   NO_WALLET_CONNECT_MESSAGE,
@@ -11,6 +12,13 @@ import {
   preflightWalletConnect,
   resolveSwapPrimaryKind,
 } from "@/lib/game/walletConnect";
+import {
+  resolveClaimWalletPrimary,
+  resolveWalletConnectUiSurface,
+  shouldOpenWalletHelp,
+  shouldResetSwapTxOnDisconnect,
+  swapBannerKindForConnectFailure,
+} from "@/lib/game/walletConnectUi";
 
 describe("walletConnect helpers", () => {
   it("a) detects injected provider available", () => {
@@ -54,9 +62,9 @@ describe("walletConnect helpers", () => {
   });
 
   it("d) classifies user rejection separately from provider errors", () => {
-    expect(classifyConnectFailure(new Error("User rejected the request")).reason).toBe(
-      "rejected",
-    );
+    const rejected = classifyConnectFailure(new Error("User rejected the request"));
+    expect(rejected.reason).toBe("rejected");
+    expect(rejected.message).toBe(CONNECTION_CANCELLED_MESSAGE);
     expect(classifyConnectFailure(new Error("Connection rejected by user")).reason).toBe(
       "rejected",
     );
@@ -65,6 +73,44 @@ describe("walletConnect helpers", () => {
     );
     expect(providerErr.reason).toBe("no-provider");
     expect(providerErr.message).toBe(NO_WALLET_CONNECT_MESSAGE);
+  });
+
+  it("rejected connection uses non-modal feedback (not help, not tx failure)", () => {
+    expect(shouldOpenWalletHelp("rejected")).toBe(false);
+    expect(resolveWalletConnectUiSurface("rejected", false)).toBe("feedback");
+    expect(resolveWalletConnectUiSurface("rejected", true)).toBe("help");
+    expect(swapBannerKindForConnectFailure()).toBe("connection");
+  });
+
+  it("no-provider opens help surface and does not classify as transaction failure", () => {
+    expect(shouldOpenWalletHelp("no-provider")).toBe(true);
+    expect(resolveWalletConnectUiSurface("no-provider", true)).toBe("help");
+    expect(swapBannerKindForConnectFailure()).not.toBe("transaction" as never);
+  });
+
+  it("Claim page wallet CTA: connect / switch / claim", () => {
+    expect(
+      resolveClaimWalletPrimary({ isConnected: false, isWrongChain: false }),
+    ).toBe("connect");
+    expect(
+      resolveClaimWalletPrimary({ isConnected: true, isWrongChain: true }),
+    ).toBe("switch");
+    expect(
+      resolveClaimWalletPrimary({ isConnected: true, isWrongChain: false }),
+    ).toBe("claim");
+  });
+
+  it("Swap disconnect clears account state only (no tx/routing reset)", () => {
+    expect(shouldResetSwapTxOnDisconnect()).toBe(false);
+  });
+
+  it("rejected connection surfaces feedback on Swap, Mint, and Game (shared helper)", () => {
+    // All three surfaces mount WalletConnectProvider → same UI surface rules.
+    for (const surface of ["swap", "mint", "game"] as const) {
+      expect(resolveWalletConnectUiSurface("rejected", false)).toBe("feedback");
+      expect(shouldOpenWalletHelp("rejected")).toBe(false);
+      expect(surface).toBeTruthy();
+    }
   });
 
   it("e) swap primary stays connect until wallet is connected", () => {

@@ -20,16 +20,16 @@ describe("probeSwapAmountOut", () => {
       functionName: "execute",
     } as never);
 
-    class ProbeError extends BaseError {
-      override walk(fn: (err: Error) => unknown) {
-        if (fn(reverted)) return reverted;
+    const probeError = Object.assign(new BaseError("probe"), {
+      walk(fn?: (err: unknown) => boolean) {
+        if (fn?.(reverted)) return reverted;
         return null;
-      }
-    }
+      },
+    });
 
     const publicClient = {
       simulateContract: vi.fn(async () => {
-        throw new ProbeError("probe");
+        throw probeError;
       }),
     };
 

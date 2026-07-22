@@ -22,6 +22,7 @@ import {
 import { playSfx } from "@/lib/game/audio";
 import {
   formatRobinhoodWriteError,
+  isNotCommittedWriteError,
   sendRobinhoodContractWrite,
 } from "@/lib/game/robinhoodContractWrite";
 
@@ -117,7 +118,10 @@ export function useHansomeReveal() {
         return { ok: true, mode: "chain", record };
       } catch (e) {
         const message = formatRobinhoodWriteError(e, "Reveal transaction failed.");
-        setLastError(message);
+        // Orphan local backup — caller may drop the secret; avoid sticky red ERROR.
+        if (!isNotCommittedWriteError(message)) {
+          setLastError(message);
+        }
         return { ok: false, error: message };
       }
     },

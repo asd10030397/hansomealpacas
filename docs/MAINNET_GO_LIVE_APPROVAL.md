@@ -70,7 +70,7 @@
 |------|----------------------------|-----------|
 | `GAME_DAY_ZERO` | **July 24, 2026 12:00 UTC** (`1784894400`) — immutable after Game deploy | [ ] |
 | Reward system | `EmissionController` parameters verified against GDS / `GameTypes` (\(G_0\), \(R_0\), bands, `G_SAFE`) | [ ] |
-| Treasury | Initial funding amount approved (see ops config; recommended **300,000,000** `$HANSOME` / 三億) | [ ] |
+| Treasury | Launch funding **30,000,000** `$HANSOME` from `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` → GameTreasury (one-time); initial \(R_d = 80{,}000\)/day; protocol \(G_0\) unchanged; progressive top-ups from same or other approved treasury wallets ([`INITIAL_TREASURY_STRATEGY.md`](./INITIAL_TREASURY_STRATEGY.md)) | [ ] |
 | Settlement | `finalizeDay` + `creditBatch` path approved for Day-0 ops | [ ] |
 | Timing | GDS Mainnet: commit **72000** / reveal **14400** / day **86400** (`GAME_FAST_TIMING=0`) | [ ] |
 
@@ -187,3 +187,6 @@ List only open human / ops items. Leave blank rows unused.
 | Date | Change |
 |------|--------|
 | 2026-07-20 | Initial go-live approval worksheet (mint 2026-07-23 12:00 UTC @ 0.015 ETH; `GAME_DAY_ZERO` 2026-07-24 12:00 UTC) |
+| 2026-07-21 | Treasury launch funding approved **30,000,000** HANSOME (initial Rd=80k/day); protocol G0 unchanged |
+| 2026-07-21 | Funding source wallet: `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` (ops only; one-time launch transfer) |
+| 2026-07-21 | Docs consistency: `GAME_TREASURY_FUND_HANSOME` preferred; scripts still `GAME_TREASURY_FUND_ETH` (HANSOME misnomer); see MAINNET_DOC_CONSISTENCY_AUDIT.md |

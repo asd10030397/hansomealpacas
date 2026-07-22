@@ -163,6 +163,8 @@ export type GameMessages = {
     demoPhaseEyebrow: string;
     unclaimedNotice: string;
     goToClaim: string;
+    /** COMMIT quick link — previous-day battle results while next Choose Location is open. */
+    previousBattleResult: string;
   };
   phaseStatus: {
     gameStatus: string;
@@ -278,7 +280,7 @@ export type GameMessages = {
     commitSuccess: string;
     committedBadge: string;
     committedCount: string;
-    /** Badge on location cards; `{n}` = base hunt penalty % (π₀). */
+    /** Badge on location cards; `{n}` = base hunted-alpaca reward cut % (π₀). */
     huntPenaltyBadge: string;
   };
   myNfts: {
@@ -331,6 +333,9 @@ export type GameMessages = {
     locationEyebrow: string;
     noLocation: string;
     openMap: string;
+    /** Always-available link to previous-day battle results during COMMIT. */
+    viewPreviousResults: string;
+    viewPreviousResultsHint: string;
     selectNftTitle: string;
     submitted: string;
     sealed: string;
@@ -345,6 +350,8 @@ export type GameMessages = {
     loadingInventory: string;
     emptyInventory: string;
     phaseCommitOnly: string;
+    /** Shown once after battle→COMMIT auto-nav. */
+    autoNavPreviousResultNote: string;
   };
   reveal: {
     heading: string;
@@ -386,7 +393,9 @@ export type GameMessages = {
     comeBackFeel: string;
     /** After Reveal Move succeeds — player stays on Result for the battle. */
     afterRevealTitle: string;
-    afterRevealBody: (countdown: string) => string;
+    /** Prominent callout on Result — same guidance as phaseStatus.help.REVEAL. */
+    dontWaitTitle: string;
+    dontWaitBody: string;
     autoSettleHint: string;
     /** Gasless resolve pipeline stages (Battle Result UX). */
     resolveStages: {
@@ -400,6 +409,8 @@ export type GameMessages = {
     };
     backgroundSettleNote: string;
     previousDayBattleNote: (day: number) => string;
+    /** Short meta when Battle Result shows previous day during COMMIT. */
+    previousRoundMeta: string;
     /** Failsafe: settle/presentation stuck — do not auto-leave Result. */
     presentationRecoveryNote: string;
     /** Non-blocking: battle ready, creditBatch still running. */
@@ -438,6 +449,16 @@ export type GameMessages = {
     autoRevealBody: string;
     autoRevealBodyGasless: string;
     autoRevealWaiting: string;
+    manualRevealHint: string;
+    revealReminderTitle: string;
+    revealReminderBody: (countdown: string) => string;
+    revealStatsLine: (revealed: number, pending: number, countdown: string) => string;
+    revealAllAction: string;
+    revealAllRunning: string;
+    revealAllProgress: (current: number, total: number, tokenId: number) => string;
+    revealAllStoppedUser: string;
+    revealActionPending: string;
+    abnormalNetworkFeeBlocked: string;
     noSecretsTitle: string;
     noSecretsBody: string;
     missedRevealTitle: string;

@@ -10,7 +10,7 @@
 | JSON stem | `deployments/robinhood-*.json` |
 | Status | **Ceremony document — do not deploy until all gates pass** |
 
-**Related:** [`MAINNET_DEPLOYMENT_CHECKLIST.md`](./MAINNET_DEPLOYMENT_CHECKLIST.md) · [`MAINNET_GENESIS_MINT_OPS.md`](./MAINNET_GENESIS_MINT_OPS.md) · [`MAINNET_VERCEL_CUTOVER.md`](./MAINNET_VERCEL_CUTOVER.md)
+**Related:** [`MAINNET_B7_LAUNCH_CEREMONY_CHECKLIST.md`](./MAINNET_B7_LAUNCH_CEREMONY_CHECKLIST.md) · [`MAINNET_DEPLOYMENT_CHECKLIST.md`](./MAINNET_DEPLOYMENT_CHECKLIST.md) · [`MAINNET_GENESIS_MINT_OPS.md`](./MAINNET_GENESIS_MINT_OPS.md) · [`MAINNET_VERCEL_CUTOVER.md`](./MAINNET_VERCEL_CUTOVER.md)
 
 **Hard rules**
 
@@ -61,7 +61,10 @@ GAME_TOKEN_ADDRESS=0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875
 GENESIS_NFT_ADDRESS=<from robinhood-genesis.json>
 GAME_DAY_ZERO=<unix — explicit, immutable>
 RANDOMNESS_PROVIDER=<day-seed fulfiller>
-GAME_TREASURY_FUND_ETH=300000000   # or SKIP_TREASURY_FUND=1 then fund manually before commits
+# Docs name: GAME_TREASURY_FUND_HANSOME=30000000 (whole HANSOME, not ETH)
+# Scripts still read legacy: GAME_TREASURY_FUND_ETH=30000000  (same value — misnomer)
+GAME_TREASURY_FUND_ETH=30000000    # until script rename; 30M HANSOME → Rd=80k/day
+# Prefer SKIP_TREASURY_FUND=1 if deployer ≠ funder, then transfer 30M from 0xcE15…069A → GameTreasury before commits
 GAME_FAST_TIMING=0
 ```
 
@@ -113,7 +116,7 @@ Sale schedule / Merkle / WL open — [`MAINNET_GENESIS_MINT_OPS.md`](./MAINNET_G
 | **`VRF_OPERATOR`** | Genesis reveal entropy operator | Operates `VRFRevealAdapter` (NFT collection reveal — **≠** game day seed) |
 | **`RANDOMNESS_PROVIDER`** | Game day-seed fulfiller | `GameRandomness.fulfillDaySeed` every day before settle |
 | **`MAINNET_OWNER`** | Multisig / timelock | Final Ownable for Genesis + Treasury + Game + Distributor + Randomness + Sinks + Emission |
-| **Treasury funder** | Usually deployer | Holds `$HANSOME` to transfer into GameTreasury |
+| **Treasury funder** | `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` | **Initial Treasury Funding Source** — one-time **30M** HANSOME → GameTreasury at launch (ops only; not in Solidity). Future top-ups: same or other approved treasury wallets |
 | **QA player** | Internal wallet | Holds `#002`–`#004` (Alpaca) for smoke; later 2 Cougars post-reveal |
 | **Mainnet relayer** (optional) | Dedicated hot wallet | Only if gasless deliberately enabled; **new** key; reveal batch is onlyOwner today |
 | **Vercel admin** | Ops | Production env cutover |
@@ -128,8 +131,11 @@ Sale schedule / Merkle / WL open — [`MAINNET_GENESIS_MINT_OPS.md`](./MAINNET_G
 
 | Purpose | Amount | Notes |
 |---------|--------|-------|
-| **GameTreasury (recommended)** | **300,000,000** | GDS \(G_0\); keeps \(R_d = R_0 = 400{,}000\) while \(G \ge 210M\) |
+| **GameTreasury (launch funding)** | **30,000,000** | From Treasury wallet `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` → GameTreasury (one-time); initial \(R_d = 80{,}000\)/day |
+| Funding source (ops) | `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` | Operational only — not hardcoded in Solidity |
+| Protocol band reference \(G_0\) | 300,000,000 | **Unchanged** in Solidity — scale for bands, not the launch transfer size |
 | Absolute minimum (commits allowed) | 15,000,000 | `G_SAFE`; below → safe mode / no Commit |
+| Optional later top-ups | 60M / 120M / 210M thresholds | Same funder or other approved treasury wallets; auto unlock 160k / 280k / 400k — see [`INITIAL_TREASURY_STRATEGY.md`](./INITIAL_TREASURY_STRATEGY.md) |
 | RewardDistributor | **0** | Pulls from Treasury; do not fund distributor |
 | Mint / WL payments | Separate ETH | Genesis sale (later) — not game reward liquidity |
 
@@ -159,7 +165,7 @@ Sign off **before** any `ALLOW_MAINNET_DEPLOY=1` live tx:
 | 5 | `GAME_DAY_ZERO` unix = intended Day 0 start (immutable) | Product/Ops |
 | 6 | `RANDOMNESS_PROVIDER` key custody + runbook | Ops |
 | 7 | `GAME_TOKEN_ADDRESS` = canonical Mainnet `$HANSOME` | Ops |
-| 8 | Treasury fund **300M** available on deployer (or explicit lower band accepted) | Treasury |
+| 8 | Treasury fund **30M** available on `0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A` for GameTreasury transfer | Treasury |
 | 9 | `MAINNET_OWNER` multisig ready (signers + threshold) | Founder |
 | 10 | Gasless Mainnet: **enabled with new keys** OR **explicitly deferred** | Product |
 | 11 | Vercel Production cutover plan + rollback window agreed | Ops |
@@ -197,7 +203,7 @@ Contracts on Mainnet are **not** undeployable. Rollback = **contain + frontend r
 |------|---------|
 | Tooling / guards / verify scripts | **Ready** (ceremony scripts exist; Mainnet-only aborts in place) |
 | Contracts (Genesis + Game suite) | **Not deployed** on Mainnet yet |
-| Treasury funding | **Plan ready** — fund **300M** `$HANSOME` at Game deploy (or explicit skip + fund before commits) |
+| Treasury funding | **Plan ready** — **30M** `$HANSOME` from `0xcE15…069A` → GameTreasury at launch (one-time; or skip + fund before commits) |
 | Reward / claim path | **Sound** — Treasury holds tokens; Distributor credits; claim pulls; UI uses `pendingRewardOf` + `claimable` |
 | Ownership / randomness | **Ops TBD** — `MAINNET_OWNER`, `RANDOMNESS_PROVIDER`, `VRF_OPERATOR` must be filled |
 | Vercel | **Blocked** until JSON + verifies green |

@@ -53,6 +53,11 @@ import { isTestnetGaslessResolveEnabled } from "@/lib/game/testnetGaslessResolve
 import type { TestnetResolveStage } from "@/lib/game/testnetResolveStages";
 import { getTestnetGameplayIdentity } from "@/lib/game/testnetGameplayTraits";
 
+function isAbnormalNetworkFeeMessage(message: string | null | undefined): boolean {
+  if (!message) return false;
+  return /Abnormal network fee|Gas estimation is abnormal|異常.*費用/i.test(message);
+}
+
 function resolveOutcomeLabel(
   outcome: string,
   t: ReturnType<typeof useGameI18n>["t"],
@@ -215,8 +220,38 @@ export default function ResultPhasePage() {
     scrolledRef.current = false;
   }, [day.day]);
 
+  const revealEyebrow = autoReveal.gasless
+    ? t.result.revealQueueEyebrowGasless
+    : autoReveal.walletAutoRevealEnabled
+      ? t.result.revealQueueEyebrow
+      : undefined;
+
+  const showDontWaitNotice =
+    phase === "REVEAL" && !isSettlementBattleReady(settleView.status);
+
+  const formatTxError = (message: string | null | undefined) =>
+    isAbnormalNetworkFeeMessage(message)
+      ? t.result.abnormalNetworkFeeBlocked
+      : message;
+
+  const showMainnetRevealActions =
+    !autoReveal.gasless &&
+    phase === "REVEAL" &&
+    !autoReveal.noSecrets &&
+    autoReveal.pendingSecrets.length > 0;
+
+  const isUserRejectedReveal = (message: string | null | undefined) =>
+    !!message &&
+    /user rejected|denied|cancelled in wallet|ACTION_REJECTED|4001/i.test(
+      message,
+    );
+
   return (
-    <div className="relative mx-auto max-w-3xl px-3 py-6 sm:px-4">
+    <div
+      className="relative mx-auto max-w-3xl px-3 py-6 sm:px-4"
+      data-testid="result-capture-queue"
+      data-status={queueStatus}
+    >
       {isMock ? <p className="mock-chip mb-3">{t.common.demoBanner}</p> : null}
       <h1 className="pixel-title pixel-title-display text-lg text-[#f0c44a] sm:text-xl">
         {t.result.heading}
@@ -229,6 +264,14 @@ export default function ResultPhasePage() {
       <div className="mt-4">
         <GameStatusPanel day={day} now={now} phaseEndsAt={phaseEndsAt} phase={phase} />
       </div>
+
+      {showDontWaitNotice ? (
+        <div className="mt-4" data-testid="result-dont-wait-notice">
+          <GameFeedback tone="info" label={t.result.dontWaitTitle} prominent>
+            {t.result.dontWaitBody}
+          </GameFeedback>
+        </div>
+      ) : null}
 
       <p className="mt-3 text-xs text-[var(--hg-muted)]" data-substep={sub}>
         {sub === "preparing"
@@ -246,11 +289,7 @@ export default function ResultPhasePage() {
       <PixelPanel
         className="mt-4"
         title={t.result.revealSectionTitle}
-        eyebrow={
-          autoReveal.gasless
-            ? t.result.revealQueueEyebrowGasless
-            : t.result.revealQueueEyebrow
-        }
+        eyebrow={revealEyebrow}
       >
         {autoReveal.gasless && autoReveal.serviceUnavailable ? (
           <GameFeedback tone="info" label={t.result.settleSectionTitle}>
@@ -285,20 +324,96 @@ export default function ResultPhasePage() {
           </GameFeedback>
         ) : null}
 
-        {!autoReveal.gasless && phase === "REVEAL" && !autoReveal.noSecrets ? (
+        {showMainnetRevealActions ? (
+          <>
+            <GameFeedback tone="info" label={t.result.revealReminderTitle}>
+              {t.result.revealReminderBody(settleCountdown)}
+              <p className="mt-2 text-xs tabular-nums text-[var(--hg-muted)]">
+                {t.result.revealStatsLine(
+                  autoReveal.revealedCount,
+                  autoReveal.pendingCount,
+                  settleCountdown,
+                )}
+              </p>
+            </GameFeedback>
+
+            <div className="mt-3">
+              <PixelButton
+                variant="gold"
+                size="sm"
+                className="w-auto"
+                disabled={autoReveal.isRevealBusy}
+                aria-busy={autoReveal.revealAllRunning || undefined}
+                onClick={() => void autoReveal.revealAll()}
+              >
+                {autoReveal.revealAllRunning
+                  ? t.result.revealAllRunning
+                  : t.result.revealAllAction}
+              </PixelButton>
+            </div>
+
+            {autoReveal.revealAllProgress ? (
+              <p className="mt-2 text-xs tabular-nums text-[var(--hg-muted)]">
+                {t.result.revealAllProgress(
+                  autoReveal.revealAllProgress.current,
+                  autoReveal.revealAllProgress.total,
+                  autoReveal.revealAllProgress.tokenId,
+                )}
+              </p>
+            ) : null}
+
+            <p className="mt-2 text-xs text-[var(--hg-muted)]">
+              {t.result.manualRevealHint}
+            </p>
+
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {autoReveal.pendingSecrets.map((secret) => (
+                <li key={secret.tokenId}>
+                  <PixelButton
+                    variant="gold"
+                    size="sm"
+                    className="w-auto"
+                    disabled={autoReveal.isRevealBusy}
+                    aria-busy={
+                      autoReveal.manualRevealTokenId === secret.tokenId ||
+                      undefined
+                    }
+                    onClick={() =>
+                      void autoReveal.runManualReveal(secret.tokenId, secret.day)
+                    }
+                  >
+                    {autoReveal.manualRevealTokenId === secret.tokenId
+                      ? t.result.revealActionPending
+                      : `${t.result.revealAction} #${secret.tokenId}`}
+                  </PixelButton>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : null}
+
+        {!autoReveal.gasless &&
+        phase === "REVEAL" &&
+        !autoReveal.noSecrets &&
+        autoReveal.walletAutoRevealEnabled ? (
           <GameFeedback
             tone={autoReveal.revealing ? "pending" : "success"}
             label={t.result.autoRevealTitle}
           >
             {autoReveal.revealing
               ? t.result.autoRevealBody
-              : t.result.autoRevealWaiting}
-            <p className="mt-2 text-xs tabular-nums text-[var(--hg-muted)]">
-              {autoReveal.revealedCount} revealed
-              {autoReveal.pendingCount > 0
-                ? ` · ${autoReveal.pendingCount} pending · ${settleCountdown}`
-                : ` · ${settleCountdown}`}
-            </p>
+              : autoReveal.pendingSecrets.length > 0
+                ? t.result.autoRevealBody
+                : t.result.autoRevealWaiting}
+            {!showMainnetRevealActions ? (
+              <p className="mt-2 text-xs tabular-nums text-[var(--hg-muted)]">
+                {t.result.revealStatsLine(
+                  autoReveal.revealedCount,
+                  autoReveal.pendingCount,
+                  settleCountdown,
+                )}
+              </p>
+            ) : null}
           </GameFeedback>
         ) : null}
 
@@ -323,7 +438,12 @@ export default function ResultPhasePage() {
 
         {autoReveal.lastError && !autoReveal.serviceUnavailable ? (
           <GameFeedback tone="error" label={t.common.txError}>
-            {autoReveal.lastError}
+            {formatTxError(autoReveal.lastError)}
+            {isUserRejectedReveal(autoReveal.lastError) ? (
+              <p className="mt-2 text-xs text-[var(--hg-muted)]">
+                {t.result.revealAllStoppedUser}
+              </p>
+            ) : null}
           </GameFeedback>
         ) : null}
         {!autoReveal.gasless &&
@@ -366,15 +486,12 @@ export default function ResultPhasePage() {
             {stageLabel ? (
               <>
                 <p>{stageLabel}</p>
-                {phase === "REVEAL" ? (
-                  <p className="mt-1">{t.result.afterRevealBody(settleCountdown)}</p>
-                ) : null}
                 {phase === "COMMIT" ? (
                   <p className="mt-1">{t.result.backgroundSettleNote}</p>
                 ) : null}
               </>
             ) : phase === "REVEAL" ? (
-              t.result.afterRevealBody(settleCountdown)
+              t.result.autoSettleHint
             ) : settleView.status === "waiting_seed" ? (
               t.settlement.waitingSeedBody
             ) : (
@@ -395,7 +512,10 @@ export default function ResultPhasePage() {
             : settleStatusLabel}
         </p>
         <p className="mt-2 text-xs text-[var(--hg-muted)]">
-          Day {settleView.day} · {settleView.phase}
+          Day {settleView.day}
+          {showingPreviousDay
+            ? ` · ${t.result.previousRoundMeta}`
+            : ` · ${settleView.phase}`}
           {phase === "REVEAL" ? ` · ${settleCountdown}` : null}
         </p>
 
@@ -413,7 +533,7 @@ export default function ResultPhasePage() {
 
         {settleView.error && !autoReveal.serviceUnavailable ? (
           <GameFeedback tone="error" label={t.common.txError}>
-            {settleView.error}
+            {formatTxError(settleView.error)}
           </GameFeedback>
         ) : null}
 
