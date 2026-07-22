@@ -54,7 +54,21 @@ export function DesktopGameNav() {
 
         <nav className="game-nav__links" aria-label={t.nav.aria}>
           {links.map((item) => {
-            const active = isNavActive(pathname, item.href, gameHref.home);
+            const active = !item.external && isNavActive(pathname, item.href, gameHref.home);
+            if (item.external) {
+              return (
+                <a
+                  key={item.id}
+                  href={item.href}
+                  className="game-nav__link game-nav__link--external"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={t.nav.marketAria}
+                >
+                  {item.label}
+                </a>
+              );
+            }
             if (item.requiresWallet) {
               return (
                 <button

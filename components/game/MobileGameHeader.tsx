@@ -100,7 +100,23 @@ export function MobileGameHeader() {
         <nav id="game-mobile-nav" className="game-nav__drawer" aria-label={t.nav.mobileAria}>
           <div className="game-nav__drawer-scroll">
             {links.map((item) => {
-              const active = isNavActive(pathname, item.href, gameHref.home);
+              const active = !item.external && isNavActive(pathname, item.href, gameHref.home);
+              if (item.external) {
+                return (
+                  <a
+                    key={item.id}
+                    href={item.href}
+                    data-nav-id={item.id}
+                    className="game-nav__mobile-link game-nav__mobile-link--external"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={t.nav.marketAria}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {item.label}
+                  </a>
+                );
+              }
               if (item.requiresWallet) {
                 return (
                   <button

@@ -34,6 +34,8 @@ function dockLabel(
       return t.dock.claim;
     case "leaderboard":
       return t.nav.leaderboard;
+    case "market":
+      return t.nav.market;
     case "docs":
       return t.nav.docs;
     default:
@@ -78,7 +80,8 @@ export function MobileGameDock() {
 
   const moreActive = GAME_DOCK_MORE.some((id) => {
     const item = navItemById(id);
-    return isNavActive(pathname, gameHref[item.hrefKey], gameHref.home);
+    if (item.externalHref) return false;
+    return isNavActive(pathname, gameHref[item.hrefKey!], gameHref.home);
   });
 
   const itemClass = (href: string, forceActive = false) => {
@@ -109,8 +112,27 @@ export function MobileGameDock() {
               <div className="mobile-dock__sheet-links">
                 {GAME_DOCK_MORE.map((id) => {
                   const item = navItemById(id);
-                  const href = gameHref[item.hrefKey];
-                  const active = isNavActive(pathname, href, gameHref.home);
+                  const href = item.externalHref ?? gameHref[item.hrefKey!];
+                  const active =
+                    !item.externalHref &&
+                    isNavActive(pathname, href, gameHref.home);
+                  const label = dockLabel(id, t);
+                  if (item.externalHref) {
+                    return (
+                      <a
+                        key={id}
+                        href={href}
+                        data-nav-id={id}
+                        className="mobile-dock__sheet-link mobile-dock__sheet-link--external"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={t.nav.marketAria}
+                        onClick={closeMore}
+                      >
+                        {label}
+                      </a>
+                    );
+                  }
                   return (
                     <Link
                       key={id}
@@ -119,7 +141,7 @@ export function MobileGameDock() {
                       className={`mobile-dock__sheet-link ${active ? "is-active" : ""}`}
                       onClick={closeMore}
                     >
-                      {dockLabel(id, t)}
+                      {label}
                     </Link>
                   );
                 })}
@@ -145,7 +167,7 @@ export function MobileGameDock() {
       >
         {GAME_DOCK_PRIMARY.map((id) => {
           const item = navItemById(id);
-          const href = gameHref[item.hrefKey];
+          const href = gameHref[item.hrefKey!];
           const label = dockLabel(id, t);
 
           return (

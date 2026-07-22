@@ -1,4 +1,5 @@
 import type { GameHrefMap } from "@/lib/game/paths";
+import { OFFICIAL_MARKET_URL } from "@/lib/links";
 
 /** Public game navigation — single source for desktop, drawer, and bottom dock. */
 export type GameNavId =
@@ -8,13 +9,24 @@ export type GameNavId =
   | "myNfts"
   | "claim"
   | "leaderboard"
+  | "market"
   | "docs";
 
 export type GameNavItemDef = {
   id: GameNavId;
-  hrefKey: keyof GameHrefMap;
+  hrefKey?: keyof GameHrefMap;
+  /** Absolute URL — opens in a new tab from game chrome. */
+  externalHref?: string;
   /** i18n key under `t.nav` */
-  labelKey: "home" | "play" | "mint" | "myNfts" | "claim" | "leaderboard" | "docs";
+  labelKey:
+    | "home"
+    | "play"
+    | "mint"
+    | "myNfts"
+    | "claim"
+    | "leaderboard"
+    | "market"
+    | "docs";
   requiresWallet?: boolean;
 };
 
@@ -27,6 +39,7 @@ export const GAME_NAV_ITEMS: readonly GameNavItemDef[] = [
   { id: "myNfts", hrefKey: "myNfts", labelKey: "myNfts" },
   { id: "claim", hrefKey: "claim", labelKey: "claim" },
   { id: "leaderboard", hrefKey: "leaderboard", labelKey: "leaderboard" },
+  { id: "market", externalHref: OFFICIAL_MARKET_URL, labelKey: "market" },
   { id: "docs", hrefKey: "docs", labelKey: "docs" },
 ] as const;
 
@@ -42,6 +55,7 @@ export const GAME_DOCK_PRIMARY: readonly GameNavId[] = [
 export const GAME_DOCK_MORE: readonly GameNavId[] = [
   "claim",
   "leaderboard",
+  "market",
   "docs",
 ] as const;
 

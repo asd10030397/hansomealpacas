@@ -5,6 +5,8 @@ import { PROJECT } from "@/content/project";
 export const OFFICIAL_X_URL = "https://x.com/HansomeAlpacas";
 export const OFFICIAL_X_HANDLE = "@HansomeAlpacas";
 export const OFFICIAL_TELEGRAM_URL = "https://t.me/HandsomeAlpacasCommunity";
+/** Marketing site — live chart + swap entry (opens from game nav). */
+export const OFFICIAL_MARKET_URL = "https://www.hansomealpacas.xyz/#chart";
 
 export function isValidHttpUrl(value: string): boolean {
   const trimmed = value.trim();

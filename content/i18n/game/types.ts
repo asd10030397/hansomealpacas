@@ -87,6 +87,8 @@ export type GameMessages = {
     /** @deprecated Prefer `claim` — kept for legacy copy references. */
     rewards: string;
     leaderboard: string;
+    market: string;
+    marketAria: string;
     docs: string;
     aria: string;
     mobileAria: string;

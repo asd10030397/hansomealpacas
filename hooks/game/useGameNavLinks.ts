@@ -13,7 +13,8 @@ export function useGameNavLinks() {
     () =>
       GAME_NAV_ITEMS.map((item) => ({
         ...item,
-        href: gameHref[item.hrefKey],
+        href: item.externalHref ?? gameHref[item.hrefKey!],
+        external: Boolean(item.externalHref),
         label: t.nav[item.labelKey],
         feature:
           item.id === "myNfts"

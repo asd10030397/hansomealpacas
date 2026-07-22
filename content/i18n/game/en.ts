@@ -79,6 +79,8 @@ export const gameEn: GameMessages = {
     claim: "CLAIM",
     rewards: "CLAIM",
     leaderboard: "LEADERBOARD",
+    market: "MARKET",
+    marketAria: "View HANSOME token price and buy or sell on hansomealpacas.xyz",
     docs: "DOCS",
     aria: "Game",
     mobileAria: "Mobile game",

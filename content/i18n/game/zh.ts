@@ -79,6 +79,8 @@ export const gameZh: GameMessages = {
     claim: "領取",
     rewards: "領取",
     leaderboard: "排行榜",
+    market: "幣價／買賣",
+    marketAria: "在 hansomealpacas.xyz 查看 HANSOME 幣價與買賣",
     docs: "文件",
     aria: "遊戲導覽",
     mobileAria: "手機遊戲導覽",
