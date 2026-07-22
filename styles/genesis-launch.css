@@ -178,25 +178,6 @@
   color: var(--gl-cream);
 }
 
-.genesis-launch__status {
-  display: grid;
-  gap: 0.4rem;
-}
-
-.genesis-launch__status-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  font-size: 0.75rem;
-  padding: 0.35rem 0;
-  border-bottom: 1px solid var(--gl-line);
-}
-
-.genesis-launch__status-row span:first-child {
-  color: var(--gl-muted);
-}
-
 .genesis-launch__mint-anchor {
   scroll-margin-top: 5rem;
 }

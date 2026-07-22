@@ -126,23 +126,6 @@ export function GenesisLaunchPage() {
           </PixelPanel>
         </div>
 
-        <PixelPanel title={L.statusTitle} eyebrow={L.statusEyebrow}>
-          <div className="genesis-launch__status">
-            {L.statusRows.map(([label, state]) => (
-              <div key={label} className="genesis-launch__status-row">
-                <span>{label}</span>
-                <strong
-                  className={
-                    state === "live" ? "text-[#3d9a4a]" : "text-[var(--hg-muted)]"
-                  }
-                >
-                  {state === "live" ? L.statusLive : L.statusSoon}
-                </strong>
-              </div>
-            ))}
-          </div>
-        </PixelPanel>
-
         <div id="mint-action" className="genesis-launch__mint-anchor">
           <MintPanel />
         </div>

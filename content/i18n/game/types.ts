@@ -210,11 +210,6 @@ export type GameMessages = {
     poolCougar: string;
     poolHunt: string;
     poolsNote: string;
-    statusTitle: string;
-    statusEyebrow: string;
-    statusLive: string;
-    statusSoon: string;
-    statusRows: [string, "live" | "soon"][];
     backHome: string;
   };
   mint: {
