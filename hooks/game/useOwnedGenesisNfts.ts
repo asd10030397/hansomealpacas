@@ -94,10 +94,13 @@ async function fetchTokenMeta(
 }> {
   const candidates: string[] = [];
   if (chainUri) candidates.push(ipfsToHttps(chainUri));
-  // Production metadata CID — used when on-chain URI is still the pre-reveal placeholder.
-  // On Testnet immediate NFT Reveal, always prefer the reveal metadata package.
-  if (immediateNftReveal || /placeholder/i.test(chainUri) || !chainUri) {
-    candidates.unshift(metadataUrlForToken(tokenId));
+  const revealMetaUrl = metadataUrlForToken(tokenId);
+  // Testnet immediate NFT Reveal may load the reveal metadata package directly.
+  // Mainnet pre-reveal: never fetch reveal-metadata by tokenId (blind-box safety).
+  if (revealMetaUrl && immediateNftReveal) {
+    candidates.unshift(revealMetaUrl);
+  } else if (revealMetaUrl && !chainUri) {
+    candidates.unshift(revealMetaUrl);
   }
   for (const url of candidates) {
     try {

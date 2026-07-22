@@ -31,6 +31,11 @@
 .qa-wallets.local.json
 **/.qa-wallets.local.json
 
+# Mainnet reveal ops vault (seed, private pin notes)
+/secrets/
+secrets/
+.env.mainnet.blindbox.local
+
 # debug
 npm-debug.log*
 yarn-debug.log*
@@ -80,7 +85,13 @@ public/pixel/genesis/collection-550/image/
 # Generated post-shuffle bake + pin staging (regenerate via nft:publish-reveal)
 public/pixel/genesis/collection-550/reveal-metadata/
 public/pixel/genesis/collection-550/placeholder-pin/
+# Live mainnet reveal seed manifest (contains secret seed — ops vault only)
+reports/genesis/reveal-shuffle-manifest.json
+reports/genesis/reveal-shuffle-manifest.md
 
 # Oversized local showcase recordings (>100MB GitHub limit)
 reports/season1-showcase/page@82df41adefe2efe288c0978e151940e7.webm
 
+
+.vercel
+.env*

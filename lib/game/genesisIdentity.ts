@@ -131,10 +131,13 @@ export const REVEAL_DURATION_SEC =
   readPublicTimingSec("NEXT_PUBLIC_GAME_REVEAL_DURATION_SEC") ??
   Math.max(1, DAY_LENGTH_SEC - COMMIT_DURATION_SEC);
 
-/** Production reveal metadata CID (Pinata). Override via env. */
+/** Reveal metadata root CID — set via env only after collection reveal (never hardcode pre-reveal). */
 export const GENESIS_METADATA_CID =
-  process.env.NEXT_PUBLIC_GENESIS_METADATA_CID?.trim() ||
-  "bafybeihs7d6nzeq2s6woads3bsbpwa5g4fgspz7fmtxr4wd6xh2idd224e";
+  process.env.NEXT_PUBLIC_GENESIS_METADATA_CID?.trim() || "";
+
+export function isGenesisMetadataCidConfigured(): boolean {
+  return GENESIS_METADATA_CID.length > 0;
+}
 
 export const IPFS_GATEWAY =
   process.env.NEXT_PUBLIC_IPFS_GATEWAY?.trim() ||
@@ -147,6 +150,7 @@ export function ipfsToHttps(uri: string): string {
   return uri;
 }
 
-export function metadataUrlForToken(tokenId: number): string {
+export function metadataUrlForToken(tokenId: number): string | null {
+  if (!isGenesisMetadataCidConfigured()) return null;
   return `${IPFS_GATEWAY.replace(/\/$/, "")}/${GENESIS_METADATA_CID}/${tokenId}.json`;
 }

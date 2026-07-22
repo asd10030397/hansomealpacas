@@ -135,8 +135,9 @@ export async function enrichNftDisplayImage(
     base.image === NFT_IMAGE_FALLBACK_COUGAR;
   // Keep real metadata / owned art; only fetch when we still have a weak fallback.
   if (!looksLikeFallback) return base;
+  const url = metadataUrlForToken(base.tokenId);
+  if (!url) return base;
   try {
-    const url = metadataUrlForToken(base.tokenId);
     const res = await fetch(url, { signal: AbortSignal.timeout(12_000) });
     if (!res.ok) return base;
     const json = (await res.json()) as MetaJson;
