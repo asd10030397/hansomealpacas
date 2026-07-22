@@ -431,6 +431,13 @@ export type Messages = {
     txSells: string;
     liveRefresh: string;
   };
+  chart: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    iframeTitle: string;
+    viewOnDextools: string;
+  };
   footer: {
     tagline: string;
     memeLovers: string;

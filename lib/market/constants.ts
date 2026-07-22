@@ -16,6 +16,13 @@ export const TOKEN_ADDRESS =
  */
 export const GECKO_TERMINAL_POOL_ID = "0x1165db4c55ea3c2c4881453937164906923c7c37a575286c1db81f19ead81a0d";
 
+/** Same pool as GECKO_TERMINAL_POOL_ID — HANSOME/ETH on Robinhood Chain. */
+export const DEXTOOLS_PAIR_ID = GECKO_TERMINAL_POOL_ID;
+
+export const DEXTOOLS_PAIR_EXPLORER_URL = `https://www.dextools.io/app/en/robinhood/pair-explorer/${DEXTOOLS_PAIR_ID}`;
+
+export const DEXTOOLS_CHART_WIDGET_URL = `https://www.dextools.io/widget-chart/en/robinhood/pe-light/${DEXTOOLS_PAIR_ID}?theme=dark&chartType=1&chartResolution=1&drawingToolbars=false&showTradeHistory=true&chartInUsd=true&headerColor=1F2937&tvPlatformColor=1F2937&tvPaneColor=1F2937&tradeHistoryColor=1F2937`;
+
 export const GECKO_TERMINAL_POOL_API = `https://api.geckoterminal.com/api/v2/networks/robinhood/pools/${GECKO_TERMINAL_POOL_ID}?include=quote_token,base_token`;
 
 export const GECKO_TERMINAL_TOKEN_POOLS_API = `https://api.geckoterminal.com/api/v2/networks/robinhood/tokens/${TOKEN_ADDRESS}/pools`;

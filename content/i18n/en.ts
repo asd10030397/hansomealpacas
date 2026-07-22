@@ -204,6 +204,13 @@ export const en: Messages = {
     txSells: "sells",
     liveRefresh: "Auto-refreshes every 30s · Source: GeckoTerminal",
   },
+  chart: {
+    eyebrow: "LIVE CHART",
+    title: "Live $HANSOME Chart",
+    subtitle: "Real-time HANSOME/ETH price action on Robinhood Chain via DEXTools.",
+    iframeTitle: "HANSOME live price chart on DEXTools",
+    viewOnDextools: "View on DEXTools",
+  },
   footer: {
     tagline: "Too handsome to be useful.",
     memeLovers: "Made for meme lovers.",

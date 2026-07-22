@@ -1,5 +1,6 @@
 import { AboutSection } from "@/sections/AboutSection";
 import { BuySection } from "@/sections/BuySection";
+import { DexToolsChartSection } from "@/sections/DexToolsChartSection";
 import { MarketStatsSection } from "@/sections/MarketStatsSection";
 import { ContractSection } from "@/sections/ContractSection";
 import { FaqSection } from "@/sections/FaqSection";
@@ -17,6 +18,7 @@ export default function Home() {
       <BuySection />
       <ContractSection />
       <MarketStatsSection />
+      <DexToolsChartSection />
       <AboutSection />
       <FaqSection />
       <FooterSection />

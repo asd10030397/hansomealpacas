@@ -199,6 +199,13 @@ export const zh: Messages = {
     txSells: "賣",
     liveRefresh: "每 30 秒自動更新 · 來源：GeckoTerminal",
   },
+  chart: {
+    eyebrow: "LIVE CHART",
+    title: "Live $HANSOME Chart",
+    subtitle: "DEXTools 即時 HANSOME/ETH 走勢（Robinhood Chain）。",
+    iframeTitle: "DEXTools HANSOME 即時價格圖表",
+    viewOnDextools: "在 DEXTools 查看",
+  },
   footer: {
     tagline: "天生贏家臉，一輩子沒屁用。",
     memeLovers: "為迷因愛好者而生。",
