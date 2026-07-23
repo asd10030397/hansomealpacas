@@ -252,6 +252,10 @@ export type GameMessages = {
     txSubmitted: string;
     mintError: string;
     saleUpcoming: string;
+    opensSoon: string;
+    notOnWhitelist: string;
+    opensIn: string;
+    opensAt: (when: string) => string;
     soldOut: string;
     walletCapReached: string;
   };

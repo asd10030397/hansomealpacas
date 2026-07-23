@@ -17,12 +17,13 @@ import {
   getGenesisExplorerTxUrl,
 } from "@/lib/game/genesis";
 import { resolveWhitelistProofs } from "@/lib/game/whitelistProofs";
+import { MintOpeningCountdown } from "@/components/mint/MintOpeningCountdown";
 
 /** Testnet → TESTNET-ONLY JSON; Mainnet → MAINNET JSON when generated (else null). */
 const whitelistProofs = resolveWhitelistProofs(GENESIS_CHAIN_ID);
 
 export function MintPanel() {
-  const { t } = useGameI18n();
+  const { t, locale } = useGameI18n();
   const {
     wallet,
     connectWallet,
@@ -78,6 +79,39 @@ export function MintPanel() {
     mint.canWhitelistMint;
 
   const busy = mint.isPending || mint.isConfirming || walletPending;
+  const isUpcoming = sale.phase === "Upcoming";
+  const isWhitelist = sale.phase === "Whitelist";
+  const isPublic = sale.phase === "Public";
+  const isSoldOut = sale.phase === "SoldOut";
+
+  const wlButtonDisabled = !canMintWl || busy;
+  const wlButtonLabel = busy
+    ? t.mint.minting
+    : isUpcoming
+      ? t.mint.opensSoon
+      : isWhitelist &&
+          wallet.connected &&
+          !wallet.wrongNetwork &&
+          sale.whitelistEligible === false
+        ? t.mint.notOnWhitelist
+        : t.mint.mintWhitelist;
+
+  const handleWhitelistMint = () => {
+    if (!canMintWl || busy) return;
+    mint.resetTx();
+    void mint.mintWhitelist().catch(() => {
+      /* prepareError surfaced below */
+    });
+  };
+
+  const handlePublicMint = () => {
+    if (!canMintPublic || busy) return;
+    mint.resetTx();
+    void mint.mintPublic(qty).catch(() => {
+      /* prepareError surfaced below */
+    });
+  };
+
   const errMsg =
     mint.prepareError ??
     mint.writeError?.message ??
@@ -194,25 +228,36 @@ export function MintPanel() {
           </PixelButton>
         ) : null}
 
-        {sale.phase === "Whitelist" ? (
+        {isUpcoming ? (
+          <>
+            <div className="mb-3">
+              <PixelButton variant="gold" size="lg" disabled aria-disabled>
+                {t.mint.opensSoon}
+              </PixelButton>
+            </div>
+            <MintOpeningCountdown
+              label={t.mint.opensIn}
+              opensAt={t.mint.opensAt}
+              locale={locale}
+            />
+            <p className="mb-3 text-xs text-[var(--hg-muted)]">{t.mint.saleUpcoming}</p>
+          </>
+        ) : null}
+
+        {isWhitelist ? (
           <div className="mb-3">
             <PixelButton
               variant="gold"
               size="lg"
-              disabled={!canMintWl || busy}
-              onClick={() => {
-                mint.resetTx();
-                void mint.mintWhitelist().catch(() => {
-                  /* prepareError surfaced below */
-                });
-              }}
+              disabled={wlButtonDisabled}
+              onClick={canMintWl && !busy ? handleWhitelistMint : undefined}
             >
-              {busy ? t.mint.minting : t.mint.mintWhitelist}
+              {wlButtonLabel}
             </PixelButton>
           </div>
         ) : null}
 
-        {sale.phase === "Public" ? (
+        {isPublic ? (
           <>
             <label className="mb-2 block text-xs text-[var(--hg-muted)]" htmlFor="mint-qty">
               {t.mint.quantity}
@@ -254,22 +299,14 @@ export function MintPanel() {
               variant="gold"
               size="lg"
               disabled={!canMintPublic || busy}
-              onClick={() => {
-                mint.resetTx();
-                void mint.mintPublic(qty).catch(() => {
-                  /* prepareError surfaced below */
-                });
-              }}
+              onClick={canMintPublic && !busy ? handlePublicMint : undefined}
             >
               {busy ? t.mint.minting : t.mint.mintPublic}
             </PixelButton>
           </>
         ) : null}
 
-        {sale.phase === "Upcoming" ? (
-          <p className="text-xs text-[var(--hg-muted)]">{t.mint.saleUpcoming}</p>
-        ) : null}
-        {sale.phase === "SoldOut" ? (
+        {isSoldOut ? (
           <p className="text-xs text-[#e07070]">{t.mint.soldOut}</p>
         ) : null}
 
