@@ -26,6 +26,10 @@ export const zh: Messages = {
     chain: "Robinhood Chain",
     chainStatus: "（未上线）",
     readLitepaper: "📖 阅读白皮书",
+    playGame: "🎮 开始游戏",
+    downloadAndroidApp: "下载 Android App",
+    downloadAndroidSubtext: "Android APK · 直接下载",
+    downloadAndroidInstallNote: "Android 可能会要求允许「安装未知来源应用程序」。",
     buy: "BUY",
     chart: "CHART",
     x: "X",
@@ -164,6 +168,35 @@ export const zh: Messages = {
     copyCa: "COPY CA",
     share: "SHARE",
     copyFailed: "Copy failed. Try again.",
+  },
+  download: {
+    meta: {
+      title: "下载 Android App | HANSOME ALPACAS",
+      description:
+        "HANSOME 游戏 Android 版直接 APK 下载。含构建日期、文件大小与 SHA-256 校验值。",
+    },
+    backHome: "← 首页",
+    eyebrow: "ANDROID APP",
+    title: "下载 Android App",
+    subtitle: "通过 APK 直接安装 HANSOME 游戏 — 非 Google Play 渠道。",
+    buildDate: "构建日期",
+    fileSize: "文件大小",
+    sha256: "SHA-256",
+    downloadApk: "下载 APK",
+    downloadSubtext: "Android APK · 直接下载",
+    directApkNote:
+      "稳定链接：game.hansomealpacas.xyz/downloads/hansome-android.apk — 版本化构建文件保留供校验。",
+    installHeading: "安装步骤",
+    installSteps: [
+      "使用上方按钮下载 APK。",
+      "从浏览器或文件管理器打开已下载的文件。",
+      "若出现提示，请允许此浏览器或文件管理器安装应用。",
+      "点击安装，然后从主屏幕打开 HANSOME。",
+    ],
+    installNote:
+      "Android 可能会要求允许「安装未知来源应用程序」。此为调试版 APK，仅供直接侧载安装 — 未上架 Google Play。",
+    versionedLabel: "版本化构建",
+    stableLabel: "稳定下载",
   },
   liveStatus: {
     title: "实时状态",

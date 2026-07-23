@@ -9,6 +9,7 @@ import { SocialBar } from "@/components/SocialBar";
 import { PROJECT } from "@/content/project";
 import { useLocale } from "@/context/LocaleContext";
 import { useMascotEasterEgg } from "@/hooks/useMascotEasterEgg";
+import { GAME_HOME_URL } from "@/lib/androidDownload";
 import { getLiveStatusState } from "@/lib/launch";
 import { EASE } from "@/lib/motion";
 
@@ -95,12 +96,22 @@ export function HeroSection() {
 
           <nav
             aria-label={t.a11y.primaryLinks}
-            className="mt-10 flex flex-wrap items-center justify-center sm:mt-12"
+            className="mt-10 flex flex-wrap items-center justify-center gap-4 sm:mt-12"
           >
+            <ActionButton href={GAME_HOME_URL} size="lg" variant="gold">
+              {t.hero.playGame}
+            </ActionButton>
+            <ActionButton href="/download" size="lg" sublabel={t.hero.downloadAndroidSubtext}>
+              {t.hero.downloadAndroidApp}
+            </ActionButton>
             <ActionButton href="/litepaper" size="lg">
               {t.hero.readLitepaper}
             </ActionButton>
           </nav>
+
+          <p className="mt-4 max-w-md text-xs leading-relaxed text-wood-dark/80 sm:text-sm">
+            {t.hero.downloadAndroidInstallNote}
+          </p>
 
           <SocialBar className="mt-10 sm:mt-11" />
         </m.div>

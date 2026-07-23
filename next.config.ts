@@ -51,6 +51,13 @@ const nextConfig: NextConfig = {
         { key: "Content-Type", value: "text/markdown; charset=utf-8" },
       ],
     },
+    {
+      source: "/downloads/:path*.apk",
+      headers: [
+        { key: "Cache-Control", value: "public, max-age=300, must-revalidate" },
+        { key: "Content-Type", value: "application/vnd.android.package-archive" },
+      ],
+    },
   ],
 };
 

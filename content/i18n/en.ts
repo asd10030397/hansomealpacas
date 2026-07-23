@@ -26,6 +26,11 @@ export const en: Messages = {
     chain: "Robinhood Chain",
     chainStatus: "(Pre-Launch)",
     readLitepaper: "📖 Read Litepaper",
+    playGame: "🎮 Play Game",
+    downloadAndroidApp: "Download Android App",
+    downloadAndroidSubtext: "Android APK · Direct Download",
+    downloadAndroidInstallNote:
+      "Android may ask to allow installation from this source.",
     buy: "BUY",
     chart: "CHART",
     x: "X",
@@ -169,6 +174,36 @@ export const en: Messages = {
     copyCa: "COPY CA",
     share: "SHARE",
     copyFailed: "Copy failed. Try again.",
+  },
+  download: {
+    meta: {
+      title: "Download Android App | HANSOME ALPACAS",
+      description:
+        "Direct APK download for the HANSOME game on Android. Build date, file size, and SHA-256 checksum included.",
+    },
+    backHome: "← HOME",
+    eyebrow: "ANDROID APP",
+    title: "Download Android App",
+    subtitle:
+      "Install the HANSOME game on Android with a direct APK download — not from Google Play.",
+    buildDate: "Build date",
+    fileSize: "File size",
+    sha256: "SHA-256",
+    downloadApk: "Download APK",
+    downloadSubtext: "Android APK · Direct Download",
+    directApkNote:
+      "Stable URL: game.hansomealpacas.xyz/downloads/hansome-android.apk — versioned builds are kept for verification.",
+    installHeading: "Install steps",
+    installSteps: [
+      "Download the APK using the button above.",
+      "Open the downloaded file from your browser or Files app.",
+      "If prompted, allow installation from this browser or file manager.",
+      "Tap Install, then open HANSOME from your home screen.",
+    ],
+    installNote:
+      "Android may ask to allow installation from this source. This is a debug build for direct sideloading only — not distributed via Google Play.",
+    versionedLabel: "Versioned build",
+    stableLabel: "Stable download",
   },
   liveStatus: {
     title: "LIVE STATUS",

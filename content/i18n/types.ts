@@ -310,11 +310,36 @@ export type Messages = {
     chain: string;
     chainStatus: string;
     readLitepaper: string;
+    playGame: string;
+    downloadAndroidApp: string;
+    downloadAndroidSubtext: string;
+    downloadAndroidInstallNote: string;
     buy: string;
     chart: string;
     x: string;
     telegram: string;
     website: string;
+  };
+  download: {
+    meta: {
+      title: string;
+      description: string;
+    };
+    backHome: string;
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    buildDate: string;
+    fileSize: string;
+    sha256: string;
+    downloadApk: string;
+    downloadSubtext: string;
+    directApkNote: string;
+    installHeading: string;
+    installSteps: readonly string[];
+    installNote: string;
+    versionedLabel: string;
+    stableLabel: string;
   };
   tokenomics: {
     eyebrow: string;
