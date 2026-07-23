@@ -243,13 +243,13 @@ export const gameEn: GameMessages = {
       "The mint UI always reads the live price from the deployed contract.",
     cycleTitle: "DAILY CYCLE",
     cycleSteps: [
-      ["CHOOSE", "Pick location"],
-      ["BATTLE", "Watch the result"],
+      ["CHOOSE", "Pick location (Commit)"],
+      ["REVEAL", "Reveal location"],
+      ["RESULT", "Battle & settle"],
       ["CLAIM", "Rewards to NFT"],
-      ["REPEAT", "Next round"],
     ],
     cycleNote:
-      "Choose Location → Battle Result → Claim. Rewards book to the NFT.",
+      "Commit → Reveal → settle → Claim. Repeat each day. Rewards book to the NFT.",
     locationsTitle: "LOCATIONS",
     locationRows: [
       ["Home", "Weight 1 · Alpaca only"],
@@ -616,9 +616,10 @@ export const gameEn: GameMessages = {
       "Two sides, one Genesis collection (550). Side is assigned at NFT Reveal — token ID does not imply Alpaca or Cougar. Player Guide is the overview; formal rules live in GDS v1.1.",
     dailyLoopTitle: "DAILY LOOP",
     dailyLoopSteps: [
-      "CHOOSE LOCATION — pick where your NFT goes",
-      "BATTLE RESULT — round resolves, then view / claim anytime in the window",
-      "NEXT ROUND — new Choose Location window",
+      "CHOOSE LOCATION — commit where your NFT goes",
+      "REVEAL — reveal your committed location on-chain",
+      "BATTLE RESULT — settlement after Reveal; view outcomes anytime",
+      "CLAIM — rewards book to the NFT; repeat next day",
     ],
     poolsTitle: "DAILY POOLS",
     poolAlpaca: "80% Alpaca Pool — Alpacas only",
