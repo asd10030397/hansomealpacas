@@ -2,7 +2,7 @@ import { en } from "@/content/i18n/en";
 import type { Locale, Messages } from "@/content/i18n/types";
 import { zh } from "@/content/i18n/zh";
 
-export const DEFAULT_LOCALE: Locale = "en";
+export const DEFAULT_LOCALE: Locale = "zh";
 export const LOCALE_STORAGE_KEY = "hansomealpacas:locale";
 
 export const messages: Record<Locale, Messages> = {

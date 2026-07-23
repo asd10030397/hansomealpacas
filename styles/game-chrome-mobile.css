@@ -34,6 +34,24 @@
   max-width: min(100%, 14rem);
 }
 
+.hansome-game .game-nav__mobile-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+}
+
+.hansome-game .game-nav__mobile-tools .game-lang {
+  margin-left: 0;
+}
+
+.hansome-game .game-nav__mobile-tools .game-lang__btn {
+  min-width: 2.85rem;
+  min-height: 2.35rem;
+  padding: 0.4rem 0.55rem;
+  font-size: 0.62rem;
+}
+
 .hansome-game .game-nav__menu-btn {
   flex: 0 0 auto;
   min-width: 4.5rem;

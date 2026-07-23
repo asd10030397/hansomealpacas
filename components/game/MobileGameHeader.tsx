@@ -95,7 +95,10 @@ export function MobileGameHeader() {
               compact
             />
           </span>
-          <AudioSettings />
+          <div className="game-nav__mobile-tools">
+            <GameLanguageToggle />
+            <AudioSettings />
+          </div>
         </div>
       </div>
 

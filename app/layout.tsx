@@ -92,7 +92,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${anton.variable} ${notoSansSC.variable}`}>
+    <html lang="zh-Hans" suppressHydrationWarning className={`${anton.variable} ${notoSansSC.variable}`}>
       <body className="min-h-screen bg-background antialiased">
         <LocaleProvider>
           <LanguageToggle />
