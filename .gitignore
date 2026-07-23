@@ -93,6 +93,16 @@ reports/genesis/reveal-shuffle-manifest.md
 # Oversized local showcase recordings (>100MB GitHub limit)
 reports/season1-showcase/page@82df41adefe2efe288c0978e151940e7.webm
 
+# Capacitor Android wrapper (internal QA)
+/mobile/hansome-game/node_modules/
+/mobile/hansome-game/android/local.properties
+/mobile/hansome-game/android/.gradle/
+/mobile/hansome-game/android/app/build/
+/mobile/hansome-game/android/build/
+/mobile/hansome-game/android/captures/
+/artifacts/*.apk
+/artifacts/*.aab
+
 
 .vercel
 .env*

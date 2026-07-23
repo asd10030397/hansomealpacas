@@ -1,5 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
-import { createConfig, http, injected } from "wagmi";
+import { createConfig, http, injected, type CreateConnectorFn } from "wagmi";
+import { walletConnect } from "wagmi/connectors/walletConnect";
 import {
   DEFAULT_RPC_URL,
   ROBINHOOD_CHAIN_ID,
@@ -22,15 +23,46 @@ const testnetHttp =
     ? http()
     : http(gameRpc || undefined);
 
+const walletConnectProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID?.trim() ?? "";
+
+const dappMetadata = {
+  name: "HANSOME",
+  description: "Alpaca vs Cougar — Robinhood Chain game",
+  url: "https://game.hansomealpacas.xyz",
+  icons: ["https://game.hansomealpacas.xyz/icons/icon-512.png"],
+};
+
 /**
- * Injected only in createConfig — importing `wagmi/connectors` barrel pulls optional
- * deps that break the Next production build. Mobile browsers without window.ethereum
- * use WalletHelpModal deep links (MetaMask / OKX) instead of calling injected connect.
- * WalletConnect QR can be added later via a dedicated import once projectId + deps are set.
+ * Injected for desktop extension browsers; WalletConnect for Capacitor APK WebView
+ * and mobile browsers without window.ethereum.
+ *
+ * Uses wagmi/connectors/walletConnect (not wagmi/connectors barrel) to avoid
+ * optional peer dependency breakage in Next production builds.
  */
+function buildConnectors(): CreateConnectorFn[] {
+  const list: CreateConnectorFn[] = [injected()];
+
+  if (walletConnectProjectId) {
+    list.push(
+      walletConnect({
+        projectId: walletConnectProjectId,
+        metadata: dappMetadata,
+        // Reown AppKit: mobile deep-links into wallet; desktop shows QR when no extension.
+        showQrModal: true,
+        isNewChainsStale: false,
+        qrModalOptions: {
+          enableMobileFullScreen: true,
+        },
+      }),
+    );
+  }
+
+  return list;
+}
+
 export const wagmiConfig = createConfig({
   chains: [robinhoodChain, robinhoodTestnetChain],
-  connectors: [injected()],
+  connectors: buildConnectors(),
   transports: {
     [robinhoodChain.id]: mainnetHttp,
     [robinhoodTestnetChain.id]: testnetHttp,
@@ -48,3 +80,5 @@ export function createQueryClient() {
     },
   });
 }
+
+export const isWalletConnectConfigured = Boolean(walletConnectProjectId);

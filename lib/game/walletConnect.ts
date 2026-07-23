@@ -1,5 +1,10 @@
+import { isCapacitorNative, shouldPreferWalletConnect } from "@/lib/game/capacitorEnv";
+
 export const NO_WALLET_CONNECT_MESSAGE =
   "No compatible wallet detected. Open this page in MetaMask or OKX Wallet, or install a browser wallet.";
+
+export const CAPACITOR_WALLET_CONNECT_MESSAGE =
+  "Connect opens MetaMask or OKX via WalletConnect. Approve in your wallet app, then return to HANSOME.";
 
 /** User dismissed / cancelled the wallet connect prompt. */
 export const CONNECTION_CANCELLED_MESSAGE = "Connection cancelled in wallet.";
@@ -28,15 +33,33 @@ export function pickWalletConnectConnector<T extends { id: string }>(
   );
 }
 
-/** Prefer injected when a provider exists; otherwise WalletConnect if configured. */
+/**
+ * Prefer injected on desktop browser when window.ethereum exists.
+ * Capacitor APK WebView and mobile browsers without injection use WalletConnect.
+ */
 export function pickConnectConnector<T extends { id: string }>(
   connectors: readonly T[],
   hasProvider: boolean,
 ): T | null {
+  if (shouldPreferWalletConnect(hasProvider)) {
+    return pickWalletConnectConnector(connectors) ?? pickInjectedConnector(connectors);
+  }
   if (hasProvider) {
     return pickInjectedConnector(connectors) ?? connectors[0] ?? null;
   }
   return pickWalletConnectConnector(connectors) ?? pickInjectedConnector(connectors);
+}
+
+export function hasWalletConnectConnector(connectors: readonly { id: string }[]): boolean {
+  return pickWalletConnectConnector(connectors) != null;
+}
+
+export function resolveNoProviderMessage(connectors: readonly { id: string }[]): string {
+  if (isCapacitorNative() && !hasWalletConnectConnector(connectors)) {
+    return `${NO_WALLET_CONNECT_MESSAGE} (WalletConnect project id missing on server.)`;
+  }
+  if (isCapacitorNative()) return CAPACITOR_WALLET_CONNECT_MESSAGE;
+  return NO_WALLET_CONNECT_MESSAGE;
 }
 
 export function metamaskDappDeepLink(host: string, pathWithSearch: string): string {
@@ -81,11 +104,27 @@ export function preflightWalletConnect(args: {
   | { ok: false; error: string; reason: "no-connector" | "no-provider" } {
   const connector = pickConnectConnector(args.connectors, args.hasProvider);
   if (!connector) {
-    return { ok: false, error: NO_WALLET_CONNECT_MESSAGE, reason: "no-connector" };
+    return {
+      ok: false,
+      error: resolveNoProviderMessage(args.connectors),
+      reason: "no-connector",
+    };
   }
   // Injected-only stack with no in-page provider → help UX, do not call connect().
   if (!args.hasProvider && connector.id === "injected") {
-    return { ok: false, error: NO_WALLET_CONNECT_MESSAGE, reason: "no-provider" };
+    return {
+      ok: false,
+      error: resolveNoProviderMessage(args.connectors),
+      reason: "no-provider",
+    };
+  }
+  // Capacitor must not call injected() — WebView has no EIP-1193 provider.
+  if (isCapacitorNative() && connector.id === "injected") {
+    return {
+      ok: false,
+      error: resolveNoProviderMessage(args.connectors),
+      reason: "no-provider",
+    };
   }
   return { ok: true, connectorId: connector.id };
 }

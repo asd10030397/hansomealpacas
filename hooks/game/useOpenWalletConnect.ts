@@ -6,9 +6,9 @@ import { GENESIS_CHAIN_ID } from "@/lib/game/genesis";
 import {
   classifyConnectFailure,
   hasInjectedEthereum,
-  NO_WALLET_CONNECT_MESSAGE,
   pickConnectConnector,
   preflightWalletConnect,
+  resolveNoProviderMessage,
   type WalletConnectFailReason,
 } from "@/lib/game/walletConnect";
 
@@ -70,10 +70,11 @@ export function useOpenWalletConnect(targetChainId: number = GENESIS_CHAIN_ID) {
 
     const connector = pickConnectConnector(connectors, hasProvider);
     if (!connector) {
-      setError(NO_WALLET_CONNECT_MESSAGE);
+      const error = resolveNoProviderMessage(connectors);
+      setError(error);
       setFailReason("no-connector");
       setHelpOpen(true);
-      return { ok: false, error: NO_WALLET_CONNECT_MESSAGE, reason: "no-connector" };
+      return { ok: false, error, reason: "no-connector" };
     }
 
     try {

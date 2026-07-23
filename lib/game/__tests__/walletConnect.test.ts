@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   classifyConnectFailure,
   CONNECTION_CANCELLED_MESSAGE,
@@ -19,6 +19,12 @@ import {
   shouldResetSwapTxOnDisconnect,
   swapBannerKindForConnectFailure,
 } from "@/lib/game/walletConnectUi";
+
+vi.mock("@/lib/game/capacitorEnv", () => ({
+  isCapacitorNative: () => false,
+  shouldPreferWalletConnect: (hasProvider: boolean) => !hasProvider,
+  isMobileUserAgent: () => false,
+}));
 
 describe("walletConnect helpers", () => {
   it("a) detects injected provider available", () => {

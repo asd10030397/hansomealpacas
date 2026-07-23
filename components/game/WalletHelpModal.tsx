@@ -4,12 +4,16 @@ import { useEffect, useId, useMemo, useRef } from "react";
 import { PixelButton } from "@/components/ui/pixel";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { metamaskDappDeepLink, okxDappDeepLink } from "@/lib/game/walletConnect";
+import { isCapacitorNative } from "@/lib/game/capacitorEnv";
 import { forceUnlockBodyScroll, lockBodyScroll, unlockBodyScroll } from "@/lib/ui/bodyScrollLock";
 
 export type WalletHelpModalProps = {
   open: boolean;
   onClose: () => void;
   message?: string | null;
+  /** Capacitor + WalletConnect: deep links do not establish a session — retry WC instead. */
+  hideDeepLinks?: boolean;
+  onRetry?: () => void;
 };
 
 function currentPageUrl(): string | null {
@@ -34,12 +38,25 @@ function okxDappLink(): string | null {
  * In-page help when no injected wallet is available (mobile Safari / Telegram).
  * Does not use window.open — safe for in-app browsers.
  */
-export function WalletHelpModal({ open, onClose, message }: WalletHelpModalProps) {
+export function WalletHelpModal({
+  open,
+  onClose,
+  message,
+  hideDeepLinks = false,
+  onRetry,
+}: WalletHelpModalProps) {
   const { t } = useGameI18n();
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
-  const mmLink = useMemo(() => (open ? metamaskDappLink() : null), [open]);
-  const okxLink = useMemo(() => (open ? okxDappLink() : null), [open]);
+  const showDeepLinks = !hideDeepLinks && !isCapacitorNative();
+  const mmLink = useMemo(
+    () => (open && showDeepLinks ? metamaskDappLink() : null),
+    [open, showDeepLinks],
+  );
+  const okxLink = useMemo(
+    () => (open && showDeepLinks ? okxDappLink() : null),
+    [open, showDeepLinks],
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -95,6 +112,11 @@ export function WalletHelpModal({ open, onClose, message }: WalletHelpModalProps
         </div>
 
         <div className="mt-5 flex flex-col gap-2">
+          {onRetry && (hideDeepLinks || isCapacitorNative()) ? (
+            <PixelButton variant="gold" className="w-full" onClick={onRetry}>
+              {t.common.connectWallet}
+            </PixelButton>
+          ) : null}
           {mmLink ? (
             <PixelButton variant="gold" className="w-full" href={mmLink}>
               {t.common.openInMetaMask}

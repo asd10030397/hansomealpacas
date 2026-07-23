@@ -1,0 +1,22 @@
+{
+  "name": "hansome-game-android",
+  "version": "0.1.0",
+  "private": true,
+  "description": "HANSOME internal QA Android wrapper (Capacitor WebView → production URL)",
+  "scripts": {
+    "cap:sync": "npx cap sync android",
+    "android:open": "npx cap open android",
+    "android:assembleDebug": "cd android && .\\gradlew.bat assembleDebug",
+    "android:copyApk": "node scripts/copy-debug-apk.mjs"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.2",
+    "@capacitor/app": "^7.0.2",
+    "@capacitor/core": "^7.4.2",
+    "@capacitor/splash-screen": "^7.0.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.2",
+    "typescript": "^5.9.2"
+  }
+}

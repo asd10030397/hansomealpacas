@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { WalletConnectFeedback } from "@/components/game/WalletConnectFeedback";
+import { CapacitorWalletBridge } from "@/components/game/CapacitorWalletBridge";
 import { WalletHelpModal } from "@/components/game/WalletHelpModal";
 import {
   useOpenWalletConnect,
@@ -15,6 +16,7 @@ import {
 } from "@/hooks/game/useOpenWalletConnect";
 import type { WalletConnectFailReason } from "@/lib/game/walletConnect";
 import { resolveWalletConnectUiSurface } from "@/lib/game/walletConnectUi";
+import { isWalletConnectConfigured } from "@/lib/wagmi";
 
 type WalletConnectContextValue = {
   openWalletConnect: () => Promise<WalletConnectResult>;
@@ -73,6 +75,7 @@ export function WalletConnectProvider({
 
   return (
     <WalletConnectContext.Provider value={value}>
+      <CapacitorWalletBridge />
       {children}
       {surface === "feedback" && connectFailReason ? (
         <WalletConnectFeedback
@@ -81,7 +84,15 @@ export function WalletConnectProvider({
           onDismiss={clearError}
         />
       ) : null}
-      <WalletHelpModal open={helpOpen} onClose={closeHelp} message={connectError} />
+      <WalletHelpModal
+        open={helpOpen}
+        onClose={closeHelp}
+        message={connectError}
+        onRetry={() => {
+          void openWalletConnect();
+        }}
+        hideDeepLinks={isWalletConnectConfigured}
+      />
     </WalletConnectContext.Provider>
   );
 }
