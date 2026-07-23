@@ -29,5 +29,7 @@
   // stay excluded here or `next build`'s type-checking picks up bot/src/**
   // via the "**/*.ts" include glob above and fails with "Cannot find module
   // 'ethers'" since that package isn't a website dependency.
-  "exclude": ["node_modules", "contracts", "bot", "bot/**"]
+  // Capacitor Android wrapper lives under mobile/ with its own deps (@capacitor/cli);
+  // exclude from Next root typecheck (same pattern as bot/).
+  "exclude": ["node_modules", "contracts", "bot", "bot/**", "mobile", "mobile/**"]
 }
