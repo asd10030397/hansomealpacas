@@ -6,8 +6,10 @@ import { useState } from "react";
 import { PixelBadge, WalletButton } from "@/components/ui/pixel";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
+import { useForumUnreadGlow } from "@/hooks/game/useForumUnreadGlow";
 import { useGameNavLinks } from "@/hooks/game/useGameNavLinks";
 import { useWalletUi } from "@/hooks/game/useWalletUi";
+import { FORUM_NAV_GLOW_CLASS } from "@/lib/game/forum/unread";
 import { isNavActive } from "@/lib/game/navActive";
 import type { GameNavItemDef } from "@/lib/game/navConfig";
 import { AudioSettings } from "./AudioSettings";
@@ -23,6 +25,7 @@ export function DesktopGameNav() {
   const { t } = useGameI18n();
   const { wallet, connectMock, disconnectMock } = useWalletUi();
   const links = useGameNavLinks();
+  const showForumGlow = useForumUnreadGlow();
   const [walletModal, setWalletModal] = useState<{
     open: boolean;
     feature: string;
@@ -81,11 +84,13 @@ export function DesktopGameNav() {
                 </button>
               );
             }
+            const glowClass =
+              item.id === "forum" && showForumGlow && !active ? FORUM_NAV_GLOW_CLASS : "";
             return (
               <Link
                 key={item.id}
                 href={item.href}
-                className={`game-nav__link ${active ? "game-nav__link--active" : ""}`}
+                className={`game-nav__link ${active ? "game-nav__link--active" : ""} ${glowClass}`.trim()}
               >
                 {item.label}
               </Link>

@@ -54,112 +54,112 @@ export const PLAYER_GUIDE_IMAGES = {
 
 /** Simple daily loop shown under Core Gameplay cards. */
 export const GUIDE_CORE_FLOW: BiText[] = [
-  { en: "Choose Location", zh: "選擇地點" },
-  { en: "Battle Begins", zh: "戰鬥開始" },
-  { en: "Battle Result", zh: "戰鬥結果" },
-  { en: "Claim Anytime", zh: "隨時領取" },
+  { en: "Choose Location", zh: "选择地点" },
+  { en: "Battle Begins", zh: "战斗开始" },
+  { en: "Battle Result", zh: "战斗结果" },
+  { en: "Claim Anytime", zh: "随时领取" },
 ];
 
 export const GUIDE_CLASSES: GuideClass[] = [
   {
     key: "king",
     emoji: "👑",
-    name: { en: "King Alpaca", zh: "王者羊駝" },
-    tag: { en: "The Ultimate Survivor", zh: "終極生存者" },
+    name: { en: "King Alpaca", zh: "王者羊驼" },
+    tag: { en: "The Ultimate Survivor", zh: "终极生存者" },
     supply: 1,
     tier: "Legendary · 1 of 500",
     ability: {
       en: "Permanent immunity to hunting penalty.",
-      zh: "永久免疫狩獵傷害。",
+      zh: "永久免疫狩猎伤害。",
     },
     playstyle: {
       en: "The legendary King of the herd — can safely challenge the most dangerous locations.",
-      zh: "羊駝族群中的傳說王者 — 可以安全挑戰最高風險地點。",
+      zh: "羊驼族群中的传说王者 — 可以安全挑战最高风险地点。",
     },
     image: PLAYER_GUIDE_IMAGES.king,
   },
   {
     key: "guardian",
     emoji: "🛡️",
-    name: { en: "Guardian Alpaca", zh: "守護者羊駝" },
-    tag: { en: "The Protector", zh: "守護者" },
+    name: { en: "Guardian Alpaca", zh: "守护者羊驼" },
+    tag: { en: "The Protector", zh: "守护者" },
     supply: 5,
     tier: "Legendary · 5 of 500",
     ability: {
       en: "Hunting penalty rate reduced by 50%.",
-      zh: "狩獵傷害降低 50%。",
+      zh: "狩猎伤害降低 50%。",
     },
     playstyle: {
       en: "Defensive strategy — better survival under pressure.",
-      zh: "防禦型策略 — 承受風險能力更高。",
+      zh: "防御型策略 — 承受风险能力更高。",
     },
     image: PLAYER_GUIDE_IMAGES.guardian,
   },
   {
     key: "farmer",
     emoji: "🌾",
-    name: { en: "Farmer Alpaca", zh: "農夫羊駝" },
-    tag: { en: "The Producer", zh: "生產者" },
+    name: { en: "Farmer Alpaca", zh: "农夫羊驼" },
+    tag: { en: "The Producer", zh: "生产者" },
     supply: 5,
     tier: "Legendary · 5 of 500",
     ability: {
       en: "Effective location reward weight ×1.20 (+20%, normalized).",
-      zh: "所在地點收益權重 ×1.20（+20%，需歸一化）。",
+      zh: "所在地点收益权重 ×1.20（+20%，需归一化）。",
     },
     playstyle: {
       en: "Long-term accumulation — rewards consistent, patient play.",
-      zh: "長期累積型 — 適合穩定、耐心的玩家。",
+      zh: "长期累积型 — 适合稳定、耐心的玩家。",
     },
     image: PLAYER_GUIDE_IMAGES.farmer,
   },
   {
     key: "lucky",
     emoji: "🍀",
-    name: { en: "Lucky Alpaca", zh: "幸運羊駝" },
-    tag: { en: "The Fortune Seeker", zh: "尋運者" },
+    name: { en: "Lucky Alpaca", zh: "幸运羊驼" },
+    tag: { en: "The Fortune Seeker", zh: "寻运者" },
     supply: 5,
     tier: "Legendary · 5 of 500",
     ability: {
       en: "20% chance to fully avoid the day's hunting penalty.",
-      zh: "20% 機率完全避免當日狩獵傷害。",
+      zh: "20% 机率完全避免当日狩猎伤害。",
     },
     playstyle: {
       en: "High risk, high reward — depends on fortune.",
-      zh: "高風險高報酬 — 依靠幸運翻盤。",
+      zh: "高风险高报酬 — 依靠幸运翻盘。",
     },
     image: PLAYER_GUIDE_IMAGES.lucky,
   },
   {
     key: "runner",
     emoji: "🏃",
-    name: { en: "Runner Alpaca", zh: "奔跑者羊駝" },
-    tag: { en: "The Escape Artist", zh: "逃脫大師" },
+    name: { en: "Runner Alpaca", zh: "奔跑者羊驼" },
+    tag: { en: "The Escape Artist", zh: "逃脱大师" },
     supply: 5,
     tier: "Legendary · 5 of 500",
     ability: {
       en: "30% chance to escape hunting (penalty = 0).",
-      zh: "30% 機率逃離狩獵（傷害歸零）。",
+      zh: "30% 机率逃离狩猎（伤害归零）。",
     },
     playstyle: {
       en: "Fast, aggressive strategy — uses escape ability against hunters.",
-      zh: "速度與反制型策略 — 利用逃脫能力反制狩獵。",
+      zh: "速度与反制型策略 — 利用逃脱能力反制狩猎。",
     },
     image: PLAYER_GUIDE_IMAGES.runner,
   },
   {
     key: "common",
     emoji: "🦙",
-    name: { en: "Common Alpaca", zh: "普通羊駝" },
+    name: { en: "Common Alpaca", zh: "普通羊驼" },
     tag: { en: "The Strategist", zh: "策略家" },
     supply: 479,
     tier: "Common · 479 of 500",
     ability: {
       en: "A standard Alpaca without special abilities — skill and strategy still matter.",
-      zh: "沒有特殊能力的基礎羊駝角色 — 策略與判斷仍然決定結果。",
+      zh: "没有特殊能力的基础羊驼角色 — 策略与判断仍然决定结果。",
     },
     playstyle: {
       en: "Wins through smart decisions and reading the herd.",
-      zh: "靠聰明的決策與判斷取勝。",
+      zh: "靠聪明的决策与判断取胜。",
     },
     image: PLAYER_GUIDE_IMAGES.common,
   },
@@ -168,22 +168,22 @@ export const GUIDE_CLASSES: GuideClass[] = [
 export const GUIDE_LOCATIONS: GuideLocation[] = [
   {
     emoji: "🏠",
-    name: { en: "Home", zh: "家園" },
+    name: { en: "Home", zh: "家园" },
     weight: 1,
     risk: 0,
     desc: {
       en: "The safest location — Cougars cannot enter. Lowest reward.",
-      zh: "最安全的地點 — 美洲獅無法進入。最低收益。",
+      zh: "最安全的地点 — 美洲狮无法进入。最低收益。",
     },
   },
   {
     emoji: "⛰️",
-    name: { en: "Mountain", zh: "山區" },
+    name: { en: "Mountain", zh: "山区" },
     weight: 2,
     risk: 1,
     desc: {
       en: "Low risk (Hunted Alpacas: -15% Rewards), modest reward.",
-      zh: "低風險（被獵羊駝：獎勵 -15%），收益偏低。",
+      zh: "低风险（被猎羊驼：奖励 -15%），收益偏低。",
     },
   },
   {
@@ -193,7 +193,7 @@ export const GUIDE_LOCATIONS: GuideLocation[] = [
     risk: 2,
     desc: {
       en: "Balanced medium risk (Hunted Alpacas: -25% Rewards) and reward.",
-      zh: "中等風險（被獵羊駝：獎勵 -25%）與收益。",
+      zh: "中等风险（被猎羊驼：奖励 -25%）与收益。",
     },
   },
   {
@@ -203,7 +203,7 @@ export const GUIDE_LOCATIONS: GuideLocation[] = [
     risk: 3,
     desc: {
       en: "Higher reward with increased hunting risk (Hunted Alpacas: -35% Rewards).",
-      zh: "較高收益，狩獵風險提高（被獵羊駝：獎勵 -35%）。",
+      zh: "较高收益，狩猎风险提高（被猎羊驼：奖励 -35%）。",
     },
   },
   {
@@ -213,7 +213,7 @@ export const GUIDE_LOCATIONS: GuideLocation[] = [
     risk: 4,
     desc: {
       en: "Highest reward. Highest hunting risk (Hunted Alpacas: -45% Rewards).",
-      zh: "最高收益。最高狩獵風險（被獵羊駝：獎勵 -45%）。",
+      zh: "最高收益。最高狩猎风险（被猎羊驼：奖励 -45%）。",
     },
   },
 ];
@@ -222,14 +222,14 @@ export const GUIDE_CORE_PHASES: GuidePhase[] = [
   {
     n: "01",
     emoji: "📍",
-    title: { en: "Choose Location", zh: "選擇地點" },
+    title: { en: "Choose Location", zh: "选择地点" },
     body: {
       en: "Players choose one location for each NFT before the round begins. Different locations have different risks and reward potential. After confirming, the move is locked for that round.",
-      zh: "回合開始前，玩家為每隻 NFT 選擇一個地點。各地點的風險與收益潛力不同。確認後，該回合的行動即鎖定。",
+      zh: "回合开始前，玩家为每只 NFT 选择一个地点。各地点的风险与收益潜力不同。确认后，该回合的行动即锁定。",
     },
     bullets: [
-      { en: "🏠 Home", zh: "🏠 家園" },
-      { en: "⛰ Mountain", zh: "⛰ 山區" },
+      { en: "🏠 Home", zh: "🏠 家园" },
+      { en: "⛰ Mountain", zh: "⛰ 山区" },
       { en: "🌾 Grassland", zh: "🌾 草原" },
       { en: "🌲 Forest", zh: "🌲 森林" },
       { en: "🌊 River", zh: "🌊 河流" },
@@ -237,44 +237,44 @@ export const GUIDE_CORE_PHASES: GuidePhase[] = [
     image: PLAYER_GUIDE_IMAGES.chooseLocation,
     imageAlt: {
       en: "Choose Location page in HANSOME Game",
-      zh: "HANSOME 遊戲的選擇地點頁面",
+      zh: "HANSOME 游戏的选择地点页面",
     },
   },
   {
     n: "02",
     emoji: "⚔️",
-    title: { en: "Battle Result", zh: "戰鬥結果" },
+    title: { en: "Battle Result", zh: "战斗结果" },
     body: {
       en: "When the Battle phase starts, the result is calculated automatically. The battle is resolved automatically when the Battle phase begins — no manual reveal is required. Players simply watch the battle results.",
-      zh: "戰鬥階段開始時，結果會自動計算。戰鬥階段一開始就會自動結算 — 玩家不需手動揭露行動。只需觀看戰鬥結果。",
+      zh: "战斗阶段开始时，结果会自动计算。战斗阶段一开始就会自动结算 — 玩家不需手动揭露行动。只需观看战斗结果。",
     },
     bullets: [
-      { en: "Which Alpacas survived", zh: "哪些羊駝存活" },
-      { en: "Which Cougars successfully hunted", zh: "哪些美洲獅狩獵成功" },
+      { en: "Which Alpacas survived", zh: "哪些羊驼存活" },
+      { en: "Which Cougars successfully hunted", zh: "哪些美洲狮狩猎成功" },
       {
         en: "Trait abilities (King, Guardian, Runner, Lucky, Farmer)",
-        zh: "特質能力（王者、守護者、奔跑者、幸運、農夫）",
+        zh: "特质能力（王者、守护者、奔跑者、幸运、农夫）",
       },
-      { en: "Final HANSOME rewards", zh: "最終 HANSOME 獎勵" },
+      { en: "Final HANSOME rewards", zh: "最终 HANSOME 奖励" },
     ],
     image: PLAYER_GUIDE_IMAGES.battleResult,
     imageAlt: {
       en: "Battle Result page in HANSOME Game",
-      zh: "HANSOME 遊戲的戰鬥結果頁面",
+      zh: "HANSOME 游戏的战斗结果页面",
     },
   },
   {
     n: "03",
     emoji: "💰",
-    title: { en: "Claim Rewards", zh: "領取獎勵" },
+    title: { en: "Claim Rewards", zh: "领取奖励" },
     body: {
       en: "Rewards never expire. Players can claim accumulated HANSOME at any time from the dedicated Claim page. Battle viewing and claiming are separate. Even if you don't claim today, your rewards continue accumulating on-chain.",
-      zh: "獎勵永不過期。玩家可隨時在專屬的領取頁領取累積的 HANSOME。觀看戰鬥與領取獎勵是分開的。即使今天不領，獎勵仍會持續在鏈上累積。",
+      zh: "奖励永不过期。玩家可随时在专属的领取页领取累积的 HANSOME。观看战斗与领取奖励是分开的。即使今天不领，奖励仍会持续在链上累积。",
     },
     image: PLAYER_GUIDE_IMAGES.claimRewards,
     imageAlt: {
       en: "Claim page in HANSOME Game",
-      zh: "HANSOME 遊戲的領取獎勵頁面",
+      zh: "HANSOME 游戏的领取奖励页面",
     },
   },
 ];
@@ -283,28 +283,28 @@ export const GUIDE_COUGAR_PHASES: GuidePhase[] = [
   {
     n: "01",
     emoji: "🎯",
-    title: { en: "Choose a Hunt", zh: "選擇狩獵地點" },
+    title: { en: "Choose a Hunt", zh: "选择狩猎地点" },
     body: {
       en: "Choose a huntable location — Mountain, Grassland, Forest, or River. Cougars can never enter Home. After confirming, the hunt location is locked for that round.",
-      zh: "選擇一個可狩獵地點 — 山區、草原、森林或河流。美洲獅永遠無法進入家園。確認後，該回合的狩獵地點即鎖定。",
+      zh: "选择一个可狩猎地点 — 山区、草原、森林或河流。美洲狮永远无法进入家园。确认后，该回合的狩猎地点即锁定。",
     },
   },
   {
     n: "02",
     emoji: "⚔️",
-    title: { en: "Battle Result", zh: "戰鬥結果" },
+    title: { en: "Battle Result", zh: "战斗结果" },
     body: {
       en: "The battle is resolved automatically when the Battle phase begins. You watch the hunt outcome — no manual reveal is required.",
-      zh: "戰鬥階段一開始就會自動結算。你只需觀看狩獵結果 — 不需手動揭露行動。",
+      zh: "战斗阶段一开始就会自动结算。你只需观看狩猎结果 — 不需手动揭露行动。",
     },
   },
   {
     n: "03",
     emoji: "🩸",
-    title: { en: "Hunt", zh: "狩獵結算" },
+    title: { en: "Hunt", zh: "狩猎结算" },
     body: {
       en: "If at least one Alpaca is at your location, your hunt succeeds. Claim your share of HANSOME anytime on the Claim page.",
-      zh: "只要你的地點至少有一隻羊駝，狩獵即成功。可隨時在領取頁領取你的 HANSOME 份額。",
+      zh: "只要你的地点至少有一只羊驼，狩猎即成功。可随时在领取页领取你的 HANSOME 份额。",
     },
   },
 ];

@@ -13,6 +13,7 @@ import { GameUiSfx } from "@/components/game/GameUiSfx";
 import { GameVisualShell } from "@/components/game/GameVisualShell";
 import { useAutoNavigateToBattle } from "@/hooks/game/useAutoNavigateToBattle";
 import { useAutoNavigateToCommit } from "@/hooks/game/useAutoNavigateToCommit";
+import { useForumSeenOnVisit } from "@/hooks/game/useForumSeenOnVisit";
 import { AutoRevealProvider } from "@/hooks/game/useAutoReveal";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { TutorialCaptureInit } from "@/components/game/TutorialCaptureInit";
@@ -26,6 +27,7 @@ export function GameShell({ children }: { children: React.ReactNode }) {
   const scenicOn = usesGamePageScenic(pageBg);
   useAutoNavigateToBattle();
   useAutoNavigateToCommit();
+  useForumSeenOnVisit();
 
   // Emergency cleanup: never leave body locked after route changes.
   useEffect(() => {

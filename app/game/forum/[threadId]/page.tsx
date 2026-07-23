@@ -18,7 +18,7 @@ import { isGenesisConfigured } from "@/lib/game/genesis";
 
 function formatWhen(iso: string, locale: string): string {
   try {
-    return new Intl.DateTimeFormat(locale === "zh" ? "zh-TW" : "en", {
+    return new Intl.DateTimeFormat(locale === "zh" ? "zh-CN" : "en", {
       dateStyle: "medium",
       timeStyle: "short",
     }).format(new Date(iso));

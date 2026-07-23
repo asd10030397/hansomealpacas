@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans_TC, Press_Start_2P } from "next/font/google";
+import { Noto_Sans_SC, Press_Start_2P } from "next/font/google";
 import { AmbientSound } from "@/components/AmbientSound";
 import { Analytics } from "@/components/Analytics";
 import { AnalyticsPageView } from "@/components/AnalyticsPageView";
@@ -22,7 +22,7 @@ const anton = Press_Start_2P({
   preload: true,
 });
 
-const notoSansTC = Noto_Sans_TC({
+const notoSansSC = Noto_Sans_SC({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-noto-sans-tc",
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     siteName: PROJECT.name,
     type: "website",
     locale: "en_US",
-    alternateLocale: ["zh_TW"],
+    alternateLocale: ["zh_CN"],
     url: canonical ?? metadataBase.origin,
     images: [
       {
@@ -92,7 +92,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${anton.variable} ${notoSansTC.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${anton.variable} ${notoSansSC.variable}`}>
       <body className="min-h-screen bg-background antialiased">
         <LocaleProvider>
           <LanguageToggle />

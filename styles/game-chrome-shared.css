@@ -49,6 +49,41 @@
   color: #1a1520;
 }
 
+/* Forum unread — subtle gold pulse on nav entries */
+@keyframes forum-nav-glow-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 4px rgba(232, 176, 58, 0.35),
+      0 0 10px rgba(240, 196, 74, 0.15);
+    filter: brightness(1);
+  }
+
+  50% {
+    box-shadow:
+      0 0 8px rgba(232, 176, 58, 0.7),
+      0 0 16px rgba(240, 196, 74, 0.35),
+      2px 2px 0 #0a0c12;
+    filter: brightness(1.08);
+  }
+}
+
+.hansome-game .game-nav__link--forum-glow,
+.hansome-game .game-nav__mobile-link--forum-glow,
+.hansome-game .mobile-dock__sheet-link--forum-glow {
+  color: #f0c44a;
+  border-color: rgba(232, 176, 58, 0.55);
+  animation: forum-nav-glow-pulse 2.5s ease-in-out infinite;
+}
+
+.hansome-game .mobile-dock__item--forum-glow {
+  color: #f0c44a;
+  text-shadow:
+    0 0 6px rgba(232, 176, 58, 0.55),
+    0 0 12px rgba(240, 196, 74, 0.25);
+  animation: forum-nav-glow-pulse 2.5s ease-in-out infinite;
+}
+
 .hansome-game .game-nav__back:active {
   transform: translate(1px, 1px);
   box-shadow: 2px 2px 0 #0a0c12;

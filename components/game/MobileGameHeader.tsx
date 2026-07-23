@@ -6,8 +6,10 @@ import { useEffect, useState } from "react";
 import { PixelButton, WalletButton } from "@/components/ui/pixel";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
+import { useForumUnreadGlow } from "@/hooks/game/useForumUnreadGlow";
 import { useGameNavLinks } from "@/hooks/game/useGameNavLinks";
 import { useWalletUi } from "@/hooks/game/useWalletUi";
+import { FORUM_MOBILE_NAV_GLOW_CLASS } from "@/lib/game/forum/unread";
 import { isNavActive } from "@/lib/game/navActive";
 import type { GameNavItemDef } from "@/lib/game/navConfig";
 import { AudioSettings } from "./AudioSettings";
@@ -23,6 +25,7 @@ export function MobileGameHeader() {
   const { t } = useGameI18n();
   const { wallet, connectMock, disconnectMock } = useWalletUi();
   const links = useGameNavLinks();
+  const showForumGlow = useForumUnreadGlow();
   const [menuOpen, setMenuOpen] = useState(false);
   const [walletModal, setWalletModal] = useState<{
     open: boolean;
@@ -130,12 +133,16 @@ export function MobileGameHeader() {
                   </button>
                 );
               }
+              const glowClass =
+                item.id === "forum" && showForumGlow && !active
+                  ? FORUM_MOBILE_NAV_GLOW_CLASS
+                  : "";
               return (
                 <Link
                   key={item.id}
                   href={item.href}
                   data-nav-id={item.id}
-                  className={`game-nav__mobile-link ${active ? "is-active" : ""}`}
+                  className={`game-nav__mobile-link ${active ? "is-active" : ""} ${glowClass}`.trim()}
                   onClick={() => setMenuOpen(false)}
                 >
                   {item.label}

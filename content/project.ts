@@ -30,7 +30,7 @@ export const PROJECT = {
   name: "HANSOME ALPACAS",
   symbol: "HANSOME",
   chain: "Robinhood Chain",
-  taglineCN: "天生贏家臉，一輩子沒屁用。",
+  taglineCN: "天生赢家脸，一辈子没屁用。",
   taglineEN: "Too handsome to be useful.",
   description:
     "The alpaca that won the genetic lottery. Pure meme, zero utility, live on Robinhood Chain.",

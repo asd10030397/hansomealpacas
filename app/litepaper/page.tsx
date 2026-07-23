@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     canonical: litepaperUrl,
     languages: {
       en: litepaperUrl,
-      "zh-TW": litepaperUrl,
+      "zh-CN": litepaperUrl,
       "x-default": litepaperUrl,
     },
   },

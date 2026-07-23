@@ -150,9 +150,9 @@ describe("missed reveal i18n", () => {
     expect(gameEn.settlement.missedRevealZero).toMatch(/0 rewards/);
     expect(gameEn.settlement.missedRevealNext).toMatch(/next round/);
 
-    expect(gameZh.settlement.missedRevealTitle).toBe("你錯過了今日的揭露。");
+    expect(gameZh.settlement.missedRevealTitle).toBe("你错过了今日的揭露。");
     expect(gameZh.settlement.missedRevealZero).toMatch(/0/);
-    expect(gameZh.settlement.missedRevealNext).toMatch(/下一輪/);
-    expect(gameZh.settlement.waitingSeedTitle).toBe("等待結算隨機數。");
+    expect(gameZh.settlement.missedRevealNext).toMatch(/下一轮/);
+    expect(gameZh.settlement.waitingSeedTitle).toBe("等待结算随机数。");
   });
 });

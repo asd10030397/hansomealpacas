@@ -4,8 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { useForumUnreadGlow } from "@/hooks/game/useForumUnreadGlow";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
+import {
+  FORUM_DOCK_GLOW_CLASS,
+  FORUM_DOCK_MORE_GLOW_CLASS,
+} from "@/lib/game/forum/unread";
 import {
   GAME_DOCK_MORE,
   GAME_DOCK_PRIMARY,
@@ -49,6 +54,7 @@ export function MobileGameDock() {
   const pathname = usePathname();
   const gameHref = useGameHref();
   const { t } = useGameI18n();
+  const showForumGlow = useForumUnreadGlow();
   const [moreOpen, setMoreOpen] = useState(false);
   const [portalReady, setPortalReady] = useState(false);
 
@@ -135,12 +141,14 @@ export function MobileGameDock() {
                       </a>
                     );
                   }
+                  const glowClass =
+                    id === "forum" && showForumGlow && !active ? FORUM_DOCK_GLOW_CLASS : "";
                   return (
                     <Link
                       key={id}
                       href={href}
                       data-nav-id={id}
-                      className={`mobile-dock__sheet-link ${active ? "is-active" : ""}`}
+                      className={`mobile-dock__sheet-link ${active ? "is-active" : ""} ${glowClass}`.trim()}
                       onClick={closeMore}
                     >
                       {label}
@@ -185,7 +193,7 @@ export function MobileGameDock() {
         })}
         <button
           type="button"
-          className={itemClass("", moreOpen || moreActive)}
+          className={`${itemClass("", moreOpen || moreActive)} ${showForumGlow && !moreActive ? FORUM_DOCK_MORE_GLOW_CLASS : ""}`.trim()}
           data-dock-more="true"
           aria-expanded={moreOpen}
           onClick={() => {
