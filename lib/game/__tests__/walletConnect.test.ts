@@ -11,6 +11,7 @@ import {
   pickWalletConnectConnector,
   preflightWalletConnect,
   resolveSwapPrimaryKind,
+  shouldBindChainOnConnect,
 } from "@/lib/game/walletConnect";
 import {
   resolveClaimWalletPrimary,
@@ -28,7 +29,7 @@ vi.mock("@/lib/game/capacitorEnv", () => ({
 
 describe("walletConnect helpers", () => {
   it("a) detects injected provider available", () => {
-    expect(hasInjectedEthereum({})).toBe(true);
+    expect(hasInjectedEthereum({ request: async () => [] })).toBe(true);
     const preflight = preflightWalletConnect({
       connectors: [{ id: "injected" }],
       hasProvider: true,
@@ -123,6 +124,12 @@ describe("walletConnect helpers", () => {
     expect(resolveSwapPrimaryKind({ isConnected: false, isWrongChain: false })).toBe("connect");
     expect(resolveSwapPrimaryKind({ isConnected: true, isWrongChain: true })).toBe("switch");
     expect(resolveSwapPrimaryKind({ isConnected: true, isWrongChain: false })).toBe("swap");
+  });
+
+  it("binds chainId at connect only for WalletConnect connectors", () => {
+    expect(shouldBindChainOnConnect("walletConnect")).toBe(true);
+    expect(shouldBindChainOnConnect("walletConnectLegacy")).toBe(true);
+    expect(shouldBindChainOnConnect("injected")).toBe(false);
   });
 
   it("picks injected connector first when provider exists", () => {

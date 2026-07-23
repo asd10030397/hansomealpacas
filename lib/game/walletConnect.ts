@@ -16,7 +16,14 @@ export type WalletConnectFailReason =
   | "failed";
 
 export function hasInjectedEthereum(ethereum: unknown): boolean {
-  return ethereum != null;
+  if (ethereum == null) return false;
+  // EIP-1193 providers expose request(); avoid treating placeholders as injected.
+  return typeof (ethereum as { request?: unknown }).request === "function";
+}
+
+/** WalletConnect pairs with a target chain; injected extension connects accounts first. */
+export function shouldBindChainOnConnect(connectorId: string): boolean {
+  return connectorId === "walletConnect" || connectorId === "walletConnectLegacy";
 }
 
 export function pickInjectedConnector<T extends { id: string }>(

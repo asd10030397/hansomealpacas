@@ -9,6 +9,7 @@ import {
   pickConnectConnector,
   preflightWalletConnect,
   resolveNoProviderMessage,
+  shouldBindChainOnConnect,
   type WalletConnectFailReason,
 } from "@/lib/game/walletConnect";
 
@@ -78,10 +79,15 @@ export function useOpenWalletConnect(targetChainId: number = GENESIS_CHAIN_ID) {
     }
 
     try {
-      await connectAsync({
-        connector,
-        chainId: targetChainId,
-      });
+      // Injected MetaMask: connect accounts only. Wrong-chain switch is a separate
+      // user action (switchToGenesisChain / swap switch) — bundling chainId here
+      // runs wallet_switchEthereumChain during connect and surfaces "cancelled"
+      // when the user is on Ethereum without ever seeing an account prompt.
+      await connectAsync(
+        shouldBindChainOnConnect(connector.id)
+          ? { connector, chainId: targetChainId }
+          : { connector },
+      );
       setHelpOpen(false);
       return { ok: true };
     } catch (e) {
