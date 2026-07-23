@@ -76,6 +76,17 @@
 
 排行榜：**僅當前活躍賽季**；計分模組 v0.1.1 已核准但 live cutover 需另批。
 
+### Future backlog（延後 — 僅設計稿，禁止擅自實作）
+
+**DEFERRED：** Mainnet mint 完成且 Season 1 Classic 穩定前，**不要**實作下列項目；**不在**現階段上線範圍內。
+
+| 文件 | 內容 |
+|------|------|
+| [`docs/HANSOME_EVENT_DAYS_v0.md`](HANSOME_EVENT_DAYS_v0.md) | Event Days 事件日目錄（雙語文案 + 規則 sketch + Tier A/B）；需 GDS 升版 + Event 合約 |
+| [`docs/SEASON2_MODULE_MINIMAL_INTERFACE.md`](SEASON2_MODULE_MINIMAL_INTERFACE.md) | Season 2 模組最小介面（Genesis read-only gate；Event 結算與 Classic 並存） |
+
+僅在使用者**明確重新開啟範圍**且 S1 已上線穩定後，才可進入實作討論。
+
 ---
 
 ## 1. 專案一句话
@@ -142,6 +153,8 @@
 | `docs/PROJECT_DOCUMENTATION_STRUCTURE.md` | 文件架構（英文） |
 | `docs/PROJECT_DOCUMENTATION_STRUCTURE_zh-TW.md` | 文件架構（繁中） |
 | `docs/CURSOR_AGENT_HANDOFF.md` | 本交接檔 |
+| `docs/SEASON2_MODULE_MINIMAL_INTERFACE.md` | Season 2 模組最小介面（**DEFERRED** 設計稿；見 §0.1 Future backlog） |
+| `docs/HANSOME_EVENT_DAYS_v0.md` | Event Days 事件日目錄（**DEFERRED** 設計稿；非 S1 鎖定；需 GDS 升版 + Event 合約；見 §0.1 Future backlog） |
 | `docs/HANSOME_Genesis_Mint_Spec_v1.0.md` | 單一 550 mixed mint 規格（權威） |
 | `docs/HANSOME_Alpaca_Mint_Spec_v1.0.md` | 羊駝側 metadata／Reserved Special |
 | `docs/HANSOME_Cougar_Mint_Spec_v1.0.md` | 美洲獅側 identity（非獨立合約） |
@@ -300,6 +313,7 @@
 | 日期 | 版本 | 說明 |
 |------|------|------|
 | 2026-07-17 | 1.0.0 | 初版 Cursor／代理人實作交接說明 |
+| 2026-07-23 | 1.0.1 | §0.1 新增 Future backlog（Event Days + Season 2 模組）；§4 索引標記 DEFERRED |
 
 ---
 
