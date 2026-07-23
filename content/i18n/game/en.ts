@@ -114,6 +114,10 @@ export const gameEn: GameMessages = {
     mintSub: "550 · GENESIS",
     enterGame: "ENTER THE GAME",
     enterGameSub: "DEPLOY · DAILY LOOP",
+    downloadAndroid: "Download Android App",
+    downloadAndroidSub: "Android APK · Direct Download",
+    downloadAndroidInstallNote:
+      "Android may ask to allow installation from this source.",
     cougarTerritory: "COUGAR TERRITORY",
     cougarTag: "HUNT. CLAIM. DOMINATE.",
     alpacaRanch: "ALPACA RANCH",

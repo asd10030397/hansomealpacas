@@ -124,6 +124,9 @@ export type GameMessages = {
     mintSub: string;
     enterGame: string;
     enterGameSub: string;
+    downloadAndroid: string;
+    downloadAndroidSub: string;
+    downloadAndroidInstallNote: string;
     cougarTerritory: string;
     cougarTag: string;
     alpacaRanch: string;

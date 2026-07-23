@@ -88,7 +88,24 @@ export function StandoffMenu() {
             <span className="standoff__btn-sub">{enterSub}</span>
           </span>
         </Link>
+
+        <Link href="/download" className="standoff__btn standoff__btn--gold">
+          <Image
+            src="/assets/icons/menu-download.svg"
+            alt=""
+            width={22}
+            height={22}
+            className="standoff__btn-icon"
+            unoptimized
+          />
+          <span className="standoff__btn-label">
+            <span>{t.title.downloadAndroid}</span>
+            <span className="standoff__btn-sub">{t.title.downloadAndroidSub}</span>
+          </span>
+        </Link>
       </nav>
+
+      <p className="standoff__install-note">{t.title.downloadAndroidInstallNote}</p>
     </div>
   );
 }
