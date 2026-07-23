@@ -5,6 +5,7 @@ import { GameShell } from "@/components/game/GameShell";
 import { GameHrefProvider } from "@/context/GameHrefContext";
 import { WalletConnectProvider } from "@/context/WalletConnectContext";
 import { getGameHref } from "@/lib/game/paths";
+import { GAME_PWA, GAME_PWA_ICONS, GAME_PWA_THEME_COLOR } from "@/lib/pwa/gameManifest";
 import "@/styles/game.css";
 import "@/styles/game-polish.css";
 import "@/styles/game-chrome-shared.css";
@@ -12,14 +13,30 @@ import "@/styles/game-chrome-desktop.css";
 import "@/styles/game-chrome-mobile.css";
 
 export const metadata: Metadata = {
-  title: "HANSOME: Alpacas vs Cougars",
-  description:
-    "Premium pixel-art GameFi — Choose Location → Battle Result → Claim on Robinhood Chain.",
+  title: GAME_PWA.name,
+  description: GAME_PWA.description,
+  applicationName: GAME_PWA.shortName,
+  manifest: "/manifest.webmanifest",
   robots: { index: true, follow: true },
+  appleWebApp: {
+    capable: true,
+    title: GAME_PWA.shortName,
+    statusBarStyle: "black-translucent",
+  },
+  icons: {
+    apple: {
+      url: GAME_PWA_ICONS.appleTouch,
+      sizes: "180x180",
+      type: "image/png",
+    },
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0e121c",
+  themeColor: GAME_PWA_THEME_COLOR,
   colorScheme: "dark",
   width: "device-width",
   initialScale: 1,

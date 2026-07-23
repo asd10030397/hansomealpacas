@@ -10,6 +10,10 @@ const publicDir = join(root, "public");
 const logoDir = join(publicDir, "logo");
 const imagesDir = join(publicDir, "images");
 const iconsDir = join(publicDir, "icons");
+const pwaIconsDir = join(iconsDir, "pwa");
+
+/** Game chrome background — matches styles/game.css PWA splash. */
+const GAME_PWA_BG = "#0e121c";
 
 const SOCIAL_PREVIEW_VERSION = 3;
 const OG_IMAGE = `opengraph-image-v${SOCIAL_PREVIEW_VERSION}.png`;
@@ -59,6 +63,36 @@ async function createFaviconIco(outputPath) {
   console.log(`  ${join(iconsDir, "favicon-32x32.png")} (32x32)`);
 }
 
+async function createGamePwaIcon(outputPath, size, { maskable = false } = {}) {
+  const logoSize = maskable ? Math.round(size * 0.62) : Math.round(size * 0.78);
+  const logo = await sharp(join(logoDir, "logo-256.png"))
+    .resize(logoSize, logoSize, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .png()
+    .toBuffer();
+
+  await sharp({
+    create: {
+      width: size,
+      height: size,
+      channels: 4,
+      background: GAME_PWA_BG,
+    },
+  })
+    .composite([{ input: logo, gravity: "center" }])
+    .png()
+    .toFile(outputPath);
+  console.log(`  ${outputPath} (${size}x${size}${maskable ? ", maskable" : ""})`);
+}
+
+async function generateGamePwaIcons() {
+  mkdirSync(pwaIconsDir, { recursive: true });
+  console.log("  Game PWA icons (dark chrome background)...");
+  await createGamePwaIcon(join(pwaIconsDir, "icon-192.png"), 192);
+  await createGamePwaIcon(join(pwaIconsDir, "icon-512.png"), 512);
+  await createGamePwaIcon(join(pwaIconsDir, "icon-512-maskable.png"), 512, { maskable: true });
+  await createGamePwaIcon(join(pwaIconsDir, "apple-touch-icon.png"), 180);
+}
+
 async function syncLogoSvg() {
   const coin = readFileSync(COIN_SVG);
   writeFileSync(join(logoDir, "logo.svg"), coin);
@@ -85,6 +119,7 @@ async function main() {
   await syncListingAssets();
 
   await rasterizeCoin(join(iconsDir, "apple-touch-icon.png"), 180);
+  await generateGamePwaIcons();
   await rasterizeCoin(join(imagesDir, "avatar.png"), 512);
 
   // CoinMarketCap / listing-site token logo spec: PNG, 200x200, transparent corners.
