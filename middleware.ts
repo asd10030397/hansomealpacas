@@ -15,6 +15,8 @@ import { GAME_HOSTS } from "@/lib/game/paths";
  * /claim                 → /game/claim
  * /rewards               → /game/claim (legacy)
  * /leaderboard           → /game/leaderboard
+ * /season                → /game/season
+ * /season/:id            → /game/season/:id
  * /docs                  → /game/docs
  * /game/commit|reveal    → same
  */
@@ -54,6 +56,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
+  // Pretty season URLs on game host (e.g. /season/1)
+  if (pathname.startsWith("/season/")) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/game${pathname}`;
+    return NextResponse.rewrite(url);
+  }
+
   const map: Record<string, string> = {
     "/": "/game",
     "/mint": "/game/mint",
@@ -63,6 +72,7 @@ export function middleware(request: NextRequest) {
     "/rewards": "/game/claim",
     "/leaderboard": "/game/leaderboard",
     "/forum": "/game/forum",
+    "/season": "/game/season",
     "/docs": "/game/docs",
     "/docs/guide": "/game/docs/guide",
     "/dashboard": "/game/dashboard",
