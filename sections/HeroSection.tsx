@@ -101,17 +101,10 @@ export function HeroSection() {
             <ActionButton href={GAME_HOME_URL} size="lg" variant="gold">
               {t.hero.playGame}
             </ActionButton>
-            <ActionButton href="/download" size="lg" sublabel={t.hero.downloadAndroidSubtext}>
-              {t.hero.downloadAndroidApp}
-            </ActionButton>
             <ActionButton href="/litepaper" size="lg">
               {t.hero.readLitepaper}
             </ActionButton>
           </nav>
-
-          <p className="mt-4 max-w-md text-xs leading-relaxed text-wood-dark/80 sm:text-sm">
-            {t.hero.downloadAndroidInstallNote}
-          </p>
 
           <SocialBar className="mt-10 sm:mt-11" />
         </m.div>
