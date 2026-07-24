@@ -2,11 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { useGameHref } from "@/hooks/game/useGameHref";
 import { useGameI18n } from "@/hooks/game/useGameI18n";
 import { useGameState } from "@/hooks/game/useGameState";
 import { useWalletUi } from "@/hooks/game/useWalletUi";
 import { enterGameHref, isResultPhase } from "@/lib/game/uiLoopPhase";
+import { AppDownloadButton, AppDownloadChooser } from "./AppDownloadChooser";
 
 /**
  * Center brand + primary game menu.
@@ -17,6 +19,7 @@ export function StandoffMenu() {
   const gameHref = useGameHref();
   const { phase } = useGameState();
   const { wallet, connectMock, disconnectMock } = useWalletUi();
+  const [downloadOpen, setDownloadOpen] = useState(false);
   const enterHref = enterGameHref(phase, gameHref);
   const enterSub = isResultPhase(phase)
     ? t.dashboard.mainResult
@@ -104,23 +107,10 @@ export function StandoffMenu() {
           </span>
         </Link>
 
-        <Link href="/download" className="standoff__btn standoff__btn--gold">
-          <Image
-            src="/assets/icons/menu-download.svg"
-            alt=""
-            width={22}
-            height={22}
-            className="standoff__btn-icon"
-            unoptimized
-          />
-          <span className="standoff__btn-label">
-            <span>{t.title.downloadAndroid}</span>
-            <span className="standoff__btn-sub">{t.title.downloadAndroidSub}</span>
-          </span>
-        </Link>
+        <AppDownloadButton onOpen={() => setDownloadOpen(true)} />
       </nav>
 
-      <p className="standoff__install-note">{t.title.downloadAndroidInstallNote}</p>
+      <AppDownloadChooser open={downloadOpen} onClose={() => setDownloadOpen(false)} />
     </div>
   );
 }

@@ -117,9 +117,14 @@ export const gameEn: GameMessages = {
     enterGameSub: "DEPLOY · DAILY LOOP",
     season: "SEASON 1",
     seasonSub: "ALPACAS VS COUGARS",
-    downloadAndroid: "Download Android App",
-    downloadAndroidSub: "Android APK · Direct Download",
-    downloadAndroidInstallNote:
+    downloadApp: "Download APP",
+    downloadAppSub: "Android · iOS",
+    downloadAppChooserTitle: "Download APP",
+    downloadAppAndroid: "Android",
+    downloadAppAndroidSub: "APK · Direct Download",
+    downloadAppIos: "iOS",
+    downloadAppIosSoon: "Coming soon",
+    downloadAppInstallNote:
       "Android may ask to allow installation from this source.",
     cougarTerritory: "COUGAR TERRITORY",
     cougarTag: "HUNT. CLAIM. DOMINATE.",

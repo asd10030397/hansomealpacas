@@ -127,9 +127,14 @@ export type GameMessages = {
     enterGameSub: string;
     season: string;
     seasonSub: string;
-    downloadAndroid: string;
-    downloadAndroidSub: string;
-    downloadAndroidInstallNote: string;
+    downloadApp: string;
+    downloadAppSub: string;
+    downloadAppChooserTitle: string;
+    downloadAppAndroid: string;
+    downloadAppAndroidSub: string;
+    downloadAppIos: string;
+    downloadAppIosSoon: string;
+    downloadAppInstallNote: string;
     cougarTerritory: string;
     cougarTag: string;
     alpacaRanch: string;

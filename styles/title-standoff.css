@@ -594,6 +594,150 @@
   color: rgba(244, 235, 220, 0.72);
 }
 
+/* ========== APP DOWNLOAD CHOOSER ========== */
+
+.standoff-download {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .standoff-download {
+    align-items: center;
+  }
+}
+
+.standoff-download__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(0, 0, 0, 0.72);
+  cursor: pointer;
+}
+
+.standoff-download__panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 22rem);
+  padding: 1rem 1rem 1.1rem;
+  border: 3px solid var(--st-ink);
+  background: linear-gradient(180deg, rgba(28, 22, 40, 0.96) 0%, rgba(14, 16, 26, 0.98) 100%);
+  box-shadow:
+    0 0 0 2px rgba(240, 196, 74, 0.45),
+    0 10px 0 rgba(0, 0, 0, 0.35),
+    0 0 40px rgba(240, 196, 74, 0.12);
+  outline: none;
+}
+
+.standoff-download__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.standoff-download__title {
+  margin: 0;
+  font-family: var(--font-anton), monospace;
+  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+  letter-spacing: 0.08em;
+  color: var(--st-gold);
+  text-shadow: 2px 2px 0 var(--st-ink);
+}
+
+.standoff-download__close {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--st-ink);
+  background: rgba(10, 12, 18, 0.65);
+  font-family: var(--font-anton), monospace;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--st-cream);
+  cursor: pointer;
+  box-shadow: 2px 2px 0 0 var(--st-ink);
+}
+
+.standoff-download__close:hover {
+  filter: brightness(1.08);
+}
+
+.standoff-download__options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.standoff-download__option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  min-height: 3rem;
+  padding: 0.65rem 0.85rem;
+  border: 3px solid var(--st-ink);
+  font-family: var(--font-anton), monospace;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  box-shadow: 4px 4px 0 0 var(--st-ink);
+  transition:
+    transform 120ms ease,
+    filter 120ms ease;
+}
+
+.standoff-download__option--android {
+  background: linear-gradient(180deg, #f6d56a 0%, #e0a82a 55%, #c48918 100%);
+  color: var(--st-ink);
+  cursor: pointer;
+}
+
+.standoff-download__option--android:hover {
+  transform: translate(-1px, -1px);
+  filter: brightness(1.06);
+}
+
+.standoff-download__option--ios {
+  background: linear-gradient(180deg, #4a5060 0%, #323848 55%, #242830 100%);
+  color: rgba(244, 235, 220, 0.55);
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+.standoff-download__option-label {
+  font-size: clamp(0.85rem, 2vw, 1rem);
+}
+
+.standoff-download__option-sub,
+.standoff-download__option-soon {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.standoff-download__option-soon {
+  color: var(--st-gold);
+  opacity: 1;
+}
+
+.standoff-download__note {
+  margin: 0.65rem 0 0;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 0.58rem;
+  line-height: 1.45;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: rgba(244, 235, 220, 0.72);
+}
+
 .standoff__demo {
   position: absolute;
   top: 0.65rem;
