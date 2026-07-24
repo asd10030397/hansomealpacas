@@ -29,6 +29,7 @@ export const GAME_INTERNAL = {
   forum: "/game/forum",
   docs: "/game/docs",
   playerGuide: "/game/docs/guide",
+  season: "/game/season",
 } as const;
 
 /** Pretty public paths on game.hansomealpacas.xyz (and game.localhost). */
@@ -49,6 +50,7 @@ export const GAME_PUBLIC = {
   forum: "/forum",
   docs: "/docs",
   playerGuide: "/docs/guide",
+  season: "/season",
 } as const;
 
 export type GameHrefMap = { readonly [K in keyof typeof GAME_INTERNAL]: string };

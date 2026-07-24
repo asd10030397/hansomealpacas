@@ -79,6 +79,7 @@ export function resolvePageBackground(
   if (path === "/leaderboard") return "leaderboard";
   if (path === "/forum" || path.startsWith("/forum/")) return "docs";
   if (path === "/docs" || path.startsWith("/docs/")) return "docs";
+  if (path === "/season" || path.startsWith("/season/")) return "docs";
   if (path === "/mint") return "home";
   if (path === "/explore" || path === "/commit") {
     return locTheme ?? "world";

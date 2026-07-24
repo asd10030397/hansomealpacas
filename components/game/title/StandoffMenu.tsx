@@ -89,6 +89,21 @@ export function StandoffMenu() {
           </span>
         </Link>
 
+        <Link href={gameHref.season} className="standoff__btn standoff__btn--season">
+          <Image
+            src="/assets/icons/menu-season.svg"
+            alt=""
+            width={22}
+            height={22}
+            className="standoff__btn-icon"
+            unoptimized
+          />
+          <span className="standoff__btn-label">
+            <span>{t.title.season}</span>
+            <span className="standoff__btn-sub">{t.title.seasonSub}</span>
+          </span>
+        </Link>
+
         <Link href="/download" className="standoff__btn standoff__btn--gold">
           <Image
             src="/assets/icons/menu-download.svg"

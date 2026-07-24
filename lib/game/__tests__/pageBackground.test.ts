@@ -23,6 +23,8 @@ describe("pageBackground", () => {
     expect(resolvePageBackground("/game/leaderboard")).toBe("leaderboard");
     expect(resolvePageBackground("/docs")).toBe("docs");
     expect(resolvePageBackground("/game/docs/guide")).toBe("docs");
+    expect(resolvePageBackground("/game/season")).toBe("docs");
+    expect(resolvePageBackground("/season")).toBe("docs");
     expect(resolvePageBackground("/game")).toBe("navHome");
     expect(resolvePageBackground("/")).toBe("navHome");
     expect(resolvePageBackground("/game/dashboard")).toBe("world");

@@ -11,6 +11,7 @@ export type GameNavId =
   | "leaderboard"
   | "forum"
   | "market"
+  | "season"
   | "docs";
 
 export type GameNavItemDef = {
@@ -28,6 +29,7 @@ export type GameNavItemDef = {
     | "leaderboard"
     | "forum"
     | "market"
+    | "season"
     | "docs";
   requiresWallet?: boolean;
 };
@@ -43,6 +45,7 @@ export const GAME_NAV_ITEMS: readonly GameNavItemDef[] = [
   { id: "leaderboard", hrefKey: "leaderboard", labelKey: "leaderboard" },
   { id: "forum", hrefKey: "forum", labelKey: "forum" },
   { id: "market", externalHref: OFFICIAL_MARKET_URL, labelKey: "market" },
+  { id: "season", hrefKey: "season", labelKey: "season" },
   { id: "docs", hrefKey: "docs", labelKey: "docs" },
 ] as const;
 
@@ -60,6 +63,7 @@ export const GAME_DOCK_MORE: readonly GameNavId[] = [
   "leaderboard",
   "forum",
   "market",
+  "season",
   "docs",
 ] as const;
 

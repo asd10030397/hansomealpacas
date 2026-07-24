@@ -43,6 +43,8 @@ function dockLabel(
       return t.nav.forum;
     case "market":
       return t.nav.market;
+    case "season":
+      return t.nav.season;
     case "docs":
       return t.nav.docs;
     default:

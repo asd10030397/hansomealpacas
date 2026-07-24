@@ -15,6 +15,7 @@ export function isMissedRevealOutcome(outcome: string | null | undefined): boole
     o === MISSED_REVEAL_OUTCOME ||
     o.includes("missed today's reveal") ||
     o.includes("missed reveal") ||
+    o.includes("错过了今日的揭露") ||
     o.includes("錯過今日的揭露")
   );
 }
@@ -57,7 +58,9 @@ export function isSeedAlreadySetError(
 
 export function isSeedMissingError(message: string | null | undefined): boolean {
   if (!message) return false;
-  return /SeedMissing|settlement randomness|等待結算隨機數/i.test(message);
+  return /SeedMissing|settlement randomness|等待结算随机数|等待結算隨機數/i.test(
+    message,
+  );
 }
 
 /** Canonical friendly copy key used by formatRobinhoodWriteError + UI. */

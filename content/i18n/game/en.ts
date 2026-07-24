@@ -82,6 +82,7 @@ export const gameEn: GameMessages = {
     forum: "FORUM",
     market: "MARKET",
     marketAria: "View HANSOME token price and buy or sell on hansomealpacas.xyz",
+    season: "SEASON",
     docs: "DOCS",
     aria: "Game",
     mobileAria: "Mobile game",
@@ -114,6 +115,8 @@ export const gameEn: GameMessages = {
     mintSub: "550 · GENESIS",
     enterGame: "ENTER THE GAME",
     enterGameSub: "DEPLOY · DAILY LOOP",
+    season: "SEASON 1",
+    seasonSub: "ALPACAS VS COUGARS",
     downloadAndroid: "Download Android App",
     downloadAndroidSub: "Android APK · Direct Download",
     downloadAndroidInstallNote:
@@ -198,7 +201,7 @@ export const gameEn: GameMessages = {
     help: {
       COMMIT: "Choose where your NFT goes and submit. The round resolves automatically.",
       REVEAL:
-        "No need to wait on this timer — battle results appear during the next Choose Location phase. Leave anytime and check back then.",
+        "Confirm each Reveal in your wallet during the 4-hour window. Battle results appear during the next Choose Location phase — no need to wait on this timer.",
       SETTLEMENT: "Battle Result viewing window — animations and history.",
       CLAIM: "Resolved — review results anytime. Claim HANSOME on the Claim page with no deadline.",
     },
@@ -518,7 +521,7 @@ export const gameEn: GameMessages = {
       "Choose a location first. Settlement runs in the background; results appear here during the next Choose Location phase.",
     goClaim: "GO TO CLAIM",
     goReveal: "WATCH BATTLE",
-    awaitingReveal: "Committed — revealing automatically from this device…",
+    awaitingReveal: "Committed — confirm Reveal in your wallet before the window closes.",
     awaitingSettlement: "In the arena — waiting for battle resolution",
     rewardZero: "0",
   },
@@ -551,7 +554,7 @@ export const gameEn: GameMessages = {
       "Battle presentation is taking longer than usual. Stay on this page — results will finish here. You can open Choose Location from the menu when ready.",
     rewardsFinalizingNote: "Rewards are being finalized.",
     arenaEyebrow: "ARENA · BATTLE RESULT",
-    revealSectionTitle: "AUTO REVEAL",
+    revealSectionTitle: "REVEAL ON-CHAIN",
     settleSectionTitle: "SETTLEMENT",
     battleSectionTitle: "BATTLE RESULTS",
     yourNftsTitle: "YOUR NFTS",
@@ -566,16 +569,16 @@ export const gameEn: GameMessages = {
     rewardLabel: "Reward",
     claimStatusLabel: "Claim",
     claimSectionTitle: "CLAIM REWARDS",
-    revealQueueEyebrow: "AUTOMATIC REVEAL",
+    revealQueueEyebrow: "4-HOUR REVEAL WINDOW",
     revealQueueEyebrowGasless: "AUTOMATIC · NO GAS",
     revealClosedHint:
       "If your move was not confirmed on-chain before settlement, it counts as a missed reveal (0 reward).",
-    revealing: "AUTO-REVEALING…",
+    revealing: "REVEALING…",
     revealed: "REVEALED",
     revealAction: "REVEAL MOVE",
-    autoRevealTitle: "Revealing your moves",
+    autoRevealTitle: "Confirm reveals in wallet",
     autoRevealBody:
-      "Your moves reveal automatically when this device has a saved backup.",
+      "Confirm each Reveal in your wallet before the 4-hour window closes.",
     autoRevealBodyGasless:
       "Revealing from the secure vault and settling on-chain — no wallet gas needed for this step.",
     autoRevealWaiting: "Battle Result ready…",
@@ -597,7 +600,7 @@ export const gameEn: GameMessages = {
       "Abnormal network fee detected — transaction blocked before MetaMask opens.",
     noSecretsTitle: "No local backup on this device",
     noSecretsBody:
-      "No commit backup on this browser. Gasless reveal can still complete from the secure vault — wait for on-chain confirmation before assuming a missed reveal.",
+      "No commit backup on this browser. Use Reveal all or reveal each NFT in your wallet before the window closes.",
     missedRevealTitle: "Missed reveal",
     missedRevealBody:
       "This NFT was committed but reveal was not confirmed on-chain before settlement. Reward is 0 for this round.",
@@ -672,6 +675,74 @@ export const gameEn: GameMessages = {
     economicModelPdfZh: "CHINESE PDF",
     fullRulesNote:
       "Player Guide covers classes, locations, and pool overview. Settlement formulas, trait resolution order (King → Runner → Lucky → Guardian → …), and edge cases are defined in HANSOME GDS v1.1 — not in the Player Guide.",
+  },
+  season: {
+    eyebrow: "SEASON 1 · LIVE",
+    heading: "SEASON 1 — ALPACAS VS COUGARS",
+    lead:
+      "The first HANSOME season is a daily commit–reveal strategy loop on Robinhood Chain. One Genesis collection, two sides, five locations — play every day or review results on your schedule.",
+    whatTitle: "WHAT IS SEASON 1?",
+    whatBody:
+      "Season 1 is the core GameFi loop: Alpacas maximize location weight vs hunt risk; Cougars hunt where Alpacas gather. Each game day you Commit a hidden location, Reveal on-chain, wait for settlement, then Claim HANSOME to your NFT. Miss Commit or Reveal and that NFT earns nothing for the day.",
+    rosterTitle: "GENESIS ROSTER",
+    rosterRows: [
+      ["Collection", "HANSOME Genesis NFT"],
+      ["Total supply", "550"],
+      ["Alpacas", "500"],
+      ["Cougars", "50"],
+      ["Side at mint", "Assigned at NFT Reveal — not selectable"],
+    ],
+    rosterNote:
+      "Cougars share the same ERC-721 collection as Alpacas. Token ID does not guarantee side.",
+    loopTitle: "DAILY CYCLE",
+    loopEyebrow: "COMMIT → REVEAL → SETTLE → CLAIM",
+    loopSteps: [
+      "CHOOSE LOCATION — you must Commit where your NFT goes (hidden until Reveal)",
+      "REVEAL — you must Reveal on-chain before the window closes",
+      "BATTLE RESULT — settlement runs; outcomes appear during the next Choose Location phase",
+      "CLAIM — rewards book to the NFT; repeat the next game day",
+    ],
+    loopNote:
+      "You must actively Commit and Reveal each day. Settlement and Claim do not require you to stay online.",
+    locationsTitle: "FIVE LOCATIONS",
+    locationHeaders: ["Location", "Weight", "Notes"],
+    locationRows: [
+      ["Home", "1", "Alpaca only — Cougars forbidden"],
+      ["Mountain", "2", "Open to both sides"],
+      ["Grassland", "3", "Open to both sides"],
+      ["Forest", "5", "Open to both sides"],
+      ["River", "8", "Highest weight · highest hunt-risk narrative"],
+    ],
+    locationsNote:
+      "Higher weight means a larger share narrative from the Alpaca Pool — and more Cougar hunt pressure.",
+    timingTitle: "20 + 4 DAY WINDOWS",
+    timingBody:
+      "Each game day uses a 20-hour Choose Location window and a 4-hour Reveal window (20+4).",
+    timingBullets: [
+      "Commit (Choose Location): first 20 hours of the game day",
+      "Reveal: final 4 hours — must Reveal or forfeit that day’s rewards",
+      "Settlement and Claim open after Reveal closes; Claim has no deadline",
+    ],
+    futureTitle: "COMING LATER — NOT LIVE YET",
+    futureBody:
+      "Season 1 ships the Classic five-location loop only. Event Days are on the backlog — not playable today:",
+    futureEventDaysLabel: "Event Days roster",
+    futureItems: [
+      "🌫️ Fog Day — hidden map intel",
+      "🔥 House on Fire — Alpacas can't go Home; KING can protect a location",
+      "⛈️ Storm Day — random location closed",
+      "🦙 Herd Day — overcrowding lowers effective weight",
+      "🐆 Famine Day — Cougar hunting rewards reduced",
+      "👑 King Under Siege — 10+ Cougars can siege the KING",
+      "👃 Lost Scent — Cougars lose map data",
+      "🌙 Night Run — Cougars can enter Alpaca Home",
+      "✨ Mysterious Land — temporary map appears, weight ×10",
+    ],
+    ctaTitle: "GET STARTED",
+    ctaMint: "MINT GENESIS NFT",
+    ctaPlay: "PLAY / EXPLORE",
+    ctaDocs: "PLAYER DOCS",
+    backHome: "← Back to title",
   },
   actions: {
     deploy: "DEPLOY",

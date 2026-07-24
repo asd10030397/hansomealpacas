@@ -90,6 +90,7 @@ export type GameMessages = {
     forum: string;
     market: string;
     marketAria: string;
+    season: string;
     docs: string;
     aria: string;
     mobileAria: string;
@@ -124,6 +125,8 @@ export type GameMessages = {
     mintSub: string;
     enterGame: string;
     enterGameSub: string;
+    season: string;
+    seasonSub: string;
     downloadAndroid: string;
     downloadAndroidSub: string;
     downloadAndroidInstallNote: string;
@@ -503,6 +506,36 @@ export type GameMessages = {
     economicModelPdfEn: string;
     economicModelPdfZh: string;
     fullRulesNote: string;
+  };
+  season: {
+    eyebrow: string;
+    heading: string;
+    lead: string;
+    whatTitle: string;
+    whatBody: string;
+    rosterTitle: string;
+    rosterRows: [string, string][];
+    rosterNote: string;
+    loopTitle: string;
+    loopEyebrow: string;
+    loopSteps: [string, string, string, string];
+    loopNote: string;
+    locationsTitle: string;
+    locationHeaders: [string, string, string];
+    locationRows: [string, string, string][];
+    locationsNote: string;
+    timingTitle: string;
+    timingBody: string;
+    timingBullets: [string, string, string];
+    futureTitle: string;
+    futureBody: string;
+    futureEventDaysLabel: string;
+    futureItems: string[];
+    ctaTitle: string;
+    ctaMint: string;
+    ctaPlay: string;
+    ctaDocs: string;
+    backHome: string;
   };
   actions: {
     deploy: string;

@@ -222,7 +222,7 @@ export default function ResultPhasePage() {
 
   const revealEyebrow = autoReveal.gasless
     ? t.result.revealQueueEyebrowGasless
-    : autoReveal.walletAutoRevealEnabled
+    : phase === "REVEAL"
       ? t.result.revealQueueEyebrow
       : undefined;
 
@@ -235,10 +235,9 @@ export default function ResultPhasePage() {
       : message;
 
   const showMainnetRevealActions =
-    !autoReveal.gasless &&
     phase === "REVEAL" &&
-    !autoReveal.noSecrets &&
-    autoReveal.pendingSecrets.length > 0;
+    autoReveal.pendingSecrets.length > 0 &&
+    (autoReveal.gasless || !autoReveal.noSecrets);
 
   const isUserRejectedReveal = (message: string | null | undefined) =>
     !!message &&

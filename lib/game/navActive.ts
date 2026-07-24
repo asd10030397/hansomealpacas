@@ -15,6 +15,7 @@ const PRETTY_TO_INTERNAL: Record<string, string> = {
   "/leaderboard": "/game/leaderboard",
   "/forum": "/game/forum",
   "/docs": "/game/docs",
+  "/season": "/game/season",
   "/commit": "/game/commit",
   "/result": "/game/result",
   "/reveal": "/game/result",
