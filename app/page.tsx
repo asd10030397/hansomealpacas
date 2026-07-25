@@ -14,11 +14,11 @@ export default function Home() {
     <main>
       <HeroSection />
       <LiveStatusSection />
+      <DexToolsChartSection />
       <TokenomicsSection />
       <BuySection />
       <ContractSection />
       <MarketStatsSection />
-      <DexToolsChartSection />
       <AboutSection />
       <FaqSection />
       <FooterSection />

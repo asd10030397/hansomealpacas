@@ -1,8 +1,6 @@
 "use client";
 
 import { ActionButton } from "@/components/ActionButton";
-import { FadeIn } from "@/components/FadeIn";
-import { Section } from "@/components/Section";
 import { useLocale } from "@/context/LocaleContext";
 import {
   DEXTOOLS_CHART_WIDGET_URL,
@@ -13,37 +11,38 @@ export function DexToolsChartSection() {
   const { t } = useLocale();
 
   return (
-    <FadeIn as="section" id="chart">
-      <Section ariaLabelledBy="chart-title" className="flex flex-col items-center py-0 text-center">
+    <section id="chart" aria-labelledby="chart-title" className="bg-sky">
+      <div className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 py-10 text-center sm:py-14">
         <p className="font-[family-name:var(--font-anton)] text-xs tracking-[0.4em] text-gold-light sm:text-sm">
           {t.chart.eyebrow}
         </p>
         <h2
           id="chart-title"
-          className="mt-4 font-[family-name:var(--font-anton)] text-[clamp(2.5rem,8vw,5rem)] tracking-[0.08em] text-foreground"
+          className="mt-3 font-[family-name:var(--font-anton)] text-[clamp(1.75rem,6vw,3.5rem)] tracking-[0.08em] text-foreground sm:mt-4"
         >
           {t.chart.title}
         </h2>
-        <p className="mt-6 max-w-2xl text-base text-muted sm:text-xl">{t.chart.subtitle}</p>
+        <p className="mt-4 max-w-2xl text-base text-muted sm:mt-5 sm:text-lg">{t.chart.subtitle}</p>
 
-        <div className="gold-border mt-14 w-full max-w-5xl overflow-hidden rounded-3xl p-3 sm:mt-16 sm:p-5">
-          <div className="overflow-hidden rounded-2xl bg-[#1F2937]">
+        <div className="gold-border mt-8 w-full max-w-5xl overflow-hidden rounded-3xl p-2 sm:mt-10 sm:p-4">
+          <div className="relative w-full overflow-hidden rounded-2xl bg-[#1F2937] pt-[72%] sm:pt-[58%]">
             <iframe
               title={t.chart.iframeTitle}
               src={DEXTOOLS_CHART_WIDGET_URL}
-              loading="lazy"
-              className="block h-[480px] w-full border-0 sm:h-[625px]"
+              loading="eager"
+              referrerPolicy="origin-when-cross-origin"
+              className="absolute inset-0 block h-full w-full border-0"
               allow="clipboard-write"
             />
           </div>
         </div>
 
-        <div className="mt-8">
+        <div className="mt-6 sm:mt-8">
           <ActionButton href={DEXTOOLS_PAIR_EXPLORER_URL} variant="gold">
             {t.chart.viewOnDextools}
           </ActionButton>
         </div>
-      </Section>
-    </FadeIn>
+      </div>
+    </section>
   );
 }

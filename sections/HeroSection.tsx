@@ -23,7 +23,7 @@ export function HeroSection() {
     <>
       <section
         aria-labelledby="hero-title"
-        className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-6 pb-20 pt-16 text-center sm:pb-28 sm:pt-20"
+        className="relative flex flex-col items-center justify-center overflow-hidden px-6 pb-14 pt-14 text-center sm:pb-16 sm:pt-16"
       >
         <img
           src="/pixel/pasture-hero-bg.png"
@@ -57,7 +57,7 @@ export function HeroSection() {
           transition={{ duration: reduceMotion ? 0 : 0.75, ease: EASE }}
           className="relative z-10 flex w-full max-w-6xl flex-col items-center"
         >
-          <GoldCoin interactive onClick={handleMascotClick} className="mb-8 sm:mb-12" />
+          <GoldCoin interactive onClick={handleMascotClick} className="mb-5 sm:mb-7" />
 
           <p className="meme-badge" aria-label={t.hero.memeBadge}>
             <span aria-hidden="true" className="meme-badge-spark left">
@@ -71,12 +71,12 @@ export function HeroSection() {
 
           <h1
             id="hero-title"
-            className="mt-5 font-[family-name:var(--font-anton)] text-[clamp(1.75rem,7.5vw,4.25rem)] leading-[1.35] tracking-normal text-foreground drop-shadow-[3px_3px_0_rgba(255,255,255,0.6)] sm:mt-6"
+            className="mt-4 font-[family-name:var(--font-anton)] text-[clamp(1.75rem,7.5vw,4.25rem)] leading-[1.35] tracking-normal text-foreground drop-shadow-[3px_3px_0_rgba(255,255,255,0.6)] sm:mt-5"
           >
             {PROJECT.name}
           </h1>
 
-          <div className="mt-3 space-y-0.5 sm:mt-4">
+          <div className="mt-2 space-y-0.5 sm:mt-3">
             <p className="font-[family-name:var(--font-anton)] text-[0.65rem] tracking-[0.32em] text-wood-dark drop-shadow-[1px_1px_0_rgba(255,255,255,0.7)] sm:text-xs">
               {t.hero.chain}
             </p>
@@ -85,18 +85,18 @@ export function HeroSection() {
             </p>
           </div>
 
-          <p className="hero-ticker mt-7 sm:mt-8">
+          <p className="hero-ticker mt-5 sm:mt-6">
             <span className="hero-ticker-label">{t.hero.tickerLabel}:</span>{" "}
             <span className="hero-ticker-value">{t.hero.ticker}</span>
           </p>
 
-          <p className="mt-5 max-w-2xl text-lg leading-relaxed text-wood-dark drop-shadow-[1px_1px_0_rgba(255,255,255,0.6)] sm:mt-6 sm:text-xl md:text-2xl">
+          <p className="mt-4 max-w-2xl text-lg leading-relaxed text-wood-dark drop-shadow-[1px_1px_0_rgba(255,255,255,0.6)] sm:mt-5 sm:text-xl md:text-2xl">
             {t.hero.tagline}
           </p>
 
           <nav
             aria-label={t.a11y.primaryLinks}
-            className="mt-10 flex flex-wrap items-center justify-center gap-4 sm:mt-12"
+            className="mt-7 flex flex-wrap items-center justify-center gap-4 sm:mt-8"
           >
             <ActionButton href={GAME_HOME_URL} size="lg" variant="gold">
               {t.hero.playGame}
@@ -106,7 +106,7 @@ export function HeroSection() {
             </ActionButton>
           </nav>
 
-          <SocialBar className="mt-10 sm:mt-11" />
+          <SocialBar className="mt-7 sm:mt-8" />
         </m.div>
       </section>
 
