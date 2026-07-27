@@ -40,7 +40,7 @@ export type LitepaperWalletBlurb = {
   allocation: string;
 };
 
-export type LitepaperRevenueStatusKey = "active" | "planned" | "exploratory";
+export type LitepaperRevenueStatusKey = "active" | "planned" | "exploratory" | "inDevelopment";
 
 export type LitepaperRevenueStream = {
   id: string;
@@ -61,7 +61,14 @@ export type LitepaperRoadmapItem = {
   done: boolean;
 };
 
-export type LitepaperRoadmapStatusKey = "completed" | "inProgress" | "future";
+export type LitepaperRoadmapStatusKey =
+  | "completed"
+  | "inProgress"
+  | "inDevelopment"
+  | "planned"
+  | "conditional"
+  | "legacy"
+  | "future";
 
 export type LitepaperRoadmapPhase = {
   phase: string;
@@ -85,6 +92,25 @@ export type LitepaperChangelogEntry = {
   version: string;
   date: string;
   changes: readonly string[];
+};
+
+export type LitepaperProductStatusKey =
+  | "inDevelopment"
+  | "planned"
+  | "conditional"
+  | "legacy"
+  | "live";
+
+export type LitepaperBrandItem = {
+  name: string;
+  statusKey: LitepaperProductStatusKey;
+  status: string;
+  body: string;
+};
+
+export type LitepaperAxisItem = {
+  title: string;
+  body: string;
 };
 
 export type LitepaperMessages = {
@@ -118,7 +144,10 @@ export type LitepaperMessages = {
   };
   statusLabels: {
     live: string;
+    inDevelopment: string;
     planned: string;
+    conditional: string;
+    legacy: string;
     exploratory: string;
   };
   founderLetter: {
@@ -134,14 +163,58 @@ export type LitepaperMessages = {
       paragraphs: readonly string[];
     };
   };
-  vision: {
+  memeIdentity: {
     heading: string;
+    slogan: string;
+    tagline: string;
     paragraphs: readonly string[];
-  };
-  philosophy: {
-    heading: string;
     pillars: readonly LitepaperPillar[];
   };
+  brandHierarchy: {
+    heading: string;
+    intro: string;
+    items: readonly LitepaperBrandItem[];
+  };
+  scanScore: {
+    heading: string;
+    status: string;
+    paragraphs: readonly string[];
+    principlesHeading: string;
+    principles: readonly string[];
+    v4LockIntelligence: {
+      heading: string;
+      status: string;
+      problem: readonly string[];
+      capabilitiesHeading: string;
+      capabilities: readonly string[];
+      statusesHeading: string;
+      statuses: readonly string[];
+      interpretationHeading: string;
+      interpretation: readonly string[];
+      whyItMatters: readonly string[];
+      scoreRelationshipHeading: string;
+      scoreRelationship: readonly string[];
+      maturityNote: string;
+    };
+  };
+  axesConfidence: {
+    heading: string;
+    intro: string;
+    axes: readonly LitepaperAxisItem[];
+    principlesHeading: string;
+    principles: readonly string[];
+  };
+  explore: {
+    heading: string;
+    status: string;
+    paragraphs: readonly string[];
+  };
+  hansomeUtility: {
+    heading: string;
+    paragraphs: readonly string[];
+    items: readonly LitepaperPillar[];
+  };
+  /** Nested under Legacy section in the UI; kept as top-level keys for diagram components. */
   gameplayOverview: {
     heading: string;
     opening: string;
@@ -240,7 +313,13 @@ export type LitepaperMessages = {
   };
   roadmap: {
     heading: string;
+    intro: string;
     phases: readonly LitepaperRoadmapPhase[];
+  };
+  legacy: {
+    heading: string;
+    status: string;
+    intro: readonly string[];
   };
   community: {
     heading: string;
@@ -472,6 +551,7 @@ export type Messages = {
     explorer: string;
     transparency: string;
     litepaper: string;
+    scan: string;
     copyright: string;
     disclaimer: string;
   };

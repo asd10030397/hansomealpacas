@@ -248,6 +248,7 @@ export const zh: Messages = {
     explorer: "区块浏览器",
     transparency: "Transparency",
     litepaper: "Litepaper",
+    scan: "Score Scan",
     copyright: "© 2026 HANSOME ALPACAS",
     disclaimer:
       "$HANSOME 为迷因代币，没有内在价值，也不保证任何回报。本网站仅供娱乐，不构成投资建议。加密货币波动剧烈，请自行研究，只投入可承受损失的资金。",
@@ -265,50 +266,53 @@ export const zh: Messages = {
     meta: {
       title: "白皮书 | HANSOME ALPACAS",
       description:
-        "HANSOME ALPACAS 白皮书：创办人的话、愿景、GameFi 经济模型、代币经济学、金库政策、流动性政策、营收策略、路线图与常见问题——今天真正做到的事，以及老实说，我们想带这只帅羊驼走向哪里。",
+        "HANSOME 2.0 白皮书：迷因身分、Scan & Score（开发中）、Explore（规划中）、代币经济学、金库、流动性、路线图与 Legacy GameFi——如实陈述现状，不把 Scan 说成生产环境已上线。",
     },
     nav: {
       onThisPage: "本页目录",
       sections: {
         "founder-letter": "创办人的话",
         introduction: "简介",
-        vision: "愿景",
-        philosophy: "核心理念",
-        "gameplay-overview": "游戏简介",
-        "gamefi-economic-model": "GameFi 经济模型",
-        documents: "文件下载（DOC）",
+        "meme-identity": "迷因身分",
+        "brand-hierarchy": "品牌层级",
+        "scan-score": "Scan & Score",
+        "axes-confidence": "坐标与 Confidence",
+        explore: "Explore",
+        "hansome-utility": "$HANSOME 效用",
         tokenomics: "代币经济学",
         treasury: "金库政策",
         liquidity: "流动性政策",
         revenue: "营收策略",
         roadmap: "路线图",
+        legacy: "Legacy",
         community: "社群",
-        "sustainable-ecosystem": "建立可持续发展的生态系",
         "long-term-vision": "长期愿景",
         faq: "常见问题",
+        documents: "文件下载",
         changelog: "更新记录",
         language: "语言与翻译",
       },
     },
     backHome: "← hansomealpacas.xyz",
     downloadPdf: "下载白皮书 PDF",
-    downloadEconomicModelPdf: "经济模型 PDF",
+    downloadEconomicModelPdf: "Legacy 经济模型 PDF",
     documentsLibrary: {
-      heading: "文件下载（DOC）",
+      heading: "文件下载",
       blurb:
-        "本站 /docs 提供的正式下载档。分享建议用 PDF；在编辑器阅读可用 Markdown。",
+        "本站 /docs 提供的正式下载档。分享建议用 PDF；在编辑器阅读可用 Markdown。GameFi 经济模型档案属 Legacy 文件。",
       litepaperEn: "白皮书（英文 PDF）",
       litepaperZh: "白皮书（中文 PDF）",
-      economicPdfEn: "GameFi 经济模型（英文 PDF）",
-      economicPdfZh: "GameFi 经济模型（中文 PDF）",
-      economicMdEn: "GameFi 经济模型（英文 Markdown）",
-      economicMdZh: "GameFi 经济模型（中文 Markdown）",
+      economicPdfEn: "Legacy — GameFi 经济模型（英文 PDF）",
+      economicPdfZh: "Legacy — GameFi 经济模型（中文 PDF）",
+      economicMdEn: "Legacy — GameFi 经济模型（英文 Markdown）",
+      economicMdZh: "Legacy — GameFi 经济模型（中文 Markdown）",
       openInBrowser: "开启",
     },
     hero: {
-      eyebrow: "白皮书",
+      eyebrow: "白皮书 · HANSOME 2.0",
       title: "HANSOME ALPACAS",
-      subtitle: "一份公开记录，说明这个项目是什么、不是什么，以及我们希望带它走到哪里——不做我们做不到的承诺。",
+      subtitle:
+        "Too Hansome to Be Useful. So we built something useful anyway. — 迷因文化、透明度、发现与链上工具。不做做不到的承诺。",
       meta: [
         { label: "链", value: "Robinhood Chain" },
         { label: "总供应量", value: "1,000,000,000 HANSOME" },
@@ -318,75 +322,242 @@ export const zh: Messages = {
     },
     statusLabels: {
       live: "已上线",
+      inDevelopment: "开发中",
       planned: "规划中",
+      conditional: "有条件",
+      legacy: "Legacy",
       exploratory: "探索中",
     },
     founderLetter: {
       heading: "创办人的话",
       paragraphs: [
-        "我们并不是因为做出了什么产品才开始 HANSOME ALPACAS。纯粹是「一只赢了基因乐透、却什么用都没有的羊驼」这个想法让我们自己笑了出来，我们猜也会让别人笑出来。这一点到现在都没变。代币是那个笑话——但它本来就是一个开始，不是全部。",
-        "诚实说，计划是这样的：HANSOME 从一枚迷因币开始。如果真的有够多人因为觉得一只蠢帅的羊驼很好笑而留下来，我们想把它变成一个真正的品牌——原创内容、社群活动、迷因比赛、周边商品，或许还有合作伙伴关系。上面这些，一项都还没发生。我们把这些告诉你，是因为这是真话，不是因为我们明天就能生出来。",
-        "我们今天能承诺的，比这个更小、也更朴实：一个永远不能再增发的固定供应量、一份任何人（包括我们自己）都无法更改的合约，以及每一个碰过这颗代币的钱包的公开记录。我们没办法承诺你一件连帽外套。我们能承诺的是一份我们无法作弊的合约，以及日后任何真正的承诺都会清楚写进这份文件、附上日期——不是在某个群组里随口说说就算了。",
-        "这份文件是我们目前最接近「计划」的东西。它说明今天什么是真的、如果这个社群持续成长我们真心想做什么、以及这两者之间的界线在哪里。遇到我们还没有答案的地方，我们选择老实说不知道，而不是硬掰一个听起来有信心的答案。如果一年后 HANSOME 还在，我们希望原因是有一群真正的社群，觉得这只羊驼——以及我们围绕着它建立起来的一切——值得留下来，而不是因为我们在最初把话说得太满。",
-        "谢谢你把这篇读到这里。光是这一点，就已经比大部分冲进迷因币的人多做了一步。",
+        "Too Hansome to Be Useful. 这就是那个笑话：一只赢了基因乐透、却几乎毫无实用价值的羊驼。我们开始 HANSOME ALPACAS，是因为这件事让我们自己笑了出来——迷因文化本来就允许先荒谬，再谈有没有用。",
+        "HANSOME 2.0 是同一个笑话的下一章：Too Hansome to Be Useful. So we built something useful anyway. 不是企业级分析公司，也不是塞满流行术语的白皮书。而是一个迷因品牌，同时认真做透明度、发现与链上工具——Scan、Score，以及之后的 Explore——并把羊驼迷因文化留住。",
+        "我们今天能承诺的，仍然比热度简报更窄：固定且无法增发的供应量、不可变更合约、公开钱包，以及诚实的状态标签。HANSOME Scan 与 HANSOME Score 为「开发中」。Explore 为「规划中」。与 Launch 相关的路径为「有条件」。Genesis NFT／羊驼 VS 美洲狮归入 Legacy。我们不会为了听起来更厉害，就把 Scan 说成生产环境已上线。",
+        "这份文件是这次转向的公开记录。它说明什么是真的、什么在进行、什么是规划、什么是 Legacy。如果一年后 HANSOME 还在，我们希望原因是真正的社群，愿意跟一只终于学会「稍微有点用」的帅羊驼一起留下来——同时没忘记它首先是个迷因。",
+        "谢谢你读到这里。Stay Hansome.",
       ],
       signature: "— HANSOME ALPACAS 团队",
     },
     introduction: {
-      heading: "简介",
+      heading: "简介／HANSOME 是什么？",
       paragraphs: [
-        "HANSOME ALPACAS 一开始就是一枚迷因币——一只极度帅气的羊驼、一个代号、零一技之长——在 Robinhood Chain 上通过 Uniswap v4 集中流动性池与 ETH 交易。它今天背后没有产品，我们也不打算装作有。",
-        "但代币从来不是故事的全部。如果 HANSOME 周围的社群持续成长，我们的计划是让品牌跟着一起成长：原创内容、社群主办的活动、迷因比赛、周边商品（服饰、玩偶、贴纸这类的），还有合适的话，合作伙伴关系。上面这些，目前一项都不存在。这份文件把这件事讲清楚，而不是把一份愿望清单包装成路线图。",
-        "今天真正存在的是：固定且无法增发的供应量、一份没有任何管理者特权的不可变更合约，以及每一个碰过这颗代币的钱包的公开记录。这份文件的目的，就是老实说清楚今天什么是事实、什么只是期望，以及两者之间的界线在哪里——让这个项目的信任建立在记录上，而不是说法上。",
+        "HANSOME ALPACAS 是部署于 Robinhood Chain 的迷因优先项目：固定供应、0% 交易税的 ERC-20 $HANSOME，通过 Uniswap v4 集中流动性池与 ETH 交易。身分仍然是那个笑话——Too Hansome to Be Useful——品牌仍然是羊驼迷因文化，不是企业仪表板。",
+        "HANSOME 2.0 在迷因之上加上第二层：透明度、发现与链上工具。方向是 Meme + Transparency + Discovery + On-chain Tools。Scan 与 Score 正在建设，让人检视结构性风险与数据完整度，而不把人气当成安全。Explore 规划用于之后的分类与 Trending 发现。这些都不取代迷因——它们只是让迷因多做一点有用的事。",
+        "链上今天已经存在的：不可变更、无法增发的 $HANSOME；官方流动性（含 Titan 锁仓部位 #47299）；公开钱包；以及以 /transparency 作为余额实时来源。不作为生产承诺存在的：一套已完成的公开扫描产品。本白皮书的状态标签是刻意写清楚的。",
       ],
       whatIsHansome: {
         heading: "HANSOME 是什么？",
         paragraphs: [
-          "HANSOME ALPACAS（代号：HANSOME）是一颗部署在 Robinhood Chain 上、供应量固定、0% 交易税的 ERC-20 代币。它唯一自称的身分，就是它诞生的那个笑话：一只极度帅气、却在设计上毫无用途的羊驼。",
-          "代币合约里没有质押机制、没有游戏、没有收益机制，也没有任何写进合约里的未来功能承诺——没有清楚、独立公告之前，也不会有。这句话讲的是合约，不是我们对这个品牌的野心。想知道我们真正想带它去哪里，请看下面的「愿景」。",
+          "HANSOME ALPACAS（代号：HANSOME）是部署在 Robinhood Chain 上、供应量固定、0% 交易税的 ERC-20。核心身分仍是迷因文化：一只极度帅气、从未被设计成「严肃实用产品」的羊驼。",
+          "在代币周围，HANSOME 2.0 正在建设可选工具——Scan、Score、Explore，以及有条件的 Launch 路径——并附上清楚的状态标签。代币合约本身不会凭空铸出效用；工具是各自有成熟度的独立产品。Genesis NFT／羊驼 VS 美洲狮 GameFi 记载于 Legacy。",
         ],
       },
     },
-    vision: {
-      heading: "愿景",
+    memeIdentity: {
+      heading: "迷因身分",
+      slogan: "Too Hansome to Be Useful.",
+      tagline: "Too Hansome to Be Useful. So we built something useful anyway.",
       paragraphs: [
-        "大部分迷因币的设计就是冲一波然后淡去。我们宁愿做那个在第一波热度退去之后，还在这里、而且还在成长的版本——就算这代表走得比较慢、讲话比较小声。",
-        "诚实说，我们想带这个项目去的地方是：HANSOME 从一枚迷因币开始，但代币是起点，不是终点。如果真的有一个真实的社群，围绕着这只荒谬又帅气的羊驼形成，我们想把它变成一个真正的品牌——原创内容、社群主导的活动、迷因比赛、周边商品，合适的话再加上合作伙伴关系。不是元宇宙，也不是那种塞满流行术语的「实用型代币」白皮书。就只是一只值得追踪的羊驼，在 Web3 里、也在 Web3 之外。",
-        "这些都不需要特定的价格、市值或上架某个交易所才能发生——需要的是真正想留在这里的人。所以顺序是：先有一个小而真实的社群，再有一个保守、透明管理的金库，等到真的有值得建构的东西之后，再在这两者之上建立品牌。",
+        "HANSOME 首先是迷因品牌。羊驼、下颌线、毫无用处——那就是文化。工具排第二，是带目的的梗：如果第一波热度过后我们还想留下来，不妨把其他迷因币通常跳过的透明度与发现也做出来。",
+        "我们不是要转型成企业级分析公司。Score 不是卖给机构风控台的简报。它是一种 hansome 的方式，去看结构性链上信号、Activity 与 Confidence——同时保留迷因语气。",
       ],
-    },
-    philosophy: {
-      heading: "核心理念",
       pillars: [
         {
-          title: "社群优先",
-          body: "没有私募，也没有卖给场外投资人的私人额度。今天持有 HANSOME 的人，取得代币的方式跟任何其他人一样——在公开市场上买进。",
+          title: "Meme",
+          body: "文化、笑话、比赛，以及人们真心想分享的吉祥物。如果不好笑了，其他都不重要。",
         },
         {
-          title: "代币只是起点",
-          body: "HANSOME 是以迷因币的身分上线的，今天它也确实就只是这样——我们不会装作不是。但这不是我们想停下来的地方。如果社群持续成长，我们的打算是在它之上建立一个真正的羊驼品牌：内容、活动、周边商品、合作伙伴关系。这是一个公开说出来的方向，不是一个附带交付日期的承诺。",
+          title: "Transparency",
+          body: "公开钱包、可验证的流动性操作，以及以 /transparency 作为余额实时来源——不是靠气氛。",
         },
         {
-          title: "0% 交易税",
-          body: "每一笔买卖都按照报价全额成交。没有暗中抽走一部分转进某个钱包的隐藏费用，没有「自动流动性」抽成，代币合约里也没有任何机制会从你的交易中抽走一分一毫。",
+          title: "Discovery",
+          body: "通过 Explore（规划中）与清楚的 Category／Trending 标签，帮助发现与理解代币——但不贩卖「安全」。",
         },
         {
-          title: "不可变更合约",
-          body: "HANSOME 合约没有任何管理者功能：不能增发、没有黑名单、不能暂停、不能更改交易税，也没有能在部署后改变合约行为的管理密钥。部署出去的样子，就是它永远的样子。",
+          title: "On-chain Tools",
+          body: "HANSOME Scan & Score（开发中）：结构性信号、Activity 与 Confidence——坐标分离、状态诚实。",
+        },
+      ],
+    },
+    brandHierarchy: {
+      heading: "品牌层级",
+      intro:
+        "HANSOME 2.0 是同一个迷因品牌下的一叠具名产品。每一条都有状态标签。请不要把它们压成「App 已经上线」。",
+      items: [
+        {
+          name: "HANSOME Scan",
+          statusKey: "inDevelopment",
+          status: "开发中",
+          body: "检视结构性 Score、Activity 与 Confidence 的扫描界面。不是生产环境已上线的扫描产品。内部 Week／Month 阶段是软性排序，不是交付承诺。",
         },
         {
-          title: "透明公开",
-          body: "这个项目涉及的四个钱包——部署钱包、流动性钱包、金库与创办人钱包——全部公开，任何时候都能在链上查证。详见下方「金库政策」章节，以及实时更新的 /transparency 页面，查看目前地址与余额。官方钱包、金库动向、流动性信息等透明度相关资料都会放在那个页面上，并尽可能以链上信息实时更新。金库执行的每一项流动性操作——包括「流动性政策」章节中提到的 2026 年 7 月流动性优化——都是通过任何人都能查证的公开交易完成的，而原始的锁仓部位在整个过程中完全没有被动过。这些决策追求的都是长期的可持续发展，而不是短期的热度。",
+          name: "HANSOME Score",
+          statusKey: "inDevelopment",
+          status: "开发中",
+          body: "0–100 结构性风险与透明度启发式分数。不是人气、不是价格预测、不是 rug／moon 神谕。永远与 Confidence 一并呈现。",
         },
         {
-          title: "长期思维",
-          body: "流动性与金库支出的决策，是依照事先订好的原则进行，而不是看今天 Twitter 上发生了什么就临时反应。这份文件会逐章说明目前这些原则具体是什么。",
+          name: "HANSOME Explore",
+          statusKey: "planned",
+          status: "规划中",
+          body: "分类、标签与 Trending 的发现界面——在 Scan／Score 足够稳定之后。不属于 Week-1 范围。",
+        },
+        {
+          name: "HANSOME Launch",
+          statusKey: "conditional",
+          status: "有条件",
+          body: "任何与 Launch 相关的产品路径，取决于工具成熟度、社群需求与明确的 go 决策。不是附日期的承诺。",
+        },
+        {
+          name: "Genesis NFT／羊驼 VS 美洲狮",
+          statusKey: "legacy",
+          status: "Legacy",
+          body: "Season-1 GameFi 与 mint 飞轮文件放在 Legacy。为持有者与历史保存——不是 HANSOME 2.0 的主叙事。",
+        },
+      ],
+    },
+    scanScore: {
+      heading: "HANSOME Scan & Score",
+      status: "开发中",
+      paragraphs: [
+        "HANSOME Scan 是检视界面。HANSOME Score 是 Scan 内呈现的结构性 0–100 输出。两者皆为「开发中」。本白皮书不宣称生产环境已上线的扫描器，不说「现已提供」，也不把用户写成已经依赖一套完成的 Scan 产品。",
+        "Score 只衡量结构性／链上风险与透明度信号。它不是人气比赛、不是成交量名气，也不是投资建议。可能存在原型或内部／有限测试；面向公众的成熟度仍属开发中。",
+        "内部规划使用的 Week／Month 标签，是工作排序的软性阶段——不是对外的硬性交付日期。",
+        "一项进行中的核心 Scan 能力：Uniswap v4 流动性与锁仓情报——因为在 Robinhood Chain 上，「看得到流动性」不等于「看得懂流动性」。",
+      ],
+      principlesHeading: "Score 原则（不可妥协）",
+      principles: [
+        "流动性小、持有人少或成交量低 ≠ 自动「不安全」。",
+        "流动性规模／滑价是情境与警示——所有权／可抽走风险才可能影响 Score。",
+        "数据缺失会降低 Confidence；不会用虚高的 Score 假装安全。",
+        "$HANSOME 永远买不到更高的 Score。持有 HANSOME 不会提升其他代币的 Score。",
+        "Category、Trending 与付费曝光永远不影响 Score。",
+      ],
+      v4LockIntelligence: {
+        heading: "Uniswap v4 流动性与锁仓情报",
+        status: "开发中",
+        problem: [
+          "主流扫描器在 Robinhood Chain 上，对 Uniswap v4 部位与第三方锁仓合约的可见度可能有限或不完整。这种可见度落差，会让持有人只看到资金池 TVL，却不知道谁能抽走 position NFT、锁仓是否已验证、何时解锁。",
+          "HANSOME Scan 正针对这个落差建造工具——不是已完成的通用产品，也不会用「全球第一」这类营销话术。只是一次 hansome 的尝试：把 v4 + 锁仓证据读清楚。",
+        ],
+        capabilitiesHeading: "规划中的能力（开发中）",
+        capabilities: [
+          "资金池身分与 Uniswap v4 position NFT／position id",
+          "部位所有者（EOA、金库、锁仓合约或其他）",
+          "在可扩展的锁仓注册表中识别时显示锁仓名称",
+          "附明确标签的锁仓状态（见下方）",
+          "可在链上验证时显示解锁日期",
+          "锁仓交易证据（有公开浏览器链接时提供）",
+          "集中流动性部位的区间内／区间外状态",
+          "部位流动性数量作为情境信息",
+          "在 UI 与 Score 输入中分离「规模」与「所有权／可抽走风险」",
+        ],
+        statusesHeading: "明确的锁仓状态",
+        statuses: [
+          "LOCKED — VERIFIED ON-CHAIN（已锁仓—链上已验证）",
+          "UNLOCKED / EOA-CONTROLLED（未锁仓／EOA 可控）",
+          "LOCK DETECTED — EXPIRY UNKNOWN（侦测到锁仓—到期日未知）",
+          "UNSUPPORTED LOCKER（尚不支持的锁仓）",
+          "UNABLE TO DETERMINE（无法判定）",
+        ],
+        interpretationHeading: "如何解读这些状态",
+        interpretation: [
+          "未知 ≠ 未锁仓。「UNABLE TO DETERMINE」与「UNSUPPORTED LOCKER」代表工具缺少已验证证据——不代表明天就有人能抽走流动性。",
+          "侦测到锁仓 ≠「安全」。没有验证条件、到期日或所有权清晰度的锁仓，仍是不完整信息。务必展示证据。",
+          "看得到流动性，不等于看得懂流动性。若抽走控制权不透明，仅凭资金池深度可能带来误导性的安全感。",
+        ],
+        whyItMatters: [
+          "迷因币靠信任剧场活着，也死在信任剧场。只秀很大的流动性数字、却不交代锁仓／所有权脉络，就是那种剧场。我们宁愿用清楚的状态说「我们还不知道」，也不假装安全。",
+          "这是我们在 Robinhood Chain 上使用 Uniswap v4 与第三方锁仓（含 Titan）时遇到的可见度问题。小心补上这个落差，正是 Scan 存在的一部分理由。",
+        ],
+        scoreRelationshipHeading: "与 HANSOME Score 的关系",
+        scoreRelationship: [
+          "规模 ≠ 锁仓状态 ≠ 所有权／可抽走风险 ≠ 区间状态。产品里必须分开呈现。",
+          "流动性小 ≠ 不安全。流动性大 ≠ 安全。",
+          "已验证的锁仓状态与所有权／可抽走风险，在证据存在时可纳入结构性 Score。",
+          "流动性规模仍属滑价／深度情境与 Activity 相关警示——不是人气加成，也不会因为「小」就自动扣分。",
+          "锁仓覆盖不足会降低 Confidence，并可能显示 UNABLE TO DETERMINE／UNSUPPORTED LOCKER——不会凭空写成「未锁仓」或「安全」。",
+        ],
+        maturityNote:
+          "状态：开发中——尚非生产就绪的通用多代币／多锁仓支持。原型路径已侦测到 HANSOME 经 Titan 锁仓的 Uniswap v4 部位 #47299 并附链上证据；扩展成跨代币的通用锁仓注册表仍在建设中。Week／Month 仅为软性阶段——没有硬性交付承诺。",
+      },
+    },
+    axesConfidence: {
+      heading: "Activity · Trending · Category · Confidence",
+      intro:
+        "四个发现坐标，外加 Confidence。它们严格分离。混在一起，就是迷因工具开始不老实的时候。",
+      axes: [
+        {
+          title: "HANSOME Score",
+          body: "结构性风险与透明度（0–100）。唯一配称为「Score」的坐标。",
+        },
+        {
+          title: "Activity",
+          body: "交易与持有人活跃度：低／中／高。仅供参考。Activity 不是安全。",
+        },
+        {
+          title: "Trending",
+          body: "相对动量（随 Explore 规划）。Trending ≠ 更安全。有机 Trending 绝不用付费换排名。",
+        },
+        {
+          title: "Category",
+          body: "分类标签（例如 Animal Memes、DeFi、Gaming）。Category 不影响 Score。",
+        },
+        {
+          title: "Confidence",
+          body: "数据完整度与样本成熟度（显示在 Score 旁）。Confidence ≠ Score。新币或索引不足的代币，不确定性应反映在这里——而不是化妆成高分。",
+        },
+      ],
+      principlesHeading: "硬性分离",
+      principles: [
+        "Score ≠ Activity ≠ Trending ≠ Category。",
+        "Confidence = 数据完整度／成熟度——不是第二个热度计。",
+        "Trending ≠ 更安全。",
+        "Category 不影响 Score。",
+        "Promoted ≠ 有机 Trending。未来若有付费曝光，必须标示为 Promoted，且绝不可混入有机 Trending 或 Score。",
+        "$HANSOME 永远买不到 Score。",
+      ],
+    },
+    explore: {
+      heading: "HANSOME Explore",
+      status: "规划中",
+      paragraphs: [
+        "Explore 是规划中的发现层：按 Category／标签浏览，以透明的相对动量逻辑呈现 Trending，若未来存在付费曝光则清楚标示 Promoted。",
+        "Explore 依赖 Scan／Score 的稳定性与分类流程。状态为「规划中」——不是 Week-1 承诺，本文件也不把它写成已上线。",
+        "在 Explore 出现之前，发现仍可透过社群、列表与图表进行。这样没关系。我们宁愿 Explore 来得晚而诚实，也不要来得早而假。",
+      ],
+    },
+    hansomeUtility: {
+      heading: "$HANSOME 效用",
+      paragraphs: [
+        "$HANSOME 首先仍是迷因代币：固定供应、0% 交易税、不可变更合约、Robinhood Chain。代币合约里没有质押产品，也没有收益机制。",
+        "HANSOME 2.0 的效用是生态层级的，不是一份凭空发明的持有者福利清单。代币锚定品牌、金库与流动性；工具（Scan、Score、Explore）围绕同一套文化与透明度标准建造。本白皮书不发明新的 Genesis NFT 持有者权益。",
+        "若未来工具使用权、社群计划或品牌产品带来更具体的效用，会以日期与状态标签另行公告——不会在这里默示暗示。",
+      ],
+      items: [
+        {
+          title: "迷因与品牌锚点",
+          body: "HANSOME ALPACAS 的文化核心——比赛、内容与社群身分。",
+        },
+        {
+          title: "金库与流动性燃料",
+          body: "官方钱包与 Uniswap v4 流动性政策（见代币经济学、金库、流动性）。实时余额：/transparency。",
+        },
+        {
+          title: "工具生态（进行中）",
+          body: "Scan & Score 开发中；Explore 规划中；Launch 有条件。效用随已上线工具成长——不是靠口号。",
+        },
+        {
+          title: "Legacy GameFi（分开记载）",
+          body: "Genesis／羊驼 VS 美洲狮经济仍记载于 Legacy。不是 2.0 的主效用叙事。",
         },
       ],
     },
     gameplayOverview: {
-      heading: "游戏简介",
-      opening: "HANSOME: Alpacas vs Cougars 不只是一个 NFT 收藏系列。",
+      heading: "游戏简介（Legacy）",
+      opening: "LEGACY — HANSOME: Alpacas vs Cougars 不只是一个 NFT 收藏系列。",
       paragraphs: [
         "每一只 Genesis NFT 都是链上生存游戏中的可游玩角色，玩家将在游戏中竞争、生存并获得奖励。",
         "玩家可以成为：",
@@ -399,7 +570,7 @@ export const zh: Messages = {
       closing: [
         "提交行动 → 揭露行动 → 结算 → 领取奖励",
         "不同的 NFT 特性与能力将影响游戏体验与策略选择。",
-        "本白皮书仅提供游戏生态的简单介绍。",
+        "本白皮书仅提供 Legacy 游戏生态的简单介绍。",
         "若想了解完整玩法、NFT 能力、地点、奖励池、结算规则与领奖方式，请前往 Game 页面。",
       ],
       imageAlt: "像素艺术：美洲狮与叼着草的羊驼在山间草地对峙",
@@ -414,7 +585,7 @@ export const zh: Messages = {
       ],
       cta: {
         heading: "想了解游戏怎么玩？",
-        body: "本白皮书仅提供高阶概览。",
+        body: "本白皮书仅提供高阶 Legacy 概览。",
         bullets: [
           "每日游戏循环",
           "NFT 能力",
@@ -429,10 +600,10 @@ export const zh: Messages = {
       },
     },
     gamefiEconomicModel: {
-      heading: "GameFi 经济模型",
+      heading: "GameFi 经济模型（Legacy）",
       intro: [
-        "HANSOME：羊驼 VS 美洲狮是部署于 Robinhood Chain 的日结算 GameFi 经济。每日奖励由 GameTreasury 持有的 $HANSOME 支付——并非新铸造。结果取决于参与度、决策、国库健康度与市场条件。本节不承诺获利或固定收益。",
-        "完整数学分析——排放阶梯、奖池拆分、羊驼与美洲狮经济、赛局框架、国库跑道，以及相对于典型 P2E 为何朝向长期永续——已另以独立报告公开，供玩家与研究者阅读。",
+        "LEGACY — HANSOME：羊驼 VS 美洲狮是部署于 Robinhood Chain 的日结算 GameFi 经济。每日奖励由 GameTreasury 持有的 $HANSOME 支付——并非新铸造。结果取决于参与度、决策、国库健康度与市场条件。本节不承诺获利或固定收益。",
+        "完整数学分析——排放阶梯、奖池拆分、羊驼与美洲狮经济、赛局框架、国库跑道，以及相对于典型 P2E 为何朝向长期永续——已另以独立 Legacy 报告公开，供玩家与研究者阅读。",
       ],
       highlightsHeading: "模型说明重点",
       highlights: [
@@ -445,14 +616,14 @@ export const zh: Messages = {
         "长期设计：固定供应＋国库支付奖励、阶梯排放、无需升级合约即可逐步扩展国库、羊驼／美洲狮相互需求（不保证获利）",
       ],
       disclaimer:
-        "奖励为有条件发放。未 Reveal、安全模式（G < Gsafe）或族群失衡都可能减少或取消当日收益。非投资建议。",
-      linksHeading: "经济模型文件",
+        "奖励为有条件发放。未 Reveal、安全模式（G < Gsafe）或族群失衡都可能减少或取消当日收益。非投资建议。属 Legacy 文件——不是 HANSOME 2.0 的主产品叙事。",
+      linksHeading: "Legacy 经济模型文件",
       links: {
         reportEn: "英文报告（Markdown）",
         reportZh: "中文报告（Markdown）",
         pdfEn: "下载 PDF（英文）",
         pdfZh: "下载 PDF（中文）",
-        game: "开启线上游戏",
+        game: "开启游戏",
       },
       hrefs: {
         reportEn: "/docs/HANSOME_GAME_ECONOMIC_MODEL_EN.md",
@@ -514,7 +685,8 @@ export const zh: Messages = {
         {
           label: "开发",
           value: "规划中——待定",
-          detail: "目前还没有划出开发预算，因为除了核心代币与网站之外，暂时没有其他需要资金的产品路线图。若情况改变，会重新检视这一项。",
+          detail:
+            "目前还没有划出正式的开发子预算。HANSOME 2.0 工具（Scan、Score、Explore）是这些资金未来打算支持的产品方向——在预算公开之前，这不是无上限的支出承诺。",
         },
         {
           label: "团队",
@@ -585,113 +757,136 @@ export const zh: Messages = {
     revenue: {
       heading: "营收策略",
       intro:
-        "HANSOME 在设计上就是 0% 交易税，所以不会像早期那些「抽税型」迷因币一样自动产生收入。未来要挹注流动性、或是真正把「愿景」里提到的品牌做出来，资金得从真实的地方来——不是靠印更多 HANSOME。以下是目前真正在运作的，以及如果情况持续成长，我们想推动起来的。以下没有任何一项是保证会实现的。",
+        "HANSOME 在设计上就是 0% 交易税，所以不会像早期那些「抽税型」迷因币一样自动产生收入。流动性与 HANSOME 2.0 工具的资金得从真实来源来——不是靠印更多 HANSOME。以下是目前真正在运作的、开发中的，以及仍属探索的。以下没有任何一项是保证会实现的。",
       streams: [
         {
           id: "lp-fees",
           title: "LP 手续费",
           statusKey: "active",
           status: "已上线",
-          body: "0.05% 的 Uniswap v4 资金池手续费，是目前唯一已经在运作的收入来源，会随交易量自动增减。它不多，但是真的，也是这份清单里唯一一项我们不需要等待就已经在发生的事。",
+          body: "0.05% 的 Uniswap v4 资金池手续费，是目前唯一已经在运作的收入来源，会随交易量自动增减。它不多，但是真的，也是这份清单里唯一不依赖新上线产品的项目。",
+        },
+        {
+          id: "scan-score-tools",
+          title: "Scan & Score 生态",
+          statusKey: "inDevelopment",
+          status: "开发中",
+          body: "链上检视工具是 HANSOME 2.0 的产品方向。任何未来变现（若有）都会另行揭露，且绝不可包含「付费提高 Score」或「付费进入有机 Trending」。今日状态：开发中——不是已上线的营收线。",
+        },
+        {
+          id: "explore-discovery",
+          title: "Explore 发现",
+          statusKey: "planned",
+          status: "规划中",
+          body: "若 Explore 上线，标示为 Promoted 的付费曝光（若未来提供）将是唯一付费发现面——绝不可混入 Score 或有机 Trending。Explore 本身仍属规划中。",
         },
         {
           id: "merchandise",
           title: "周边商品",
           statusKey: "exploratory",
           status: "探索中",
-          body: "服饰、玩偶、贴纸——对一只这么帅的吉祥物来说，周边商品是很自然的方向，而且它是长期计划里真实的一部分，不只是随口写上去的项目。目前还没有任何一款真正设计、制作或贩售。我们宁愿等到社群大到真的想要它的时候再好好做，也不想为了赶时间推出一件没人要的连帽外套。",
+          body: "服饰、玩偶、贴纸——对这只吉祥物很自然。目前还没有任何一款真正设计、制作或贩售。我们宁愿等到社群大到真的想要再好好做。",
         },
         {
           id: "partnerships",
           title: "合作伙伴",
           statusKey: "exploratory",
           status: "探索中",
-          body: "目前没有任何赞助、合作或联名关系存在。如果真的出现合适的机会——真正符合这个品牌、而不只是花钱买一则宣传贴文——我们会认真考虑，并在确定之后才对外公布。目前还没有。",
-        },
-        {
-          id: "ecosystem-products",
-          title: "未来生态产品",
-          statusKey: "exploratory",
-          status: "探索中",
-          body: "目前没有规划或开发中的额外产品（工具、联名、限量发售等）。随着品牌这一侧逐渐成长——内容、社群活动、迷因比赛——其中有些可能会变成真正能带来收入的东西。目前还没有，我们刻意把这一类留白，而不是用一堆空想的功能点子把它填满。",
+          body: "不预设任何赞助、合作或联名。若出现真正符合品牌的机会，确定后才会公告——不会在这里写成已上线。",
         },
       ],
     },
     roadmap: {
-      heading: "路线图",
+      heading: "路线图 — HANSOME 2.0",
+      intro:
+        "分阶段路线图，附诚实状态标签。「Week」「Month」指工具工作的软性内部排序阶段——不是对外的硬性交付承诺。有条件项目需要明确的 go 决策。",
       phases: [
         {
-          phase: "第一阶段",
-          title: "打好基础",
+          phase: "阶段 0",
+          title: "基础（已完成）",
           statusKey: "completed",
           status: "已完成",
           items: [
-            { label: "部署供应量固定、无法增发、不可变更的 HANSOME 合约", done: true },
-            { label: "建立官方的 Uniswap v4 ETH/HANSOME 流动性池", done: true },
+            { label: "在 Robinhood Chain 部署供应量固定、无法增发、不可变更的 HANSOME 合约", done: true },
+            { label: "建立官方 Uniswap v4 ETH/HANSOME 流动性池", done: true },
             { label: "上线官方网站、交易界面与 /transparency 页面", done: true },
-            { label: "发布这份白皮书", done: true },
+            { label: "通过 Titan Locker 锁仓官方 Uniswap v4 LP 部位（#47299）——约 2027-07-15 解锁", done: true },
+            { label: "金库主导的流动性优化：在锁仓 NFT 之外运作多个部位", done: true },
+            { label: "发布白皮书与 Legacy GameFi 文件", done: true },
           ],
         },
         {
-          phase: "第二阶段",
-          title: "站稳脚步、听社群的话",
-          statusKey: "inProgress",
-          status: "进行中",
+          phase: "阶段 1",
+          title: "Scan & Score",
+          statusKey: "inDevelopment",
+          status: "开发中",
           items: [
-            { label: "被 DEX 信息聚合平台收录——已正式上架 GeckoTerminal 与 DexScreener", done: true },
+            { label: "HANSOME Scan 检视界面——开发中（非生产环境已上线）", done: false },
+            { label: "HANSOME Score 结构性启发式分数 + Confidence——开发中", done: false },
             {
               label:
-                "官方 Uniswap v4 流动性部位（#47299）已通过 Titan Locker 锁仓 365 天，将于 2027 年 7 月解锁——这是对长期流动性的具体承诺，可在 /transparency 上验证",
-              done: true,
-            },
-            {
-              label: "由金库主导，完成官方 Uniswap v4 资金池的流动性优化，在原始锁仓部位之外新增两个金库持有的流动性部位（详见「流动性政策」）",
-              done: true,
-            },
-            { label: "改善 Robinhood Chain 上的交换基础设施与 Gas 费用处理，提升交易可靠性", done: true },
-            { label: "建立内部工具，协助金库进行流动性管理", done: true },
-            { label: "持续针对网站与整体交易体验进行渐进式改善", done: false },
-            { label: "已送出 CoinGecko 上架申请，审核中", done: false },
-            { label: "已送出 CoinMarketCap 上架申请，审核中", done: false },
-            { label: "开始定期领取并回收 LP 手续费", done: false },
-            {
-              label: "持续观察市场状况与流动性深度——如果交易量与社群成长真的需要，未来会再加入更多流动性",
+                "Uniswap v4 流动性与锁仓情报 + 可扩展锁仓注册表——开发中（差异化能力；尚非生产就绪的通用多代币支持）",
               done: false,
             },
-            { label: "持续专注在建立 HANSOME 品牌，而不是追逐短期价格目标", done: false },
-            { label: "持续扩大早期社群", done: false },
+            { label: "在产品 UX 中维持 Score ≠ Activity ≠ Trending ≠ Category 的分离", done: false },
+            { label: "内部 Week／Month 阶段仅供排序——软性标记，不是对外 SLA", done: false },
           ],
         },
         {
-          phase: "第三阶段",
-          title: "维持下去、把品牌做起来",
-          statusKey: "future",
-          status: "未来规划",
+          phase: "阶段 2",
+          title: "Explore 与分类",
+          statusKey: "planned",
+          status: "规划中",
           items: [
-            { label: "评估真实、已公开的营收来源（见「营收策略」），视实际情况推进", done: false },
-            { label: "把里程碑式的流动性补充机制正式订成规则", done: false },
-            { label: "探索让社群在金库与流动性决策上真正拥有发言权", done: false },
-            { label: "如果社群真的在这里，开始把品牌做成不只是一张走势图——内容、社群活动、迷因比赛", done: false },
-            { label: "等有了真正的社群可以服务之后，探索周边商品（服饰、玩偶、贴纸）与合作伙伴关系", done: false },
-            { label: "没有固定日期、没有承诺的交易所上架、没有价格目标——这个阶段是方向，不是合约", done: false },
+            { label: "Category／标签分类与人工验证流程——规划中", done: false },
+            { label: "HANSOME Explore 发现界面——规划中（在 Scan／Score 稳定之后）", done: false },
+            { label: "Trending 采相对动量；Promoted 绝不混入有机 Trending 或 Score", done: false },
           ],
         },
+        {
+          phase: "阶段 3",
+          title: "Launch 路径",
+          statusKey: "conditional",
+          status: "有条件",
+          items: [
+            { label: "与 HANSOME Launch 相关的产品工作——有条件：取决于工具成熟度与明确 go 决策", done: false },
+            { label: "没有固定上架日期、没有价格目标、没有承诺的交易所结果", done: false },
+            { label: "CoinGecko／CoinMarketCap 申请仍属流程事项，不是路线图保证", done: false },
+          ],
+        },
+        {
+          phase: "Legacy",
+          title: "Genesis NFT／GameFi",
+          statusKey: "legacy",
+          status: "Legacy",
+          items: [
+            { label: "羊驼 VS 美洲狮玩法 + GameFi 经济模型保存在 Legacy", done: true },
+            { label: "Mint 飞轮文件保存在 Legacy——不是 2.0 主叙事", done: true },
+          ],
+        },
+      ],
+    },
+    legacy: {
+      heading: "Legacy：Genesis NFT + GameFi",
+      status: "Legacy",
+      intro: [
+        "本节保存 Season-1 GameFi 材料：游戏简介、GameFi 经济模型，以及 mint 收入飞轮。相对于 HANSOME 2.0 的迷因＋工具方向，本节标示为 LEGACY。",
+        "这里不发明新的 NFT 持有者权益。完整玩法请看 Game；经济数学请看下方链接的 Legacy 经济模型文件。",
       ],
     },
     community: {
       heading: "社群",
       paragraphs: [
-        "热度是一次尖峰，社群才是地板。一波热潮可以在很短时间内带来大量关注，也可以同样快速地把这些关注全部带走，什么都不留下。社群——就算规模很小——才是在图表停止跳动之后，还会留下来在乎这件事的人。",
-        "这个项目宁愿有一百个真心觉得吉祥物好笑、并且愿意留下来的人，也不想要一万个下周就忘记代号的人。这份文件里的每一项政策——金库的自律、流动性的做法、老实区分什么是真的、什么只是方向——说到底都是为了同一个目标：给一个真实的社群，以及日后跟这个社群一起打造出来的真正品牌，一个值得参与的理由。",
-        "这已经不只是一个希望了。我们已经有一个真正在运作的 Telegram 社群，靠自然成长慢慢变大，而不是靠付费推广冲出来的。我们会定期举办迷因比赛、抽奖、AMA 问答与社群活动，给真正愿意参与的人，也开始与 KOL 合作、推动更广泛的营销活动，把值得留下来的人带进来。社群的参与度，正逐渐成为这个项目最重要的优先事项之一，和金库、流动性的自律并列。",
+        "热度是一次尖峰，社群才是地板。HANSOME 宁愿留下一百个真心觉得羊驼好笑、也在乎诚实状态标签的人，也不想要一万个下周就忘记代号的人。",
+        "Telegram 社群持续运作：迷因比赛、抽奖、AMA 与社群活动。营销与 KOL 合作是为了带来值得留下来的人，不是用来遮掩尚未完成的产品。",
+        "HANSOME 2.0 对社群的约定没变：迷因文化优先、透明度永远在场，以及用清楚的「开发中／规划中／有条件／Legacy」标签来赢得信任的工具。",
       ],
     },
     sustainableEcosystem: {
-      heading: "建立可持续发展的生态系",
+      heading: "Mint 飞轮（Legacy）",
       paragraphs: [
-        "建立一个可持续发展的生态系，是我们的长期愿景。",
-        "我们的目标不只是推出一个 NFT 系列。",
-        "HANSOME: Alpacas vs Cougars NFT Mint 所产生的收入，将重新投入 HANSOME 生态系，用于：",
+        "LEGACY — 围绕 Genesis mint 收入建立可持续 GameFi 生态，是 Season-1 的愿景。",
+        "HANSOME: Alpacas vs Cougars NFT Mint 所产生的收入，曾描述为将重新投入 HANSOME 生态系，用于：",
       ],
       investments: [
         "🎮 游戏开发",
@@ -708,68 +903,78 @@ export const zh: Messages = {
         "持续开发",
       ],
       closing: [
-        "随着生态系持续成长，我们希望为 NFT 持有者与整个 HANSOME 社群创造更多价值。",
-        "更强大的生态系会吸引更多玩家。",
-        "更多玩家会形成更健康的社群。",
-        "更健康的社群会支持未来的持续开发。",
-        "这就是我们正在建立的成长飞轮。",
+        "此飞轮仍作为 Legacy 脉络保存。HANSOME 2.0 的主循环是迷因文化 → 透明度 → 工具 → 发现——不是以 mint 为先的成长。",
+        "更强的生态系仍然重要。排序与产品重心已经转移。",
       ],
     },
     longTermVision: {
       heading: "长期愿景",
-      intro: "没有人能保证这一定会成功。但我们期望 HANSOME 走向的样子，是一个循环，而不是一条直线——从一枚迷因币开始，如果一切顺利，最后走到比一枚迷因币大得多的地方。每一个阶段都喂养下一个阶段：",
+      intro:
+        "没有人能保证这一定会成功。我们想要的形状是一个循环：迷因文化养活诚实，诚实让工具值得信任，工具让发现有用——同时不假装 Scan 已经是生产环境上线产品。",
       lifecycle: [
-        { label: "社群", body: "因为觉得这只羊驼好笑而真正参与的人——不只是盯着走势图的旁观者。" },
-        { label: "品牌", body: "一个让人真心愿意分享的羊驼识别——迷因、内容，一种值得参与的氛围。" },
-        {
-          label: "产品",
-          body: "等有了愿意支持的观众之后，品牌能撑起的真实产出——周边商品（服饰、玩偶、贴纸）、社群活动、迷因比赛，或许还有联名合作（见「营收策略」）。",
-        },
-        { label: "营收", body: "来自这些产品、赞助合作，以及 LP 手续费的实际收入——不是空想。" },
-        { label: "金库", body: "这些收入以透明、公开、可上链查证的方式累积起来。" },
-        { label: "流动性", body: "金库资金依照既定节奏，强化并分散流动性。" },
+        { label: "迷因", body: "人们真心分享的羊驼文化——比赛、笑话、身分。" },
+        { label: "透明", body: "公开钱包、可验证的 LP 操作，以 /transparency 为实时真相。" },
+        { label: "工具", body: "开发中的 Scan & Score——结构性信号 + Confidence。" },
+        { label: "发现", body: "规划中的 Explore——Category、Trending；若有付费仅标 Promoted。" },
+        { label: "社群", body: "为文化与诚实留下的人，而不只是盯着走势图。" },
+        { label: "金库", body: "LP 手续费与未来真实收入，有目的地强化流动性——不是靠印币。" },
       ],
       loopLabel: "循环",
       closing:
-        "今天的 HANSOME，还处在这个循环最初的阶段——大部分是「社群」，一点点「品牌」，「产品」与「营收」还完全是空白。这不是需要隐藏的失败，只是老实反映一个目前仍然主要是「一只很帅的羊驼，加上一群觉得这件事好笑的人」的项目的真实状态。这份文件会随着情况改变被持续更新——如果没有改变，也会老实承认。",
+        "今天的 HANSOME 仍处在这个循环的早期：迷因身分清楚、链上透明度真实、工具开发中、Explore 规划中、Launch 有条件、GameFi 归入 Legacy。这份文件会随状态改变更新——包括老实承认延期。",
     },
     faq: {
       heading: "常见问题",
       items: [
         {
-          question: "HANSOME 今天实际上做了什么？",
+          question: "什么是 HANSOME 2.0？",
           answer:
-            "老实说？就是一只极度帅气的羊驼，加上固定供应量与不可变更合约。今天就只有这样。除此之外的东西——内容、活动、周边商品、合作伙伴关系——都写在上面的「愿景」与「长期愿景」里，是一个方向，不是现在就存在的东西。",
+            "同一个迷因品牌——Too Hansome to Be Useful——加上工具方向：透明度、发现，以及链上 Scan／Score（开发中）、Explore（规划中）、Launch（有条件）。Genesis GameFi 属 Legacy。",
         },
         {
-          question: "之后会有周边商品、社群活动或合作伙伴吗？",
+          question: "HANSOME Scan 现在上线／现已提供了吗？",
           answer:
-            "目前都还没有。但如果社群持续成长，这确实是真心的计划——原创内容、社群主办的活动、迷因比赛，之后如果合适的话，还有周边商品（服饰、玩偶、贴纸）与合作伙伴关系。没有日期，没有保证。这件事会不会发生，取决于你们大家有没有让它值得被做出来。",
+            "没有——以本白皮书的用语，它不是生产环境已上线产品。HANSOME Scan 与 HANSOME Score 为「开发中」。请勿把原型或测试工作读成完成的公开扫描器。我们对 Scan／Score 避免使用「现已提供」「live scanner」「用户目前可以…」这类说法。",
+        },
+        {
+          question: "HANSOME Score 衡量什么？",
+          answer:
+            "结构性风险与透明度信号（0–100）。它不是人气、不是价格预测，也不是 rug／moon 神谕。请永远搭配 Confidence（数据完整度）阅读。Score ≠ Activity ≠ Trending ≠ Category。",
+        },
+        {
+          question: "Category 或 Trending 会改变 Score 吗？",
+          answer:
+            "不会。Category 永远不影响 Score。Trending 不是安全。未来若有 Promoted 曝光，必须清楚标示，且绝不可混入有机 Trending 或 Score。$HANSOME 永远买不到 Score。",
+        },
+        {
+          question: "流动性小或成交量低，代表代币不安全吗？",
+          answer:
+            "不代表。流动性小、持有人少或成交量低，不会自动变成「不安全」的 Score。规模／滑价是情境；所有权／可抽走风险才是可能影响 Score 的结构性流动性议题。不确定性应反映在 Confidence。",
+        },
+        {
+          question: "什么是 Uniswap v4 流动性与锁仓情报？",
+          answer:
+            "一项「开发中」的 Scan 能力，针对可见度落差：主流扫描器在 Robinhood Chain 上对 Uniswap v4 + 第三方锁仓的可见度可能有限或不完整。规划输出包括资金池／部位身分、所有者、锁仓名称、明确锁仓状态（LOCKED—VERIFIED ON-CHAIN、UNLOCKED/EOA-CONTROLLED、LOCK DETECTED—EXPIRY UNKNOWN、UNSUPPORTED LOCKER、UNABLE TO DETERMINE）、解锁日期、锁仓交易证据、区间状态，以及规模 vs 可抽走风险。未知 ≠ 未锁仓；侦测到锁仓 ≠ 在未验证条件下就等于安全。原型已侦测 HANSOME Titan #47299；通用多代币／多锁仓支持仍在建设——尚非生产就绪。",
         },
         {
           question: "为什么金库的余额比宣称的 90% 低？",
           answer:
-            "因为 90% 描述的是上线时的初始配额，不是一个固定不变的余额。把金库代币投入官方 Uniswap v4 流动性部位，是「流动性政策」里正常、公开揭露的一部分——不是卖币。所以金库的余额本来就会随着时间下降，因为它里面越来越多的代币变成了流动性，而不是留在那个钱包里不动。实时数字永远都在 /transparency——这份文件只说明背后的政策，也就是为什么它会变动。",
-        },
-        {
-          question: "为什么是 0% 交易税？",
-          answer:
-            "交易税是一种长期存在的机制，会把每笔交易的一部分转走——通常转进团队控制的钱包。彻底拿掉它，代表每一笔交易都会照报价全额成交，没有任何抽成，也让一整类的信任问题根本不会出现。",
-        },
-        {
-          question: "为什么要不可变更？",
-          answer:
-            "一份可升级或由管理者控制的合约，等于是承诺「现在的规则以后还会是现在的规则」，但这个承诺背后除了说一说之外没有任何保证。一份没有增发、没有黑名单、没有管理密钥的不可变更合约，让这个承诺从「说出来」变成「结构上就是这样」——代价是以后永远没办法修补任何东西，而这是刻意接受的取舍。",
+            "因为 90% 描述的是上线时的初始配额，不是固定余额。把金库代币投入官方 Uniswap v4 流动性部位，是「流动性政策」里正常、公开揭露的一部分——不是卖币。实时数字永远在 /transparency。",
         },
         {
           question: "如果流动性变成单边怎么办？",
           answer:
-            "如果价格往一个方向移动得够远，集中流动性部位确实会完全变成单边——这是预期中的行为，不是故障。发生时，那个特定部位就会在那个方向上失去深度，直到被重新平衡或补充为止。上方「流动性政策」章节说明了规划中的常态后备做法，希望避免变成「没有人能交易」的情况——但截至目前，只有单一部位在运作，这个风险是真实存在、而且我们公开承认的。",
+            "如果价格往一个方向移动得够远，集中流动性部位确实会完全变成单边——这是预期行为，不是故障。HANSOME 现在运作多个部位（原始 Titan 锁仓 #47299，加上额外的金库持有区间）作为杠铃型后备。风险仍然真实且公开承认；详见「流动性政策」。",
         },
         {
-          question: "为什么不直接部署一个新合约？",
+          question: "为什么是 0% 交易税与不可变更合约？",
           answer:
-            "因为目前合约的不可变更性，本身就是信任的来源。为了「修好」某个问题就重新部署合约，等于放弃了这整份文件所建立的唯一保证——不能增发、没有管理者权限、什么都改不了。遇到问题，我们会用金库与流动性政策去解决，而不是整个重来一次。",
+            "0% 交易税代表成交按报价全额结算、没有抽成。不可变更且没有增发、黑名单或管理密钥，让「我们无法作弊供应量规则」成为结构事实。问题用金库与流动性政策解决——并用诚实上线的工具解决——而不是重新部署一颗新代币。",
+        },
+        {
+          question: "游戏／Genesis NFT 的故事去哪了？",
+          answer:
+            "在本白皮书的 Legacy 章节。玩法、GameFi 经济与 mint 飞轮都保存在那里，并标示 Legacy。HANSOME 2.0 的主叙事是迷因＋工具。",
         },
       ],
     },
@@ -777,6 +982,16 @@ export const zh: Messages = {
       heading: "更新记录",
       intro: "这里记录的是这份文件本身的修订历史，不是整个项目的完整历史。",
       entries: [
+        {
+          version: "v2.0",
+          date: "2026 年 7 月",
+          changes: [
+            "HANSOME 2.0 重写：迷因身分核心（“Too Hansome to Be Useful”／“…So we built something useful anyway”）、带状态标签的品牌层级、Scan & Score（开发中）、坐标与 Confidence 分离、Explore（规划中）、$HANSOME 效用、含有条件 Launch 的分阶段路线图、将 Genesis + GameFi + mint 飞轮移入 Legacy。",
+            "在 Scan & Score 下新增 Uniswap v4 流动性与锁仓情报（开发中）：可见度落差表述、规划能力、明确锁仓状态、与 Score 关系（规模 ≠ 锁仓 ≠ 所有权／可抽走 ≠ 区间）、Titan #47299 原型说明、路线图差异化条目 + FAQ。",
+            "营收策略改为围绕生态工具；文件下载将 GameFi 经济模型标为 Legacy；FAQ 加入 Score 免责声明；强化文末声明。",
+            "保留已核实的代币经济学／金库／流动性事实（10 亿供应、0% 税、不可增发、Robinhood、90/5/5、钱包角色、Uniswap v4、Titan #47299 约 2027-07-15 解锁、实时余额指向 /transparency）。修正过时的「单一部位」FAQ 用语。",
+          ],
+        },
         {
           version: "v1.7.1",
           date: "2026 年 7 月",
@@ -801,7 +1016,6 @@ export const zh: Messages = {
         },
         {
           version: "v1.5",
-
           date: "2026 年 7 月",
           changes: [
             "由金库主导，完成官方 Uniswap v4 资金池的流动性优化：新增两个金库持有的部位——一个窄区间部位用于降低交易滑价，一个宽区间部位提供额外的下跌保护——同时原始锁仓 365 天的部位（#47299）完全维持不变。",
@@ -863,13 +1077,13 @@ export const zh: Messages = {
     },
     language: {
       heading: "语言与翻译",
-      body: "这份文件提供英文与简体中文两个版本。简体中文版是人工撰写，力求读起来自然通顺，不是机器翻译——如果你发现两个版本在意思上有落差，请以英文版为准，也欢迎让我们知道。之后可能会加入更多语言；这份文件的架构设计，就是为了让新增语言不需要重新制作整个页面。",
+      body: "这份文件提供英文与中文两个版本。中文版是人工撰写，力求读起来自然通顺，不是机器翻译——如果你发现两个版本在意思上有落差，请以英文版为准，也欢迎让我们知道。之后可能会加入更多语言；这份文件的架构设计，就是为了让新增语言不需要重新制作整个页面。",
     },
     closing: {
-      note: "本文件反映 HANSOME ALPACAS 截至发布时的状态，会随项目进展修订，内容不构成投资建议。",
+      note: "本文件反映 HANSOME ALPACAS 截至发布时的状态，会随状态标签变更而修订，内容不构成投资建议。HANSOME Score／Scan（若日后提供）仅为信息性启发式工具——不是投资建议、人气排名或安全保证。加密货币波动极大，请自行研究（DYOR）。本白皮书中的状态标签（开发中、规划中、有条件、Legacy）优先于任何营销简写。",
       home: "首页",
       transparency: "透明公开",
       swap: "交易",
     },
-  },
+},
 };

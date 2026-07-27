@@ -58,6 +58,7 @@ export function FooterSection() {
           <FooterLink href={website} label={t.hero.website} />
           <FooterInternalLink href="/transparency" label={t.footer.transparency} />
           <FooterInternalLink href="/litepaper" label={t.footer.litepaper} />
+          <FooterInternalLink href="/scan" label={t.footer.scan} />
           <FooterLink href={explorer} label={t.footer.explorer} />
         </nav>
 

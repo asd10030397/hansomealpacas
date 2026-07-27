@@ -255,6 +255,7 @@ export const en: Messages = {
     explorer: "Explorer",
     transparency: "Transparency",
     litepaper: "Litepaper",
+    scan: "Score Scan",
     copyright: "© 2026 HANSOME ALPACAS",
     disclaimer:
       "$HANSOME is a meme coin with no intrinsic value or promised returns. This site is entertainment only. Crypto is volatile. DYOR. Only ape what you can lose.",
@@ -272,51 +273,53 @@ export const en: Messages = {
     meta: {
       title: "Litepaper | HANSOME ALPACAS",
       description:
-        "The HANSOME ALPACAS litepaper: founder letter, vision, GameFi economic model, tokenomics, treasury policy, liquidity policy, revenue strategy, roadmap, and FAQ — what's true today, and honestly, where we're hoping to take this handsome alpaca next.",
+        "HANSOME 2.0 litepaper: meme identity, Scan & Score (in development), Explore (planned), tokenomics, treasury, liquidity, roadmap, and Legacy GameFi — what's true today, without pretending Scan is production-live.",
     },
     nav: {
       onThisPage: "On this page",
       sections: {
         "founder-letter": "Founder Letter",
         introduction: "Introduction",
-        vision: "Vision",
-        philosophy: "Core Philosophy",
-        "gameplay-overview": "Gameplay Overview",
-        "gamefi-economic-model": "GameFi Economic Model",
-        documents: "Documents (DOC)",
+        "meme-identity": "Meme Identity",
+        "brand-hierarchy": "Brand Hierarchy",
+        "scan-score": "Scan & Score",
+        "axes-confidence": "Axes & Confidence",
+        explore: "Explore",
+        "hansome-utility": "$HANSOME Utility",
         tokenomics: "Tokenomics",
         treasury: "Treasury Policy",
         liquidity: "Liquidity Policy",
         revenue: "Revenue Strategy",
         roadmap: "Roadmap",
+        legacy: "Legacy",
         community: "Community",
-        "sustainable-ecosystem": "Sustainable Ecosystem",
         "long-term-vision": "Long-Term Vision",
         faq: "FAQ",
+        documents: "Documents",
         changelog: "Changelog",
         language: "Language & Translations",
       },
     },
     backHome: "← hansomealpacas.xyz",
     downloadPdf: "Download Litepaper PDF",
-    downloadEconomicModelPdf: "Economic Model PDF",
+    downloadEconomicModelPdf: "Legacy Economic Model PDF",
     documentsLibrary: {
-      heading: "Documents (DOC)",
+      heading: "Documents",
       blurb:
-        "Official downloadable files served from /docs on this site. Prefer PDF for sharing; Markdown for reading in a text editor.",
+        "Official downloadable files served from /docs on this site. Prefer PDF for sharing; Markdown for reading in a text editor. GameFi economic-model files are Legacy documentation.",
       litepaperEn: "Litepaper (English PDF)",
       litepaperZh: "Litepaper (Chinese PDF)",
-      economicPdfEn: "GameFi Economic Model (English PDF)",
-      economicPdfZh: "GameFi Economic Model (Chinese PDF)",
-      economicMdEn: "GameFi Economic Model (English Markdown)",
-      economicMdZh: "GameFi Economic Model (Chinese Markdown)",
+      economicPdfEn: "Legacy — GameFi Economic Model (English PDF)",
+      economicPdfZh: "Legacy — GameFi Economic Model (Chinese PDF)",
+      economicMdEn: "Legacy — GameFi Economic Model (English Markdown)",
+      economicMdZh: "Legacy — GameFi Economic Model (Chinese Markdown)",
       openInBrowser: "Open",
     },
     hero: {
-      eyebrow: "LITEPAPER",
+      eyebrow: "LITEPAPER · HANSOME 2.0",
       title: "HANSOME ALPACAS",
       subtitle:
-        "A public record of what this project is, what it isn't, and where we're hoping to take it — without promises we can't keep.",
+        "Too Hansome to Be Useful. So we built something useful anyway — meme culture, transparency, discovery, and on-chain tools. No promises we can't keep.",
       meta: [
         { label: "Network", value: "Robinhood Chain" },
         { label: "Total Supply", value: "1,000,000,000 HANSOME" },
@@ -325,77 +328,244 @@ export const en: Messages = {
       ],
     },
     statusLabels: {
-      live: "Live",
-      planned: "Planned",
-      exploratory: "Exploratory",
+      live: "LIVE",
+      inDevelopment: "IN DEVELOPMENT",
+      planned: "PLANNED",
+      conditional: "CONDITIONAL",
+      legacy: "LEGACY",
+      exploratory: "EXPLORATORY",
     },
     founderLetter: {
       heading: "Founder Letter",
       paragraphs: [
-        "We didn't start HANSOME ALPACAS because we had a product. We started it because \"an alpaca that won the genetic lottery and has absolutely nothing to show for it\" made us laugh, and we figured it might make other people laugh too. That part hasn't changed. The token is the joke — but it was always meant to be the beginning of something, not the whole thing.",
-        "Here's the honest version of the plan: HANSOME starts as a meme coin. If enough people actually stick around because they think a stupidly handsome alpaca is funny, we want to grow this into a real brand — original content, community events, meme contests, merch, maybe partnerships somewhere down the line. Nothing on that list exists yet. We're telling you because it's true, not because we're ready to ship any of it tomorrow.",
-        "What we can promise today is narrower than that, and a lot more boring: a fixed supply that can never be minted again, a contract that can't be changed by us or anyone else, and a public paper trail for every wallet that touches this token. We can't promise you a hoodie. We can promise you a contract we can't cheat with, and that any real promise we do make will show up in this document, dated — not just floated in a group chat and forgotten.",
-        "This document is the closest thing we have to a plan. It says what's real today, what we're actually hoping to build if this community keeps growing, and where the line between those two things sits. Where we don't know something yet, we've tried to say so instead of filling the gap with confidence we don't have. If HANSOME is still around in a year, we'd rather it be because a real community decided the alpaca — and whatever we managed to build around it — was worth sticking around for, not because we oversold it at the start.",
-        "Thanks for reading this far. That already puts you ahead of most people who ape into a meme coin.",
+        "Too Hansome to Be Useful. That was the joke. An alpaca that won the genetic lottery and had absolutely nothing practical to offer. We started HANSOME ALPACAS because that made us laugh — and because meme culture is allowed to be ridiculous before it is allowed to be useful.",
+        "HANSOME 2.0 is the next chapter of the same joke: Too Hansome to Be Useful. So we built something useful anyway. Not an enterprise analytics company. Not a whitepaper full of buzzwords. A meme brand that also ships transparency, discovery, and on-chain tools — Scan, Score, and eventually Explore — while keeping the alpaca culture intact.",
+        "What we can promise today is still narrower than a hype deck: a fixed, non-mintable supply; an immutable contract; public wallets; and honest status labels. HANSOME Scan and HANSOME Score are IN DEVELOPMENT. Explore is PLANNED. Launch-related work is CONDITIONAL. Genesis NFT / Alpacas vs Cougars sits under LEGACY. We will not describe Scan as production-live just to sound bigger.",
+        "This document is the public record of that shift. It says what is real, what is in progress, what is planned, and what is legacy. If HANSOME is still around in a year, we want it to be because a real community stuck with a handsome alpaca that finally learned how to be a little useful — without forgetting it was a meme first.",
+        "Thanks for reading this far. Stay Hansome.",
       ],
       signature: "— The HANSOME ALPACAS team",
     },
     introduction: {
-      heading: "Introduction",
+      heading: "Introduction / What is HANSOME?",
       paragraphs: [
-        "HANSOME ALPACAS started as a meme coin — one extremely handsome alpaca, one ticker, zero marketable skills — trading on Robinhood Chain against ETH through a Uniswap v4 concentrated-liquidity pool. There's no product behind it today, and we're not going to pretend otherwise.",
-        "But the token was never meant to be the whole story. If the community around HANSOME keeps growing, the plan is to grow the brand right along with it: original content, community-run events, meme contests, merch (apparel, plushies, stickers — the usual suspects), and partnerships if the right ones show up. None of that exists yet. This document says so plainly, instead of dressing up a wishlist as a roadmap.",
-        "What does exist today: a fixed, non-mintable supply, an immutable contract with no owner privileges, and a public record of every wallet that touches the token. This document exists to state plainly what is true today, what is aspirational, and where the line between the two sits — so that trust in this project is built on record, not narrative.",
+        "HANSOME ALPACAS is a meme-first project on Robinhood Chain: fixed-supply, zero-tax ERC-20 $HANSOME, trading against ETH through a Uniswap v4 concentrated-liquidity pool. The identity is still the joke — Too Hansome to Be Useful — and the brand is still alpaca meme culture, not a corporate dashboard.",
+        "HANSOME 2.0 adds a second layer on top of that meme: transparency, discovery, and on-chain tools. The direction is Meme + Transparency + Discovery + On-chain Tools. Scan and Score are being built so people can inspect structural risk and data completeness without confusing popularity for safety. Explore is planned for category and trending discovery later. None of that replaces the meme — it gives the meme something useful to do.",
+        "What already exists on-chain today: immutable, non-mintable $HANSOME; official liquidity (including Titan-locked position #47299); public wallets; and /transparency as the live balance source of truth. What does not exist as a production promise: a finished public scanner product. Status labels in this litepaper are deliberate.",
       ],
       whatIsHansome: {
         heading: "What is HANSOME?",
         paragraphs: [
-          "HANSOME ALPACAS (ticker: HANSOME) is a fixed-supply, zero-tax ERC-20 token deployed on Robinhood Chain. Its only stated identity is the joke it was built on: an alpaca that is extremely handsome and, by design, extremely useless.",
-          "There is no staking product, no game, no yield mechanism, and no claim of future utility baked into the token contract — and there won't be, without a clear, separate announcement. That's a statement about the contract, not about our ambitions for the brand. For where we'd actually like this to go, see Vision below.",
+          "HANSOME ALPACAS (ticker: HANSOME) is a fixed-supply, zero-tax ERC-20 on Robinhood Chain. Its core identity remains meme culture: an extremely handsome alpaca that was never designed as a serious utility product.",
+          "Around that token, HANSOME 2.0 is building optional tools — Scan, Score, Explore, and a conditional Launch path — with clear status labels. The token contract itself does not mint utility into existence; tools are separate products with their own maturity. Genesis NFT / Alpacas vs Cougars GameFi is documented under Legacy.",
         ],
       },
     },
-    vision: {
-      heading: "Vision",
+    memeIdentity: {
+      heading: "Meme Identity",
+      slogan: "Too Hansome to Be Useful.",
+      tagline: "Too Hansome to Be Useful. So we built something useful anyway.",
       paragraphs: [
-        "Most meme coins are built to spike and fade. We'd rather build the version that's still here — and still growing — after the first hype cycle burns out, even if that means moving slower and yelling less about it.",
-        "Here's the honest version of where we want this to go: HANSOME starts as a meme coin, but the token is the beginning, not the destination. If a real community forms around this ridiculous, handsome alpaca, the plan is to turn that into an actual brand — original content, community-driven events, meme contests, merch, and partnerships if the right ones come along. Not a metaverse. Not a \"utility token\" with a whitepaper full of buzzwords. Just an alpaca worth following, in Web3 and outside of it.",
-        "None of that requires a specific price, market cap, or exchange listing to happen — it requires people who actually want to be here. So the order of operations is: a small, real community first; a treasury that's managed conservatively and transparently second; and a brand built on top of both, once there's actually something worth building on.",
+        "HANSOME is a meme brand first. The alpaca, the jawline, the uselessness — that is the culture. Tools come second, as a punchline with a purpose: if we are going to be here after the first hype cycle, we might as well ship transparency and discovery that other meme coins usually skip.",
+        "We are not repositioning as an enterprise analytics corporation. Score is not a sales pitch for institutional risk desks. It is a hansome way to look at structural on-chain signals, Activity, and Confidence — while keeping the meme voice.",
       ],
-    },
-    philosophy: {
-      heading: "Core Philosophy",
       pillars: [
         {
-          title: "Community First",
-          body: "There was no presale and no private allocation sold to outside investors. The people who hold HANSOME today got it the same way anyone else could — by buying it on the open market.",
-        },
-        {
-          title: "The Token Is the Start",
-          body: "HANSOME launched as a meme coin, and today, that's still all it is — we're not claiming otherwise. But it's not where we're hoping to stop. If the community keeps growing, the intention is to build a real alpaca brand on top of it: content, events, merch, partnerships. That's a stated direction, not a promise with a delivery date.",
-        },
-        {
-          title: "0% Tax",
-          body: "Every buy and sell settles at the full quoted amount. There is no hidden fee redirected to a wallet, no \"auto-liquidity\" skim, and no mechanism inside the token contract that takes a cut of your trade.",
-        },
-        {
-          title: "Immutable Contract",
-          body: "The HANSOME contract has no owner functions: no mint, no blacklist, no pause, no ability to change the tax, and no admin key that can alter behavior after deployment. What was deployed is permanently what exists.",
+          title: "Meme",
+          body: "Culture, jokes, contests, and a mascot people actually want to share. If it stops being funny, the rest does not matter.",
         },
         {
           title: "Transparency",
-          body: "All four wallets involved in this project — Deployment, Liquidity, Treasury, and Founder — are public and viewable on-chain at any time. See the Treasury Policy section and the live /transparency page for current addresses and balances. Official wallets, treasury activity, liquidity information, and other transparency data are kept on that page, updated from on-chain information whenever possible. Every liquidity operation the Treasury carries out — including the July 2026 liquidity optimization described in the Liquidity Policy section — happens through public transactions anyone can verify, and the original locked position has stayed completely untouched through all of them. Long-term sustainability, not short-term hype, is what those decisions are made for.",
+          body: "Public wallets, verifiable liquidity ops, and /transparency as the live source of truth for balances — not vibes.",
         },
         {
-          title: "Long-Term Thinking",
-          body: "Decisions about liquidity and treasury spending are made on a deliberate, rules-based basis rather than reacting to whatever happened on Twitter that day. Section by section, this document explains what those rules currently are.",
+          title: "Discovery",
+          body: "Helping people find and contextualize tokens through Explore (PLANNED) and clear Category / Trending labels — without selling safety.",
+        },
+        {
+          title: "On-chain Tools",
+          body: "HANSOME Scan & Score (IN DEVELOPMENT): structural signals, Activity, and Confidence — separate axes, honest status.",
+        },
+      ],
+    },
+    brandHierarchy: {
+      heading: "Brand Hierarchy",
+      intro:
+        "HANSOME 2.0 is a stack of named products under one meme brand. Each line has a status label. Do not collapse them into “the app is live.”",
+      items: [
+        {
+          name: "HANSOME Scan",
+          statusKey: "inDevelopment",
+          status: "IN DEVELOPMENT",
+          body: "Token inspection surface for structural Score, Activity, and Confidence. Not a production-live scanner product. Internal Week / Month stages are soft planning markers, not delivery promises.",
+        },
+        {
+          name: "HANSOME Score",
+          statusKey: "inDevelopment",
+          status: "IN DEVELOPMENT",
+          body: "0–100 structural risk & transparency heuristic. Not popularity, not price prediction, not a rug/moon oracle. Always shown with Confidence.",
+        },
+        {
+          name: "HANSOME Explore",
+          statusKey: "planned",
+          status: "PLANNED",
+          body: "Discovery UI for categories, tags, and trending — after Scan/Score are stable enough. Not Week-1 scope.",
+        },
+        {
+          name: "HANSOME Launch",
+          statusKey: "conditional",
+          status: "CONDITIONAL",
+          body: "Any launch-related product path depends on tooling maturity, community need, and explicit go decisions. Not a dated promise.",
+        },
+        {
+          name: "Genesis NFT / Alpacas vs Cougars",
+          statusKey: "legacy",
+          status: "LEGACY",
+          body: "Season-1 GameFi and mint flywheel documentation live under Legacy. Preserved for holders and history — not the primary HANSOME 2.0 product narrative.",
+        },
+      ],
+    },
+    scanScore: {
+      heading: "HANSOME Scan & Score",
+      status: "IN DEVELOPMENT",
+      paragraphs: [
+        "HANSOME Scan is the inspection surface. HANSOME Score is the structural 0–100 output shown inside Scan. Both are IN DEVELOPMENT. This litepaper does not claim a production-live scanner, does not say “available now,” and does not describe users as currently depending on a finished Scan product.",
+        "Score measures structural / on-chain risk and transparency signals only. It is not a popularity contest, not volume fame, and not financial advice. Prototype and staging work may exist for internal or limited testing; public maturity is still in development.",
+        "Week / Month labels used in internal planning are soft stages for sequencing work — not hard public delivery dates.",
+        "A core Scan capability in progress: Uniswap v4 Liquidity & Lock Intelligence — because on Robinhood Chain, “liquidity visible” does not necessarily mean “liquidity understood.”",
+      ],
+      principlesHeading: "Score principles (non-negotiable)",
+      principles: [
+        "Small liquidity, few holders, or low volume ≠ automatically “unsafe.”",
+        "Liquidity size / slippage is context and warning — ownership / withdrawal risk may affect Score.",
+        "Missing data lowers Confidence; it does not invent safety via a fake high Score.",
+        "$HANSOME never buys a higher Score. Holdings of HANSOME do not boost another token’s Score.",
+        "Category, Trending, and paid placement never affect Score.",
+      ],
+      v4LockIntelligence: {
+        heading: "Uniswap v4 Liquidity & Lock Intelligence",
+        status: "IN DEVELOPMENT",
+        problem: [
+          "Mainstream scanners may provide limited or incomplete visibility into Uniswap v4 positions and third-party lockers on Robinhood Chain. That visibility gap can leave holders looking at a pool TVL number without knowing who can withdraw the position NFT, whether a locker is verified, or when a lock expires.",
+          "HANSOME Scan is building tooling aimed at that gap — not as a finished generic product, and not with “first in the world” marketing. Just a handsome attempt to make v4 + locker evidence readable.",
+        ],
+        capabilitiesHeading: "Planned capabilities (IN DEVELOPMENT)",
+        capabilities: [
+          "Pool identity and Uniswap v4 position NFT / position id",
+          "Position owner (EOA, treasury, locker contract, or other)",
+          "Locker name when recognized via an extensible locker registry",
+          "Lock status with explicit labels (see below)",
+          "Unlock date when verifiable on-chain",
+          "Lock transaction evidence (public explorer links when available)",
+          "In-range / out-of-range status for concentrated positions",
+          "Position liquidity amount as context",
+          "Separation of size vs ownership / withdrawal risk in the UI and Score inputs",
+        ],
+        statusesHeading: "Explicit lock statuses",
+        statuses: [
+          "LOCKED — VERIFIED ON-CHAIN",
+          "UNLOCKED / EOA-CONTROLLED",
+          "LOCK DETECTED — EXPIRY UNKNOWN",
+          "UNSUPPORTED LOCKER",
+          "UNABLE TO DETERMINE",
+        ],
+        interpretationHeading: "How to read these statuses",
+        interpretation: [
+          "Unknown ≠ unlocked. “UNABLE TO DETERMINE” and “UNSUPPORTED LOCKER” mean the tool lacks verified evidence — not that someone can pull liquidity tomorrow.",
+          "A detected lock ≠ “safe.” Lock without verified conditions, expiry, or ownership clarity is incomplete information. Always show evidence.",
+          "Liquidity visible does not necessarily mean liquidity understood. Pool depth alone can be a misleading comfort signal if withdrawal control is opaque.",
+        ],
+        whyItMatters: [
+          "Meme coins live and die on trust theater. Showing a big liquidity number without lock / ownership context is how that theater happens. We’d rather say “we don’t know yet” with a clear status than invent safety.",
+          "This is a visibility problem we encountered building on Robinhood Chain with Uniswap v4 and third-party lockers (including Titan). Closing that gap carefully is part of what Scan is for.",
+        ],
+        scoreRelationshipHeading: "Relationship to HANSOME Score",
+        scoreRelationship: [
+          "Size ≠ Lock Status ≠ Ownership / Withdrawal Risk ≠ Range Status. Keep them separate in the product.",
+          "Small liquidity ≠ unsafe. Large liquidity ≠ safe.",
+          "Verified lock status and ownership / withdrawal risk may feed the structural Score (when evidence exists).",
+          "Liquidity size remains slippage / depth context and Activity-adjacent warning — not a popularity boost and not an automatic Score penalty for being small.",
+          "Missing locker coverage lowers Confidence and may yield UNABLE TO DETERMINE / UNSUPPORTED LOCKER — it does not invent “unlocked” or “safe.”",
+        ],
+        maturityNote:
+          "Status: IN DEVELOPMENT — not production-ready generic multi-token / multi-locker support. A prototype path has detected HANSOME’s Titan-locked Uniswap v4 position #47299 with on-chain evidence; extending that into a general locker registry across tokens is still being built. Soft Week / Month stages only — no hard delivery promise.",
+      },
+    },
+    axesConfidence: {
+      heading: "Activity · Trending · Category · Confidence",
+      intro:
+        "Four discovery axes plus Confidence. They are strictly separate. Mixing them is how meme tools become dishonest.",
+      axes: [
+        {
+          title: "HANSOME Score",
+          body: "Structural risk & transparency (0–100). The only axis that is “the Score.”",
+        },
+        {
+          title: "Activity",
+          body: "Low / Medium / High trading and holder activity. Informational. Activity is not safety.",
+        },
+        {
+          title: "Trending",
+          body: "Relative momentum (PLANNED with Explore). Trending ≠ safer. Organic Trending is never pay-to-rank.",
+        },
+        {
+          title: "Category",
+          body: "Taxonomy labels (e.g. Animal Memes, DeFi, Gaming). Category does not affect Score.",
+        },
+        {
+          title: "Confidence",
+          body: "Data completeness and sample maturity (shown beside Score). Confidence ≠ Score. New or thinly indexed tokens should show uncertainty here — not a cosmetic high Score.",
+        },
+      ],
+      principlesHeading: "Hard separations",
+      principles: [
+        "Score ≠ Activity ≠ Trending ≠ Category.",
+        "Confidence = data completeness / maturity — not a second popularity meter.",
+        "Trending ≠ safer.",
+        "Category does not affect Score.",
+        "Promoted ≠ organic Trending. Any future paid placement must be labeled Promoted and must never mix into organic Trending or Score.",
+        "$HANSOME never buys Score.",
+      ],
+    },
+    explore: {
+      heading: "HANSOME Explore",
+      status: "PLANNED",
+      paragraphs: [
+        "Explore is the planned discovery layer: browse by Category / tags, surface Trending with transparent relative-momentum logic, and keep Promoted placements clearly labeled if they ever exist.",
+        "Explore depends on Scan/Score stability and taxonomy workflows. It is PLANNED — not shipping as a Week-1 promise, and not described as live in this document.",
+        "Until Explore exists, discovery remains informal (community, listings, charts). That is fine. We would rather ship Explore late and honest than early and fake.",
+      ],
+    },
+    hansomeUtility: {
+      heading: "$HANSOME Utility",
+      paragraphs: [
+        "$HANSOME is still a meme token first: fixed supply, 0% tax, immutable contract, Robinhood Chain. There is no staking product and no yield mechanism baked into the token contract.",
+        "HANSOME 2.0 utility is ecosystem-level, not a list of invented holder perks. The token anchors the brand, treasury, and liquidity; tools (Scan, Score, Explore) are built around the same culture and transparency standard. This litepaper does not invent new Genesis NFT holder benefits.",
+        "If future tool access, community programs, or branded products attach more concrete utility, they will be announced with dates and status labels — not silently implied here.",
+      ],
+      items: [
+        {
+          title: "Meme & brand anchor",
+          body: "The cultural center of HANSOME ALPACAS — contests, content, and community identity.",
+        },
+        {
+          title: "Treasury & liquidity fuel",
+          body: "Official wallets and Uniswap v4 liquidity policy (see Tokenomics, Treasury, Liquidity). Live balances: /transparency.",
+        },
+        {
+          title: "Tools ecosystem (in progress)",
+          body: "Scan & Score IN DEVELOPMENT; Explore PLANNED; Launch CONDITIONAL. Utility grows with shipped tools — not with slogans.",
+        },
+        {
+          title: "Legacy GameFi (separate)",
+          body: "Genesis / Alpacas vs Cougars economics remain documented under Legacy. They are not the primary 2.0 utility story.",
         },
       ],
     },
     gameplayOverview: {
-      heading: "Gameplay Overview",
+      heading: "Gameplay Overview (Legacy)",
       opening:
-        "HANSOME: Alpacas vs Cougars is more than a collectible NFT project.",
+        "LEGACY — HANSOME: Alpacas vs Cougars is more than a collectible NFT project.",
       paragraphs: [
         "Every Genesis NFT has a role inside an on-chain survival game where players compete, survive, and earn rewards.",
         "Players may become:",
@@ -408,7 +578,7 @@ export const en: Messages = {
       closing: [
         "Commit Move → Reveal Move → Settlement → Claim Rewards",
         "Different NFT traits and abilities influence gameplay, creating a unique experience for every holder.",
-        "This Litepaper provides only a simple overview of the game ecosystem.",
+        "This Litepaper provides only a simple overview of the legacy game ecosystem.",
         "For detailed gameplay mechanics, NFT abilities, locations, reward pools, settlement rules, and claiming instructions, please visit the Game section.",
       ],
       imageAlt: "Pixel art of a snarling cougar facing a calm grass-chewing alpaca in a mountain meadow",
@@ -423,7 +593,7 @@ export const en: Messages = {
       ],
       cta: {
         heading: "Want to learn how the game works?",
-        body: "This Litepaper provides only a high-level overview.",
+        body: "This Litepaper provides only a high-level Legacy overview.",
         bullets: [
           "Daily gameplay loop",
           "NFT abilities",
@@ -438,10 +608,10 @@ export const en: Messages = {
       },
     },
     gamefiEconomicModel: {
-      heading: "GameFi Economic Model",
+      heading: "GameFi Economic Model (Legacy)",
       intro: [
-        "HANSOME: Alpacas vs Cougars is a day-settled GameFi economy on Robinhood Chain. Daily rewards are paid from the GameTreasury balance of $HANSOME — they are not newly minted. Outcomes depend on participation, decisions, treasury health, and market conditions. This section does not promise profits or fixed yields.",
-        "The full mathematical analysis — emission bands, pool splits, Alpaca vs Cougar economics, game-theory framing, treasury runway, and why the design targets long-term sustainability versus typical P2E — is published as a standalone report for players and researchers.",
+        "LEGACY — HANSOME: Alpacas vs Cougars is a day-settled GameFi economy on Robinhood Chain. Daily rewards are paid from the GameTreasury balance of $HANSOME — they are not newly minted. Outcomes depend on participation, decisions, treasury health, and market conditions. This section does not promise profits or fixed yields.",
+        "The full mathematical analysis — emission bands, pool splits, Alpaca vs Cougar economics, game-theory framing, treasury runway, and why the design targets long-term sustainability versus typical P2E — is published as a standalone Legacy report for players and researchers.",
       ],
       highlightsHeading: "What the model explains",
       highlights: [
@@ -454,14 +624,14 @@ export const en: Messages = {
         "Long-term design: fixed-supply rewards from GameTreasury, step-down emission, progressive treasury expansion without contract upgrades, Alpaca/Cougar mutual demand (no profit guarantees)",
       ],
       disclaimer:
-        "Rewards are contingent. Missing Reveal, safe mode (G < Gsafe), or population imbalance can reduce or eliminate a day’s earnings. Not investment advice.",
-      linksHeading: "Economic Model documents",
+        "Rewards are contingent. Missing Reveal, safe mode (G < Gsafe), or population imbalance can reduce or eliminate a day’s earnings. Not investment advice. Legacy documentation — not the primary HANSOME 2.0 product narrative.",
+      linksHeading: "Legacy Economic Model documents",
       links: {
         reportEn: "English report (Markdown)",
         reportZh: "Chinese report (Markdown)",
         pdfEn: "Download PDF (English)",
         pdfZh: "Download PDF (Chinese)",
-        game: "Open the live game",
+        game: "Open the game",
       },
       hrefs: {
         reportEn: "/docs/HANSOME_GAME_ECONOMIC_MODEL_EN.md",
@@ -525,7 +695,7 @@ export const en: Messages = {
           label: "Development",
           value: "Planned — TODO",
           detail:
-            "No development budget has been carved out yet, since there is no product roadmap to fund beyond the core token and site. This will be revisited if that changes.",
+            "No formal development sub-budget has been carved out yet. HANSOME 2.0 tooling (Scan, Score, Explore) is the intended product direction those funds would support once a budget is published — not an open-ended promise of spend.",
         },
         {
           label: "Team",
@@ -601,124 +771,136 @@ export const en: Messages = {
     revenue: {
       heading: "Revenue Strategy",
       intro:
-        "HANSOME has 0% transaction tax by design, so it doesn't generate revenue the way older \"tax token\" meme coins did. Any future funding for liquidity, or for actually building the brand we talk about in Vision, has to come from somewhere real — not from printing more HANSOME. Here's what's actually running today, and what we'd like to get running if things keep growing. Nothing below is guaranteed.",
+        "HANSOME has 0% transaction tax by design, so it doesn't generate revenue the way older “tax token” meme coins did. Funding for liquidity and for HANSOME 2.0 tools has to come from real sources — not from printing more HANSOME. Here's what's running today, what's in development, and what remains exploratory. Nothing below is guaranteed.",
       streams: [
         {
           id: "lp-fees",
           title: "LP Fees",
           statusKey: "active",
           status: "Active",
-          body: "The 0.05% Uniswap v4 pool fee is the one revenue source already running today, scaling automatically with trading volume. It's small, it's real, and it's the only thing on this list we didn't have to wait on.",
+          body: "The 0.05% Uniswap v4 pool fee is the one revenue source already running today, scaling automatically with trading volume. It's small, it's real, and it's the only item on this list that does not depend on shipping a new product.",
+        },
+        {
+          id: "scan-score-tools",
+          title: "Scan & Score ecosystem",
+          statusKey: "inDevelopment",
+          status: "IN DEVELOPMENT",
+          body: "On-chain inspection tools are the product direction of HANSOME 2.0. Any future monetization (if any) will be disclosed separately and must never include paying for a higher Score or organic Trending rank. Status today: in development — not a live revenue line.",
+        },
+        {
+          id: "explore-discovery",
+          title: "Explore discovery",
+          statusKey: "planned",
+          status: "PLANNED",
+          body: "If Explore ships, labeled Promoted placements (if ever offered) would be the only paid discovery surface — never mixed into Score or organic Trending. Explore itself remains planned.",
         },
         {
           id: "merchandise",
           title: "Merchandise",
           statusKey: "exploratory",
           status: "Exploratory",
-          body: "Apparel, plushies, stickers — merch is a pretty natural fit for a mascot this handsome, and it's part of the actual long-term plan, not just a placeholder line. Nothing has been designed, produced, or sold yet. We'd rather do it right once there's a community big enough to actually want it than rush out a hoodie nobody asked for.",
+          body: "Apparel, plushies, stickers — a natural fit for the mascot. Nothing has been designed, produced, or sold yet. We'd rather do it right once there's a community big enough to want it.",
         },
         {
           id: "partnerships",
           title: "Partnerships",
           statusKey: "exploratory",
           status: "Exploratory",
-          body: "No partnerships, sponsorships, or cross-promotions exist right now. If the right one comes along — something that actually fits the brand instead of just paying for a shoutout — we'll take it seriously and announce it once it's real. Nothing here yet.",
-        },
-        {
-          id: "ecosystem-products",
-          title: "Future Ecosystem Products",
-          statusKey: "exploratory",
-          status: "Exploratory",
-          body: "No additional products (tools, collabs, drops, etc.) are currently planned or in development. As the brand side of this grows — content, community events, meme contests — some of that may eventually turn into something monetizable. It hasn't yet, and this category stays intentionally open rather than filled with speculative feature ideas.",
+          body: "No partnerships, sponsorships, or cross-promotions are assumed. If the right one fits the brand, it will be announced when real — not listed as live here.",
         },
       ],
     },
     roadmap: {
-      heading: "Roadmap",
+      heading: "Roadmap — HANSOME 2.0",
+      intro:
+        "Phased roadmap with honest status labels. “Week” and “Month” refer to soft internal sequencing stages for tooling work — not hard public delivery promises. Conditional items require explicit go decisions.",
       phases: [
         {
-          phase: "Phase 1",
-          title: "Foundation",
+          phase: "Phase 0",
+          title: "Foundation (shipped)",
           statusKey: "completed",
           status: "Completed",
           items: [
-            { label: "Deploy fixed-supply, non-mintable, immutable HANSOME contract", done: true },
+            { label: "Deploy fixed-supply, non-mintable, immutable HANSOME contract on Robinhood Chain", done: true },
             { label: "Create the official Uniswap v4 ETH/HANSOME liquidity pool", done: true },
             { label: "Launch the public website, swap interface, and /transparency page", done: true },
-            { label: "Publish this litepaper", done: true },
+            { label: "Lock official Uniswap v4 LP position (#47299) via Titan Locker — unlock ~2027-07-15", done: true },
+            { label: "Treasury-led liquidity optimization: multiple positions alongside the locked NFT", done: true },
+            { label: "Publish litepaper + Legacy GameFi documentation", done: true },
+          ],
+        },
+        {
+          phase: "Phase 1",
+          title: "Scan & Score",
+          statusKey: "inDevelopment",
+          status: "IN DEVELOPMENT",
+          items: [
+            { label: "HANSOME Scan inspection surface — IN DEVELOPMENT (not production-live)", done: false },
+            { label: "HANSOME Score structural heuristic + Confidence — IN DEVELOPMENT", done: false },
+            {
+              label:
+                "Uniswap v4 Liquidity & Lock Intelligence + extensible locker registry — IN DEVELOPMENT (differentiator; not production-ready generic multi-token support)",
+              done: false,
+            },
+            { label: "Keep Score ≠ Activity ≠ Trending ≠ Category separations in product UX", done: false },
+            { label: "Internal Week / Month stages for sequencing only — soft markers, not public SLAs", done: false },
           ],
         },
         {
           phase: "Phase 2",
-          title: "Stabilize & Listen",
-          statusKey: "inProgress",
-          status: "In Progress",
+          title: "Explore & taxonomy",
+          statusKey: "planned",
+          status: "PLANNED",
           items: [
-            { label: "Get discovered on DEX aggregators — officially listed on GeckoTerminal and DexScreener", done: true },
-            {
-              label:
-                "Lock the official Uniswap v4 LP position (#47299) for 365 days via Titan Locker, unlocking July 2027 — a concrete, on-chain commitment to long-term liquidity, verifiable on /transparency",
-              done: true,
-            },
-            {
-              label:
-                "Complete a Treasury-led liquidity optimization on the official Uniswap v4 pool, adding two new Treasury-owned positions alongside the original locked position (see Liquidity Policy)",
-              done: true,
-            },
-            { label: "Improve swap infrastructure and gas-fee handling on Robinhood Chain for more reliable transactions", done: true },
-            { label: "Build internal tooling to support ongoing Treasury liquidity management", done: true },
-            { label: "Continue making incremental improvements to the website and overall trading experience", done: false },
-            { label: "CoinGecko listing application submitted — pending review", done: false },
-            { label: "CoinMarketCap listing application submitted — pending review", done: false },
-            { label: "Begin periodic LP fee collection and recycling", done: false },
-            {
-              label:
-                "Continue monitoring market conditions and liquidity depth — additional liquidity may be added in the future if trading volume and community growth genuinely require it",
-              done: false,
-            },
-            { label: "Continue focusing on building the HANSOME brand instead of short-term price targets", done: false },
-            { label: "Continue growing the early community around the brand", done: false },
+            { label: "Category / tag taxonomy with manual verify workflow — PLANNED", done: false },
+            { label: "HANSOME Explore discovery UI — PLANNED (after Scan/Score stability)", done: false },
+            { label: "Trending as relative momentum; Promoted never mixed into organic Trending or Score", done: false },
           ],
         },
         {
           phase: "Phase 3",
-          title: "Sustain & Grow the Brand",
-          statusKey: "future",
-          status: "Future",
+          title: "Launch path",
+          statusKey: "conditional",
+          status: "CONDITIONAL",
           items: [
-            { label: "Evaluate real, disclosed revenue sources (see Revenue Strategy) as they materialize", done: false },
-            { label: "Formalize a rules-based, milestone-tied liquidity top-up schedule", done: false },
-            { label: "Explore giving the community a real voice in treasury/liquidity decisions", done: false },
-            {
-              label: "Start turning the brand into something beyond a chart — content, community events, meme contests — if the community is actually here for it",
-              done: false,
-            },
-            {
-              label: "Explore merch (apparel, plushies, stickers) and partnerships once there's a real community to build them for",
-              done: false,
-            },
-            {
-              label: "No fixed dates, no promised exchange listings, no price targets — this phase is a direction, not a contract",
-              done: false,
-            },
+            { label: "HANSOME Launch-related product work — CONDITIONAL on tooling maturity and explicit go decisions", done: false },
+            { label: "No fixed listing dates, no price targets, no promised exchange outcomes", done: false },
+            { label: "CoinGecko / CoinMarketCap applications remain process items, not roadmap guarantees", done: false },
           ],
         },
+        {
+          phase: "Legacy",
+          title: "Genesis NFT / GameFi",
+          statusKey: "legacy",
+          status: "LEGACY",
+          items: [
+            { label: "Alpacas vs Cougars gameplay + GameFi economic model preserved under Legacy", done: true },
+            { label: "Mint flywheel documentation preserved under Legacy — not the primary 2.0 narrative", done: true },
+          ],
+        },
+      ],
+    },
+    legacy: {
+      heading: "Legacy: Genesis NFT + GameFi",
+      status: "LEGACY",
+      intro: [
+        "This section preserves Season-1 GameFi material: gameplay overview, the GameFi economic model, and the mint-revenue flywheel. It is LEGACY relative to HANSOME 2.0’s meme + tools direction.",
+        "Nothing here invents new NFT holder benefits. For live game mechanics, use the Game surface. For economic math, use the Legacy economic-model documents linked below.",
       ],
     },
     community: {
       heading: "Community",
       paragraphs: [
-        "Hype is a spike. Community is a floor. A hype cycle can bring a lot of attention very quickly and take all of it away just as fast, leaving nothing behind. A community — even a small one — is what's still around to care the day after the chart stops moving.",
-        "This project would rather have a hundred people who actually find the mascot funny and stick around than ten thousand people who forget the ticker by next week. Every policy in this document — the treasury discipline, the liquidity approach, being straight about what's real versus what's just a direction — is really in service of one goal: giving a real community, and eventually a real brand built with that community, something worth being part of.",
-        "That's not just an intention anymore. There's an active Telegram community already up and running, growing organically rather than through paid pushes. We run regular meme contests, giveaways, AMA sessions, and community events for the people who actually show up, and we're starting to work with KOLs and run broader marketing campaigns to bring in people worth keeping around. Community participation is quickly becoming one of this project's biggest priorities, right alongside treasury and liquidity discipline.",
+        "Hype is a spike. Community is a floor. HANSOME would rather keep a hundred people who find the alpaca funny — and who care about honest status labels — than ten thousand who forget the ticker next week.",
+        "Telegram is active: meme contests, giveaways, AMAs, and community events. Marketing and KOL work exist to bring in people worth keeping, not to paper over missing products.",
+        "HANSOME 2.0 asks the community for the same deal as always: meme culture first, transparency always, and tools that earn trust by shipping with clear IN DEVELOPMENT / PLANNED / CONDITIONAL / LEGACY labels.",
       ],
     },
     sustainableEcosystem: {
-      heading: "Building a Sustainable Ecosystem",
+      heading: "Mint Flywheel (Legacy)",
       paragraphs: [
-        "Building a sustainable ecosystem is our long-term vision.",
-        "Our goal isn't just to launch an NFT collection.",
-        "Revenue generated from the HANSOME: Alpacas vs Cougars NFT mint will be reinvested into the HANSOME ecosystem through:",
+        "LEGACY — Building a sustainable GameFi ecosystem was a Season-1 vision around Genesis mint revenue.",
+        "Revenue generated from the HANSOME: Alpacas vs Cougars NFT mint was described as reinvested into the HANSOME ecosystem through:",
       ],
       investments: [
         "🎮 Game development",
@@ -735,69 +917,78 @@ export const en: Messages = {
         "Further Development",
       ],
       closing: [
-        "As the ecosystem grows, we aim to create more value for both NFT holders and the HANSOME community.",
-        "A stronger ecosystem attracts more players.",
-        "More players create a healthier community.",
-        "A healthier community supports future development.",
-        "That's the flywheel we're building.",
+        "This flywheel remains documented for Legacy context. HANSOME 2.0’s primary loop is meme culture → transparency → tools → discovery — not mint-first growth.",
+        "A stronger ecosystem still matters. The sequencing and product center of gravity have shifted.",
       ],
     },
     longTermVision: {
       heading: "Long-Term Vision",
       intro:
-        "There is no guarantee this works. But the shape we're hoping HANSOME grows into looks like a loop, not a straight line — starting from a meme coin, and, if it goes well, ending up somewhere much bigger than one. Each stage feeds the next:",
+        "There is no guarantee this works. The shape we want is a loop: meme culture that funds honesty, honesty that makes tools trustworthy, tools that make discovery useful — without pretending Scan is already production-live.",
       lifecycle: [
-        { label: "Community", body: "People who actually engage because they think the alpaca's funny — not just spectators watching a chart." },
-        { label: "Brand", body: "A recognizable alpaca identity people actually want to share — memes, content, an aesthetic worth being part of." },
-        {
-          label: "Products",
-          body: "Real things the brand can support once there's an audience for them — merch (apparel, plushies, stickers), community events, meme contests, maybe collaborations (see Revenue Strategy).",
-        },
-        { label: "Revenue", body: "Actual income from those products, sponsorships, and from LP fees — not speculation." },
-        { label: "Treasury", body: "That revenue accumulates transparently, publicly, on-chain." },
-        { label: "Liquidity", body: "Treasury funds reinforce and diversify liquidity on a deliberate schedule." },
+        { label: "Meme", body: "Alpaca culture people actually share — contests, jokes, identity." },
+        { label: "Transparency", body: "Public wallets, verifiable LP ops, /transparency as live truth." },
+        { label: "Tools", body: "Scan & Score in development — structural signals + Confidence." },
+        { label: "Discovery", body: "Explore planned — Category, Trending, labeled Promoted only if ever paid." },
+        { label: "Community", body: "People who stay for the culture and the honesty, not just the chart." },
+        { label: "Treasury", body: "LP fees and future real revenue reinforce liquidity on purpose — not by printing." },
       ],
       loopLabel: "The Loop",
       closing:
-        "Today, HANSOME is at the very start of this loop — mostly \"Community\" and a little bit of \"Brand,\" with nothing yet in \"Products\" or \"Revenue.\" That's not a failure to hide, it's just an honest snapshot of a project that's still mostly a really handsome alpaca and the people who think that's funny. This document gets revisited and updated as that changes — including admitting it if it doesn't.",
+        "Today HANSOME sits early in that loop: strong meme identity, real on-chain transparency, tools in development, Explore planned, Launch conditional, GameFi under Legacy. This document will be updated as statuses change — including admitting when something slips.",
     },
     faq: {
       heading: "FAQ",
       items: [
         {
-          question: "What does HANSOME actually do today?",
+          question: "What is HANSOME 2.0?",
           answer:
-            "Honestly? It's an extremely handsome alpaca with a fixed supply and an immutable contract. That's it, today. Anything beyond that — content, events, merch, partnerships — is covered in Vision and Long-Term Vision above as direction, not as something live right now.",
+            "The same meme brand — Too Hansome to Be Useful — plus a tools direction: transparency, discovery, and on-chain Scan/Score (IN DEVELOPMENT), Explore (PLANNED), and Launch (CONDITIONAL). Genesis GameFi is Legacy.",
         },
         {
-          question: "Will there be merch, community events, or partnerships?",
+          question: "Is HANSOME Scan live / available now?",
           answer:
-            "Nothing is live yet. But that's genuinely the plan if the community keeps growing — think original content, community-run events, meme contests, and eventually merch (apparel, plushies, stickers) and partnerships if the right ones show up. No dates, no guarantees. It happens if you all make it worth building.",
+            "No — not as a production-live product in this litepaper’s language. HANSOME Scan and HANSOME Score are IN DEVELOPMENT. Do not read prototype or staging work as a finished public scanner. We avoid phrases like “available now,” “live scanner,” or “users can currently…” for Scan/Score.",
+        },
+        {
+          question: "What does HANSOME Score measure?",
+          answer:
+            "Structural risk and transparency signals (0–100). It is not popularity, not price prediction, and not a rug/moon oracle. Always read it with Confidence (data completeness). Score ≠ Activity ≠ Trending ≠ Category.",
+        },
+        {
+          question: "Does Category or Trending change Score?",
+          answer:
+            "No. Category never affects Score. Trending is not safety. Promoted placements (if any, in the future) must stay labeled and must never mix into organic Trending or Score. $HANSOME never buys Score.",
+        },
+        {
+          question: "Does small liquidity or low volume mean a token is unsafe?",
+          answer:
+            "No. Small liquidity, few holders, or low volume are not automatic “unsafe” Score outcomes. Size/slippage is context; ownership/withdrawal risk is the structural liquidity concern that may affect Score. Uncertainty belongs in Confidence.",
+        },
+        {
+          question: "What is Uniswap v4 Liquidity & Lock Intelligence?",
+          answer:
+            "An IN DEVELOPMENT Scan capability aimed at a visibility gap: mainstream scanners may give limited or incomplete Uniswap v4 + third-party locker visibility on Robinhood Chain. Planned outputs include pool/position identity, owner, locker name, explicit lock statuses (LOCKED—VERIFIED ON-CHAIN, UNLOCKED/EOA-CONTROLLED, LOCK DETECTED—EXPIRY UNKNOWN, UNSUPPORTED LOCKER, UNABLE TO DETERMINE), unlock date, lock tx evidence, range status, and size vs withdrawal risk. Unknown ≠ unlocked; a detected lock ≠ safe without verified conditions. Prototype work has detected HANSOME Titan #47299; generic multi-token/locker support is still being built — not production-ready.",
         },
         {
           question: "Why is the Treasury balance lower than the stated 90%?",
           answer:
-            "Because 90% describes the initial allocation at launch, not a fixed balance. Deploying Treasury tokens into the official Uniswap v4 liquidity position is a normal, disclosed part of the Liquidity Policy — not a sale. So the Treasury's balance is expected to trend down over time as more of it becomes liquidity instead of sitting untouched in that wallet. The live number, right now, is always at /transparency — this document only describes the policy behind why it moves.",
-        },
-        {
-          question: "Why 0% tax?",
-          answer:
-            "A transaction tax is a standing mechanism that redirects part of every trade somewhere — usually to a wallet the team controls. Removing it entirely means every trade settles exactly as quoted, with nothing skimmed, and removes an entire category of trust question before it can even come up.",
-        },
-        {
-          question: "Why immutable?",
-          answer:
-            "An upgradeable or owner-controlled contract is a promise that the current rules will stay the current rules, backed by nothing but intent. An immutable contract with no mint, no blacklist, and no admin key makes that promise structurally true instead of just stated — at the cost of never being able to patch anything later, which is a tradeoff made deliberately.",
+            "Because 90% describes the initial allocation at launch, not a fixed balance. Deploying Treasury tokens into the official Uniswap v4 liquidity position is a normal, disclosed part of the Liquidity Policy — not a sale. The live number is always at /transparency.",
         },
         {
           question: "What happens if liquidity becomes one-sided?",
           answer:
-            "Concentrated liquidity positions can become fully one-sided if price moves far enough in one direction — that's expected behavior, not a malfunction. When it happens, that specific position stops providing depth in that direction until it's rebalanced or supplemented. The Liquidity Policy section above describes the standing-backstop approach planned to keep this from meaning \"no one can trade\" — but as of today, a single position is live, and this risk is real and openly acknowledged.",
+            "Concentrated liquidity positions can become fully one-sided if price moves far enough — expected behavior, not a malfunction. HANSOME now runs multiple positions (original Titan-locked #47299 plus additional Treasury-owned ranges) as a barbell backstop. Risk remains real and openly acknowledged; see Liquidity Policy.",
         },
         {
-          question: "Why not deploy a new token contract?",
+          question: "Why 0% tax and an immutable contract?",
           answer:
-            "Because the immutability of the current contract is itself the trust feature. Deploying a new contract to \"fix\" a problem would mean abandoning the one guarantee — no mint, no owner control, nothing can change — that this whole document is built around. Problems get solved with treasury and liquidity policy, not by starting over.",
+            "0% tax means trades settle as quoted with no skim. Immutability with no mint, blacklist, or admin key makes “we can’t cheat the supply rules” a structural fact. Problems get solved with treasury and liquidity policy — and with shipping tools honestly — not by redeploying a new token.",
+        },
+        {
+          question: "Where did the game / Genesis NFT story go?",
+          answer:
+            "Under Legacy in this litepaper. Gameplay, GameFi economics, and the mint flywheel are preserved there with a LEGACY label. HANSOME 2.0’s primary narrative is meme + tools.",
         },
       ],
     },
@@ -805,6 +996,16 @@ export const en: Messages = {
       heading: "Changelog",
       intro: "A record of this document's own revisions — not the whole project's history, just this litepaper.",
       entries: [
+        {
+          version: "v2.0",
+          date: "July 2026",
+          changes: [
+            "HANSOME 2.0 rewrite: meme identity core (“Too Hansome to Be Useful” / “…So we built something useful anyway”), brand hierarchy with status labels, Scan & Score (IN DEVELOPMENT), axes + Confidence separations, Explore (PLANNED), $HANSOME utility, phased roadmap with Conditional Launch, Legacy section for Genesis + GameFi + mint flywheel.",
+            "Added Uniswap v4 Liquidity & Lock Intelligence under Scan & Score (IN DEVELOPMENT): visibility-gap framing, planned capabilities, explicit lock statuses, Score relationship (size ≠ lock ≠ ownership/withdrawal ≠ range), Titan #47299 prototype note, roadmap differentiator + FAQ.",
+            "Revenue strategy reframed around ecosystem tools; Documents relabel GameFi economic model as Legacy; FAQ Score disclaimers; closing disclaimer strengthened.",
+            "Preserved verified Tokenomics / Treasury / Liquidity facts (1B supply, 0% tax, non-mintable, Robinhood, 90/5/5, wallets, Uniswap v4, Titan #47299 unlock ~2027-07-15, /transparency for live balances). Fixed stale “single position” FAQ language.",
+          ],
+        },
         {
           version: "v1.7.1",
           date: "July 2026",
@@ -892,13 +1093,13 @@ export const en: Messages = {
     },
     language: {
       heading: "Language & Translations",
-      body: "This document is available in English and Traditional Chinese. The Traditional Chinese version is written by hand to read naturally, not run through machine translation — if you spot a place where the meaning drifts between the two versions, treat the English version as the reference and let us know. Additional languages may be added later; the structure of this document is built so that doing so doesn't require rebuilding the page.",
+      body: "This document is available in English and Chinese. The Chinese version is written by hand to read naturally, not run through machine translation — if you spot a place where the meaning drifts between the two versions, treat the English version as the reference and let us know. Additional languages may be added later; the structure of this document is built so that doing so doesn't require rebuilding the page.",
     },
     closing: {
-      note: "This document reflects the state of HANSOME ALPACAS as of publication and will be revised as the project changes. It is not financial advice.",
+      note: "This document reflects HANSOME ALPACAS as of publication and will be revised as statuses change. It is not financial advice. HANSOME Score / Scan (when available) are informational heuristics — not investment recommendations, popularity ranks, or guarantees of safety. Crypto is volatile. DYOR. Status labels in this litepaper (IN DEVELOPMENT, PLANNED, CONDITIONAL, LEGACY) override marketing shorthand.",
       home: "Home",
       transparency: "Transparency",
       swap: "Swap",
     },
-  },
+},
 };
