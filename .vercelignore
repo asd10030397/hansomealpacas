@@ -3,6 +3,9 @@ reports/season1-showcase/**/*.webm
 reports/season1-showcase/**/*.wav
 reports/season1-showcase/**/*.mp4
 reports/**/*.webm
+# Root Capacitor/staging folder only — do NOT use bare "assets"
+# (that gitignore-style pattern also excludes public/assets and breaks the game UI).
+/assets
 .next
 node_modules
 contracts/node_modules
