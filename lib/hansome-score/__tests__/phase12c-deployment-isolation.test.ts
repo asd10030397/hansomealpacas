@@ -172,7 +172,7 @@ describe("Phase 12C KV namespaces", () => {
     const prodContract = contractCacheKey({
       chainId: 4663,
       address: "0xAbC0000000000000000000000000000000000001",
-      artifactType: "bytecode",
+      artifactType: "runtime_bytecode",
       bytecodeHash: "deadbeef",
     });
 
@@ -199,7 +199,7 @@ describe("Phase 12C KV namespaces", () => {
     const candContract = contractCacheKey({
       chainId: 4663,
       address: "0xAbC0000000000000000000000000000000000001",
-      artifactType: "bytecode",
+      artifactType: "runtime_bytecode",
       bytecodeHash: "deadbeef",
     });
 
