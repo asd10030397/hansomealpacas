@@ -22,12 +22,24 @@ import {
   cancelActiveDeepAttempt,
 } from "@/lib/hansome-score/deep-settlement";
 import {
+  annotateFenceAccepted,
+  annotateFenceRejection,
+  clearDeepLease,
+  heartbeatDeepLease,
+  isOrphanAnalyzing,
+  recoverOrphanAnalyzing,
+  stampDeepRuntime,
+  toDeepRuntimeDiagnostics,
+  withRegisteredDeepJob,
+} from "@/lib/hansome-score/deep-runtime";
+import {
   beginLpTerminal,
   hasVerifiedLockedResult,
   isLpForceRefreshActive,
   isLpHardTerminal,
   LP_FORCE_PROGRESS_STALL_MS,
   markLpTerminalRunning,
+  mayLpForceRecover,
   resolveLpInterruptOutcome,
   settleLpFailedTerminal,
   applyLpHardTerminal,
@@ -48,6 +60,7 @@ import {
   scanTokenFast,
 } from "@/lib/hansome-score/scan-fast";
 import {
+  MAX_DEEP_AUTO_RETRIES,
   assignDeepAttempt,
   bumpDeepRetryCount,
   isDeepRetryable,
@@ -106,7 +119,11 @@ import {
   markForceLpFullRefresh,
   markManualSmartLpRefresh,
 } from "@/lib/hansome-score/lp/smart-refresh";
-import type { ScanCacheMeta, ScanResponse } from "@/lib/hansome-score/types";
+import type {
+  DeepRuntimeDiagnostics,
+  ScanCacheMeta,
+  ScanResponse,
+} from "@/lib/hansome-score/types";
 
 export { resolveDeploymentScope } from "@/lib/hansome-score/deployment-scope";
 export {
@@ -581,7 +598,10 @@ async function persistWithLpPublishContract(
         authGeneration: auth?.deepAttemptId ?? null,
       }),
     );
-    return { accepted: false, response: auth ?? incoming };
+    const annotated = auth
+      ? annotateFenceRejection(auth, incoming.deepAttemptId)
+      : incoming;
+    return { accepted: false, response: annotated };
   }
   if (shouldRejectUnfencedDeepWrite(auth, incoming)) {
     return { accepted: false, response: auth ?? incoming };
@@ -659,25 +679,50 @@ async function persistWithLpPublishContract(
     });
     if (!pub.ok) {
       if (pub.reason === "stale_publish_rejected") {
-        return { accepted: false, response: auth ?? merged };
+        const annotated = auth
+          ? annotateFenceRejection(auth, merged.deepAttemptId)
+          : merged;
+        return { accepted: false, response: annotated };
       }
       // Partial / failed publish: keep nonterminal — do not expose done LP body.
-      const nonterm: ScanResponse = {
-        ...clearStaleLpEvidence(merged),
-        analysisStatus:
-          merged.analysisStatus === "complete"
-            ? "partial"
-            : merged.analysisStatus,
-        analysisStages: {
-          ...merged.analysisStages!,
-          liquidity: "analyzing",
-          score:
-            merged.analysisStages?.score === "done"
-              ? "analyzing"
-              : (merged.analysisStages?.score ?? "analyzing"),
+      const canRetry =
+        isDeepRetryable({
+          ...merged,
+          analysisStatus:
+            merged.analysisStatus === "complete"
+              ? "partial"
+              : merged.analysisStatus,
+        }) ||
+        (isLpForceRefreshActive(merged) && mayLpForceRecover(merged.lpTerminal));
+      const nonterm: ScanResponse = stampDeepRuntime(
+        {
+          ...clearStaleLpEvidence(merged),
+          analysisStatus:
+            merged.analysisStatus === "complete"
+              ? canRetry
+                ? "deep_running"
+                : "partial"
+              : merged.analysisStatus,
+          analysisStages: {
+            ...merged.analysisStages!,
+            liquidity: canRetry ? "analyzing" : "partial",
+            score:
+              merged.analysisStages?.score === "done"
+                ? "done"
+                : canRetry
+                  ? "analyzing"
+                  : "partial",
+          },
+          lpPublish: undefined,
         },
-        lpPublish: undefined,
-      };
+        {
+          lease: undefined,
+          retryRequired: canRetry,
+          retryScheduled: canRetry,
+          lastTransition: canRetry ? "lp_publish_retry" : "lp_publish_terminal",
+          lastErrorCode: pub.reason ?? "lp_publish_failed",
+        },
+      );
       const stamped = await persistProgressResponse(key, nonterm);
       return { accepted: true, response: stamped };
     }
@@ -770,20 +815,54 @@ async function reconcilePublishedLpOnRead(
         )))
   ) {
     const cleared = clearStaleLpEvidence(response);
+    // Phase 13A: never demote to analyzing on read when no recovery path remains.
+    const canRecover =
+      isDeepRetryable({
+        ...cleared,
+        analysisStatus:
+          cleared.analysisStatus === "complete"
+            ? "partial"
+            : cleared.analysisStatus,
+      }) ||
+      (isLpForceRefreshActive(cleared) && mayLpForceRecover(cleared.lpTerminal));
+    const liqStage = canRecover ? "analyzing" : "partial";
+    const scoreStage =
+      cleared.analysisStages?.score === "done"
+        ? "done"
+        : canRecover
+          ? "analyzing"
+          : "partial";
     return {
       ...cleared,
       analysisStatus:
         cleared.analysisStatus === "complete"
-          ? "deep_running"
-          : cleared.analysisStatus,
+          ? canRecover
+            ? "deep_running"
+            : "partial"
+          : cleared.analysisStatus === "deep_running" && !canRecover
+            ? "partial"
+            : cleared.analysisStatus,
       analysisStages: {
         ...cleared.analysisStages!,
-        liquidity: "analyzing",
-        score:
-          cleared.analysisStages?.score === "done"
-            ? "analyzing"
-            : (cleared.analysisStages?.score ?? "analyzing"),
+        liquidity: liqStage,
+        score: scoreStage,
       },
+      deepRuntime: canRecover
+        ? {
+            ...cleared.deepRuntime,
+            retryRequired: true,
+            retryScheduled: false,
+            lastTransition: "lp_read_rearm",
+            lastErrorCode: check.reason ?? "lp_body_incompatible",
+          }
+        : {
+            ...cleared.deepRuntime,
+            lease: undefined,
+            retryRequired: false,
+            retryScheduled: false,
+            lastTransition: "lp_read_terminal",
+            lastErrorCode: check.reason ?? "lp_body_incompatible",
+          },
     };
   }
   return response;
@@ -840,6 +919,42 @@ function settleTerminalPartial(
       };
     }
     if (outcome.kind === "recover") {
+      const existingRetry = mergeMonotonicDeepRetryCount(
+        opts?.existingRetryCount,
+        response.deepRetryCount,
+      );
+      // Phase 13A: if deep auto-retries already exhausted, do not re-open analyzing.
+      if (existingRetry >= MAX_DEEP_AUTO_RETRIES) {
+        const failed = applyLpHardTerminal(
+          response.analysisStatus === "failed" ||
+            response.analysisStatus === "partial"
+            ? response
+            : markScanPartial(response, opts),
+          settleLpFailedTerminal(contract, {
+            reason: "recovery_exhausted",
+            failedStages: ["liquidity"],
+          }),
+        );
+        const bumped = bumpDeepRetryCount({
+          ...failed,
+          analysisStatus: "failed",
+          analysisStages: {
+            ...failed.analysisStages!,
+            liquidity: "unknown",
+          },
+        });
+        return clearDeepLease(
+          {
+            ...bumped,
+            deepRetryCount: mergeMonotonicDeepRetryCount(
+              existingRetry,
+              bumped.deepRetryCount,
+            ),
+          },
+          "force_lp_retry_exhausted",
+          "recovery_exhausted",
+        );
+      }
       // Keep collecting — new generation so cancelled workers stay fenced out.
       const addr = outcome.response.overview?.address;
       if (addr) markForceLpFullRefresh(addr);
@@ -861,13 +976,21 @@ function settleTerminalPartial(
           generation: gen,
         },
       });
-      return {
-        ...bumped,
-        deepRetryCount: mergeMonotonicDeepRetryCount(
-          opts?.existingRetryCount,
-          bumped.deepRetryCount,
-        ),
-      };
+      return stampDeepRuntime(
+        {
+          ...bumped,
+          deepRetryCount: mergeMonotonicDeepRetryCount(
+            existingRetry,
+            bumped.deepRetryCount,
+          ),
+        },
+        {
+          retryRequired: true,
+          retryScheduled: true,
+          lastTransition: "force_lp_recover",
+          lastErrorCode: null,
+        },
+      );
     }
     const failed = applyLpHardTerminal(
       response.analysisStatus === "failed" ||
@@ -899,16 +1022,62 @@ function settleTerminalPartial(
 
   const marked =
     response.analysisStatus === "partial" || response.analysisStatus === "failed"
-      ? response
+      ? // Phase 13A: still run markScanPartial so sticky analyzing stages terminalize.
+        markScanPartial(response, opts)
       : markScanPartial(response, opts);
   const bumped = bumpDeepRetryCount(marked);
-  return {
-    ...bumped,
-    deepRetryCount: mergeMonotonicDeepRetryCount(
-      opts?.existingRetryCount,
-      bumped.deepRetryCount,
-    ),
-  };
+  return clearDeepLease(
+    {
+      ...bumped,
+      deepRetryCount: mergeMonotonicDeepRetryCount(
+        opts?.existingRetryCount,
+        bumped.deepRetryCount,
+      ),
+    },
+    "settled_partial",
+    opts?.reason ? "deep_partial" : undefined,
+  );
+}
+
+/**
+ * Phase 13A — recover orphan analyzing (no inflight, no valid lease, no retry).
+ */
+export async function recoverOrphanAnalyzingIfNeeded(
+  address: string,
+): Promise<ScanResponse | null> {
+  const normalized = assertValidTokenAddress(address);
+  const key = cacheKey(normalized);
+  const loaded = await loadSnapshot(normalized);
+  if (!loaded) return null;
+  const deepInflight = isDeepAnalysisInflight(normalized);
+  const outcome = recoverOrphanAnalyzing(loaded.snap.response, { deepInflight });
+  if (!outcome.orphan) return null;
+  console.warn(
+    JSON.stringify({
+      tag: "deep_orphan_recovered",
+      address: normalized,
+      shouldRetry: outcome.shouldRetry,
+      transition: outcome.response.deepRuntime?.lastTransition,
+      deepRetryCount: outcome.response.deepRetryCount ?? 0,
+      deploymentScope: resolveDeploymentScope(),
+    }),
+  );
+  let next = outcome.response;
+  if (outcome.shouldRetry) {
+    // Re-arm collecting so after()/schedule can continue with a new generation.
+    next = rearmPartialForDeepRetry({
+      ...next,
+      analysisStatus: "partial",
+    });
+    next = stampDeepRuntime(next, {
+      retryRequired: true,
+      retryScheduled: true,
+      lastTransition: "orphan_rearmed",
+      lastErrorCode: "orphan_analyzing",
+    });
+  }
+  const written = await persistProgressResponse(key, next);
+  return written;
 }
 
 /**
@@ -995,8 +1164,8 @@ async function runFreshScan(address: string): Promise<ScanResponse> {
 
       // Prefer progressive enrich from Fast snapshot (avoids redoing wave1).
       if (prior && isDeepInProgress(prior.response)) {
-        // New generation when starting (or keep re-arm's id if already stamped).
-        const base = prior.response.deepAttemptId
+        // Phase 13A order: allocate generation → register lease → persist analyzing → work.
+        const allocated = prior.response.deepAttemptId
           ? {
               ...prior.response,
               deepStartedAt:
@@ -1007,14 +1176,22 @@ async function runFreshScan(address: string): Promise<ScanResponse> {
               ...prior.response,
               analysisStatus: "deep_running",
             });
+        const base = withRegisteredDeepJob(allocated);
         await persistProgressResponse(key, base);
         const attemptId = base.deepAttemptId;
         try {
           const enriched = await enrichScanDeep(base, {
             deadline,
             onProgress: async (partial) => {
+              const lease = partial.deepRuntime?.lease ?? base.deepRuntime?.lease;
+              const heartbeated = lease
+                ? stampDeepRuntime(partial, {
+                    lease: heartbeatDeepLease(lease),
+                    lastTransition: "progress_heartbeat",
+                  })
+                : partial;
               await persistFencedDeepProgress(key, {
-                ...partial,
+                ...heartbeated,
                 deepAttemptId: attemptId,
               });
             },
@@ -1053,23 +1230,51 @@ async function runFreshScan(address: string): Promise<ScanResponse> {
                   }
                 : { ...enriched, deepAttemptId: attemptId };
           const nowIso = new Date().toISOString();
-          const stamped = stampResponse(
-            {
-              ...finalized,
-              scoreComputedAt: nowIso,
-              activityUpdatedAt: nowIso,
-            },
-            nowIso,
-            nowIso,
+          const released = forceLpRecovering
+            ? stampDeepRuntime(
+                {
+                  ...finalized,
+                  scoreComputedAt: nowIso,
+                  activityUpdatedAt: nowIso,
+                },
+                {
+                  lease: undefined,
+                  retryRequired: true,
+                  retryScheduled: true,
+                  lastTransition: "force_lp_midflight",
+                  lastErrorCode: null,
+                },
+              )
+            : clearDeepLease(
+                {
+                  ...finalized,
+                  scoreComputedAt: nowIso,
+                  activityUpdatedAt: nowIso,
+                },
+                "deep_settled",
+              );
+          const stamped = stampResponse(released, nowIso, nowIso);
+          const settled = await persistFencedDeepSettle(
+            key,
+            annotateFenceAccepted(stamped),
           );
-          const settled = await persistFencedDeepSettle(key, stamped);
           return settled.response;
         } catch (err) {
           const existingRetry =
             (memory.get(key) ?? (await kvGetSnapshot(key)))?.response
               .deepRetryCount ?? base.deepRetryCount;
+          const errCode =
+            err instanceof DeepScanTimeoutError
+              ? "deep_timeout"
+              : (err as { code?: string })?.code === "deep_lp_rpc_timeout"
+                ? "deep_lp_rpc_timeout"
+                : "deep_enrich_failed";
           const partial = settleTerminalPartial(
-            { ...base, deepAttemptId: attemptId },
+            clearDeepLease(
+              { ...base, deepAttemptId: attemptId },
+              "worker_failed",
+              errCode,
+            ),
             {
               reason:
                 err instanceof DeepScanTimeoutError
@@ -1252,6 +1457,7 @@ export function scheduleDeepAnalysis(address: string): void {
 export async function ensureDeepAnalysis(address: string): Promise<ScanResponse> {
   const normalized = assertValidTokenAddress(address.trim());
   await recoverStaleDeepIfNeeded(normalized);
+  await recoverOrphanAnalyzingIfNeeded(normalized);
   const key = cacheKey(normalized);
   const authSnap = await loadAuthoritativeSnap(key);
   const peeked = authSnap?.response ?? (await peekScanSnapshot(normalized));
@@ -1809,10 +2015,13 @@ export async function getScanAnalysisStatus(address: string): Promise<{
   deepInflight: boolean;
   /** True when caller should schedule after() deep work (not fire-and-forget). */
   needsDeepAfter: boolean;
+  /** Phase 13A — lease / retry / fence diagnostics (no secrets). */
+  deepRuntime: DeepRuntimeDiagnostics;
   result: CachedScanResponse | null;
 }> {
   const normalized = assertValidTokenAddress(address.trim());
   await recoverStaleDeepIfNeeded(normalized);
+  await recoverOrphanAnalyzingIfNeeded(normalized);
   const key = cacheKey(normalized);
   const authSnap = await loadAuthoritativeSnap(key);
   let peeked = authSnap
@@ -1947,13 +2156,42 @@ export async function getScanAnalysisStatus(address: string): Promise<{
     peeked = { ...written, cache: peeked.cache };
   }
 
+  // Phase 13A: sticky analyzing without lease/inflight/retry is orphan — recover again
+  // after watchdog / reconcile paths may have rewritten stages.
+  if (
+    peeked &&
+    isOrphanAnalyzing({
+      response: peeked,
+      deepInflight: isDeepAnalysisInflight(normalized),
+    })
+  ) {
+    const recovered = await recoverOrphanAnalyzingIfNeeded(normalized);
+    if (recovered) {
+      peeked = { ...recovered, cache: peeked.cache };
+    }
+  }
+
   const deepInflight = isDeepAnalysisInflight(normalized);
-  const needsDeepAfter = Boolean(peeked && needsDeepWork(peeked));
+  const retryScheduled = peeked?.deepRuntime?.retryScheduled === true;
+  const needsDeepAfter = Boolean(
+    peeked &&
+      (needsDeepWork(peeked) ||
+        retryScheduled ||
+        (hasAnalyzingNeedingWork(peeked) && !deepInflight)),
+  );
   // Kick work in-process; routes MUST also wrap ensureDeepAnalysis in after()
   // so the isolate stays alive after the HTTP response.
   if (needsDeepAfter && !deepInflight) {
+    if (peeked) {
+      peeked = stampDeepRuntime(peeked, {
+        retryScheduled: true,
+        lastTransition: "status_schedule_deep",
+      });
+      await persistProgressResponse(key, peeked);
+    }
     scheduleDeepAnalysis(normalized);
   }
+  const deepRuntime = toDeepRuntimeDiagnostics(peeked ?? {});
   return {
     address: normalized,
     analysisStatus:
@@ -1970,6 +2208,22 @@ export async function getScanAnalysisStatus(address: string): Promise<{
     analysisStages: peeked?.analysisStages,
     deepInflight: deepInflight || isDeepAnalysisInflight(normalized),
     needsDeepAfter,
+    deepRuntime,
     result: peeked,
   };
+}
+
+function hasAnalyzingNeedingWork(
+  response: Pick<ScanResponse, "analysisStages" | "deepRetryCount" | "analysisStatus">,
+): boolean {
+  const stages = response.analysisStages;
+  if (!stages) return false;
+  const analyzing =
+    stages.liquidity === "analyzing" ||
+    stages.creator === "analyzing" ||
+    stages.burn === "analyzing" ||
+    stages.relationships === "analyzing" ||
+    stages.score === "analyzing";
+  if (!analyzing) return false;
+  return (response.deepRetryCount ?? 0) < MAX_DEEP_AUTO_RETRIES;
 }

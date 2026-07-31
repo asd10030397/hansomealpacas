@@ -44,8 +44,20 @@ function parseRefreshFlag(
 function scheduleAfterDeep(address: string, result: ScanResponse) {
   if (!isDeepInProgress(result)) return;
   after(() => {
-    void ensureDeepAnalysis(address).catch((err) => {
+    void ensureDeepAnalysis(address).catch(async (err) => {
       console.warn(`[${PROJECT.symbol}] deep analysis after() failed:`, err);
+      // Phase 13A: worker launch / after() failure must not leave orphan analyzing.
+      try {
+        const { recoverOrphanAnalyzingIfNeeded } = await import(
+          "@/lib/hansome-score/scan-cache"
+        );
+        await recoverOrphanAnalyzingIfNeeded(address);
+      } catch (recoverErr) {
+        console.warn(
+          `[${PROJECT.symbol}] deep orphan recovery after after() failure:`,
+          recoverErr,
+        );
+      }
     });
   });
 }

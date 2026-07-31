@@ -74,9 +74,12 @@ import {
   isLpForceRefreshActive,
   markLpTerminalPublishing,
   markLpTerminalRunning,
+  mayLpForceRecover,
   resolveLpInterruptOutcome,
   settleLpSuccessTerminal,
 } from "@/lib/hansome-score/lp/lp-terminal-contract";
+import { withDeepLpRpcTimeout } from "@/lib/hansome-score/deep-runtime";
+import { MAX_DEEP_AUTO_RETRIES } from "@/lib/hansome-score/scan-progress";
 import {
   isHookNativeOwnership,
   retainHookNativeLockDistribution,
@@ -324,17 +327,27 @@ export function markScanPartial(
   opts?: { reason?: string },
 ): ScanResponse {
   const stages = cloneStages(response.analysisStages);
-  const protectLp =
-    isLpForceRefreshActive(response) ||
+  // Phase 13A: only protect liquidity while force-LP recovery can still continue.
+  // Exhausted force/auto budgets must not leave liquidity=analyzing on a partial settle.
+  const forceOwnsLiquidity =
+    (isLpForceRefreshActive(response) && mayLpForceRecover(response.lpTerminal)) ||
     response.lpTerminal?.terminalState === "SUCCESS_TERMINAL" ||
     response.lpTerminal?.terminalState === "FAILED_TERMINAL";
+  const retriesExhausted =
+    (response.deepRetryCount ?? 0) >= MAX_DEEP_AUTO_RETRIES;
+  const protectLp = forceOwnsLiquidity && !retriesExhausted;
   for (const id of DEEP_STAGE_IDS) {
     if (id === "liquidity" && protectLp) {
-      // Force LP contract owns liquidity terminalization.
+      // Force LP contract owns liquidity terminalization while recovery remains.
       continue;
     }
     if (stages[id] === "analyzing" || stages[id] === "pending") {
-      stages[id] = "partial";
+      stages[id] =
+        id === "liquidity" &&
+        response.lpTerminal?.forceRefresh &&
+        !mayLpForceRecover(response.lpTerminal)
+          ? "unknown"
+          : "partial";
     }
   }
   if (stages.burn === "analyzing" || stages.burn === "pending") {
@@ -1188,7 +1201,9 @@ export async function enrichScanDeep(
                 existing ??
                 Promise.all([
                   fetchOptionalGeckoActivity(address, { signal }),
-                  fetchEthUsd({ signal }).catch(() => null as number | null),
+                  withDeepLpRpcTimeout(fetchEthUsd({ signal }), {
+                    label: "eth_usd",
+                  }).catch(() => null as number | null),
                 ]);
               if (!existing) attemptMemo.priceEthUsd.set(memoKey, fetchPair);
               const [g, e] = await fetchPair;

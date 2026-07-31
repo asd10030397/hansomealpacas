@@ -42,8 +42,19 @@ export async function GET(request: Request) {
       status.needsDeepAfter
     ) {
       after(() => {
-        void ensureDeepAnalysis(address).catch((err) => {
+        void ensureDeepAnalysis(address).catch(async (err) => {
           console.warn(`[${PROJECT.symbol}] status after() deep failed:`, err);
+          try {
+            const { recoverOrphanAnalyzingIfNeeded } = await import(
+              "@/lib/hansome-score/scan-cache"
+            );
+            await recoverOrphanAnalyzingIfNeeded(address);
+          } catch (recoverErr) {
+            console.warn(
+              `[${PROJECT.symbol}] status orphan recovery failed:`,
+              recoverErr,
+            );
+          }
         });
       });
     }
@@ -57,6 +68,9 @@ export async function GET(request: Request) {
         scoreProvisional: status.scoreProvisional,
         analysisStages: status.analysisStages,
         deepInflight: status.deepInflight,
+        deepRetryRequired: status.deepRuntime.deepRetryRequired ?? false,
+        deepRetryScheduled: status.deepRuntime.deepRetryScheduled ?? false,
+        deepRuntime: status.deepRuntime,
         complete: status.result ? isScanComplete(status.result) : false,
         deploymentScope,
         result: status.result,

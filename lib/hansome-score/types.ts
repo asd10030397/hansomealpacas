@@ -685,6 +685,50 @@ export type DeepProgressMeta = {
   stallReason?: string;
 };
 
+/** Phase 13A — durable Deep worker lease (KV via scan snapshot). */
+export type DeepLeaseState = "none" | "valid" | "expired";
+
+export type DeepRuntimeLease = {
+  generation: string;
+  workerId: string;
+  startedAt: string;
+  heartbeatAt: string;
+  expiresAt: string;
+  attempt: number;
+  deploymentScope: string;
+};
+
+/**
+ * Phase 13A — Deep runtime reliability metadata (no secrets).
+ * Invariant: analyzing ⇒ inflight OR retryScheduled OR valid lease.
+ */
+export type DeepRuntimeMeta = {
+  lease?: DeepRuntimeLease;
+  retryRequired?: boolean;
+  retryScheduled?: boolean;
+  lastErrorCode?: string;
+  lastTransition?: string;
+  fenceResult?: "accepted" | "rejected" | "none";
+  lastFenceIncomingGeneration?: string;
+  deploymentScope?: string;
+};
+
+export type DeepRuntimeDiagnostics = {
+  deepGeneration?: string;
+  deepWorkerId?: string;
+  deepAttempt?: number;
+  deepLeaseState?: DeepLeaseState;
+  deepStartedAt?: string;
+  deepHeartbeatAt?: string;
+  deepExpiresAt?: string;
+  deepRetryRequired?: boolean;
+  deepRetryScheduled?: boolean;
+  deepLastErrorCode?: string;
+  deepLastTransition?: string;
+  deepDeploymentScope?: string;
+  deepFenceResult?: "accepted" | "rejected" | "none";
+};
+
 export type ScanResponse = {
   version: string;
   /**
@@ -739,6 +783,11 @@ export type ScanResponse = {
    * Survives serverless isolate changes via the scan snapshot KV record.
    */
   deepProgress?: DeepProgressMeta;
+  /**
+   * Phase 13A — lease / retry / fence diagnostics for Deep runtime recovery.
+   * Survives isolate changes via the scan snapshot KV record.
+   */
+  deepRuntime?: DeepRuntimeMeta;
   /** True when Overall/Structural computed without deep LP/creator/P2 inputs. */
   scoreProvisional?: boolean;
   analysisStages?: AnalysisStages;
