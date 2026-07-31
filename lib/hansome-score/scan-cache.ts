@@ -2183,11 +2183,12 @@ export async function getScanAnalysisStatus(address: string): Promise<{
   // so the isolate stays alive after the HTTP response.
   if (needsDeepAfter && !deepInflight) {
     if (peeked) {
-      peeked = stampDeepRuntime(peeked, {
+      const stamped = stampDeepRuntime(peeked, {
         retryScheduled: true,
         lastTransition: "status_schedule_deep",
       });
-      await persistProgressResponse(key, peeked);
+      peeked = { ...stamped, cache: peeked.cache };
+      await persistProgressResponse(key, stamped);
     }
     scheduleDeepAnalysis(normalized);
   }
