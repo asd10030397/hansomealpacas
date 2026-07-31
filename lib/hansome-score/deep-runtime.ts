@@ -129,19 +129,37 @@ export function heartbeatDeepLease(
 
 export function stampDeepRuntime(
   response: ScanResponse,
-  patch: Partial<NonNullable<ScanResponse["deepRuntime"]>> & {
+  patch: {
+    lease?: DeepRuntimeLease | undefined;
+    retryRequired?: boolean;
+    retryScheduled?: boolean;
     lastTransition: string;
+    /** Pass null to clear. */
     lastErrorCode?: string | null;
+    fenceResult?: "accepted" | "rejected" | "none";
+    lastFenceIncomingGeneration?: string;
+    deploymentScope?: string;
   },
 ): ScanResponse {
   const prev = response.deepRuntime ?? {};
-  const next = {
+  const next: NonNullable<ScanResponse["deepRuntime"]> = {
     ...prev,
-    ...patch,
+    lease: "lease" in patch ? patch.lease : prev.lease,
+    retryRequired:
+      patch.retryRequired !== undefined ? patch.retryRequired : prev.retryRequired,
+    retryScheduled:
+      patch.retryScheduled !== undefined
+        ? patch.retryScheduled
+        : prev.retryScheduled,
+    lastTransition: patch.lastTransition,
     lastErrorCode:
       patch.lastErrorCode === null
         ? undefined
         : (patch.lastErrorCode ?? prev.lastErrorCode),
+    fenceResult: patch.fenceResult ?? prev.fenceResult,
+    lastFenceIncomingGeneration:
+      patch.lastFenceIncomingGeneration ?? prev.lastFenceIncomingGeneration,
+    deploymentScope: patch.deploymentScope ?? prev.deploymentScope,
   };
   return { ...response, deepRuntime: next };
 }
