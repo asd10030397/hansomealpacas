@@ -3,6 +3,8 @@ import { Noto_Sans_SC, Press_Start_2P } from "next/font/google";
 import { AmbientSound } from "@/components/AmbientSound";
 import { Analytics } from "@/components/Analytics";
 import { AnalyticsPageView } from "@/components/AnalyticsPageView";
+import { VercelWebAnalytics } from "@/components/VercelWebAnalytics";
+import { WebsiteAnalyticsBeacon } from "@/components/WebsiteAnalyticsBeacon";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { MotionProvider } from "@/components/MotionProvider";
 import { SkipLink } from "@/components/SkipLink";
@@ -98,10 +100,12 @@ export default function RootLayout({
           <LanguageToggle />
           <SkipLink />
           <AnalyticsPageView />
+          <WebsiteAnalyticsBeacon />
           <MotionProvider>{children}</MotionProvider>
         </LocaleProvider>
         <AmbientSound />
         <Analytics />
+        <VercelWebAnalytics />
       </body>
     </html>
   );

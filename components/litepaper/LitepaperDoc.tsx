@@ -114,14 +114,78 @@ function LitepaperContent() {
 
       <LitepaperSection id="scan-score" eyebrow="04" title={lp.scanScore.heading}>
         <div className="mb-4">
-          <StatusBadge statusKey="inDevelopment" status={lp.scanScore.status} />
+          <StatusBadge statusKey={lp.scanScore.statusKey} status={lp.scanScore.status} />
         </div>
         <div className="space-y-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
           {lp.scanScore.paragraphs.map((p) => (
             <p key={p}>{p}</p>
           ))}
         </div>
-        <h3 className="mt-8 text-sm font-semibold uppercase tracking-[0.14em] text-gold">
+
+        <div className="mt-8 rounded-2xl border border-wood/40 bg-[color:var(--lp-surface)] p-5 sm:p-6">
+          <p className="text-[0.8125rem] leading-relaxed text-[color:var(--lp-text-muted)]">
+            {lp.scanScore.tryScan.blurb}
+          </p>
+          <Link
+            href={lp.scanScore.tryScan.href}
+            className="pixel-btn mt-4 inline-flex items-center gap-1.5 border border-wood bg-gold/15 px-4 py-2 font-[family-name:var(--font-anton)] text-[0.7rem] tracking-[0.1em] text-gold transition-colors hover:bg-gold/25"
+          >
+            {lp.scanScore.tryScan.button}
+          </Link>
+        </div>
+
+        <h3 className="mt-10 text-sm font-semibold uppercase tracking-[0.14em] text-gold">
+          {lp.scanScore.capabilitiesHeading}
+        </h3>
+        <ul className="mt-3 space-y-2 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
+          {lp.scanScore.capabilities.map((item) => (
+            <li key={item}>{"\u2022"} {item}</li>
+          ))}
+        </ul>
+
+        <h3 className="mt-10 text-sm font-semibold uppercase tracking-[0.14em] text-gold">
+          {lp.scanScore.modulesHeading}
+        </h3>
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {lp.scanScore.modules.map((mod) => (
+            <div key={mod.title} className="lp-card rounded-2xl p-5">
+              <h4 className="text-sm font-semibold text-[color:var(--lp-text)]">{mod.title}</h4>
+              <p className="mt-2 text-[0.8125rem] leading-relaxed text-[color:var(--lp-text-muted)]">{mod.body}</p>
+            </div>
+          ))}
+        </div>
+
+        <h3 className="mt-10 text-sm font-semibold uppercase tracking-[0.14em] text-gold">
+          {lp.scanScore.overallBandsHeading}
+        </h3>
+        <p className="mt-3 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
+          {lp.scanScore.overallBandsIntro}
+        </p>
+        <ul className="mt-3 space-y-2 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
+          {lp.scanScore.overallBands.map((item) => (
+            <li key={item}>{"\u2022"} {item}</li>
+          ))}
+        </ul>
+
+        <h3 className="mt-10 text-sm font-semibold uppercase tracking-[0.14em] text-gold">
+          {lp.scanScore.howItWorksHeading}
+        </h3>
+        <ul className="mt-3 space-y-2 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
+          {lp.scanScore.howItWorks.map((item) => (
+            <li key={item}>{"\u2022"} {item}</li>
+          ))}
+        </ul>
+
+        <h3 className="mt-10 text-sm font-semibold uppercase tracking-[0.14em] text-gold">
+          {lp.scanScore.limitationsHeading}
+        </h3>
+        <ul className="mt-3 space-y-2 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
+          {lp.scanScore.limitations.map((item) => (
+            <li key={item}>{"\u2022"} {item}</li>
+          ))}
+        </ul>
+
+        <h3 className="mt-10 text-sm font-semibold uppercase tracking-[0.14em] text-gold">
           {lp.scanScore.principlesHeading}
         </h3>
         <ul className="mt-3 space-y-2 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
@@ -136,7 +200,10 @@ function LitepaperContent() {
             <h3 className="font-[family-name:var(--font-anton)] text-base tracking-wide text-[color:var(--lp-text)]">
               {lp.scanScore.v4LockIntelligence.heading}
             </h3>
-            <StatusBadge statusKey="inDevelopment" status={lp.scanScore.v4LockIntelligence.status} />
+            <StatusBadge
+              statusKey={lp.scanScore.v4LockIntelligence.statusKey}
+              status={lp.scanScore.v4LockIntelligence.status}
+            />
           </div>
           <div className="mt-4 space-y-4 text-[0.9375rem] leading-relaxed text-[color:var(--lp-text-muted)] sm:text-base">
             {lp.scanScore.v4LockIntelligence.problem.map((p) => (
@@ -602,6 +669,12 @@ function LitepaperContent() {
             className="text-sm font-medium text-gold underline decoration-gold/40 underline-offset-4 hover:decoration-gold"
           >
             {lp.closing.home}
+          </Link>
+          <Link
+            href="/scan"
+            className="text-sm font-medium text-gold underline decoration-gold/40 underline-offset-4 hover:decoration-gold"
+          >
+            {lp.closing.scan}
           </Link>
           <Link
             href="/transparency"

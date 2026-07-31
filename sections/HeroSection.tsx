@@ -96,14 +96,24 @@ export function HeroSection() {
 
           <nav
             aria-label={t.a11y.primaryLinks}
-            className="mt-7 flex flex-wrap items-center justify-center gap-4 sm:mt-8"
+            className="mt-7 flex w-full max-w-xl flex-col items-stretch gap-3 sm:mt-8 sm:max-w-2xl sm:gap-4"
           >
-            <ActionButton href={GAME_HOME_URL} size="lg" variant="gold">
-              {t.hero.playGame}
-            </ActionButton>
-            <ActionButton href="/litepaper" size="lg">
-              {t.hero.readLitepaper}
-            </ActionButton>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 [&>a]:w-full [&>span]:w-full">
+              <ActionButton href="/scan" size="lg" variant="gold">
+                {t.hero.hansomeScan}
+              </ActionButton>
+              <ActionButton href="/swap" size="lg">
+                {t.hero.swapHansome}
+              </ActionButton>
+            </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 [&>a]:w-full [&>span]:w-full">
+              <ActionButton href={GAME_HOME_URL} size="lg">
+                {t.hero.playGame}
+              </ActionButton>
+              <ActionButton href="/litepaper" size="lg">
+                {t.hero.readLitepaper}
+              </ActionButton>
+            </div>
           </nav>
 
           <SocialBar className="mt-7 sm:mt-8" />

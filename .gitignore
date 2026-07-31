@@ -106,3 +106,42 @@ reports/season1-showcase/page@82df41adefe2efe288c0978e151940e7.webm
 
 .vercel
 .env*
+
+# Playwright visual smoke runtime outputs (keep baselines)
+/tests/visual/artifacts/
+
+# --- Scan V1 release hygiene: local ops / scratch (never ship) ---
+/contracts/logs/
+/contracts/.tmp*
+/contracts/.list-*
+/contracts/.opensea*
+/contracts/scripts/_tmp*
+/contracts/scripts/_launch*
+/contracts/scripts/_sellparts/
+/contracts/scripts/_parts.json
+/contracts/scripts/_load-ops*
+/contracts/scripts/_resolve-*
+/contracts/scripts/_watch-*
+/contracts/scripts/ops-*
+/contracts/scripts/execute-mainnet-*
+/contracts/scripts/lib/ops-*
+/contracts/scripts/lib/min-trade-floor.ts
+/contracts/scripts/lib/same-addr-action-gap.ts
+/scripts/_tmp*
+/scripts/_png-diff.mjs
+/lib/hansome-score/_tmp*
+/reports/_tmp*
+/reports/_tmp_*
+/AndroidManifest.xml
+/META-INF/
+/assets/
+/org/
+/res/
+/marketing-assets/
+/app/dev/cinematic-ad-stage/
+/mobile/hansome-game/AndroidManifest.xml
+/mobile/hansome-game/META-INF/
+/mobile/hansome-game/assets/
+/mobile/hansome-game/org/
+/mobile/hansome-game/res/
+

@@ -2,7 +2,8 @@ import { en } from "@/content/i18n/en";
 import type { Locale, Messages } from "@/content/i18n/types";
 import { zh } from "@/content/i18n/zh";
 
-export const DEFAULT_LOCALE: Locale = "zh";
+/** First visit with no saved preference: always English (no Accept-Language / browser auto-zh). */
+export const DEFAULT_LOCALE: Locale = "en";
 export const LOCALE_STORAGE_KEY = "hansomealpacas:locale";
 
 export const messages: Record<Locale, Messages> = {

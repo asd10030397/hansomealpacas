@@ -1,0 +1,147 @@
+{
+  "version": "1.1.0-week2a",
+  "chainId": 4663,
+  "updatedAt": "2026-07-27",
+  "notes": "Regression set for HANSOME Score Week 2A. Live scores vary; expect.* fields capture category behaviours / honest unknowns — not GT retune targets. Soft related-wallet wording only.",
+  "tokens": [
+    {
+      "address": "0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875",
+      "symbolHint": "HANSOME",
+      "note": "Primary — Titan #47299 locked + EOA #357867 + EOA #142938 → MUST be MIXED",
+      "required": true,
+      "characteristics": ["fixed_supply", "mixed_lp", "equal_balance_cluster"],
+      "expect": {
+        "contractRiskAnalyzed": true,
+        "creatorMayClearProvisional": true,
+        "lockAggregate": "MIXED",
+        "requiredPositionIds": ["47299", "357867", "142938"],
+        "mustFailIfOnlyTitan47299": true,
+        "mustNotClaimFullyLockedIfRemovableExists": true,
+        "scoreNeverBoughtWithHansome": true
+      }
+    },
+    {
+      "address": "0x38aaf33082b20aff2e33433138de920f131b7777",
+      "symbolHint": "ASTEROID",
+      "note": "Trending RH meme — high activity sample",
+      "required": false,
+      "characteristics": ["meme", "high_activity"],
+      "expect": {
+        "scanSucceeds": true,
+        "axesSeparated": true
+      }
+    },
+    {
+      "address": "0xf0e17e54239cd945cd7bea471a3a2ca6a8c7f7a3",
+      "symbolHint": "LEMON.FUN",
+      "note": "Trending — concentrated / mintable surface candidate",
+      "required": false,
+      "characteristics": ["meme", "possible_mintable"],
+      "expect": { "scanSucceeds": true }
+    },
+    {
+      "address": "0x39dbed3a2bd333467115de45665cc57f813c4571",
+      "symbolHint": "PONS",
+      "note": "High volume RH token",
+      "required": false,
+      "characteristics": ["high_volume"],
+      "expect": { "scanSucceeds": true }
+    },
+    {
+      "address": "0x714e663991a8fddcbf69d0b74355cbd0d02e5a30",
+      "symbolHint": "ASTEROID-2",
+      "note": "Second ASTEROID pool base — thin/competitive LP candidate",
+      "required": false,
+      "characteristics": ["meme", "thin_or_competitive_lp"],
+      "expect": { "scanSucceeds": true }
+    },
+    {
+      "address": "0x020bfc650a365f8bb26819deaabf3e21291018b4",
+      "symbolHint": "CASHCAT",
+      "note": "Trending meme",
+      "required": false,
+      "characteristics": ["meme"],
+      "expect": { "scanSucceeds": true }
+    },
+    {
+      "address": "0x69984ad3322300039f2855f81c44dbc532efe744",
+      "symbolHint": "TYGR",
+      "note": "Trending meme",
+      "required": false,
+      "characteristics": ["meme"],
+      "expect": { "scanSucceeds": true }
+    },
+    {
+      "address": "0x30db03a051205ccbeb1b6524ddf87fbc6c0127bc",
+      "symbolHint": "TA",
+      "note": "Trending — high volume",
+      "required": false,
+      "characteristics": ["high_volume"],
+      "expect": { "scanSucceeds": true }
+    },
+    {
+      "address": "0xa5971e3a5d9cf9e927aeae8bdaf62a464c1cb2b4",
+      "symbolHint": "CABLE",
+      "note": "Lower volume relative sample",
+      "required": false,
+      "characteristics": ["lower_volume"],
+      "expect": { "scanSucceeds": true }
+    },
+    {
+      "address": "0x556f6d981eeb12454691e6ba6e1e2e1d5b9f6ba7",
+      "symbolHint": "KITTY",
+      "note": "Trending meme",
+      "required": false,
+      "characteristics": ["meme"],
+      "expect": { "scanSucceeds": true }
+    },
+    {
+      "address": "0x84e8f0f454153c393c81e38b8884e90ebcfa6c0b",
+      "symbolHint": "ROAR",
+      "note": "Trending — concentrated holder candidate",
+      "required": false,
+      "characteristics": ["meme", "possible_concentration"],
+      "expect": { "scanSucceeds": true }
+    },
+    {
+      "address": "0x56910d4409f3a0c78c64dd8d0545ff0705389870",
+      "symbolHint": "Index",
+      "note": "Mid volume",
+      "required": false,
+      "characteristics": ["mid_volume"],
+      "expect": { "scanSucceeds": true }
+    },
+    {
+      "address": "0xe934e36a439c94017b64a3fece66af12099abf50",
+      "symbolHint": "STONKBROKER",
+      "note": "Trending meme",
+      "required": false,
+      "characteristics": ["meme"],
+      "expect": { "scanSucceeds": true }
+    },
+    {
+      "address": "0xdb87393727b666c43f5aecb03d8b419ba54d9b03",
+      "symbolHint": "SWOGE",
+      "note": "Trending meme",
+      "required": false,
+      "characteristics": ["meme"],
+      "expect": { "scanSucceeds": true }
+    },
+    {
+      "address": "0xb61a4de2e1797e504f8a8ca134096e9ac0d47777",
+      "symbolHint": "CATE",
+      "note": "Very high volume sample",
+      "required": false,
+      "characteristics": ["very_high_volume"],
+      "expect": { "scanSucceeds": true }
+    },
+    {
+      "address": "0x62c71cd34a52c30d894419cbcc55db2afa8032ea",
+      "symbolHint": "YOLO",
+      "note": "Trending meme",
+      "required": false,
+      "characteristics": ["meme"],
+      "expect": { "scanSucceeds": true }
+    }
+  ]
+}

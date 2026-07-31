@@ -31,5 +31,18 @@
   // 'ethers'" since that package isn't a website dependency.
   // Capacitor Android wrapper lives under mobile/ with its own deps (@capacitor/cli);
   // exclude from Next root typecheck (same pattern as bot/).
-  "exclude": ["node_modules", "contracts", "bot", "bot/**", "mobile", "mobile/**"]
+  "exclude": [
+    "node_modules",
+    "contracts",
+    "bot",
+    "bot/**",
+    "mobile",
+    "mobile/**",
+    "settlement-worker",
+    "settlement-worker/**",
+    "lib/hansome-score/_tmp-*.ts",
+    "lib/**/_tmp-*.ts",
+    "reports/data/_tmp_*.ts",
+    "reports/data/_tmp_*.mjs"
+  ]
 }

@@ -1,0 +1,129 @@
+{
+  "phase": "8.1A",
+  "purpose": "Frozen inputs for Known-First vs Full Quick semantic equivalence — no secrets",
+  "liveTipConfirmed": "dpl_5xqS15tNvmkgyAXp1KhLzPNEjup7",
+  "phase81TipInvestigated": "dpl_jsCNHa1otFa4DfiVfNAjDxHHzgB1",
+  "frozenBlock": {
+    "chainId": 4663,
+    "number": 22371136,
+    "hash": "0xc5475bc3d4c2f377791e75956c32ac92d2f7994de438c2b407bcf50bac0a165b",
+    "timestamp": 1785319831,
+    "timestampIso": "2026-07-29T10:10:31.000Z",
+    "rpc": "https://rpc.mainnet.chain.robinhood.com",
+    "historicalReads": "supported_at_capture_via_getBalance_blockNumber",
+    "reorgCheck": "single_capture_window_hash_recorded; re-verify before live mutation tests",
+    "earlierCaptureNote": "22368660/0x111beb7e… also used during initial probe; harness canonical is 22371136"
+  },
+  "evaluationTimestampMs": 1785319831000,
+  "externalFixtures": {
+    "gecko": {
+      "network": "robinhood",
+      "poolId": "0x1165db4c55ea3c2c4881453937164906923c7c37a575286c1db81f19ead81a0d",
+      "liquidityUsd": 15843.1782,
+      "volume24hUsd": 713.5956210394,
+      "transactions24h": 14,
+      "source": "api.geckoterminal.com capture at frozen evaluation"
+    },
+    "ethUsd": {
+      "usd": null,
+      "note": "Not required for Overall when liquidityUsd labeled; frozen as null to avoid paid oracle secrets"
+    },
+    "activity": {
+      "volume24hUsd": 713.5956210394,
+      "transactions24h": 14,
+      "level": "Low"
+    },
+    "tvl": {
+      "liquidityUsd": 15843.1782
+    },
+    "maturityTimestamp": {
+      "tokenAgeDays": 17.690391655092593,
+      "bucket": "14_to_30_days_score_55"
+    }
+  },
+  "tokens": {
+    "HANSOME": {
+      "address": "0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875",
+      "livePhase8ScoreInput": {
+        "structuralScore": 75,
+        "liquidityUsd": 15839.4646,
+        "poolInventoryPctOfSupply": 11.867532737794739,
+        "sizeWarning": false,
+        "holdersCount": 94,
+        "top10AdjustedPct": 35.4032965575473,
+        "volume24hUsd": 713.5956210394,
+        "transactions24h": 14,
+        "tokenAgeDays": 17.690391655092593,
+        "dataConfidencePercent": 67
+      },
+      "expectedOverall": 54,
+      "expectedComponents": {
+        "structural": 75,
+        "liquidityDepth": 45,
+        "holderAdoption": 43,
+        "activity": 34,
+        "maturity": 55,
+        "dataConfidence": 67
+      },
+      "phase8BaselineEra": {
+        "observedScore": 53,
+        "observedAt": "2026-07-28T19:35:59.283Z",
+        "deploy": "dpl_5xqS15tNvmkgyAXp1KhLzPNEjup7",
+        "liquidityUsdObserved": 15800.8513,
+        "componentSnapshot": null,
+        "reconstructedMinimalInputDeltaFor53": {
+          "note": "Same structural/liq/activity/maturity/confidence as live 54; only top10AdjustedPct crosses holder soft-bonus boundary",
+          "top10AdjustedPct": 40.5,
+          "holdersCount": 94,
+          "expectedHolderAdoption": 40,
+          "expectedOverall": 53
+        }
+      },
+      "lpStructural": {
+        "aggregateState": "MIXED",
+        "aggregateLockState": "MIXED",
+        "discoveryComplete": false,
+        "knownPositionsVerified": true,
+        "poolDetected": true,
+        "positionIds": ["47299", "357867", "142938"],
+        "positions": [
+          {
+            "positionNftId": "47299",
+            "owner": "0x4a50761042e321F214b6B6c2920F9eA1C5533828",
+            "lockState": "LOCKED_VERIFIED_ONCHAIN",
+            "unlockTimestamp": 1815622680,
+            "removableByEoa": false
+          },
+          {
+            "positionNftId": "357867",
+            "owner": "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
+            "lockState": "UNLOCKED_EOA_CONTROLLED",
+            "unlockTimestamp": null,
+            "removableByEoa": true
+          },
+          {
+            "positionNftId": "142938",
+            "owner": "0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A",
+            "lockState": "UNLOCKED_EOA_CONTROLLED",
+            "unlockTimestamp": null,
+            "removableByEoa": true
+          }
+        ]
+      }
+    },
+    "PRIMARY": {
+      "address": "0x57ffd85d9f0744b7790dcdbbc2c0f188f81de00f",
+      "note": "Frozen structural equality exercised via planner + score-input isolation; live refresh not required for 8.1A"
+    }
+  },
+  "core7": [
+    { "id": "HANSOME", "address": "0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875" },
+    { "id": "PRIMARY", "address": "0x57ffd85d9f0744b7790dcdbbc2c0f188f81de00f" },
+    { "id": "FOX", "address": "0x2103faA9D1762e27a716C61718b3aCf3Ec1F9bf1" },
+    { "id": "GME", "address": "0xc2362AfF2A2a4CC1f48cF3Dab2C4e2605eb94BA3" },
+    { "id": "CASHCAT", "address": "0x020bfc650a365f8bb26819deaabf3e21291018b4" },
+    { "id": "PONS", "address": "0x39dbed3a2bd333467115de45665cc57f813c4571" },
+    { "id": "TYGR", "address": "0x69984ad3322300039f2855f81c44dbc532efe744" },
+    { "id": "WALLET", "address": "0x0339f5459fc690ac85f1782e15782a151b4a9e1b" }
+  ]
+}

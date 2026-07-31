@@ -1,0 +1,412 @@
+{
+  "version": "1.1.0-week1.5",
+  "scannedAt": "2026-07-27T12:47:02.732Z",
+  "overview": {
+    "address": "0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875",
+    "chainId": 4663,
+    "name": "Hansome Alpacas",
+    "symbol": "HANSOME",
+    "decimals": 18,
+    "totalSupplyRaw": "1000000000000000000000000000",
+    "totalSupplyFormatted": "1000000000",
+    "holdersCount": 92,
+    "transfersCount": 1091,
+    "deployer": "0xfEff679d14f7D1a2F343095680430e4c96dE691F",
+    "creationTxHash": "0x4bea41a20de1adc9eae1ecd48050f20b182228cf35d18c093e73c0def64aadff",
+    "contractVerified": true,
+    "poolManagerBalanceRaw": "114191367508232388495932403",
+    "poolManagerBalanceFormatted": "114191367.508232388495932403",
+    "poolId": "0x1165db4c55ea3c2c4881453937164906923c7c37a575286c1db81f19ead81a0d",
+    "lpLockStatus": "locked",
+    "lpLockDetail": "PoolManager holds tokens; evaluated 1 v4 Position NFT(s) via locker registry.",
+    "lpIntelligence": {
+      "poolDetected": true,
+      "poolId": "0x1165db4c55ea3c2c4881453937164906923c7c37a575286c1db81f19ead81a0d",
+      "poolManagerBalanceRaw": "114191367508232388495932403",
+      "poolManagerBalanceFormatted": "114191367.508232388495932403",
+      "aggregateLockState": "LOCKED_VERIFIED_ONCHAIN",
+      "aggregateLockStateDisplay": "LOCKED — VERIFIED ON-CHAIN",
+      "ownershipRiskNote": "Verified on-chain lock via known locker registry.",
+      "sizeWarning": false,
+      "positions": [
+        {
+          "positionNftId": "47299",
+          "owner": "0x4a50761042e321F214b6B6c2920F9eA1C5533828",
+          "ownerLabel": "TitanLockerManagerV2",
+          "lockerName": "TitanLockerManagerV2",
+          "lockerAddress": "0x26b0654A0756DCd036D4e7215324f3D2Be34D79e",
+          "lockState": "LOCKED_VERIFIED_ONCHAIN",
+          "lockStateDisplay": "LOCKED — VERIFIED ON-CHAIN",
+          "unlockTimestamp": 1815622680,
+          "unlockDateUtc": "2027-07-15T03:38:00.000Z",
+          "lockCreatedAt": 1784086711,
+          "lockTxHash": "0x8ac188afa59c9bc26626bfec6977fbc25c294003d8761b2e41030ad0aab3bcf3",
+          "liquidity": "80044131519596909069874",
+          "tickLower": 195680,
+          "tickUpper": 210680,
+          "currentTick": 176193,
+          "inRange": false,
+          "removableByEoa": false,
+          "evidenceLevel": "on_chain_verified",
+          "dataSource": "positionManager.ownerOf + TitanLockerManagerV2.getTokenLockData"
+        }
+      ],
+      "evidenceLevel": "on_chain_verified",
+      "detail": "PoolManager holds tokens; evaluated 1 v4 Position NFT(s) via locker registry."
+    },
+    "contractRisk": {
+      "status": "analyzed",
+      "mintable": false,
+      "honeypot": false,
+      "buyTaxBps": 0,
+      "sellTaxBps": 0,
+      "transferTaxBps": 0,
+      "modifiableTax": false,
+      "pausable": false,
+      "blacklistOrWhitelist": false,
+      "isProxy": false,
+      "hasOwnerAdmin": false,
+      "findings": [
+        {
+          "code": "contract_clean",
+          "severity": "info",
+          "message": "No mint/tax/pause/blacklist/proxy privilege surface found in verified ABI/source.",
+          "source": "abi_source"
+        }
+      ],
+      "goplusSupplement": {
+        "anti_whale_modifiable": "0",
+        "buy_tax": "",
+        "cannot_buy": "0",
+        "can_take_back_ownership": "0",
+        "creator_address": "0xfeff679d14f7d1a2f343095680430e4c96de691f",
+        "creator_balance": "5662063.156334313194384229",
+        "creator_percent": "0.005662",
+        "external_call": "0",
+        "hidden_owner": "0",
+        "holder_count": "92",
+        "holders": [
+          {
+            "address": "0x8f10b468b06c6fd214b65f87778827f7d113f996",
+            "tag": "",
+            "is_contract": 1,
+            "balance": "0.000000000000000001",
+            "percent": "0.000000",
+            "is_locked": 0
+          },
+          {
+            "address": "0x11111605b53ecef22726df86881e4d6d40b5ca11",
+            "tag": "",
+            "is_contract": 1,
+            "balance": "0.000000000000000001",
+            "percent": "0.000000",
+            "is_locked": 0
+          }
+        ],
+        "honeypot_with_same_creator": "0",
+        "is_anti_whale": "0",
+        "is_blacklisted": "0",
+        "is_honeypot": "0",
+        "is_in_dex": "0",
+        "is_mintable": "0",
+        "is_open_source": "1",
+        "is_proxy": "0",
+        "is_whitelisted": "0",
+        "owner_balance": "0",
+        "owner_change_balance": "0",
+        "owner_percent": "0",
+        "personal_slippage_modifiable": "0",
+        "selfdestruct": "0",
+        "sell_tax": "",
+        "slippage_modifiable": "0",
+        "token_name": "Hansome Alpacas",
+        "token_symbol": "HANSOME",
+        "total_supply": "1000000000",
+        "trading_cooldown": "0",
+        "transfer_pausable": "0",
+        "transfer_tax": ""
+      },
+      "detail": "Verified clean fixed-supply ERC-20 surface (no privileged mint/tax/pause/blacklist/proxy)."
+    },
+    "concentration": {
+      "top1AdjustedPct": 5.975779022188562,
+      "top10AdjustedPct": 35.4032965575473,
+      "top10RawPct": 45.022433308370545,
+      "exclusions": [
+        "0x8366a39CC670B4001A1121B8F6A443A643e40951 (Uniswap v4 PoolManager (AMM liquidity))"
+      ]
+    },
+    "tokenAgeDays": 15.827361979166668,
+    "topHolders": [
+      {
+        "address": "0x8366a39CC670B4001A1121B8F6A443A643e40951",
+        "balanceRaw": "114191367508232388495932403",
+        "balanceFormatted": "114191367.508232388495932403",
+        "percentOfSupply": 11.419136750823238,
+        "label": "Uniswap v4 PoolManager (AMM liquidity)",
+        "excludedFromConcentration": true
+      },
+      {
+        "address": "0xd54aCBd41031f67eEf89A2a30Fd051Ba2BeCF65f",
+        "balanceRaw": "59757790221885623208201745",
+        "balanceFormatted": "59757790.221885623208201745",
+        "percentOfSupply": 5.975779022188562,
+        "excludedFromConcentration": false
+      },
+      {
+        "address": "0x9387fAC8C85a66bBbAAF3e4e9beD27eA1C74D4DA",
+        "balanceRaw": "59757790221885623208201745",
+        "balanceFormatted": "59757790.221885623208201745",
+        "percentOfSupply": 5.975779022188562,
+        "excludedFromConcentration": false
+      },
+      {
+        "address": "0x66bCC7D4BDdE6888b8e880E339a1bED9b0983496",
+        "balanceRaw": "59757790221885623208201745",
+        "balanceFormatted": "59757790.221885623208201745",
+        "percentOfSupply": 5.975779022188562,
+        "excludedFromConcentration": false
+      },
+      {
+        "address": "0x41de38d27bae9099b6662fe65308cF210c274022",
+        "balanceRaw": "59757790221885623208201745",
+        "balanceFormatted": "59757790.221885623208201745",
+        "percentOfSupply": 5.975779022188562,
+        "excludedFromConcentration": false
+      },
+      {
+        "address": "0xbCd7Af62271D5Db57914a36603E9Fb50Ff73Eb7e",
+        "balanceRaw": "23378584165437865569420381",
+        "balanceFormatted": "23378584.165437865569420381",
+        "percentOfSupply": 2.337858416543787,
+        "excludedFromConcentration": false
+      },
+      {
+        "address": "0x7cEDA1E76dA943AD2b3b35aE9E38e37410d29223",
+        "balanceRaw": "19242808249018835628877013",
+        "balanceFormatted": "19242808.249018835628877013",
+        "percentOfSupply": 1.9242808249018837,
+        "excludedFromConcentration": false
+      },
+      {
+        "address": "0x2006CF012842e757f1f79938cD646e8a19d5c389",
+        "balanceRaw": "18380412273473864925432824",
+        "balanceFormatted": "18380412.273473864925432824",
+        "percentOfSupply": 1.8380412273473863,
+        "label": "Founder Wallet (official)",
+        "excludedFromConcentration": false
+      },
+      {
+        "address": "0xF3B14E3C47d05744A0158091292EB46F880195e2",
+        "balanceRaw": "18000000000000000000000000",
+        "balanceFormatted": "18000000",
+        "percentOfSupply": 1.8000000000000003,
+        "excludedFromConcentration": false
+      },
+      {
+        "address": "0xEa1B9A20341eA76B59ead9A57B718821719ED87A",
+        "balanceRaw": "18000000000000000000000000",
+        "balanceFormatted": "18000000",
+        "percentOfSupply": 1.8000000000000003,
+        "excludedFromConcentration": false
+      },
+      {
+        "address": "0xE6497fA16661F9585850cB7f6D6B64c922C1f3f6",
+        "balanceRaw": "18000000000000000000000000",
+        "balanceFormatted": "18000000",
+        "percentOfSupply": 1.8000000000000003,
+        "excludedFromConcentration": false
+      },
+      {
+        "address": "0xE08d357a63F668A996Aad607be56D06d49E7a678",
+        "balanceRaw": "18000000000000000000000000",
+        "balanceFormatted": "18000000",
+        "percentOfSupply": 1.8000000000000003,
+        "excludedFromConcentration": false
+      },
+      {
+        "address": "0xd4CC3a95b2657aAdB245e7827358716A1661fD1f",
+        "balanceRaw": "18000000000000000000000000",
+        "balanceFormatted": "18000000",
+        "percentOfSupply": 1.8000000000000003,
+        "excludedFromConcentration": false
+      },
+      {
+        "address": "0xCB04Fe852357EB0648A3Eb7a866a9885086091d2",
+        "balanceRaw": "18000000000000000000000000",
+        "balanceFormatted": "18000000",
+        "percentOfSupply": 1.8000000000000003,
+        "excludedFromConcentration": false
+      },
+      {
+        "address": "0xB4F5BCEd1240785F1F38040FC7d1E48F127ae065",
+        "balanceRaw": "18000000000000000000000000",
+        "balanceFormatted": "18000000",
+        "percentOfSupply": 1.8000000000000003,
+        "excludedFromConcentration": false
+      },
+      {
+        "address": "0x9B0147A73E3342Df96Cb5ba6c1805Ff983d1eEE0",
+        "balanceRaw": "18000000000000000000000000",
+        "balanceFormatted": "18000000",
+        "percentOfSupply": 1.8000000000000003,
+        "excludedFromConcentration": false
+      },
+      {
+        "address": "0x92aA743a5CC3904b81a4899BCA0098c690aC49f5",
+        "balanceRaw": "18000000000000000000000000",
+        "balanceFormatted": "18000000",
+        "percentOfSupply": 1.8000000000000003,
+        "excludedFromConcentration": false
+      },
+      {
+        "address": "0x8180cC033B6885DC7DB7AcD1Fc481e0cE489c9Bc",
+        "balanceRaw": "18000000000000000000000000",
+        "balanceFormatted": "18000000",
+        "percentOfSupply": 1.8000000000000003,
+        "excludedFromConcentration": false
+      },
+      {
+        "address": "0x746Baf1337ac73B32Bc3c658D1d1841670590520",
+        "balanceRaw": "18000000000000000000000000",
+        "balanceFormatted": "18000000",
+        "percentOfSupply": 1.8000000000000003,
+        "excludedFromConcentration": false
+      },
+      {
+        "address": "0x66476BaDF50c6A2B0de3D2b208B674C52A84C723",
+        "balanceRaw": "18000000000000000000000000",
+        "balanceFormatted": "18000000",
+        "percentOfSupply": 1.8000000000000003,
+        "excludedFromConcentration": false
+      }
+    ]
+  },
+  "score": {
+    "score": 78,
+    "base": 100,
+    "deductions": [
+      {
+        "category": "holder_concentration",
+        "points": 3,
+        "code": "top1_ge_5",
+        "reason": "Top holder (excl. pool/burn) holds ~6.0% of supply."
+      },
+      {
+        "category": "wallet_relationship",
+        "points": 6,
+        "code": "equal_balance_cluster",
+        "reason": "Possible related wallets (probabilistic): 18 top holders share identical balances."
+      },
+      {
+        "category": "wallet_relationship",
+        "points": 5,
+        "code": "shared_funding_pattern",
+        "reason": "Shared funding pattern (probabilistic): 5 top holders share a common funder."
+      },
+      {
+        "category": "creator_behaviour",
+        "points": 8,
+        "code": "creator_behaviour_unindexed",
+        "reason": "Creator sell/transfer history unavailable — provisional deduction (unknown ≠ safe)."
+      }
+    ],
+    "categoryTotals": {
+      "contract_risk": 0,
+      "liquidity_ownership": 0,
+      "holder_concentration": 3,
+      "wallet_relationship": 11,
+      "launch_fairness": 0,
+      "creator_behaviour": 8
+    },
+    "flags": [
+      {
+        "severity": "info",
+        "code": "lp_locked_verified",
+        "message": "LOCKED — VERIFIED ON-CHAIN via PositionManager + known locker registry."
+      },
+      {
+        "severity": "risk",
+        "code": "possible_related_wallets",
+        "message": "Possible related wallets (probabilistic — not proof of common ownership)."
+      },
+      {
+        "severity": "warning",
+        "code": "creator_behaviour_incomplete",
+        "message": "Creator behaviour index incomplete — Score withholds full creator-behaviour credit."
+      }
+    ],
+    "scoreCeilingApplied": null,
+    "incompleteCategories": [
+      "creator_behaviour"
+    ]
+  },
+  "activity": {
+    "level": "Low",
+    "source": "geckoterminal",
+    "volume24hUsd": 51.4326058971,
+    "transactions24h": 3,
+    "transfersCount": 1091,
+    "note": "Low activity. Ordinary low volume does not penalize Score."
+  },
+  "confidence": {
+    "percent": 90,
+    "penalties": [
+      {
+        "code": "creator_behaviour_missing",
+        "points": 10,
+        "reason": "Creator behaviour not indexed — Score also applies provisional deduction."
+      }
+    ]
+  },
+  "sources": [
+    {
+      "id": "rpc",
+      "label": "Robinhood RPC",
+      "usedFor": "name, symbol, decimals, totalSupply, PoolManager balances, PositionManager ownerOf/liquidity, Titan lock data",
+      "affectsScore": true
+    },
+    {
+      "id": "blockscout",
+      "label": "Blockscout",
+      "usedFor": "deployer, holders sample, counters, verification, ABI/source, funding/early-transfer graph, creation age",
+      "affectsScore": true
+    },
+    {
+      "id": "locker_registry",
+      "label": "v4 locker registry (Titan)",
+      "usedFor": "Generic Position NFT lock classification — same path for all tokens including HANSOME",
+      "affectsScore": true
+    },
+    {
+      "id": "transparency",
+      "label": "content/transparency.ts",
+      "usedFor": "Official wallet labels + lock tx corroboration (not silent Score grant)",
+      "affectsScore": false
+    },
+    {
+      "id": "geckoterminal",
+      "label": "GeckoTerminal",
+      "usedFor": "Activity volume / txs only (labeled)",
+      "affectsScore": false
+    },
+    {
+      "id": "goplus",
+      "label": "GoPlus (labeled supplement)",
+      "usedFor": "Contract flag cross-check — never silent Score override",
+      "affectsScore": false
+    }
+  ],
+  "disclaimers": [
+    "Not financial advice. HANSOME Score is a Week 1.5 prototype heuristic for structural risk & transparency — not popularity, price prediction, or a rug/moon oracle.",
+    "Core Score uses RPC + Blockscout + verified ABI/source + self-calculated metrics. Third-party data may label Activity or supplement contract flags but must not silently override on-chain evidence.",
+    "Related-wallet flags are probabilistic only — not proof of common ownership.",
+    "Low volume, few holders, or small liquidity size alone do not mean “unsafe.”",
+    "Missing data is not treated as safe — incomplete categories apply provisional Score effects and/or ceilings.",
+    "DYOR. Category / Trending / Explore are separate concepts and do not affect Score."
+  ],
+  "uiWording": {
+    "scoreSubtitle": "Structural risk & transparency — not popularity.",
+    "confidenceNote": "Confidence reflects data completeness and maturity — not how “good” the token is."
+  }
+}

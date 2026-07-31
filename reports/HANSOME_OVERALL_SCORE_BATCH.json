@@ -1,0 +1,987 @@
+{
+  "version": "1.3.0-overall",
+  "generatedAt": "2026-07-27T14:52:54.498Z",
+  "count": 20,
+  "rows": [
+    {
+      "tag": "hansome_primary",
+      "address": "0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875",
+      "symbol": "HANSOME",
+      "name": "Hansome Alpacas",
+      "overall": 55,
+      "structural": 83,
+      "activity": "Low",
+      "volume24hUsd": 51.4326058971,
+      "transactions24h": 3,
+      "holders": 92,
+      "tokenAgeDays": 15.849142731481482,
+      "dataConfidence": 88,
+      "confidenceBand": "High",
+      "lpAggregate": "MIXED",
+      "sizeWarning": false,
+      "overallComponents": {
+        "structural": 83,
+        "liquidityDepth": 45,
+        "holderAdoption": 43,
+        "activity": 19,
+        "maturity": 55,
+        "dataConfidence": 88
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "lp_mixed",
+          "points": 8,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "top1_ge_5",
+          "points": 3,
+          "category": "holder_concentration"
+        },
+        {
+          "code": "equal_balance_cluster",
+          "points": 6,
+          "category": "wallet_relationship"
+        }
+      ],
+      "divergence": 28,
+      "scannedAt": "2026-07-27T13:23:45.883Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "high_cashcat",
+      "address": "0x020bfC650A365f8BB26819deAAbF3E21291018b4",
+      "symbol": "CASHCAT",
+      "name": "Cash Cat",
+      "overall": 83,
+      "structural": 72,
+      "activity": "High",
+      "volume24hUsd": 3494833.59170884,
+      "transactions24h": 6059,
+      "holders": 34044,
+      "tokenAgeDays": 38.724035625,
+      "dataConfidence": 53,
+      "confidenceBand": "Medium",
+      "lpAggregate": "UNKNOWN_INCOMPLETE",
+      "sizeWarning": false,
+      "overallComponents": {
+        "structural": 72,
+        "liquidityDepth": 95,
+        "holderAdoption": 95,
+        "activity": 92,
+        "maturity": 70,
+        "dataConfidence": 53
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "lp_unable_to_determine",
+          "points": 12,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "top1_ge_5",
+          "points": 3,
+          "category": "holder_concentration"
+        },
+        {
+          "code": "shared_funding_pattern",
+          "points": 5,
+          "category": "wallet_relationship"
+        },
+        {
+          "code": "creator_behaviour_unindexed",
+          "points": 8,
+          "category": "creator_behaviour"
+        }
+      ],
+      "divergence": -11,
+      "scannedAt": "2026-07-27T13:36:34.581Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "high_pons",
+      "address": "0x39dBED3a2bd333467115dE45665cC57F813C4571",
+      "symbol": "PONS",
+      "name": "Pons",
+      "overall": 80,
+      "structural": 75,
+      "activity": "High",
+      "volume24hUsd": 3095828.97051308,
+      "transactions24h": 3519,
+      "holders": 20074,
+      "tokenAgeDays": 13.704455914351852,
+      "dataConfidence": 52,
+      "confidenceBand": "Medium",
+      "lpAggregate": "UNKNOWN_INCOMPLETE",
+      "sizeWarning": true,
+      "overallComponents": {
+        "structural": 75,
+        "liquidityDepth": 88,
+        "holderAdoption": 95,
+        "activity": 92,
+        "maturity": 42,
+        "dataConfidence": 52
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "lp_unable_to_determine",
+          "points": 12,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "shared_funding_pattern",
+          "points": 5,
+          "category": "wallet_relationship"
+        },
+        {
+          "code": "creator_behaviour_unindexed",
+          "points": 8,
+          "category": "creator_behaviour"
+        }
+      ],
+      "divergence": -5,
+      "scannedAt": "2026-07-27T13:46:14.989Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "high_stonkbroker",
+      "address": "0xe934e36A439C94017B64a3FecE66AF12099aBF50",
+      "symbol": "STONKBROKER",
+      "name": "StonkBroker",
+      "overall": 75,
+      "structural": 57,
+      "activity": "High",
+      "volume24hUsd": 1458189.82638802,
+      "transactions24h": 2267,
+      "holders": 8017,
+      "tokenAgeDays": 9.595382997685185,
+      "dataConfidence": 53,
+      "confidenceBand": "Medium",
+      "lpAggregate": "UNKNOWN_INCOMPLETE",
+      "sizeWarning": false,
+      "overallComponents": {
+        "structural": 57,
+        "liquidityDepth": 95,
+        "holderAdoption": 92,
+        "activity": 92,
+        "maturity": 42,
+        "dataConfidence": 53
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "lp_unable_to_determine",
+          "points": 12,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "top1_ge_30",
+          "points": 14,
+          "category": "holder_concentration"
+        },
+        {
+          "code": "top10_ge_50",
+          "points": 4,
+          "category": "holder_concentration"
+        },
+        {
+          "code": "shared_funding_pattern",
+          "points": 5,
+          "category": "wallet_relationship"
+        },
+        {
+          "code": "creator_behaviour_unindexed",
+          "points": 8,
+          "category": "creator_behaviour"
+        }
+      ],
+      "divergence": -18,
+      "scannedAt": "2026-07-27T13:49:57.507Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "high_tendies",
+      "address": "0x45242320DBB855EeA8Fd36804C6487E10E97FCF9",
+      "symbol": "TENDIES",
+      "name": "TENDIES",
+      "overall": 40,
+      "structural": 70,
+      "activity": "Low",
+      "volume24hUsd": null,
+      "transactions24h": null,
+      "holders": null,
+      "tokenAgeDays": null,
+      "dataConfidence": 22,
+      "confidenceBand": "Low",
+      "lpAggregate": "UNKNOWN_INCOMPLETE",
+      "sizeWarning": true,
+      "overallComponents": {
+        "structural": 70,
+        "liquidityDepth": 28,
+        "holderAdoption": 38,
+        "activity": 11,
+        "maturity": 40,
+        "dataConfidence": 22
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "contract_risk_incomplete",
+          "points": 10,
+          "category": "contract_risk"
+        },
+        {
+          "code": "lp_unable_to_determine",
+          "points": 12,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "creator_behaviour_unindexed",
+          "points": 8,
+          "category": "creator_behaviour"
+        }
+      ],
+      "divergence": 30,
+      "scannedAt": "2026-07-27T13:58:17.366Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "high_index",
+      "address": "0x56910D4409F3a0C78C64DD8D0545FF0705389870",
+      "symbol": "Index",
+      "name": "The Index",
+      "overall": 77,
+      "structural": 67,
+      "activity": "High",
+      "volume24hUsd": 244478.716162653,
+      "transactions24h": 814,
+      "holders": 9577,
+      "tokenAgeDays": 24.460199537037038,
+      "dataConfidence": 53,
+      "confidenceBand": "Medium",
+      "lpAggregate": "UNKNOWN_INCOMPLETE",
+      "sizeWarning": false,
+      "overallComponents": {
+        "structural": 67,
+        "liquidityDepth": 88,
+        "holderAdoption": 95,
+        "activity": 85,
+        "maturity": 55,
+        "dataConfidence": 53
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "owner_admin",
+          "points": 8,
+          "category": "contract_risk"
+        },
+        {
+          "code": "lp_unable_to_determine",
+          "points": 12,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "shared_funding_pattern",
+          "points": 5,
+          "category": "wallet_relationship"
+        },
+        {
+          "code": "creator_behaviour_unindexed",
+          "points": 8,
+          "category": "creator_behaviour"
+        }
+      ],
+      "divergence": -10,
+      "scannedAt": "2026-07-27T14:06:28.083Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "high_cate",
+      "address": "0xb61a4De2e1797e504f8A8Ca134096e9aC0D47777",
+      "symbol": "CATE",
+      "name": "Catecoin",
+      "overall": 74,
+      "structural": 74,
+      "activity": "High",
+      "volume24hUsd": 25148546.7365825,
+      "transactions24h": 16013,
+      "holders": 2648,
+      "tokenAgeDays": 0.5351299768518518,
+      "dataConfidence": 37,
+      "confidenceBand": "Low",
+      "lpAggregate": "UNKNOWN_INCOMPLETE",
+      "sizeWarning": false,
+      "overallComponents": {
+        "structural": 74,
+        "liquidityDepth": 88,
+        "holderAdoption": 85,
+        "activity": 92,
+        "maturity": 10,
+        "dataConfidence": 37
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "contract_risk_incomplete",
+          "points": 10,
+          "category": "contract_risk"
+        },
+        {
+          "code": "lp_none",
+          "points": 8,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "creator_behaviour_unindexed",
+          "points": 8,
+          "category": "creator_behaviour"
+        }
+      ],
+      "divergence": 0,
+      "scannedAt": "2026-07-27T14:10:30.064Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "med_tygr",
+      "address": "0x69984Ad3322300039f2855f81C44Dbc532EFe744",
+      "symbol": "TYGR",
+      "name": "Tygr",
+      "overall": 74,
+      "structural": 75,
+      "activity": "High",
+      "volume24hUsd": 1919143.02360673,
+      "transactions24h": 10832,
+      "holders": 2226,
+      "tokenAgeDays": 6.858780173611111,
+      "dataConfidence": 51,
+      "confidenceBand": "Medium",
+      "lpAggregate": "UNKNOWN_INCOMPLETE",
+      "sizeWarning": true,
+      "overallComponents": {
+        "structural": 75,
+        "liquidityDepth": 75,
+        "holderAdoption": 85,
+        "activity": 92,
+        "maturity": 32,
+        "dataConfidence": 51
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "lp_unable_to_determine",
+          "points": 12,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "shared_funding_pattern",
+          "points": 5,
+          "category": "wallet_relationship"
+        },
+        {
+          "code": "creator_behaviour_unindexed",
+          "points": 8,
+          "category": "creator_behaviour"
+        }
+      ],
+      "divergence": 1,
+      "scannedAt": "2026-07-27T14:18:56.365Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "med_roar",
+      "address": "0x84E8F0f454153c393C81E38B8884e90EBcFA6c0b",
+      "symbol": "ROAR",
+      "name": "Roaring Cat",
+      "overall": 70,
+      "structural": 69,
+      "activity": "High",
+      "volume24hUsd": 4260750.95923638,
+      "transactions24h": 26019,
+      "holders": 2167,
+      "tokenAgeDays": 3.980026886574074,
+      "dataConfidence": 54,
+      "confidenceBand": "Medium",
+      "lpAggregate": "UNKNOWN_INCOMPLETE",
+      "sizeWarning": true,
+      "overallComponents": {
+        "structural": 69,
+        "liquidityDepth": 60,
+        "holderAdoption": 85,
+        "activity": 92,
+        "maturity": 32,
+        "dataConfidence": 54
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "lp_unable_to_determine",
+          "points": 12,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "top1_ge_10",
+          "points": 6,
+          "category": "holder_concentration"
+        },
+        {
+          "code": "shared_funding_pattern",
+          "points": 5,
+          "category": "wallet_relationship"
+        },
+        {
+          "code": "creator_behaviour_unindexed",
+          "points": 8,
+          "category": "creator_behaviour"
+        }
+      ],
+      "divergence": -1,
+      "scannedAt": "2026-07-27T14:29:03.005Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "med_yolo",
+      "address": "0x62C71cd34a52c30d894419CBcc55Db2aFA8032eA",
+      "symbol": "YOLO",
+      "name": "YOLO",
+      "overall": 73,
+      "structural": 69,
+      "activity": "High",
+      "volume24hUsd": 809966.088121176,
+      "transactions24h": 2496,
+      "holders": 3230,
+      "tokenAgeDays": 12.301483587962963,
+      "dataConfidence": 51,
+      "confidenceBand": "Medium",
+      "lpAggregate": "UNKNOWN_INCOMPLETE",
+      "sizeWarning": false,
+      "overallComponents": {
+        "structural": 69,
+        "liquidityDepth": 75,
+        "holderAdoption": 85,
+        "activity": 92,
+        "maturity": 42,
+        "dataConfidence": 51
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "lp_unable_to_determine",
+          "points": 12,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "equal_balance_cluster",
+          "points": 6,
+          "category": "wallet_relationship"
+        },
+        {
+          "code": "shared_funding_pattern",
+          "points": 5,
+          "category": "wallet_relationship"
+        },
+        {
+          "code": "creator_behaviour_unindexed",
+          "points": 8,
+          "category": "creator_behaviour"
+        }
+      ],
+      "divergence": -4,
+      "scannedAt": "2026-07-27T14:37:24.411Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "new_mythosbet",
+      "address": "0x98793D7DF7785fBc632855cDA1fe0bA96d0d38D6",
+      "symbol": "MYTHOSBET",
+      "name": "MythosBet",
+      "overall": 34,
+      "structural": 62,
+      "activity": "Low",
+      "volume24hUsd": 262.5799908385,
+      "transactions24h": 4,
+      "holders": 2,
+      "tokenAgeDays": 0.05986347222222222,
+      "dataConfidence": 49,
+      "confidenceBand": "Medium",
+      "lpAggregate": "UNKNOWN_INCOMPLETE",
+      "sizeWarning": false,
+      "overallComponents": {
+        "structural": 62,
+        "liquidityDepth": 30,
+        "holderAdoption": 4,
+        "activity": 28,
+        "maturity": 10,
+        "dataConfidence": 49
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "contract_risk_incomplete",
+          "points": 10,
+          "category": "contract_risk"
+        },
+        {
+          "code": "lp_none",
+          "points": 8,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "top1_ge_50",
+          "points": 20,
+          "category": "holder_concentration"
+        }
+      ],
+      "divergence": 28,
+      "scannedAt": "2026-07-27T14:38:02.496Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "new_sasanka",
+      "address": "0x06F0A8077583b5d4073613d7c8a26328BB9D4b07",
+      "symbol": "Sasanka",
+      "name": "Sasanka",
+      "overall": 37,
+      "structural": 58,
+      "activity": "Medium",
+      "volume24hUsd": 1163.6139974249,
+      "transactions24h": 22,
+      "holders": 34,
+      "tokenAgeDays": 0.060438483796296294,
+      "dataConfidence": 59,
+      "confidenceBand": "Medium",
+      "lpAggregate": "UNKNOWN_INCOMPLETE",
+      "sizeWarning": false,
+      "overallComponents": {
+        "structural": 58,
+        "liquidityDepth": 15,
+        "holderAdoption": 20,
+        "activity": 55,
+        "maturity": 10,
+        "dataConfidence": 59
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "contract_risk_incomplete",
+          "points": 10,
+          "category": "contract_risk"
+        },
+        {
+          "code": "lp_none",
+          "points": 8,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "top1_ge_50",
+          "points": 20,
+          "category": "holder_concentration"
+        },
+        {
+          "code": "same_block_early_buys",
+          "points": 4,
+          "category": "wallet_relationship"
+        }
+      ],
+      "divergence": 21,
+      "scannedAt": "2026-07-27T14:38:47.630Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "new_meta",
+      "address": "0x6768D7f06aEfCD2E3884e3e504EA38f8de795AAe",
+      "symbol": "META",
+      "name": "MetaStreet",
+      "overall": 35,
+      "structural": 62,
+      "activity": "Low",
+      "volume24hUsd": 767.951527415,
+      "transactions24h": 12,
+      "holders": 2,
+      "tokenAgeDays": 0.06111578703703704,
+      "dataConfidence": 49,
+      "confidenceBand": "Medium",
+      "lpAggregate": "UNKNOWN_INCOMPLETE",
+      "sizeWarning": false,
+      "overallComponents": {
+        "structural": 62,
+        "liquidityDepth": 30,
+        "holderAdoption": 4,
+        "activity": 34,
+        "maturity": 10,
+        "dataConfidence": 49
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "contract_risk_incomplete",
+          "points": 10,
+          "category": "contract_risk"
+        },
+        {
+          "code": "lp_none",
+          "points": 8,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "top1_ge_50",
+          "points": 20,
+          "category": "holder_concentration"
+        }
+      ],
+      "divergence": 27,
+      "scannedAt": "2026-07-27T14:39:24.183Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "new_gme",
+      "address": "0x4B7952fECff8425F4E39036e2406fB877EbE82E1",
+      "symbol": "GME",
+      "name": "GME",
+      "overall": 36,
+      "structural": 62,
+      "activity": "Medium",
+      "volume24hUsd": 801.0755627498,
+      "transactions24h": 25,
+      "holders": 3,
+      "tokenAgeDays": 0.061581666666666666,
+      "dataConfidence": 49,
+      "confidenceBand": "Medium",
+      "lpAggregate": "UNKNOWN_INCOMPLETE",
+      "sizeWarning": false,
+      "overallComponents": {
+        "structural": 62,
+        "liquidityDepth": 30,
+        "holderAdoption": 4,
+        "activity": 42,
+        "maturity": 10,
+        "dataConfidence": 49
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "contract_risk_incomplete",
+          "points": 10,
+          "category": "contract_risk"
+        },
+        {
+          "code": "lp_none",
+          "points": 8,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "top1_ge_50",
+          "points": 20,
+          "category": "holder_concentration"
+        }
+      ],
+      "divergence": 26,
+      "scannedAt": "2026-07-27T14:40:05.993Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "new_toth",
+      "address": "0x413f33De71EF3B681631b19Bb1B72A82E701ecB2",
+      "symbol": "TOTH",
+      "name": "TOTH",
+      "overall": 42,
+      "structural": 72,
+      "activity": "Medium",
+      "volume24hUsd": 1869.6132707111,
+      "transactions24h": 48,
+      "holders": 3,
+      "tokenAgeDays": 0.06215803240740741,
+      "dataConfidence": 63,
+      "confidenceBand": "Medium",
+      "lpAggregate": "UNKNOWN_INCOMPLETE",
+      "sizeWarning": false,
+      "overallComponents": {
+        "structural": 72,
+        "liquidityDepth": 30,
+        "holderAdoption": 4,
+        "activity": 55,
+        "maturity": 10,
+        "dataConfidence": 63
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "lp_none",
+          "points": 8,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "top1_ge_50",
+          "points": 20,
+          "category": "holder_concentration"
+        }
+      ],
+      "divergence": 30,
+      "scannedAt": "2026-07-27T14:40:52.035Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "low_cablev3",
+      "address": "0x348c3Ac48A2A0425582d184B8e7aDC945c70B735",
+      "symbol": "CableV3",
+      "name": "Cable v3",
+      "overall": 32,
+      "structural": 62,
+      "activity": "Low",
+      "volume24hUsd": 9.7461,
+      "transactions24h": 1,
+      "holders": 3,
+      "tokenAgeDays": 0.06273347222222223,
+      "dataConfidence": 49,
+      "confidenceBand": "Medium",
+      "lpAggregate": "UNKNOWN_INCOMPLETE",
+      "sizeWarning": false,
+      "overallComponents": {
+        "structural": 62,
+        "liquidityDepth": 30,
+        "holderAdoption": 4,
+        "activity": 19,
+        "maturity": 10,
+        "dataConfidence": 49
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "contract_risk_incomplete",
+          "points": 10,
+          "category": "contract_risk"
+        },
+        {
+          "code": "lp_none",
+          "points": 8,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "top1_ge_50",
+          "points": 20,
+          "category": "holder_concentration"
+        }
+      ],
+      "divergence": 30,
+      "scannedAt": "2026-07-27T14:41:18.495Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "low_omnibook",
+      "address": "0x857aC66c995A44F98ffF655990fFd2931569d376",
+      "symbol": "OMNIBOOK",
+      "name": "Omnibook by Virtuals",
+      "overall": 42,
+      "structural": 62,
+      "activity": "Medium",
+      "volume24hUsd": 2158.6849891902,
+      "transactions24h": 27,
+      "holders": 5,
+      "tokenAgeDays": 0.0632299074074074,
+      "dataConfidence": 62,
+      "confidenceBand": "Medium",
+      "lpAggregate": "NONE",
+      "sizeWarning": true,
+      "overallComponents": {
+        "structural": 62,
+        "liquidityDepth": 45,
+        "holderAdoption": 4,
+        "activity": 55,
+        "maturity": 10,
+        "dataConfidence": 62
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "contract_risk_incomplete",
+          "points": 10,
+          "category": "contract_risk"
+        },
+        {
+          "code": "lp_none",
+          "points": 8,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "top1_ge_50",
+          "points": 20,
+          "category": "holder_concentration"
+        }
+      ],
+      "divergence": 20,
+      "scannedAt": "2026-07-27T14:42:12.386Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "new_hooddog",
+      "address": "0x27D0d3886E87BCe42E1faCd907EBF29A01562aa6",
+      "symbol": "‎Hooddog",
+      "name": "Hooddog",
+      "overall": 38,
+      "structural": 72,
+      "activity": "Low",
+      "volume24hUsd": 368.1024710812,
+      "transactions24h": 12,
+      "holders": 2,
+      "tokenAgeDays": 0.06391372685185186,
+      "dataConfidence": 63,
+      "confidenceBand": "Medium",
+      "lpAggregate": "UNKNOWN_INCOMPLETE",
+      "sizeWarning": false,
+      "overallComponents": {
+        "structural": 72,
+        "liquidityDepth": 30,
+        "holderAdoption": 4,
+        "activity": 34,
+        "maturity": 10,
+        "dataConfidence": 63
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "lp_none",
+          "points": 8,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "top1_ge_50",
+          "points": 20,
+          "category": "holder_concentration"
+        }
+      ],
+      "divergence": 34,
+      "scannedAt": "2026-07-27T14:42:47.719Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "thin_cable",
+      "address": "0xa5971E3A5d9cf9e927aeaE8BDAf62A464C1cb2b4",
+      "symbol": "CABLE",
+      "name": "Cable",
+      "overall": 50,
+      "structural": 55,
+      "activity": "High",
+      "volume24hUsd": 116312.74005186,
+      "transactions24h": 1796,
+      "holders": 147,
+      "tokenAgeDays": 1.069812800925926,
+      "dataConfidence": 56,
+      "confidenceBand": "Medium",
+      "lpAggregate": "UNKNOWN_INCOMPLETE",
+      "sizeWarning": true,
+      "overallComponents": {
+        "structural": 55,
+        "liquidityDepth": 30,
+        "holderAdoption": 44,
+        "activity": 85,
+        "maturity": 20,
+        "dataConfidence": 56
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "lp_unable_to_determine",
+          "points": 12,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "top1_ge_50",
+          "points": 20,
+          "category": "holder_concentration"
+        },
+        {
+          "code": "shared_funding_pattern",
+          "points": 5,
+          "category": "wallet_relationship"
+        },
+        {
+          "code": "creator_behaviour_unindexed",
+          "points": 8,
+          "category": "creator_behaviour"
+        }
+      ],
+      "divergence": 5,
+      "scannedAt": "2026-07-27T14:50:04.990Z",
+      "ok": true,
+      "error": null
+    },
+    {
+      "tag": "asteroid",
+      "address": "0x38aAf33082B20AfF2e33433138de920f131B7777",
+      "symbol": "ASTEROID",
+      "name": "Asteroid Shiba",
+      "overall": 64,
+      "structural": 66,
+      "activity": "High",
+      "volume24hUsd": 107912.207254948,
+      "transactions24h": 701,
+      "holders": 862,
+      "tokenAgeDays": 6.21856125,
+      "dataConfidence": 42,
+      "confidenceBand": "Low",
+      "lpAggregate": "UNKNOWN_INCOMPLETE",
+      "sizeWarning": false,
+      "overallComponents": {
+        "structural": 66,
+        "liquidityDepth": 60,
+        "holderAdoption": 71,
+        "activity": 85,
+        "maturity": 32,
+        "dataConfidence": 42
+      },
+      "capsApplied": [],
+      "structuralDeductions": [
+        {
+          "code": "contract_risk_incomplete",
+          "points": 10,
+          "category": "contract_risk"
+        },
+        {
+          "code": "lp_none",
+          "points": 8,
+          "category": "liquidity_ownership"
+        },
+        {
+          "code": "top1_ge_5",
+          "points": 3,
+          "category": "holder_concentration"
+        },
+        {
+          "code": "shared_funding_pattern",
+          "points": 5,
+          "category": "wallet_relationship"
+        },
+        {
+          "code": "creator_behaviour_unindexed",
+          "points": 8,
+          "category": "creator_behaviour"
+        }
+      ],
+      "divergence": 2,
+      "scannedAt": "2026-07-27T14:52:54.498Z",
+      "ok": true,
+      "error": null
+    }
+  ]
+}

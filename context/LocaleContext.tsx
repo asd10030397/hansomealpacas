@@ -32,6 +32,8 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    // Only honor an explicitly saved preference. Do not infer from
+    // navigator.language, Accept-Language, IP, or region — default stays EN.
     try {
       const stored = localStorage.getItem(LOCALE_STORAGE_KEY);
       if (isLocale(stored)) {

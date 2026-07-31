@@ -13,7 +13,15 @@ const eslintConfig = [
   {
     // "bot" is a standalone project deployed separately (Railway) with its
     // own lint/build tooling — keep it out of the website's ESLint scope.
-    ignores: ["contracts/**", "bot/**"],
+    ignores: [
+      "contracts/**",
+      "bot/**",
+      // Local measure/probe scripts — not part of the app runtime; hook-name
+      // false positives (e.g. useLpDiscoveryCacheTestKv) must not block deploy.
+      "lib/hansome-score/_tmp-*.ts",
+      "scripts/_tmp-*.mjs",
+      "scripts/_tmp-*.ts",
+    ],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];

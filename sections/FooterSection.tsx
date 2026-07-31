@@ -39,7 +39,11 @@ export function FooterSection() {
 
   return (
     <footer className="relative px-6 pb-16 pt-16 sm:pb-20 sm:pt-20">
-      <div aria-hidden="true" className="grass-divider" />
+      <div aria-hidden="true" className="footer-divider">
+        <span className="footer-divider__rule" />
+        <span className="footer-divider__gem" />
+        <span className="footer-divider__rule" />
+      </div>
       <FadeIn className="mx-auto flex max-w-5xl flex-col items-center text-center">
         <p className="font-[family-name:var(--font-anton)] text-3xl tracking-[0.08em] text-foreground sm:text-4xl">
           {PROJECT.name}
@@ -59,6 +63,7 @@ export function FooterSection() {
           <FooterInternalLink href="/transparency" label={t.footer.transparency} />
           <FooterInternalLink href="/litepaper" label={t.footer.litepaper} />
           <FooterInternalLink href="/scan" label={t.footer.scan} />
+          <FooterInternalLink href="/privacy" label={t.footer.privacy} />
           <FooterLink href={explorer} label={t.footer.explorer} />
         </nav>
 

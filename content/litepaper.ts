@@ -44,6 +44,7 @@ export const ROADMAP_STATUS_STYLES: Record<string, string> = {
   completed: "border-grass/40 bg-grass/15 text-grass",
   inProgress: "border-gold/40 bg-gold/15 text-gold",
   inDevelopment: "border-gold/40 bg-gold/15 text-gold",
+  publicBeta: "border-grass/40 bg-grass/15 text-grass",
   planned: "border-[var(--lp-text-faint)]/40 bg-white/[0.03] text-[var(--lp-text-faint)]",
   conditional: "border-gold/40 bg-gold/10 text-gold",
   legacy: "border-[var(--lp-text-faint)]/40 bg-white/[0.03] text-[var(--lp-text-faint)]",
@@ -59,6 +60,7 @@ export const REVENUE_STATUS_STYLES: Record<string, string> = {
 
 export const PRODUCT_STATUS_STYLES: Record<string, string> = {
   live: "border-grass/40 bg-grass/15 text-grass",
+  publicBeta: "border-grass/40 bg-grass/15 text-grass",
   inDevelopment: "border-gold/40 bg-gold/15 text-gold",
   planned: "border-[var(--lp-text-faint)]/40 bg-white/[0.03] text-[var(--lp-text-faint)]",
   conditional: "border-gold/40 bg-gold/10 text-gold",

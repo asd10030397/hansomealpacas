@@ -1,0 +1,27 @@
+{
+  "version": "0.1.0-week2b",
+  "note": "Category + Meme Story metadata store. Does not affect HANSOME Score / Activity / Trending / Confidence. No LLM assignment in MVP.",
+  "records": [
+    {
+      "tokenAddress": "0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875",
+      "chainId": 4663,
+      "tags": ["animal_memes", "meme"],
+      "subtags": ["alpaca"],
+      "source": "hansome_manual",
+      "verifiedBy": "hansome_ops",
+      "verifiedAt": "2026-07-27T15:30:00.000Z",
+      "categoryVerified": true,
+      "memeStoryText": "HANSOME ALPACAS ($HANSOME) is a community-driven meme coin on Robinhood Chain — an animal-meme character (the “too handsome” alpaca) with a fixed supply and no utility promises. It exists as culture-first internet meme / community identity on the chain, not as a company pitch. Official home: hansomealpacas.xyz.",
+      "memeStoryTier": "verified",
+      "memeStorySources": [
+        "https://hansomealpacas.xyz",
+        "https://x.com/HansomeAlpacas"
+      ],
+      "memeStorySource": "hansome_manual",
+      "memeStoryVerifiedBy": "hansome_ops",
+      "memeStoryVerifiedAt": "2026-07-27T15:30:00.000Z",
+      "updatedAt": "2026-07-27T15:30:00.000Z",
+      "notes": "Seed Verified Project Description per HANSOME_MEME_STORY_SPEC.md §8 — re-verify vs live site/socials before any Explore public filter ship."
+    }
+  ]
+}

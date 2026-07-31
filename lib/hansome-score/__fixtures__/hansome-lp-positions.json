@@ -1,0 +1,49 @@
+{
+  "token": "0x2C38Df5F59b04C3F3BB8c9E6C445E211eB1b0875",
+  "chainId": 4663,
+  "poolId": "0x1165db4c55ea3c2c4881453937164906923c7c37a575286c1db81f19ead81a0d",
+  "principle": "One locked position does not mean locked liquidity.",
+  "requiredAggregate": "MIXED",
+  "mustFailIfOnly": ["47299"],
+  "positions": [
+    {
+      "positionNftId": "47299",
+      "role": "titan_locked",
+      "owner": "0x4a50761042e321F214b6B6c2920F9eA1C5533828",
+      "ownerType": "Titan child locker",
+      "expectedLock": "LOCKED_VERIFIED_ONCHAIN",
+      "removableByEoa": false,
+      "fee": 500,
+      "tickLower": 195680,
+      "tickUpper": 210680,
+      "evidence": "PositionManager.ownerOf + TitanLockerManagerV2.getTokenLockData"
+    },
+    {
+      "positionNftId": "357867",
+      "role": "liquidity_wallet_eoa",
+      "owner": "0x0bd54aeE53E9603375C27940d74e7c0923573b2a",
+      "ownerType": "EOA (Liquidity Wallet official)",
+      "expectedLock": "UNLOCKED_EOA_CONTROLLED",
+      "removableByEoa": true,
+      "fee": 500,
+      "tickLower": 174810,
+      "tickUpper": 177620,
+      "inRangeAtProbe": true,
+      "evidence": "PositionManager.ownerOf — NFT held by official Liquidity Wallet"
+    },
+    {
+      "positionNftId": "142938",
+      "role": "treasury_eoa",
+      "owner": "0xcE152894dF356741e7cfdFdD9d0B4D1fDf4a069A",
+      "ownerType": "EOA (Treasury official)",
+      "expectedLock": "UNLOCKED_EOA_CONTROLLED",
+      "removableByEoa": true,
+      "fee": 500,
+      "tickLower": 194740,
+      "tickUpper": 197750,
+      "inRangeAtProbe": false,
+      "evidence": "PositionManager.ownerOf — NFT held by official Treasury"
+    }
+  ],
+  "lockDistributionNote": "Ranges differ — lock % by raw L is unavailable (not economically comparable)."
+}
