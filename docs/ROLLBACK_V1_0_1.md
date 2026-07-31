@@ -6,6 +6,7 @@
 | **Known-good tip** | `dpl_995JvbHVDTsv4mSP77rJqeas8GEA` |
 | **Known-good URL** | `https://hansomealpacas-hp5h51664-the-67.vercel.app` |
 | **Phase 13B cutover** | **Did not occur** (`RELEASE_ABORTED`) |
+| **Phase 13B.1 cutover** | **Did not occur** (`RELEASE_ABORTED`) |
 
 Isolation / promotion rules: [`docs/DEPLOYMENT_ISOLATION.md`](DEPLOYMENT_ISOLATION.md).  
 Generic rollback: [`docs/ROLLBACK.md`](ROLLBACK.md).
@@ -44,6 +45,6 @@ Expect deployment id **`dpl_995JvbHVDTsv4mSP77rJqeas8GEA`** on all three.
 
 ---
 
-## Phase 13B status
+## Phase 13B / 13B.1 status
 
-Rollback was **not executed** because aliases were never moved.
+Rollback was **not executed** because aliases were never moved. Live tip remains `dpl_995JvbHVDTsv4mSP77rJqeas8GEA`.
