@@ -646,7 +646,23 @@ export type LpTerminalReason =
   | "publish_failed"
   | "recovery_exhausted"
   | "interactive_stale"
+  | "stale_forced_refresh"
+  | "force_txn_expired"
   | "unknown";
+
+/** Phase 13C — durable forceLp refresh transaction metadata. */
+export type LpForceRecoveryMeta = {
+  state: "open" | "committed" | "rolled_back";
+  priorGeneration: string | null;
+  pendingGeneration: string;
+  reason:
+    | "force_refresh_started"
+    | "stale_forced_refresh"
+    | "force_txn_expired"
+    | "committed";
+  savedAt: string;
+  durablePrior: boolean;
+};
 
 export type LpTerminalContract = {
   attemptId: string;
@@ -700,7 +716,8 @@ export type DeepRuntimeLease = {
 
 /**
  * Phase 13A — Deep runtime reliability metadata (no secrets).
- * Invariant: analyzing ⇒ inflight OR retryScheduled OR valid lease.
+ * Invariant (13C.1): analyzing ⇒ retryScheduled OR valid durable lease.
+ * Process-local inflight alone is not ownership.
  */
 export type DeepRuntimeMeta = {
   lease?: DeepRuntimeLease;
@@ -718,6 +735,10 @@ export type DeepRuntimeDiagnostics = {
   deepWorkerId?: string;
   deepAttempt?: number;
   deepLeaseState?: DeepLeaseState;
+  /** True only when durable lease is valid (not process-local inflight). */
+  deepLeaseOwned?: boolean;
+  /** Process-local coalesce Map/Set — may be zombie; not durable ownership. */
+  deepInflightLocal?: boolean;
   deepStartedAt?: string;
   deepHeartbeatAt?: string;
   deepExpiresAt?: string;
@@ -778,6 +799,11 @@ export type ScanResponse = {
    * Hard terminals are SUCCESS_TERMINAL | FAILED_TERMINAL only (never PARTIAL).
    */
   lpTerminal?: LpTerminalContract;
+  /**
+   * Phase 13C — forceLp recovery transaction (prior durable evidence slot).
+   * Open while force rediscovery runs; committed on new publish; rolled_back on restore.
+   */
+  lpForceRecovery?: LpForceRecoveryMeta;
   /**
    * Monotonic Deep progress publishes for UI polling.
    * Survives serverless isolate changes via the scan snapshot KV record.

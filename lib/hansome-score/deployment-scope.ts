@@ -330,6 +330,27 @@ export function scanLpResultKvKey(scopedKey: string): string {
   return `${peeled.scope}:scan:lp:result:${peeled.chainId}:${peeled.token}`;
 }
 
+/** Phase 13C — prior durable LP body while forceLp txn is open. */
+export function scanLpRecoveryKvKey(scopedKey: string): string {
+  const peeled = peelScopedTokenKey(scopedKey);
+  if (!peeled) return scopedKvKey("scan", "lp", "recovery", scopedKey);
+  return `${peeled.scope}:scan:lp:recovery:${peeled.chainId}:${peeled.token}`;
+}
+
+/** Phase 13D — Known-First Bootstrap advisory cache. */
+export function scanLpBootstrapKvKey(scopedKey: string): string {
+  const peeled = peelScopedTokenKey(scopedKey);
+  if (!peeled) return scopedKvKey("scan", "lp", "bootstrap", scopedKey);
+  return `${peeled.scope}:scan:lp:bootstrap:${peeled.chainId}:${peeled.token}`;
+}
+
+/** Phase 13D.1 — Persistent LP snapshot (IDs + evidence refs). */
+export function scanLpSnapshotKvKey(scopedKey: string): string {
+  const peeled = peelScopedTokenKey(scopedKey);
+  if (!peeled) return scopedKvKey("scan", "lp", "snap", scopedKey);
+  return `${peeled.scope}:scan:lp:snap:${peeled.chainId}:${peeled.token}`;
+}
+
 /** Rate-limit keys are also deployment-scoped (Phase 12C). */
 export function scanRlAddrKvKey(addrKey: string): string {
   return scopedKvKey("scan", "rl", "addr", addrKey);

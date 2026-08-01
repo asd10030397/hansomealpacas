@@ -1,5 +1,5 @@
 /**
- * Server Scan cache (API routes / RSC only — do not import from Client Components).
+ * Server Scan cache (API routes / RSC only ??do not import from Client Components).
  * `server-only` omitted so Node harnesses (tsx measure) can import; Next client
  * code must continue importing types from `types.ts`, not this module.
  */
@@ -42,6 +42,7 @@ import {
   mayLpForceRecover,
   resolveLpInterruptOutcome,
   settleLpFailedTerminal,
+  settleLpSuccessTerminal,
   applyLpHardTerminal,
 } from "@/lib/hansome-score/lp/lp-terminal-contract";
 import {
@@ -105,7 +106,6 @@ import {
 import { loadLpDiscoveryCheckpoint } from "@/lib/hansome-score/lp/discovery-checkpoint";
 import {
   attachPublishedLp,
-  clearStaleLpEvidence,
   deleteLpPublishedBody,
   extractLpPublishMeta,
   loadLpPublishedBody,
@@ -116,7 +116,20 @@ import {
   type LpPublishMeta,
 } from "@/lib/hansome-score/lp/lp-result-publish";
 import {
-  markForceLpFullRefresh,
+  armForceLpClearedAggregate,
+  attachRefreshingPriorLp,
+  commitForceLpRefresh,
+  finalizeForceLpFailure,
+  isClearedLpShell,
+  isDurableLpEvidence,
+  isForceTxnExpired,
+  loadLpRecoverySlot,
+  prepareForceLpRefresh,
+  rollbackForceLpRefresh,
+  shouldDedupeForceLp,
+} from "@/lib/hansome-score/lp/force-lp-recovery";
+import {
+  markForceLpFullRefreshDurable,
   markManualSmartLpRefresh,
 } from "@/lib/hansome-score/lp/smart-refresh";
 import type {
@@ -160,7 +173,7 @@ export {
 export const SCAN_FULL_TTL_MS = 15 * 60 * 1000;
 /** Serve stale snapshot + background refresh. */
 export const SCAN_STALE_TTL_MS = 60 * 60 * 1000;
-/** Activity/price overlay TTL (architecture: 30–60s). */
+/** Activity/price overlay TTL (architecture: 30??0s). */
 export const SCAN_ACTIVITY_TTL_MS = 45 * 1000;
 /** KV soft retention for snapshot blob. */
 export const SCAN_KV_TTL_SEC = 24 * 60 * 60;
@@ -170,7 +183,7 @@ export const SCAN_REFRESH_ADDR_COOLDOWN_MS = 60 * 1000;
 export const SCAN_REFRESH_IP_COOLDOWN_MS = 120 * 1000;
 /** KV refresh lock TTL (short ops / waiters). */
 export const SCAN_LOCK_TTL_SEC = 90;
-/** Deep analysis lock — must cover DEEP_SCAN_MAX_EXECUTION_MS. */
+/** Deep analysis lock ??must cover DEEP_SCAN_MAX_EXECUTION_MS. */
 export const SCAN_DEEP_LOCK_TTL_SEC = Math.ceil(DEEP_SCAN_MAX_EXECUTION_MS / 1000) + 30;
 /** How long lock waiters poll before falling back to stale. */
 export const SCAN_LOCK_WAIT_MS = 4_000;
@@ -458,7 +471,7 @@ async function persistSnapshot(key: string, snap: StoredSnapshot): Promise<void>
 }
 
 /**
- * Refresh Activity/price/liquidity only — does NOT recompute Structural or Overall Score.
+ * Refresh Activity/price/liquidity only ??does NOT recompute Structural or Overall Score.
  * Failures keep prior snapshot (stale fallback).
  */
 async function applyActivityOverlay(
@@ -574,6 +587,147 @@ async function persistProgressResponse(
   return stamped;
 }
 
+function incomingHasSalvageableKnownFirst(incoming: ScanResponse): boolean {
+  const intel = incoming.overview?.lpIntelligence;
+  if (!intel) return false;
+  if (
+    (intel.positions ?? []).some(
+      (p) => p.lockState === "LOCKED_VERIFIED_ONCHAIN",
+    )
+  ) {
+    return true;
+  }
+  if (intel.ownershipClass !== "hook_native") return false;
+  return (
+    intel.hookPositionIndex != null ||
+    intel.v4OwnershipEvidence != null ||
+    (intel.ownershipClassEvidence?.length ?? 0) > 0 ||
+    (intel.positions?.length ?? 0) > 0
+  );
+}
+
+/**
+ * Phase 13E.1 — stale-generation Known-First salvage.
+ * When a late Locked/Hook publish loses the generation fence, fold its durable
+ * LP evidence into the authoritative generation instead of discarding it.
+ */
+async function salvageKnownFirstLpAcrossFence(
+  key: string,
+  auth: ScanResponse,
+  incoming: ScanResponse,
+): Promise<ScanResponse> {
+  if (!incomingHasSalvageableKnownFirst(incoming) || !auth.overview) {
+    return annotateFenceRejection(auth, incoming.deepAttemptId);
+  }
+  const { preferVerifiedLpAgainstIncomplete } = await import(
+    "@/lib/hansome-score/lp/known-bootstrap-resolver"
+  );
+  const kept = preferVerifiedLpAgainstIncomplete(
+    auth.overview.lpIntelligence,
+    incoming.overview!.lpIntelligence!,
+  );
+  const keptVerified = (kept.positions ?? []).some(
+    (p) => p.lockState === "LOCKED_VERIFIED_ONCHAIN",
+  );
+  const keptHook = kept.ownershipClass === "hook_native";
+  if (!keptVerified && !keptHook) {
+    return annotateFenceRejection(auth, incoming.deepAttemptId);
+  }
+
+  let salvaged: ScanResponse = {
+    ...auth,
+    overview: {
+      ...auth.overview,
+      lpIntelligence: kept,
+      lpLockStatus:
+        incoming.overview?.lpLockStatus ?? auth.overview.lpLockStatus,
+      lpLockDetail:
+        incoming.overview?.lpLockDetail ?? auth.overview.lpLockDetail,
+      poolId: incoming.overview?.poolId ?? auth.overview.poolId,
+    },
+    analysisStages: {
+      ...(auth.analysisStages ?? {
+        contract: "done",
+        holders: "done",
+        market: "done",
+        burn: "pending",
+        liquidity: "analyzing",
+        creator: "pending",
+        relationships: "pending",
+        score: "pending",
+      }),
+      liquidity: "done",
+    },
+  };
+  if (
+    keptVerified &&
+    (!salvaged.lpTerminal || !isLpHardTerminal(salvaged.lpTerminal))
+  ) {
+    const contract = markLpTerminalRunning(
+      beginLpTerminal({
+        attemptId: auth.deepAttemptId ?? "known_first_salvage",
+        generation: auth.deepAttemptId ?? "known_first_salvage",
+        forceRefresh: auth.lpTerminal?.forceRefresh === true,
+      }),
+    );
+    salvaged = applyLpHardTerminal(
+      salvaged,
+      settleLpSuccessTerminal(contract),
+    );
+  }
+
+  console.warn(
+    JSON.stringify({
+      tag: "known_first_salvage_across_fence",
+      mode: "fence_reject",
+      authGeneration: auth.deepAttemptId ?? null,
+      incomingGeneration: incoming.deepAttemptId ?? null,
+      locked: keptVerified,
+      hook: keptHook,
+      tid:
+        kept.positions?.find((p) => p.lockState === "LOCKED_VERIFIED_ONCHAIN")
+          ?.positionNftId ?? null,
+    }),
+  );
+
+  const written = await persistProgressResponse(key, salvaged);
+  if (shouldPublishLpBody(written)) {
+    const scope = resolveDeploymentScope();
+    const generation = written.deepAttemptId ?? auth.deepAttemptId ?? "";
+    const intel = written.overview.lpIntelligence;
+    try {
+      await publishDeepLpResult({
+        attemptId: generation,
+        generation,
+        deploymentScope: scope,
+        tokenAddress: written.overview.address,
+        chainId: SCAN_CHAIN_ID,
+        authoritativeGeneration: generation,
+        intelligence: intel,
+        lpLockStatus: written.overview.lpLockStatus,
+        lpLockDetail: written.overview.lpLockDetail,
+        poolId: written.overview.poolId,
+        liquidityUsd: written.liquidityUsd,
+        persistLpBody: persistLpPublishedBody,
+        persistScanAggregate: async () => {
+          /* aggregate already written via persistProgressResponse */
+        },
+        markLiquidityTerminal: async () => {},
+        maxRetries: 1,
+      });
+    } catch {
+      /* salvage aggregate write is enough for status durability */
+    }
+  }
+
+  return stampDeepRuntime(written, {
+    fenceResult: "rejected",
+    lastTransition: "known_first_salvage_across_fence",
+    lastErrorCode: "stale_publish_rejected",
+    lastFenceIncomingGeneration: incoming.deepAttemptId,
+  });
+}
+
 /**
  * Phase 10C-4 publish contract for terminal liquidity writes.
  * Dual-write LP body then scan aggregate; reject stale generations.
@@ -587,6 +741,12 @@ async function persistWithLpPublishContract(
   const auth = current?.response;
   if (mode === "progress") {
     if (!shouldAcceptDeepProgress(auth, incoming)) {
+      if (auth && incomingHasSalvageableKnownFirst(incoming)) {
+        return {
+          accepted: false,
+          response: await salvageKnownFirstLpAcrossFence(key, auth, incoming),
+        };
+      }
       return { accepted: false, response: auth ?? incoming };
     }
   } else if (!shouldAcceptDeepSettle(auth, incoming)) {
@@ -598,6 +758,12 @@ async function persistWithLpPublishContract(
         authGeneration: auth?.deepAttemptId ?? null,
       }),
     );
+    if (auth && incomingHasSalvageableKnownFirst(incoming)) {
+      return {
+        accepted: false,
+        response: await salvageKnownFirstLpAcrossFence(key, auth, incoming),
+      };
+    }
     const annotated = auth
       ? annotateFenceRejection(auth, incoming.deepAttemptId)
       : incoming;
@@ -644,6 +810,62 @@ async function persistWithLpPublishContract(
     lpTerminal: mergedLpTerminal,
   };
 
+  // Phase 13E.1 — cross-worker Known-First protection: never let an empty
+  // late/timeout/failed settle wipe durable LOCKED_VERIFIED or Hook Native.
+  if (auth?.overview?.lpIntelligence && merged.overview) {
+    const { preferVerifiedLpAgainstIncomplete } = await import(
+      "@/lib/hansome-score/lp/known-bootstrap-resolver"
+    );
+    const kept = preferVerifiedLpAgainstIncomplete(
+      auth.overview.lpIntelligence,
+      merged.overview.lpIntelligence ?? auth.overview.lpIntelligence,
+    );
+    const keptVerified = (kept.positions ?? []).some(
+      (p) => p.lockState === "LOCKED_VERIFIED_ONCHAIN",
+    );
+    const keptHook = kept.ownershipClass === "hook_native";
+    if (
+      (keptVerified || keptHook) &&
+      kept !== merged.overview.lpIntelligence
+    ) {
+      merged = {
+        ...merged,
+        overview: {
+          ...merged.overview,
+          lpIntelligence: kept,
+          lpLockStatus: auth.overview.lpLockStatus ?? merged.overview.lpLockStatus,
+          lpLockDetail: auth.overview.lpLockDetail ?? merged.overview.lpLockDetail,
+          poolId: auth.overview.poolId ?? merged.overview.poolId,
+        },
+        analysisStages: {
+          ...merged.analysisStages!,
+          liquidity:
+            keptVerified || keptHook
+              ? ("done" as const)
+              : (merged.analysisStages?.liquidity ?? "partial"),
+        },
+      };
+      if (
+        keptVerified &&
+        (!merged.lpTerminal || !isLpHardTerminal(merged.lpTerminal))
+      ) {
+        const contract = markLpTerminalRunning(
+          beginLpTerminal({
+            attemptId:
+              merged.deepAttemptId ?? auth.deepAttemptId ?? "known_first",
+            generation:
+              merged.deepAttemptId ?? auth.deepAttemptId ?? "known_first",
+            forceRefresh: merged.lpTerminal?.forceRefresh === true,
+          }),
+        );
+        merged = applyLpHardTerminal(
+          merged,
+          settleLpSuccessTerminal(contract),
+        );
+      }
+    }
+  }
+
   if (shouldPublishLpBody(merged)) {
     const scope = resolveDeploymentScope();
     const generation = merged.deepAttemptId ?? "";
@@ -682,9 +904,14 @@ async function persistWithLpPublishContract(
         const annotated = auth
           ? annotateFenceRejection(auth, merged.deepAttemptId)
           : merged;
+        // Phase 13C: fence reject must not destroy durable prior ??rollback if force open.
+        if (annotated.lpForceRecovery?.durablePrior) {
+          const restored = await finalizeForceLpFailure(annotated);
+          return { accepted: false, response: restored };
+        }
         return { accepted: false, response: annotated };
       }
-      // Partial / failed publish: keep nonterminal — do not expose done LP body.
+      // Partial / failed publish: keep nonterminal ??do not expose done LP body.
       const canRetry =
         isDeepRetryable({
           ...merged,
@@ -694,39 +921,58 @@ async function persistWithLpPublishContract(
               : merged.analysisStatus,
         }) ||
         (isLpForceRefreshActive(merged) && mayLpForceRecover(merged.lpTerminal));
-      const nonterm: ScanResponse = stampDeepRuntime(
-        {
-          ...clearStaleLpEvidence(merged),
-          analysisStatus:
-            merged.analysisStatus === "complete"
-              ? canRetry
-                ? "deep_running"
-                : "partial"
-              : merged.analysisStatus,
-          analysisStages: {
-            ...merged.analysisStages!,
-            liquidity: canRetry ? "analyzing" : "partial",
-            score:
-              merged.analysisStages?.score === "done"
-                ? "done"
-                : canRetry
-                  ? "analyzing"
-                  : "partial",
-          },
-          lpPublish: undefined,
+      // Phase 13C.1: destructive clear only inside an open force-LP recovery txn.
+      const forceTxnOpen =
+        merged.lpForceRecovery?.state === "open" ||
+        !!merged.lpForceRecovery?.durablePrior;
+      const clearedOrKept = forceTxnOpen
+        ? armForceLpClearedAggregate(merged, merged.lpForceRecovery!)
+        : merged;
+      let nontermBase: ScanResponse = {
+        ...clearedOrKept,
+        analysisStatus:
+          merged.analysisStatus === "complete"
+            ? canRetry
+              ? "deep_running"
+              : "partial"
+            : merged.analysisStatus,
+        analysisStages: {
+          ...merged.analysisStages!,
+          liquidity: canRetry ? "analyzing" : "partial",
+          score:
+            merged.analysisStages?.score === "done"
+              ? "done"
+              : canRetry
+                ? "analyzing"
+                : "partial",
         },
-        {
-          lease: undefined,
-          retryRequired: canRetry,
-          retryScheduled: canRetry,
-          lastTransition: canRetry ? "lp_publish_retry" : "lp_publish_terminal",
-          lastErrorCode: pub.reason ?? "lp_publish_failed",
-        },
-      );
+        lpPublish: forceTxnOpen ? undefined : merged.lpPublish,
+        lpForceRecovery: merged.lpForceRecovery,
+      };
+      // Phase 13C: exhausted force publish ??restore prior durable evidence.
+      if (!canRetry && merged.lpForceRecovery?.durablePrior) {
+        nontermBase = await finalizeForceLpFailure(nontermBase);
+      }
+      const nonterm: ScanResponse = stampDeepRuntime(nontermBase, {
+        lease: undefined,
+        retryRequired: canRetry,
+        retryScheduled: canRetry,
+        lastTransition: canRetry ? "lp_publish_retry" : "lp_publish_terminal",
+        lastErrorCode: pub.reason ?? "lp_publish_failed",
+      });
       const stamped = await persistProgressResponse(key, nonterm);
       return { accepted: true, response: stamped };
     }
-    return { accepted: true, response: merged };
+    // Phase 13C: successful dual-write commits force txn (drops recovery slot).
+    let committed = merged;
+    if (merged.lpForceRecovery?.state === "open") {
+      committed = await commitForceLpRefresh({
+        scope,
+        tokenAddress: token,
+        response: merged,
+      });
+    }
+    return { accepted: true, response: committed };
   }
 
   const stamped = await persistProgressResponse(key, merged);
@@ -756,15 +1002,52 @@ async function persistFencedDeepSettle(
 /**
  * Read contract: verify published LP generation/scope before serving terminal LP JSON.
  * Candidate never falls back to Production bodies.
+ * Phase 13C: serve/restore recovery-slot prior across forceLp instead of sticky clear.
  */
 async function reconcilePublishedLpOnRead(
   response: ScanResponse,
 ): Promise<ScanResponse> {
+  const scope = resolveDeploymentScope();
+  const token = response.overview.address;
+  const forceMeta = response.lpForceRecovery;
+  const forceOpen =
+    forceMeta?.state === "open" || isLpForceRefreshActive(response);
+
+  if (forceMeta?.state === "open" && isForceTxnExpired(forceMeta)) {
+    return rollbackForceLpRefresh({
+      response,
+      scope,
+      reason: "force_txn_expired",
+    });
+  }
+
   const liq = response.analysisStages?.liquidity;
   const terminal = liq === "done" || liq === "partial" || liq === "unknown";
+
+  if (!terminal && forceOpen && forceMeta?.durablePrior) {
+    const active = await loadLpPublishedBody(scope, token, SCAN_CHAIN_ID);
+    const slot = await loadLpRecoverySlot(scope, token, SCAN_CHAIN_ID);
+    const body =
+      active && isDurableLpEvidence(response, active)
+        ? active
+        : (slot?.body ?? null);
+    if (body) return attachRefreshingPriorLp(response, body);
+    return response;
+  }
+
+  if (
+    terminal &&
+    isClearedLpShell(response.overview?.lpIntelligence) &&
+    (forceMeta?.durablePrior || forceMeta?.state === "open")
+  ) {
+    const slot = await loadLpRecoverySlot(scope, token, SCAN_CHAIN_ID);
+    if (slot?.body) {
+      return rollbackForceLpRefresh({ response, scope });
+    }
+  }
+
   if (!terminal) return response;
   const meta = extractLpPublishMeta(response);
-  const scope = resolveDeploymentScope();
   const body = await loadLpPublishedBody(
     scope,
     response.overview.address,
@@ -778,8 +1061,18 @@ async function reconcilePublishedLpOnRead(
     allowProductionFallback: false,
   });
   if (check.ok) {
-    // Prefer published body (authoritative) over any mixed aggregate fields.
-    return attachPublishedLp(response, check.body, check.body);
+    let attached = attachPublishedLp(response, check.body, check.body);
+    if (
+      forceMeta?.state === "open" &&
+      check.body.lpGeneration !== forceMeta.priorGeneration
+    ) {
+      attached = await commitForceLpRefresh({
+        scope,
+        tokenAddress: token,
+        response: attached,
+      });
+    }
+    return attached;
   }
 
   const hasVerifiedLock = (response.overview.lpIntelligence?.positions ?? []).some(
@@ -791,7 +1084,6 @@ async function reconcilePublishedLpOnRead(
       ? response.lpPublish.lpGeneration === response.deepAttemptId
       : true);
 
-  // Transient missing LP body: keep generation-aligned verified Locked aggregate.
   if (
     check.reason === "missing_lp_body" &&
     hasVerifiedLock &&
@@ -800,12 +1092,23 @@ async function reconcilePublishedLpOnRead(
     return response;
   }
 
-  // Incompatible / cleared / timeout shells — strip and demote liquidity.
+  if (
+    (check.reason === "missing_lp_body" || check.reason === "missing_scan_meta") &&
+    forceMeta?.durablePrior
+  ) {
+    const slot = await loadLpRecoverySlot(scope, token, SCAN_CHAIN_ID);
+    if (slot?.body) {
+      return rollbackForceLpRefresh({ response, scope });
+    }
+  }
+
   if (
     check.reason === "generation_mismatch" ||
     check.reason === "scope_mismatch" ||
     check.reason === "schema_rejected" ||
     check.reason === "production_fallback_forbidden" ||
+    check.reason === "missing_scan_meta" ||
+    check.reason === "missing_lp_body" ||
     (!hasVerifiedLock &&
       (/did not finish in time|probe budget exceeded/i.test(
         response.overview.lpIntelligence?.detail ?? "",
@@ -814,60 +1117,88 @@ async function reconcilePublishedLpOnRead(
           response.overview.lpIntelligence?.detail ?? "",
         )))
   ) {
-    const cleared = clearStaleLpEvidence(response);
-    // Phase 13A: never demote to analyzing on read when no recovery path remains.
+    if (forceMeta?.durablePrior) {
+      const slot = await loadLpRecoverySlot(scope, token, SCAN_CHAIN_ID);
+      if (slot?.body) {
+        return rollbackForceLpRefresh({ response, scope });
+      }
+    }
+    // Phase 13C: never invent a cleared shell on read. That was converting
+    // soft-fail timeout / missing_scan_meta terminals into sticky
+    // "LP evidence cleared" mid-cold (~53s) and blocking rediscovery.
     const canRecover =
       isDeepRetryable({
-        ...cleared,
+        ...response,
         analysisStatus:
-          cleared.analysisStatus === "complete"
+          response.analysisStatus === "complete"
             ? "partial"
-            : cleared.analysisStatus,
+            : response.analysisStatus,
       }) ||
-      (isLpForceRefreshActive(cleared) && mayLpForceRecover(cleared.lpTerminal));
-    const liqStage = canRecover ? "analyzing" : "partial";
-    const scoreStage =
-      cleared.analysisStages?.score === "done"
-        ? "done"
-        : canRecover
-          ? "analyzing"
-          : "partial";
-    return {
-      ...cleared,
-      analysisStatus:
-        cleared.analysisStatus === "complete"
-          ? canRecover
+      (isLpForceRefreshActive(response) &&
+        mayLpForceRecover(response.lpTerminal));
+    if (!canRecover) {
+      // Phase 13C.1: honest terminal — never leave analyzing without lease/retry.
+      const stages = response.analysisStages
+        ? { ...response.analysisStages }
+        : undefined;
+      if (stages) {
+        if (stages.liquidity === "analyzing" || stages.liquidity === "pending") {
+          stages.liquidity = "partial";
+        }
+        if (stages.score === "analyzing" || stages.score === "pending") {
+          stages.score = "partial";
+        }
+      }
+      return stampDeepRuntime(
+        {
+          ...response,
+          analysisStatus:
+            response.analysisStatus === "deep_running" ||
+            response.analysisStatus === "fast_ready"
+              ? "partial"
+              : response.analysisStatus,
+          analysisStages: stages,
+          lpForceRecovery: forceMeta,
+        },
+        {
+          lease: undefined,
+          retryRequired: false,
+          retryScheduled: false,
+          lastTransition: "lp_read_terminal",
+          lastErrorCode: check.reason ?? "lp_body_incompatible",
+        },
+      );
+    }
+    // Phase 13C.1: rearm MUST schedule a durable retry (retryScheduled=true).
+    // Never return analyzing + retryRequired + !retryScheduled + lease=none.
+    return stampDeepRuntime(
+      {
+        ...response,
+        analysisStatus:
+          response.analysisStatus === "complete"
             ? "deep_running"
-            : "partial"
-          : cleared.analysisStatus === "deep_running" && !canRecover
-            ? "partial"
-            : cleared.analysisStatus,
-      analysisStages: {
-        ...cleared.analysisStages!,
-        liquidity: liqStage,
-        score: scoreStage,
+            : response.analysisStatus,
+        analysisStages: {
+          ...response.analysisStages!,
+          liquidity: "analyzing",
+          score:
+            response.analysisStages?.score === "done"
+              ? "done"
+              : "analyzing",
+        },
+        lpForceRecovery: forceMeta,
       },
-      deepRuntime: canRecover
-        ? {
-            ...cleared.deepRuntime,
-            retryRequired: true,
-            retryScheduled: false,
-            lastTransition: "lp_read_rearm",
-            lastErrorCode: check.reason ?? "lp_body_incompatible",
-          }
-        : {
-            ...cleared.deepRuntime,
-            lease: undefined,
-            retryRequired: false,
-            retryScheduled: false,
-            lastTransition: "lp_read_terminal",
-            lastErrorCode: check.reason ?? "lp_body_incompatible",
-          },
-    };
+      {
+        lease: undefined,
+        retryRequired: true,
+        retryScheduled: true,
+        lastTransition: "lp_read_rearm",
+        lastErrorCode: check.reason ?? "lp_body_incompatible",
+      },
+    );
   }
   return response;
 }
-
 /** Stamp / refresh force-LP terminal contract on a newly assigned deep attempt. */
 function withForceLpTerminal(response: ScanResponse): ScanResponse {
   const gen = response.deepAttemptId;
@@ -887,8 +1218,112 @@ function withForceLpTerminal(response: ScanResponse): ScanResponse {
 }
 
 /**
+ * Phase 13C — after Deep settle, commit new publish or restore durable prior.
+ */
+async function maybeRestoreForceLpAfterSettle(
+  response: ScanResponse,
+): Promise<ScanResponse> {
+  const meta = response.lpForceRecovery;
+  if (!meta?.durablePrior) return response;
+  if (meta.state === "committed" || meta.state === "rolled_back") return response;
+
+  const cleared = isClearedLpShell(response.overview?.lpIntelligence);
+  const newPublish =
+    !!response.lpPublish?.lpGeneration &&
+    response.lpPublish.lpGeneration !== meta.priorGeneration &&
+    isDurableLpEvidence(response);
+  const success =
+    response.lpTerminal?.terminalState === "SUCCESS_TERMINAL" || newPublish;
+  if (success) {
+    return commitForceLpRefresh({
+      scope: resolveDeploymentScope(),
+      tokenAddress: response.overview.address,
+      response,
+    });
+  }
+
+  const hardFail =
+    response.lpTerminal?.terminalState === "FAILED_TERMINAL" ||
+    response.analysisStages?.liquidity === "unknown" ||
+    (cleared &&
+      !isLpForceRefreshActive(response) &&
+      (response.analysisStatus === "partial" ||
+        response.analysisStatus === "failed" ||
+        response.analysisStages?.liquidity === "partial"));
+
+  if (hardFail) {
+    return finalizeForceLpFailure(response);
+  }
+  return response;
+}
+
+/**
+ * Phase 13C — open forceLp txn: stash durable prior, arm cleared aggregate for rediscovery.
+ * Keeps active KV body when durable (commit-on-success); deletes only non-durable shells.
+ */
+async function beginForceLpRefreshArm(
+  prior: ScanResponse,
+  opts?: { stages?: ScanResponse["analysisStages"] },
+): Promise<ScanResponse> {
+  const normalized = prior.overview.address;
+  if (shouldDedupeForceLp(prior) && prior.lpForceRecovery) {
+    await markForceLpFullRefreshDurable(SCAN_CHAIN_ID, normalized);
+    const rearmed = assignDeepAttempt({
+      ...armForceLpClearedAggregate(prior, prior.lpForceRecovery),
+      analysisPhase: "fast",
+      analysisStatus: "deep_running",
+      scoreProvisional: true,
+      deepRetryCount: 0,
+      analysisStages: {
+        ...(opts?.stages ?? prior.analysisStages!),
+        liquidity: "analyzing",
+        score: "analyzing",
+      },
+    });
+    return withForceLpTerminal(rearmed);
+  }
+
+  const provisional = assignDeepAttempt({
+    ...prior,
+    analysisPhase: "fast",
+    analysisStatus: "deep_running",
+    scoreProvisional: true,
+    deepRetryCount: 0,
+  });
+  const pending = provisional.deepAttemptId!;
+  const prep = await prepareForceLpRefresh({
+    response: prior,
+    pendingGeneration: pending,
+  });
+  await markForceLpFullRefreshDurable(SCAN_CHAIN_ID, normalized);
+  if (prep.mayDeleteActiveBody) {
+    await deleteLpPublishedBody(
+      resolveDeploymentScope(),
+      normalized,
+      SCAN_CHAIN_ID,
+    );
+  }
+  const cleared = armForceLpClearedAggregate(provisional, prep.meta);
+  return withForceLpTerminal({
+    ...cleared,
+    deepAttemptId: pending,
+    deepStartedAt: provisional.deepStartedAt,
+    analysisPhase: "fast",
+    analysisStatus: "deep_running",
+    scoreProvisional: true,
+    deepRetryCount: 0,
+    analysisStages: {
+      ...(opts?.stages ?? cleared.analysisStages ?? prior.analysisStages!),
+      liquidity: "analyzing",
+      score: "analyzing",
+    },
+    lpForceRecovery: prep.meta,
+  });
+}
+
+/**
  * Persist a settled Deep outcome. Phase 10C-5: force-LP never settles as
- * PARTIAL_TERMINAL for liquidity — recover or hard-terminal instead.
+ * PARTIAL_TERMINAL for liquidity ??recover or hard-terminal instead.
  */
 function settleTerminalPartial(
   response: ScanResponse,
@@ -956,16 +1391,24 @@ function settleTerminalPartial(
         );
       }
       // Keep collecting — new generation so cancelled workers stay fenced out.
+      // Phase 13C.1: destructive clear only when force recovery txn is open.
       const addr = outcome.response.overview?.address;
-      if (addr) markForceLpFullRefresh(addr);
+      if (addr) void markForceLpFullRefreshDurable(SCAN_CHAIN_ID, addr);
+      const forceMeta = outcome.response.lpForceRecovery;
+      const forceTxnOpen =
+        forceMeta?.state === "open" || !!forceMeta?.durablePrior;
+      const baseForRearm = forceTxnOpen && forceMeta
+        ? armForceLpClearedAggregate(outcome.response, forceMeta)
+        : outcome.response;
       const rearmed = assignDeepAttempt({
-        ...clearStaleLpEvidence(outcome.response),
+        ...baseForRearm,
         analysisStatus: "deep_running",
         analysisStages: {
           ...outcome.response.analysisStages!,
           liquidity: "analyzing",
         },
         scoreProvisional: true,
+        lpForceRecovery: forceMeta,
       });
       const gen = rearmed.deepAttemptId!;
       const bumped = bumpDeepRetryCount({
@@ -1003,6 +1446,7 @@ function settleTerminalPartial(
       }),
     );
     // Force FAILED_TERMINAL: liquidity unknown (not sticky partial/analyzing).
+    // Phase 13C: preserve txn meta so reconcile/status can restore durable prior.
     const bumped = bumpDeepRetryCount({
       ...failed,
       analysisStatus: "failed",
@@ -1010,6 +1454,7 @@ function settleTerminalPartial(
         ...failed.analysisStages!,
         liquidity: "unknown",
       },
+      lpForceRecovery: response.lpForceRecovery,
     });
     return {
       ...bumped,
@@ -1040,7 +1485,35 @@ function settleTerminalPartial(
 }
 
 /**
- * Phase 13A — recover orphan analyzing (no inflight, no valid lease, no retry).
+ * Phase 13C.1 — drop process-local coalesce when durable lease is absent.
+ * Zombie Promise / backgroundRefresh entries block scheduleDeepAnalysis and
+ * previously masked orphan recovery via deepInflight=true.
+ */
+export function evictLocalDeepCoalesce(
+  address: string,
+  reason: "orphan_zombie_coalesce" | "zombie_coalesce" = "zombie_coalesce",
+): boolean {
+  const normalized = assertValidTokenAddress(address);
+  const key = cacheKey(normalized);
+  const had = inflight.has(key) || backgroundRefresh.has(key);
+  if (!had) return false;
+  cancelActiveDeepAttempt(normalized, reason);
+  backgroundRefresh.delete(key);
+  if (inflight.has(key)) inflight.delete(key);
+  console.warn(
+    JSON.stringify({
+      tag: "deep_coalesce_evicted",
+      address: normalized,
+      reason,
+      deploymentScope: resolveDeploymentScope(),
+    }),
+  );
+  return true;
+}
+
+/**
+ * Phase 13A/13C.1 — recover orphan analyzing (no valid lease, no retryScheduled).
+ * Local deepInflight alone does not suppress orphan; zombie coalesce is evicted.
  */
 export async function recoverOrphanAnalyzingIfNeeded(
   address: string,
@@ -1049,9 +1522,15 @@ export async function recoverOrphanAnalyzingIfNeeded(
   const key = cacheKey(normalized);
   const loaded = await loadSnapshot(normalized);
   if (!loaded) return null;
-  const deepInflight = isDeepAnalysisInflight(normalized);
-  const outcome = recoverOrphanAnalyzing(loaded.snap.response, { deepInflight });
+  // Phase 13C.1: durable ownership only — pass deepInflight=false for decision.
+  const outcome = recoverOrphanAnalyzing(loaded.snap.response, {
+    deepInflight: false,
+  });
   if (!outcome.orphan) return null;
+  const hadLocalInflight = isDeepAnalysisInflight(normalized);
+  if (hadLocalInflight) {
+    evictLocalDeepCoalesce(normalized, "orphan_zombie_coalesce");
+  }
   console.warn(
     JSON.stringify({
       tag: "deep_orphan_recovered",
@@ -1059,6 +1538,7 @@ export async function recoverOrphanAnalyzingIfNeeded(
       shouldRetry: outcome.shouldRetry,
       transition: outcome.response.deepRuntime?.lastTransition,
       deepRetryCount: outcome.response.deepRetryCount ?? 0,
+      evictedLocalCoalesce: hadLocalInflight,
       deploymentScope: resolveDeploymentScope(),
     }),
   );
@@ -1117,7 +1597,7 @@ export async function recoverStaleDeepIfNeeded(
   const recovered = retireDeepAttempt(
     settleTerminalPartial(snap.response, {
       reason:
-        "Deep analysis stopped or timed out — Fast Scan preserved. Some sections temporarily unavailable.",
+        "Deep analysis stopped or timed out ??Fast Scan preserved. Some sections temporarily unavailable.",
       existingRetryCount: snap.response.deepRetryCount,
     }),
   );
@@ -1154,7 +1634,7 @@ async function runFreshScan(address: string): Promise<ScanResponse> {
         if (again && isScanComplete(again.response)) return again.response;
         if (again) return again.response;
         throw new Error(
-          "Scan refresh in progress for this token — retry shortly (no snapshot yet).",
+          "Scan refresh in progress for this token ??retry shortly (no snapshot yet).",
         );
       }
     }
@@ -1164,7 +1644,7 @@ async function runFreshScan(address: string): Promise<ScanResponse> {
 
       // Prefer progressive enrich from Fast snapshot (avoids redoing wave1).
       if (prior && isDeepInProgress(prior.response)) {
-        // Phase 13A order: allocate generation → register lease → persist analyzing → work.
+        // Phase 13A order: allocate generation ??register lease ??persist analyzing ??work.
         const allocated = prior.response.deepAttemptId
           ? {
               ...prior.response,
@@ -1201,7 +1681,7 @@ async function runFreshScan(address: string): Promise<ScanResponse> {
             (memory.get(key) ?? (await kvGetSnapshot(key)))?.response
               .deepRetryCount ?? base.deepRetryCount;
           // Phase 10C-5: force-LP recovery mid-flight stays deep_running + analyzing
-          // — do not wrap again in settleTerminalPartial (would double-count recovery).
+          // ??do not wrap again in settleTerminalPartial (would double-count recovery).
           const forceLpRecovering =
             enriched.lpTerminal?.forceRefresh === true &&
             !isLpHardTerminal(enriched.lpTerminal) &&
@@ -1212,7 +1692,7 @@ async function runFreshScan(address: string): Promise<ScanResponse> {
                   { ...enriched, deepAttemptId: attemptId },
                   {
                     reason:
-                      "Deep analysis ended without completion — Fast Scan preserved.",
+                      "Deep analysis ended without completion ??Fast Scan preserved.",
                     existingRetryCount: existingRetry,
                   },
                 )
@@ -1258,6 +1738,13 @@ async function runFreshScan(address: string): Promise<ScanResponse> {
             key,
             annotateFenceAccepted(stamped),
           );
+          const restored = await maybeRestoreForceLpAfterSettle(
+            settled.response,
+          );
+          if (restored !== settled.response) {
+            await persistProgressResponse(key, restored);
+            return restored;
+          }
           return settled.response;
         } catch (err) {
           const existingRetry =
@@ -1285,11 +1772,18 @@ async function runFreshScan(address: string): Promise<ScanResponse> {
           );
           console.warn("[scan-cache] deep enrich failed; marking partial:", err);
           const settled = await persistFencedDeepSettle(key, partial);
+          const restored = await maybeRestoreForceLpAfterSettle(
+            settled.response,
+          );
+          if (restored !== settled.response) {
+            await persistProgressResponse(key, restored);
+            return restored;
+          }
           return settled.response;
         }
       }
 
-      // No fast base (manual full refresh cold) — monolithic scanToken with deadline
+      // No fast base (manual full refresh cold) ??monolithic scanToken with deadline
       let timer: ReturnType<typeof setTimeout> | undefined;
       try {
         const result = await Promise.race([
@@ -1325,7 +1819,7 @@ async function runFreshScan(address: string): Promise<ScanResponse> {
             reason:
               err instanceof Error
                 ? err.message
-                : "Deep analysis failed — Fast Scan preserved.",
+                : "Deep analysis failed ??Fast Scan preserved.",
             existingRetryCount: existingRetry,
           });
           const settled = await persistFencedDeepSettle(key, partial);
@@ -1384,7 +1878,7 @@ async function runFastScan(address: string): Promise<ScanResponse> {
 
 /**
  * After a Deep attempt settles retryable-partial, re-arm stages and schedule
- * another attempt (fresh execution budget). Prevents Fast → partial → stuck UI.
+ * another attempt (fresh execution budget). Prevents Fast ??partial ??stuck UI.
  * Stale jobs whose generation is no longer authoritative must not re-arm.
  */
 async function rearmAndContinueIfRetryable(
@@ -1402,7 +1896,7 @@ async function rearmAndContinueIfRetryable(
   ) {
     return;
   }
-  // Exhausted on the authoritative snapshot — do not re-open budget.
+  // Exhausted on the authoritative snapshot ??do not re-open budget.
   if (auth && !isDeepRetryable(auth)) {
     if (auth.analysisStatus === "partial" || auth.analysisStatus === "failed") {
       return;
@@ -1477,7 +1971,7 @@ export async function ensureDeepAnalysis(address: string): Promise<ScanResponse>
     return runFreshScan(normalized);
   }
 
-  // Honest terminal partial/failed — budget exhausted or no retryable stages.
+  // Honest terminal partial/failed ??budget exhausted or no retryable stages.
   if (
     peeked.analysisStatus === "partial" ||
     peeked.analysisStatus === "failed"
@@ -1514,7 +2008,7 @@ async function loadSnapshot(address: string): Promise<{
   return { snap: auth, source };
 }
 
-/** Peek memory/KV only — never starts a full scan (SSR-safe). */
+/** Peek memory/KV only ??never starts a full scan (SSR-safe). */
 export async function peekScanSnapshot(
   address: string,
 ): Promise<CachedScanResponse | null> {
@@ -1637,7 +2131,7 @@ async function maybeScheduleTransferIndexRefresh(
 
 /**
  * Overlay fresher `scan:burn:*` history onto a snapshot without re-running Score.
- * Incomplete windows stay Unknown / Incomplete — never invent completeness.
+ * Incomplete windows stay Unknown / Incomplete ??never invent completeness.
  */
 async function applyBurnHistoryOverlay(
   address: string,
@@ -1645,7 +2139,7 @@ async function applyBurnHistoryOverlay(
 ): Promise<ScanResponse> {
   const sb = response.overview?.supplyBurn;
   if (!sb) return response;
-  // Fast / provisional: deep job owns P2/P3 — do not start a parallel burn paginate
+  // Fast / provisional: deep job owns P2/P3 ??do not start a parallel burn paginate
   if (
     response.analysisPhase === "fast" ||
     response.scoreProvisional ||
@@ -1716,7 +2210,7 @@ export async function getCachedScan(
     // Phase 10C-3: refresh must recover zombie deep_running before re-arm/schedule.
     // Previously refresh skipped recoverStaleDeepIfNeeded (non-refresh path only).
     await recoverStaleDeepIfNeeded(normalized);
-    // Non-blocking refresh: clear partial → schedule deep, return latest usable snapshot
+    // Non-blocking refresh: clear partial ??schedule deep, return latest usable snapshot
     await markRefreshRateLimit(rlKey, opts.clientIp);
     const priorRefresh = await loadSnapshot(normalized);
     if (
@@ -1730,36 +2224,28 @@ export async function getCachedScan(
         opts.forceLpFullRefresh === true ||
         lpEvidenceNeedsFullRefresh(priorRefresh.snap.response);
       if (forceFromPartial) {
-        markForceLpFullRefresh(normalized);
-        await deleteLpPublishedBody(
-          resolveDeploymentScope(),
-          normalized,
-          SCAN_CHAIN_ID,
+        // Phase 13C: stash durable prior; do not eagerly destroy published body.
+        const rearmed = await beginForceLpRefreshArm(
+          priorRefresh.snap.response,
         );
+        await persistSnapshot(key, toStored(rearmed));
+      } else {
+        const rearmed: ScanResponse = {
+          ...rearmPartialForDeepRetry(priorRefresh.snap.response),
+          deepRetryCount: 0,
+        };
+        await persistSnapshot(key, toStored(rearmed));
       }
-      let rearmed: ScanResponse = {
-        ...rearmPartialForDeepRetry(priorRefresh.snap.response),
-        deepRetryCount: 0,
-      };
-      if (forceFromPartial) rearmed = withForceLpTerminal(rearmed);
-      await persistSnapshot(key, toStored(rearmed));
     } else if (
       priorRefresh &&
       (opts.forceLpFullRefresh === true ||
         lpEvidenceNeedsFullRefresh(priorRefresh.snap.response))
     ) {
-      // Sticky timeout / version-budget LP marked liquidity=done — force re-run.
-      // Phase 10C-4: clear published LP body so warm cannot reuse timeout detail.
-      markForceLpFullRefresh(normalized);
-      await deleteLpPublishedBody(
-        resolveDeploymentScope(),
-        normalized,
-        SCAN_CHAIN_ID,
-      );
+      // Sticky timeout / version-budget LP — force re-run (13C preserves durable prior).
       await markManualSmartLpRefresh(SCAN_CHAIN_ID, normalized);
       const priorStages = priorRefresh.snap.response.analysisStages;
-      let rearmed: ScanResponse = {
-        ...rearmPartialForDeepRetry({
+      const rearmed = await beginForceLpRefreshArm(
+        {
           ...priorRefresh.snap.response,
           analysisStatus: "partial",
           analysisStages: {
@@ -1772,10 +2258,20 @@ export async function getCachedScan(
             relationships: priorStages?.relationships ?? "partial",
             score: "partial",
           },
-        }),
-        deepRetryCount: 0,
-      };
-      rearmed = withForceLpTerminal(rearmed);
+        },
+        {
+          stages: {
+            contract: priorStages?.contract ?? "done",
+            holders: priorStages?.holders ?? "done",
+            market: priorStages?.market ?? "done",
+            burn: priorStages?.burn ?? "partial",
+            liquidity: "analyzing",
+            creator: priorStages?.creator ?? "partial",
+            relationships: priorStages?.relationships ?? "partial",
+            score: "analyzing",
+          },
+        },
+      );
       await persistSnapshot(key, toStored(rearmed));
     } else if (
       priorRefresh?.snap.response.analysisStatus === "complete" ||
@@ -1801,19 +2297,7 @@ export async function getCachedScan(
       const forceLp =
         opts.forceLpFullRefresh === true ||
         lpEvidenceNeedsFullRefresh(priorResp);
-      if (forceLp) {
-        markForceLpFullRefresh(normalized);
-        await deleteLpPublishedBody(
-          resolveDeploymentScope(),
-          normalized,
-          SCAN_CHAIN_ID,
-        );
-      }
-      // Phase 7.1: mark manual refresh in KV so Deep (other isolate) always
-      // evaluates Smart LP (never silently skip liquidity).
       await markManualSmartLpRefresh(SCAN_CHAIN_ID, normalized);
-      // Arm liquidity for Smart LP freshness evaluation (not force-all
-      // ownership/lock). Job body uses planSmartLpRefresh — may be price-only.
       const plan = planWarmDeepStages({
         eligibility,
         stages: priorResp.analysisStages,
@@ -1822,58 +2306,32 @@ export async function getCachedScan(
         forceLiquidityRefresh: true,
       });
       const warmStages = applyWarmRearmStages(priorResp, plan);
-      const baseResp = forceLp ? clearStaleLpEvidence(priorResp) : priorResp;
-      const rearmed: ScanResponse = assignDeepAttempt({
-        ...baseResp,
-        analysisPhase: "fast",
-        analysisStatus: "deep_running",
-        scoreProvisional: true,
-        deepRetryCount: 0,
-        analysisStages: {
-          ...warmStages,
-          ...(forceLp ? { liquidity: "analyzing" as const, score: "analyzing" as const } : {}),
-        },
-      });
-      const gen = rearmed.deepAttemptId!;
-      const stamped: ScanResponse = forceLp
-        ? {
-            ...rearmed,
-            lpTerminal: markLpTerminalRunning(
-              beginLpTerminal({
-                attemptId: gen,
-                generation: gen,
-                forceRefresh: true,
-              }),
-            ),
-          }
-        : rearmed;
-      await persistSnapshot(key, toStored(stamped));
-    } else if (opts.forceLpFullRefresh === true && priorRefresh) {
-      // Force LP while deep_running / other non-complete — new generation + terminal contract.
-      cancelActiveDeepAttempt(normalized, "external");
-      markForceLpFullRefresh(normalized);
-      await deleteLpPublishedBody(
-        resolveDeploymentScope(),
-        normalized,
-        SCAN_CHAIN_ID,
-      );
-      await markManualSmartLpRefresh(SCAN_CHAIN_ID, normalized);
-      await releaseRefreshLock(key);
-      const cleared = clearStaleLpEvidence(priorRefresh.snap.response);
-      const rearmed = withForceLpTerminal(
-        assignDeepAttempt({
-          ...cleared,
+      if (forceLp) {
+        const stamped = await beginForceLpRefreshArm(priorResp, {
+          stages: {
+            ...warmStages,
+            liquidity: "analyzing",
+            score: "analyzing",
+          },
+        });
+        await persistSnapshot(key, toStored(stamped));
+      } else {
+        const rearmed: ScanResponse = assignDeepAttempt({
+          ...priorResp,
           analysisPhase: "fast",
           analysisStatus: "deep_running",
           scoreProvisional: true,
           deepRetryCount: 0,
-          analysisStages: {
-            ...(cleared.analysisStages ?? priorRefresh.snap.response.analysisStages!),
-            liquidity: "analyzing",
-            score: "analyzing",
-          },
-        }),
-      );
+          analysisStages: warmStages,
+        });
+        await persistSnapshot(key, toStored(rearmed));
+      }
+    } else if (opts.forceLpFullRefresh === true && priorRefresh) {
+      // Force LP while deep_running / other non-complete — new generation + terminal contract.
+      cancelActiveDeepAttempt(normalized, "external");
+      await markManualSmartLpRefresh(SCAN_CHAIN_ID, normalized);
+      await releaseRefreshLock(key);
+      const rearmed = await beginForceLpRefreshArm(priorRefresh.snap.response);
       await persistSnapshot(key, toStored(rearmed));
     }
     scheduleDeepAnalysis(normalized);
@@ -1908,7 +2366,7 @@ export async function getCachedScan(
     let snap = loaded.snap;
     let source = loaded.source;
 
-    // Incomplete fast / deep_running / retryable partial — keep serving; ensure deep runs
+    // Incomplete fast / deep_running / retryable partial ??keep serving; ensure deep runs
     if (isDeepRetryable(snap.response)) {
       const rearmed = rearmPartialForDeepRetry(snap.response);
       const written = await persistProgressResponse(key, rearmed);
@@ -1938,7 +2396,7 @@ export async function getCachedScan(
       });
     }
 
-    // Terminal partial/failed (retry budget exhausted) — serve Fast/available data.
+    // Terminal partial/failed (retry budget exhausted) ??serve Fast/available data.
     if (!isScanComplete(snap.response)) {
       return withMetaReconciled(snap.response, {
         hit: true,
@@ -1982,7 +2440,7 @@ export async function getCachedScan(
     });
   }
 
-  // Cold miss — Fast Scan only (do not block HTTP on deep LP/creator)
+  // Cold miss ??Fast Scan only (do not block HTTP on deep LP/creator)
   const wasFastInflight = fastInflight.has(key);
   try {
     const fast = await runFastScan(normalized);
@@ -2003,7 +2461,7 @@ export async function getCachedScan(
 }
 
 /**
- * Status poll helper — peek snapshot + deep inflight flag (no new scan start
+ * Status poll helper ??peek snapshot + deep inflight flag (no new scan start
  * unless caller also hits getCachedScan).
  */
 export async function getScanAnalysisStatus(address: string): Promise<{
@@ -2015,7 +2473,7 @@ export async function getScanAnalysisStatus(address: string): Promise<{
   deepInflight: boolean;
   /** True when caller should schedule after() deep work (not fire-and-forget). */
   needsDeepAfter: boolean;
-  /** Phase 13A — lease / retry / fence diagnostics (no secrets). */
+  /** Phase 13A ??lease / retry / fence diagnostics (no secrets). */
   deepRuntime: DeepRuntimeDiagnostics;
   result: CachedScanResponse | null;
 }> {
@@ -2036,7 +2494,7 @@ export async function getScanAnalysisStatus(address: string): Promise<{
     : await peekScanSnapshot(normalized);
 
   // Progress watchdog: may interrupt work but MUST NEVER publish an LP partial terminal.
-  // Phase 10C-5: timeout → record → bounded recovery → SUCCESS_TERMINAL | FAILED_TERMINAL.
+  // Phase 10C-5: timeout ??record ??bounded recovery ??SUCCESS_TERMINAL | FAILED_TERMINAL.
   const stallThresholdMs =
     peeked?.lpTerminal?.forceRefresh && !isLpHardTerminal(peeked.lpTerminal)
       ? LP_FORCE_PROGRESS_STALL_MS
@@ -2081,7 +2539,7 @@ export async function getScanAnalysisStatus(address: string): Promise<{
       const settled = await persistFencedDeepSettle(key, outcome.response);
       peeked = { ...settled.response, cache: peeked.cache };
       console.warn(
-        `[scan-cache] watchdog → SUCCESS_TERMINAL for ${normalized} (verified after interrupt)`,
+        `[scan-cache] watchdog ??SUCCESS_TERMINAL for ${normalized} (verified after interrupt)`,
       );
     } else if (outcome.kind === "recover") {
       // Non-LP siblings may soft-settle; liquidity stays analyzing (no PARTIAL_TERMINAL).
@@ -2095,15 +2553,21 @@ export async function getScanAnalysisStatus(address: string): Promise<{
         }
       }
       stages.liquidity = "analyzing";
-      markForceLpFullRefresh(normalized);
-      const cleared = hasVerifiedLockedResult(peeked)
-        ? peeked
-        : clearStaleLpEvidence(peeked);
+      void markForceLpFullRefreshDurable(SCAN_CHAIN_ID, normalized);
+      // Phase 13C.1: never invent a cleared shell outside an open force txn.
+      const forceMeta = peeked.lpForceRecovery;
+      const forceTxnOpen =
+        forceMeta?.state === "open" || !!forceMeta?.durablePrior;
+      const cleared =
+        hasVerifiedLockedResult(peeked) || !forceTxnOpen || !forceMeta
+          ? peeked
+          : armForceLpClearedAggregate(peeked, forceMeta);
       const rearmed = assignDeepAttempt({
         ...cleared,
         analysisStages: stages,
         analysisStatus: "deep_running",
         scoreProvisional: true,
+        lpForceRecovery: peeked.lpForceRecovery,
         lpTerminal: {
           ...outcome.contract,
           // generation updated after assignDeepAttempt below
@@ -2134,13 +2598,13 @@ export async function getScanAnalysisStatus(address: string): Promise<{
       peeked = { ...written, cache: peeked.cache };
       scheduleDeepAnalysis(normalized);
       console.warn(
-        `[scan-cache] watchdog → LP recovery for ${normalized} (attempt ${outcome.contract.recoveryAttempts}; no partial terminal)`,
+        `[scan-cache] watchdog ??LP recovery for ${normalized} (attempt ${outcome.contract.recoveryAttempts}; no partial terminal)`,
       );
     } else {
       const settled = await persistFencedDeepSettle(key, outcome.response);
       peeked = { ...settled.response, cache: peeked.cache };
       console.warn(
-        `[scan-cache] watchdog → FAILED_TERMINAL for ${normalized}`,
+        `[scan-cache] watchdog ??FAILED_TERMINAL for ${normalized}`,
       );
     }
 
@@ -2149,20 +2613,20 @@ export async function getScanAnalysisStatus(address: string): Promise<{
     });
   }
 
-  // Status poll re-arm: retryable partial → deep_running so UI stays Collecting.
+  // Status poll re-arm: retryable partial ??deep_running so UI stays Collecting.
   if (peeked && isDeepRetryable(peeked) && !isDeepAnalysisInflight(normalized)) {
     const rearmed = rearmPartialForDeepRetry(peeked);
     const written = await persistProgressResponse(key, rearmed);
     peeked = { ...written, cache: peeked.cache };
   }
 
-  // Phase 13A: sticky analyzing without lease/inflight/retry is orphan — recover again
-  // after watchdog / reconcile paths may have rewritten stages.
+  // Phase 13A/13C.1: sticky analyzing without durable lease/retry is orphan —
+  // recover even when process-local coalesce claims inflight.
   if (
     peeked &&
     isOrphanAnalyzing({
       response: peeked,
-      deepInflight: isDeepAnalysisInflight(normalized),
+      deepInflight: false,
     })
   ) {
     const recovered = await recoverOrphanAnalyzingIfNeeded(normalized);
@@ -2171,17 +2635,17 @@ export async function getScanAnalysisStatus(address: string): Promise<{
     }
   }
 
-  const deepInflight = isDeepAnalysisInflight(normalized);
+  const deepInflightLocal = isDeepAnalysisInflight(normalized);
   const retryScheduled = peeked?.deepRuntime?.retryScheduled === true;
   const needsDeepAfter = Boolean(
     peeked &&
       (needsDeepWork(peeked) ||
         retryScheduled ||
-        (hasAnalyzingNeedingWork(peeked) && !deepInflight)),
+        (hasAnalyzingNeedingWork(peeked) && !deepInflightLocal)),
   );
   // Kick work in-process; routes MUST also wrap ensureDeepAnalysis in after()
   // so the isolate stays alive after the HTTP response.
-  if (needsDeepAfter && !deepInflight) {
+  if (needsDeepAfter && !deepInflightLocal) {
     if (peeked) {
       const stamped = stampDeepRuntime(peeked, {
         retryScheduled: true,
@@ -2192,7 +2656,10 @@ export async function getScanAnalysisStatus(address: string): Promise<{
     }
     scheduleDeepAnalysis(normalized);
   }
-  const deepRuntime = toDeepRuntimeDiagnostics(peeked ?? {});
+  const deepInflight = isDeepAnalysisInflight(normalized);
+  const deepRuntime = toDeepRuntimeDiagnostics(peeked ?? {}, Date.now(), {
+    deepInflightLocal: deepInflight,
+  });
   return {
     address: normalized,
     analysisStatus:
@@ -2207,7 +2674,8 @@ export async function getScanAnalysisStatus(address: string): Promise<{
       (peeked && isScanComplete(peeked) ? "complete" : peeked ? "fast" : undefined),
     scoreProvisional: Boolean(peeked?.scoreProvisional),
     analysisStages: peeked?.analysisStages,
-    deepInflight: deepInflight || isDeepAnalysisInflight(normalized),
+    /** Process-local coalesce only — prefer deepRuntime.deepLeaseOwned for ownership. */
+    deepInflight,
     needsDeepAfter,
     deepRuntime,
     result: peeked,

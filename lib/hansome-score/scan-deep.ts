@@ -38,9 +38,29 @@ import {
   type KnownFirstEarlyExitPlan,
 } from "@/lib/hansome-score/lp/known-first-early-exit";
 import {
+  bootstrapPackToDiscoverySources,
+  KNOWN_HOOK_EARLY_BUDGET_MS,
+  KNOWN_PONS_EARLY_BUDGET_MS,
+  KNOWN_TITAN_EARLY_BUDGET_MS,
+  preferVerifiedLpAgainstIncomplete,
+  resolveKnownBootstrap,
+  staticKnownBootstrapSeeds,
+  tryVerifyKnownHookBootstrap,
+  tryVerifyKnownPonsBootstrap,
+  tryVerifyKnownTitanBootstrap,
+  type KnownBootstrapPack,
+} from "@/lib/hansome-score/lp/known-bootstrap-resolver";
+import {
+  ADAPTIVE_LIQUIDITY_BUDGET,
+  computeAdaptiveHardBoundMs,
+} from "@/lib/hansome-score/lp/adaptive-discovery-budget";
+import { persistSnapshotFromLpPublish } from "@/lib/hansome-score/lp/lp-persistent-snapshot";
+import { loadPriorLpForForceDeep } from "@/lib/hansome-score/lp/force-lp-recovery";
+import {
   buildSmartLpEvidence,
   coalesceSmartLpRefresh,
   consumeForceLpFullRefresh,
+  consumeForceLpFullRefreshDurable,
   consumeManualSmartLpRefresh,
   peekManualSmartLpRefresh,
   isSmartLpSelectiveOwnerRefresh,
@@ -315,6 +335,18 @@ function shouldPreserveCompletedLpEvidence(response: ScanResponse): boolean {
   if (stages?.liquidity === "done") return true;
   const lp = response.overview?.lpIntelligence;
   if (!lp) return false;
+  // Phase 13E: never let soft-partial wipe LOCKED_VERIFIED positions.
+  if (lp.positions?.some((p) => p.lockState === "LOCKED_VERIFIED_ONCHAIN")) {
+    return true;
+  }
+  // Phase 13E.1: Known-Hook Class B evidence is product-complete enough to preserve.
+  if (
+    lp.ownershipClass === "hook_native" &&
+    (lp.hookPositionIndex != null ||
+      (lp.ownershipClassEvidence?.length ?? 0) > 0)
+  ) {
+    return true;
+  }
   return (
     lp.knownPositionsVerified === true &&
     lp.lockDistribution?.available === true
@@ -849,7 +881,7 @@ export async function enrichScanDeep(
     warmPlan.path === "warm"
       ? shouldSkipWarmStage(warmPlan.relationships)
       : stageAlreadyComplete(stages.relationships);
-  const skipLiquidity =
+  let skipLiquidity =
     warmPlan.path === "warm"
       ? shouldSkipWarmStage(warmPlan.liquidity)
       : stageAlreadyComplete(stages.liquidity);
@@ -857,6 +889,227 @@ export async function enrichScanDeep(
     warmPlan.path === "warm"
       ? shouldSkipWarmStage(warmPlan.creatorBurn)
       : creatorDone && burnDone;
+
+  // Phase 13E / 13E.1 — Known-First BEFORE parallel wave (exclusive RPC).
+  // Order: Titan → Pons → Hook (matches bootstrap priority; one hit early-exits LP).
+  if (!skipLiquidity && !isSmartLpRefreshEnabled()) {
+    const seeds = staticKnownBootstrapSeeds(address);
+    const priorLp = current.overview.lpIntelligence ?? null;
+    const poolBal =
+      current.overview.poolManagerBalanceRaw != null
+        ? BigInt(current.overview.poolManagerBalanceRaw)
+        : null;
+    const decimals = current.overview.decimals;
+
+    const publishKnownEarly = async (
+      intelIn: LpIntelligence,
+      label: string,
+      extraSources: string[],
+    ) => {
+      let intel = preferVerifiedLpAgainstIncomplete(priorLp, intelIn);
+      for (const s of extraSources) {
+        if (!intel.discoverySources?.includes(s)) {
+          intel = {
+            ...intel,
+            discoverySources: [...(intel.discoverySources ?? []), s],
+          };
+        }
+      }
+      stages = setStage(cloneStages(stages), "liquidity", "done");
+      current = {
+        ...current,
+        analysisStatus: "deep_running",
+        analysisStages: stages,
+        overview: {
+          ...current.overview,
+          poolId: intel.poolId,
+          lpLockStatus: legacyLpStatus(intel.aggregateState),
+          lpLockDetail: intel.detail,
+          lpIntelligence: intel,
+        },
+      };
+      if (hasVerifiedLockedResult(current)) {
+        const contract = markLpTerminalPublishing(
+          markLpTerminalRunning(
+            current.lpTerminal ??
+              beginLpTerminal({
+                attemptId: attempt.deepAttemptId,
+                generation: attempt.deepAttemptId,
+                forceRefresh: false,
+              }),
+          ),
+        );
+        current = applyLpHardTerminal(
+          current,
+          settleLpSuccessTerminal(contract),
+        );
+      } else if (
+        intel.ownershipClass === "hook_native" &&
+        current.lpTerminal == null
+      ) {
+        // Honest Class B terminal: UNKNOWN_INCOMPLETE with durable ownership evidence.
+        const contract = markLpTerminalPublishing(
+          markLpTerminalRunning(
+            beginLpTerminal({
+              attemptId: attempt.deepAttemptId,
+              generation: attempt.deepAttemptId,
+              forceRefresh: false,
+            }),
+          ),
+        );
+        current = applyLpHardTerminal(
+          current,
+          settleLpSuccessTerminal(contract),
+        );
+      }
+      void persistSnapshotFromLpPublish({
+        chainId: ROBINHOOD_CHAIN_ID,
+        tokenAddress: address,
+        intelligence: intel,
+        discoveryGeneration: attempt.deepAttemptId,
+        publishGeneration: current.lpPublish?.lpGeneration ?? null,
+      }).catch(() => {});
+      await publish(
+        current,
+        `liquidity:${label}`,
+        Date.now() - startedAt,
+        {
+          stage: "liquidity",
+          action: "lp_known_first_early_exit",
+          completedUnits: 5,
+          totalUnits: 6,
+        },
+        { terminal: true },
+      );
+      skipLiquidity = true;
+      return intel;
+    };
+
+    if (seeds.completeness.knownTitan === true) {
+      const preStart = Date.now();
+      console.info(
+        `[scan-deep] known-titan pre-parallel begin budgetMs=${KNOWN_TITAN_EARLY_BUDGET_MS}` +
+          ` remainMs=${remainingMs(deadline)}`,
+      );
+      try {
+        const titanHit = await tryVerifyKnownTitanBootstrap({
+          tokenAddress: address,
+          poolManagerBalance: poolBal,
+          decimals,
+          budgetMs: KNOWN_TITAN_EARLY_BUDGET_MS,
+        });
+        if (titanHit) {
+          const intel = await publishKnownEarly(
+            titanHit.intelligence,
+            "known-titan-pre-parallel",
+            [
+              "known_bootstrap",
+              "bootstrap:registry_titan",
+              "bootstrap_stage:known_titan",
+              "titan_pre_parallel",
+            ],
+          );
+          console.info(
+            `[scan-deep] known-titan pre-parallel early-exit ms=${Date.now() - preStart}` +
+              ` tid=${intel.positions.find((p) => p.lockState === "LOCKED_VERIFIED_ONCHAIN")?.positionNftId ?? "-"}` +
+              ` pos=${intel.positions.length}`,
+          );
+        } else {
+          console.info(
+            `[scan-deep] known-titan pre-parallel miss ms=${Date.now() - preStart} — liquidity job will retry`,
+          );
+        }
+      } catch (err) {
+        console.warn(
+          `[scan-deep] known-titan pre-parallel error — liquidity job will retry:`,
+          err,
+        );
+      }
+    }
+
+    if (!skipLiquidity && seeds.completeness.knownPons === true) {
+      const preStart = Date.now();
+      console.info(
+        `[scan-deep] known-pons pre-parallel begin budgetMs=${KNOWN_PONS_EARLY_BUDGET_MS}` +
+          ` remainMs=${remainingMs(deadline)}`,
+      );
+      try {
+        const ponsHit = await tryVerifyKnownPonsBootstrap({
+          tokenAddress: address,
+          poolManagerBalance: poolBal,
+          decimals,
+          budgetMs: KNOWN_PONS_EARLY_BUDGET_MS,
+        });
+        if (ponsHit) {
+          const intel = await publishKnownEarly(
+            ponsHit.intelligence,
+            "known-pons-pre-parallel",
+            [
+              "known_bootstrap",
+              "bootstrap:registry_pons",
+              "bootstrap_stage:known_pons",
+              "pons_pre_parallel",
+            ],
+          );
+          console.info(
+            `[scan-deep] known-pons pre-parallel early-exit ms=${Date.now() - preStart}` +
+              ` tid=${intel.positions.find((p) => p.lockState === "LOCKED_VERIFIED_ONCHAIN")?.positionNftId ?? "-"}`,
+          );
+        } else {
+          console.info(
+            `[scan-deep] known-pons pre-parallel miss ms=${Date.now() - preStart} — liquidity job will retry`,
+          );
+        }
+      } catch (err) {
+        console.warn(
+          `[scan-deep] known-pons pre-parallel error — liquidity job will retry:`,
+          err,
+        );
+      }
+    }
+
+    if (!skipLiquidity && seeds.completeness.knownHook === true) {
+      const preStart = Date.now();
+      console.info(
+        `[scan-deep] known-hook pre-parallel begin budgetMs=${KNOWN_HOOK_EARLY_BUDGET_MS}` +
+          ` remainMs=${remainingMs(deadline)}`,
+      );
+      try {
+        const hookHit = await tryVerifyKnownHookBootstrap({
+          tokenAddress: address,
+          poolManagerBalance: poolBal,
+          decimals,
+          budgetMs: KNOWN_HOOK_EARLY_BUDGET_MS,
+        });
+        if (hookHit) {
+          const intel = await publishKnownEarly(
+            hookHit.intelligence,
+            "known-hook-pre-parallel",
+            [
+              "known_bootstrap",
+              "bootstrap:registry_hook",
+              "bootstrap_stage:known_hook",
+              "hook_pre_parallel",
+            ],
+          );
+          console.info(
+            `[scan-deep] known-hook pre-parallel early-exit ms=${Date.now() - preStart}` +
+              ` class=${intel.ownershipClass}` +
+              ` owned=${intel.hookPositionIndex?.hookOwnedCount ?? 0}`,
+          );
+        } else {
+          console.info(
+            `[scan-deep] known-hook pre-parallel miss ms=${Date.now() - preStart} — liquidity job will retry`,
+          );
+        }
+      } catch (err) {
+        console.warn(
+          `[scan-deep] known-hook pre-parallel error — liquidity job will retry:`,
+          err,
+        );
+      }
+    }
+  }
 
   if (!skipRelationships) {
     stages = setStage(stages, "relationships", "analyzing");
@@ -1057,12 +1310,14 @@ export async function enrichScanDeep(
     const topHolders = current.overview.topHolders;
     const deployer = current.overview.deployer;
 
+    // Phase 13D.2 — adaptive liquidity ceiling (base 180s, expand while progress).
     const liqBudgetMs = Math.min(
-      DEEP_STAGE_BUDGET_MS.liquidity,
+      ADAPTIVE_LIQUIDITY_BUDGET.maxBudgetMs,
+      Math.max(DEEP_STAGE_BUDGET_MS.liquidity, ADAPTIVE_LIQUIDITY_BUDGET.baseBudgetMs),
       remainingMs(deadline),
     );
     // Exhaustive PM history only when soft budget leaves headroom above known-first (~20s).
-    // Default 180s is below historical cold rediscovery (~190s) — prefer known-first.
+    // Adaptive max (255s) can unlock exhaustive; default path still prefers known-first.
     const allowExhaustive = liqBudgetMs >= 200_000;
 
     // Phase 7.1 Smart LP — disabled unless HANSOME_SMART_LP_REFRESH=1 (Phase 7.3).
@@ -1070,6 +1325,7 @@ export async function enrichScanDeep(
     const lpCacheSnap = await loadLpDiscoveryCache(ROBINHOOD_CHAIN_ID, address);
     const smartLpEnabled = isSmartLpRefreshEnabled();
     const explicitForceFullLp =
+      (await consumeForceLpFullRefreshDurable(ROBINHOOD_CHAIN_ID, address)) ||
       consumeForceLpFullRefresh(address) ||
       process.env.HANSOME_FORCE_LP_FULL_REFRESH === "1";
     // When Smart LP is off, do NOT treat "disabled" as force-full (that would
@@ -1083,6 +1339,27 @@ export async function enrichScanDeep(
       ? await consumeManualSmartLpRefresh(ROBINHOOD_CHAIN_ID, address)
       : false;
 
+    // Phase 13C: prefer recovery-slot / preserved active body when aggregate was cleared for force.
+    const priorLpForRefresh = await loadPriorLpForForceDeep({
+      response: current,
+    });
+
+    // Phase 13D — Known-First Bootstrap (advisory until ownership verification).
+    const knownBootstrap: KnownBootstrapPack = await resolveKnownBootstrap({
+      chainId: ROBINHOOD_CHAIN_ID,
+      tokenAddress: address,
+      lpCache: lpCacheSnap,
+      lpCheckpoint: lpCkpt,
+      priorLp: priorLpForRefresh,
+    });
+    console.info(
+      `[scan-deep] known-bootstrap stages=${knownBootstrap.stagesHit.join(",") || "-"}` +
+        ` ids=${knownBootstrap.positionIds.length}` +
+        ` pools=${knownBootstrap.poolIds.length}` +
+        ` next=${knownBootstrap.nextStage}` +
+        ` advisory=true`,
+    );
+
     const knownFirstEvidence = buildKnownFirstEvidence({
       chainId: ROBINHOOD_CHAIN_ID,
       expectedChainId: ROBINHOOD_CHAIN_ID,
@@ -1090,7 +1367,7 @@ export async function enrichScanDeep(
       analysisSemanticVersion: current.version ?? ANALYSIS_SEMANTIC_VERSION,
       lpCache: lpCacheSnap,
       lpCheckpoint: lpCkpt,
-      priorLp: current.overview.lpIntelligence ?? null,
+      priorLp: priorLpForRefresh,
       snapshotAgeMs,
       priorPartialFailure: current.analysisStages?.liquidity === "partial",
       forceLpFullRefresh: explicitForceFullLp,
@@ -1107,7 +1384,7 @@ export async function enrichScanDeep(
       analysisSemanticVersion: current.version ?? ANALYSIS_SEMANTIC_VERSION,
       lpCache: lpCacheSnap,
       lpCheckpoint: lpCkpt,
-      priorLp: current.overview.lpIntelligence ?? null,
+      priorLp: priorLpForRefresh,
       snapshotAgeMs,
       priorPartialFailure: current.analysisStages?.liquidity === "partial",
       // Smart LP off → force plan to full (unused when known-first drives paths).
@@ -1124,6 +1401,123 @@ export async function enrichScanDeep(
         ` skipQuick=${knownFirstPlan.evidence.skipBroadQuick}` +
         ` smartLp=${smartLpEnabled ? smartPlan.outcome : "off"}`,
     );
+
+    // Phase 13E — Known-Pons PREFLIGHT outside withStageBudget + coalesce.
+    // Live Candidate evidence: known-bootstrap logs then liquidity:timeout with NO
+    // "known-pons begin" — Ownership Verification never started because coalesce /
+    // stage budget was already exhausted by parallel siblings / zombie inflight.
+    // Preflight uses its own 12s budget and progressive-publishes Locked immediately.
+    if (!smartLpEnabled && knownBootstrap.completeness.knownPons === true) {
+      const preflightStarted = Date.now();
+      console.info(
+        `[scan-deep] known-pons preflight begin remainMs=${remainingMs(deadline)}`,
+      );
+      try {
+        const ponsHit = await tryVerifyKnownPonsBootstrap({
+          tokenAddress: address,
+          poolManagerBalance,
+          decimals,
+          budgetMs: KNOWN_PONS_EARLY_BUDGET_MS,
+        });
+        if (ponsHit) {
+          let intel = ponsHit.intelligence;
+          intel = preferVerifiedLpAgainstIncomplete(priorLpForRefresh, intel);
+          const bootSources = bootstrapPackToDiscoverySources(knownBootstrap);
+          for (const s of bootSources) {
+            if (!intel.discoverySources?.includes(s)) {
+              intel = {
+                ...intel,
+                discoverySources: [...(intel.discoverySources ?? []), s],
+              };
+            }
+          }
+          // Light enrich (pool % warning) without waiting on market APIs.
+          if (
+            (poolManagerBalance ?? 0n) > 0n &&
+            current.overview.totalSupplyRaw != null
+          ) {
+            try {
+              const totalSupply = BigInt(current.overview.totalSupplyRaw);
+              if (totalSupply > 0n) {
+                const poolPct =
+                  (Number(poolManagerBalance) / Number(totalSupply)) * 100;
+                if (poolPct < 1) intel = { ...intel, sizeWarning: true };
+              }
+            } catch {
+              /* ignore */
+            }
+          }
+          stages = setStage(
+            cloneStages(current.analysisStages),
+            "liquidity",
+            "done",
+          );
+          current = {
+            ...current,
+            analysisStatus: "deep_running",
+            analysisStages: stages,
+            overview: {
+              ...current.overview,
+              poolId: intel.poolId,
+              lpLockStatus: legacyLpStatus(intel.aggregateState),
+              lpLockDetail: intel.detail,
+              lpIntelligence: intel,
+            },
+          };
+          if (hasVerifiedLockedResult(current)) {
+            const contract = markLpTerminalPublishing(
+              markLpTerminalRunning(
+                current.lpTerminal ??
+                  beginLpTerminal({
+                    attemptId: attempt.deepAttemptId,
+                    generation: attempt.deepAttemptId,
+                    forceRefresh: false,
+                  }),
+              ),
+            );
+            current = applyLpHardTerminal(
+              current,
+              settleLpSuccessTerminal(contract),
+            );
+          }
+          void persistSnapshotFromLpPublish({
+            chainId: ROBINHOOD_CHAIN_ID,
+            tokenAddress: address,
+            intelligence: intel,
+            discoveryGeneration: attempt.deepAttemptId,
+            publishGeneration: current.lpPublish?.lpGeneration ?? null,
+          }).catch((err) => {
+            console.warn("[scan-deep] preflight LP snapshot failed:", err);
+          });
+          await publish(
+            current,
+            "liquidity:known-pons-preflight",
+            Date.now() - lpMs,
+            {
+              stage: "liquidity",
+              action: "lp_known_first_early_exit",
+              completedUnits: 5,
+              totalUnits: 6,
+            },
+            { terminal: true },
+          );
+          console.info(
+            `[scan-deep] known-pons preflight early-exit ms=${Date.now() - preflightStarted}` +
+              ` positions=${intel.positions.length}` +
+              ` tid=${intel.positions.find((p) => p.lockState === "LOCKED_VERIFIED_ONCHAIN")?.positionNftId ?? "-"}`,
+          );
+          return;
+        }
+        console.info(
+          `[scan-deep] known-pons preflight miss ms=${Date.now() - preflightStarted} — continuing stage path`,
+        );
+      } catch (preflightErr) {
+        console.warn(
+          `[scan-deep] known-pons preflight error ms=${Date.now() - preflightStarted} — continuing:`,
+          preflightErr,
+        );
+      }
+    }
 
     const publishLpStep = async (
       action: string,
@@ -1159,14 +1553,14 @@ export async function enrichScanDeep(
       await publishLpStep("lp_refresh_plan", 0);
       await publishLpStep("lp_cache_validate", 1);
     } else {
+      // Validate publishes only when Known-Pons / known-first actually runs (below).
       await publishLpStep("lp_known_first_plan", 0);
       await publishLpStep("lp_known_evidence_load", 1);
-      await publishLpStep("lp_known_evidence_validate", 2);
     }
 
     const lpIntelligence = await withStageBudget(
       "liquidity",
-      DEEP_STAGE_BUDGET_MS.liquidity,
+      liqBudgetMs,
       deadline,
       async (signal) => {
         const { result } = await coalesceSmartLpRefresh(
@@ -1250,6 +1644,10 @@ export async function enrichScanDeep(
         if (isHansome && hint.positionNftId && /^\d+$/.test(hint.positionNftId)) {
           candidatePositionIds.add(BigInt(hint.positionNftId));
         }
+        // Phase 13D: union Known Bootstrap seeds (Titan → Pons → Hook → historical).
+        for (const id of knownBootstrap.candidatePositionIds) {
+          candidatePositionIds.add(id);
+        }
 
         const tokenDecimals = decimals ?? 18;
 
@@ -1294,6 +1692,308 @@ export async function enrichScanDeep(
           }
           return intel;
         };
+
+        // Phase 13E.1 — Known-Titan progressive (HANSOME) before structural reuse / multi.
+        // Mirrors Known-Pons: stamp durable Locked before market wait / sibling soft-fail.
+        if (!smartLpEnabled && knownBootstrap.completeness.knownTitan === true) {
+          const titanStarted = Date.now();
+          try {
+            await publishLpStep("lp_known_evidence_validate", 2);
+            const remain = Math.max(0, deadline - Date.now());
+            const titanBudget = Math.min(
+              KNOWN_TITAN_EARLY_BUDGET_MS,
+              Math.max(
+                8_000,
+                remain > 90_000
+                  ? KNOWN_TITAN_EARLY_BUDGET_MS
+                  : Math.floor(remain * 0.5),
+              ),
+            );
+            console.info(
+              `[scan-deep] known-titan bootstrap begin budgetMs=${titanBudget} remainMs=${remain}`,
+            );
+            const titanEarly = await tryVerifyKnownTitanBootstrap({
+              tokenAddress: address,
+              poolManagerBalance,
+              decimals,
+              budgetMs: titanBudget,
+              signal,
+            });
+            if (titanEarly) {
+              let intel = enrichLp(titanEarly.intelligence);
+              intel = preferVerifiedLpAgainstIncomplete(priorLpForRefresh, intel);
+              const bootSources = bootstrapPackToDiscoverySources(knownBootstrap);
+              for (const s of bootSources) {
+                if (!intel.discoverySources?.includes(s)) {
+                  intel = {
+                    ...intel,
+                    discoverySources: [...(intel.discoverySources ?? []), s],
+                  };
+                }
+              }
+              current = {
+                ...current,
+                overview: {
+                  ...current.overview,
+                  poolId: intel.poolId,
+                  lpLockStatus: legacyLpStatus(intel.aggregateState),
+                  lpLockDetail: intel.detail,
+                  lpIntelligence: intel,
+                },
+              };
+              await publish(
+                current,
+                "liquidity:known-titan-progressive",
+                Date.now() - startedAt,
+                {
+                  stage: "liquidity",
+                  action: "lp_known_first_early_exit",
+                  completedUnits: 5,
+                  totalUnits: 6,
+                },
+              );
+              await Promise.race([
+                ensureMarket(),
+                new Promise<void>((r) => setTimeout(r, 4_000)),
+              ]);
+              if (signal.aborted) {
+                throw new DeepScanTimeoutError("Deep stage aborted: liquidity");
+              }
+              applyMarketToActivity();
+              await publishLpStep("lp_known_first_early_exit", 6);
+              await publishLpStep("lp_final_validation", 7);
+              console.info(
+                `[scan-deep] known-titan bootstrap early-exit ms=${Date.now() - titanStarted}` +
+                  ` positions=${intel.positions.length}` +
+                  ` locked=${intel.positions.filter((p) => p.lockState === "LOCKED_VERIFIED_ONCHAIN").length}`,
+              );
+              return {
+                intelligence: intel,
+                legacyStatus: legacyLpStatus(intel.aggregateState),
+                geckoLiquidity: market.gecko.liquidityUsd,
+                smartOutcome: "known_first_reuse",
+                knownFirstOutcome: "known_first_reuse",
+                skippedBroadQuick: true,
+              };
+            }
+            console.info(
+              `[scan-deep] known-titan bootstrap miss — continuing known-first/multi` +
+                ` ms=${Date.now() - titanStarted}`,
+            );
+          } catch (titanErr) {
+            if (
+              titanErr instanceof DeepScanTimeoutError &&
+              signal.aborted
+            ) {
+              throw titanErr;
+            }
+            console.warn(
+              `[scan-deep] known-titan bootstrap error — continuing ms=${Date.now() - titanStarted}:`,
+              titanErr,
+            );
+          }
+        }
+
+        // Phase 13D/E — Known-Pons early path (before structural reuse / multi wall).
+        // Adapter still revalidates ownerOf; never invents lock from registry alone.
+        // Budget-capped: miss/timeout continues to multi — never starve the stage.
+        // Do NOT modify Pons classification — reliability/publish path only.
+        if (!smartLpEnabled && knownBootstrap.completeness.knownPons === true) {
+          const ponsStarted = Date.now();
+          try {
+            await publishLpStep("lp_known_evidence_validate", 2);
+            const remain = Math.max(0, deadline - Date.now());
+            const ponsBudget = Math.min(
+              KNOWN_PONS_EARLY_BUDGET_MS,
+              Math.max(8_000, remain > 90_000 ? KNOWN_PONS_EARLY_BUDGET_MS : Math.floor(remain * 0.5)),
+            );
+            console.info(
+              `[scan-deep] known-pons bootstrap begin budgetMs=${ponsBudget} remainMs=${remain}`,
+            );
+            const ponsEarly = await tryVerifyKnownPonsBootstrap({
+              tokenAddress: address,
+              poolManagerBalance,
+              decimals,
+              budgetMs: ponsBudget,
+              signal,
+            });
+            if (ponsEarly) {
+              let intel = enrichLp(ponsEarly.intelligence);
+              intel = preferVerifiedLpAgainstIncomplete(priorLpForRefresh, intel);
+              const bootSources = bootstrapPackToDiscoverySources(knownBootstrap);
+              for (const s of bootSources) {
+                if (!intel.discoverySources?.includes(s)) {
+                  intel = {
+                    ...intel,
+                    discoverySources: [...(intel.discoverySources ?? []), s],
+                  };
+                }
+              }
+              // Phase 13E — stamp Locked onto durable `current` BEFORE market wait so
+              // stage-timeout soft-fail cannot drop a proven Pons publish.
+              current = {
+                ...current,
+                overview: {
+                  ...current.overview,
+                  poolId: intel.poolId,
+                  lpLockStatus: legacyLpStatus(intel.aggregateState),
+                  lpLockDetail: intel.detail,
+                  lpIntelligence: intel,
+                },
+              };
+              await publish(
+                current,
+                "liquidity:known-pons-progressive",
+                Date.now() - startedAt,
+                {
+                  stage: "liquidity",
+                  action: "lp_known_first_early_exit",
+                  completedUnits: 5,
+                  totalUnits: 6,
+                },
+              );
+              await Promise.race([
+                ensureMarket(),
+                new Promise<void>((r) => setTimeout(r, 4_000)),
+              ]);
+              if (signal.aborted) {
+                // Locked already stamped — prefer success interrupt over empty soft-fail.
+                throw new DeepScanTimeoutError("Deep stage aborted: liquidity");
+              }
+              applyMarketToActivity();
+              await publishLpStep("lp_known_first_early_exit", 6);
+              await publishLpStep("lp_final_validation", 7);
+              console.info(
+                `[scan-deep] known-pons bootstrap early-exit ms=${Date.now() - ponsStarted}` +
+                  ` positions=${intel.positions.length}` +
+                  ` locked=${intel.positions.filter((p) => p.lockState === "LOCKED_VERIFIED_ONCHAIN").length}`,
+              );
+              return {
+                intelligence: intel,
+                legacyStatus: legacyLpStatus(intel.aggregateState),
+                geckoLiquidity: market.gecko.liquidityUsd,
+                smartOutcome: "known_first_reuse",
+                knownFirstOutcome: "known_first_reuse",
+                skippedBroadQuick: true,
+              };
+            }
+            console.info(
+              `[scan-deep] known-pons bootstrap miss — continuing known-first/multi` +
+                ` ms=${Date.now() - ponsStarted}`,
+            );
+          } catch (ponsErr) {
+            // Only abort liquidity when the stage signal is already done; otherwise
+            // fall through so multi-version can still publish Locked.
+            if (
+              ponsErr instanceof DeepScanTimeoutError &&
+              signal.aborted
+            ) {
+              throw ponsErr;
+            }
+            console.warn(
+              `[scan-deep] known-pons bootstrap error — continuing ms=${Date.now() - ponsStarted}:`,
+              ponsErr,
+            );
+          }
+        }
+
+        // Phase 13E.1 — Known-Hook progressive (GME/OKC). Publish Class B evidence
+        // without awaiting foreign exhaustive discovery.
+        if (!smartLpEnabled && knownBootstrap.completeness.knownHook === true) {
+          const hookStarted = Date.now();
+          try {
+            await publishLpStep("lp_known_evidence_validate", 2);
+            const remain = Math.max(0, deadline - Date.now());
+            const hookBudget = Math.min(
+              KNOWN_HOOK_EARLY_BUDGET_MS,
+              Math.max(
+                4_000,
+                remain > 60_000
+                  ? KNOWN_HOOK_EARLY_BUDGET_MS
+                  : Math.floor(remain * 0.35),
+              ),
+            );
+            console.info(
+              `[scan-deep] known-hook bootstrap begin budgetMs=${hookBudget} remainMs=${remain}`,
+            );
+            const hookEarly = await tryVerifyKnownHookBootstrap({
+              tokenAddress: address,
+              poolManagerBalance,
+              decimals,
+              budgetMs: hookBudget,
+              signal,
+            });
+            if (hookEarly) {
+              let intel = enrichLp(hookEarly.intelligence);
+              intel = preferVerifiedLpAgainstIncomplete(priorLpForRefresh, intel);
+              const bootSources = bootstrapPackToDiscoverySources(knownBootstrap);
+              for (const s of bootSources) {
+                if (!intel.discoverySources?.includes(s)) {
+                  intel = {
+                    ...intel,
+                    discoverySources: [...(intel.discoverySources ?? []), s],
+                  };
+                }
+              }
+              current = {
+                ...current,
+                overview: {
+                  ...current.overview,
+                  poolId: intel.poolId,
+                  lpLockStatus: legacyLpStatus(intel.aggregateState),
+                  lpLockDetail: intel.detail,
+                  lpIntelligence: intel,
+                },
+              };
+              await publish(
+                current,
+                "liquidity:known-hook-progressive",
+                Date.now() - startedAt,
+                {
+                  stage: "liquidity",
+                  action: "lp_known_first_early_exit",
+                  completedUnits: 5,
+                  totalUnits: 6,
+                },
+              );
+              await Promise.race([
+                ensureMarket(),
+                new Promise<void>((r) => setTimeout(r, 3_000)),
+              ]);
+              applyMarketToActivity();
+              await publishLpStep("lp_known_first_early_exit", 6);
+              await publishLpStep("lp_final_validation", 7);
+              console.info(
+                `[scan-deep] known-hook bootstrap early-exit ms=${Date.now() - hookStarted}` +
+                  ` class=${intel.ownershipClass}` +
+                  ` owned=${intel.hookPositionIndex?.hookOwnedCount ?? 0}`,
+              );
+              return {
+                intelligence: intel,
+                legacyStatus: legacyLpStatus(intel.aggregateState),
+                geckoLiquidity: market.gecko.liquidityUsd,
+                smartOutcome: "known_first_reuse",
+                knownFirstOutcome: "known_first_reuse",
+                skippedBroadQuick: true,
+              };
+            }
+            console.info(
+              `[scan-deep] known-hook bootstrap miss — continuing known-first/multi` +
+                ` ms=${Date.now() - hookStarted}`,
+            );
+          } catch (hookErr) {
+            if (
+              hookErr instanceof DeepScanTimeoutError &&
+              signal.aborted
+            ) {
+              throw hookErr;
+            }
+            console.warn(
+              `[scan-deep] known-hook bootstrap error — continuing ms=${Date.now() - hookStarted}:`,
+              hookErr,
+            );
+          }
+        }
 
         // —— Phase 8.1 Known-First early exit (Smart LP off) ——
         if (
@@ -1737,11 +2437,6 @@ export async function enrichScanDeep(
             );
           },
         });
-        await ensureMarket();
-        if (signal.aborted) {
-          throw new DeepScanTimeoutError("Deep stage aborted: liquidity");
-        }
-        applyMarketToActivity();
         if (isHansome && hint.lockTxUrl && hint.positionNftId) {
           for (const p of lp.intelligence.positions) {
             if (p.positionNftId === hint.positionNftId && !p.lockTxHash) {
@@ -1750,10 +2445,58 @@ export async function enrichScanDeep(
           }
         }
         enrichLp(lp.intelligence);
+        // Phase 13D: never downgrade verified LP after incomplete rediscovery.
+        let finalIntel = preferVerifiedLpAgainstIncomplete(
+          priorLpForRefresh,
+          lp.intelligence,
+        );
+        const bootSources = bootstrapPackToDiscoverySources(knownBootstrap);
+        for (const s of bootSources) {
+          if (!finalIntel.discoverySources?.includes(s)) {
+            finalIntel = {
+              ...finalIntel,
+              discoverySources: [...(finalIntel.discoverySources ?? []), s],
+            };
+          }
+        }
+        // Phase 13E — progressive stamp when multi already verified Locked (BEER Pons)
+        // so liquidity stage timeout cannot wipe positions via empty soft-fail.
+        if (
+          finalIntel.positions.some(
+            (p) => p.lockState === "LOCKED_VERIFIED_ONCHAIN",
+          )
+        ) {
+          current = {
+            ...current,
+            overview: {
+              ...current.overview,
+              poolId: finalIntel.poolId,
+              lpLockStatus: legacyLpStatus(finalIntel.aggregateState),
+              lpLockDetail: finalIntel.detail,
+              lpIntelligence: finalIntel,
+            },
+          };
+          await publish(
+            current,
+            "liquidity:verified-progressive",
+            Date.now() - startedAt,
+            {
+              stage: "liquidity",
+              action: "lp_final_validation",
+              completedUnits: 5,
+              totalUnits: 6,
+            },
+          );
+        }
+        await ensureMarket();
+        if (signal.aborted) {
+          throw new DeepScanTimeoutError("Deep stage aborted: liquidity");
+        }
+        applyMarketToActivity();
         await publishLpStep("lp_final_validation", 6);
         return {
-          intelligence: lp.intelligence,
-          legacyStatus: lp.legacyStatus,
+          intelligence: finalIntel,
+          legacyStatus: legacyLpStatus(finalIntel.aggregateState),
           geckoLiquidity: market.gecko.liquidityUsd,
           smartOutcome: smartLpEnabled
             ? smartPlan.outcome
@@ -1791,6 +2534,16 @@ export async function enrichScanDeep(
         lpIntelligence: lpIntelligence.intelligence,
       },
     };
+    // Phase 13D.1 — persist LP snapshot (IDs + evidence refs; always revalidate on reuse).
+    void persistSnapshotFromLpPublish({
+      chainId: ROBINHOOD_CHAIN_ID,
+      tokenAddress: address,
+      intelligence: lpIntelligence.intelligence,
+      discoveryGeneration: attempt.deepAttemptId,
+      publishGeneration: current.lpPublish?.lpGeneration ?? null,
+    }).catch((err) => {
+      console.warn("[scan-deep] persist LP snapshot failed:", err);
+    });
     // Phase 10C-5: publish path → SUCCESS_TERMINAL when verified lock present.
     if (current.lpTerminal || hasVerifiedLockedResult(current)) {
       const contract = markLpTerminalPublishing(
@@ -1946,6 +2699,42 @@ export async function enrichScanDeep(
         { terminal: outcome.kind !== "recover" },
       );
     } else {
+      // Phase 13E.1: if Known-First already stamped Locked/Hook/useful PosM, do not wipe.
+      if (
+        hasVerifiedLockedResult(current) ||
+        current.overview.lpIntelligence?.ownershipClass === "hook_native" ||
+        ((current.overview.lpIntelligence?.positions?.length ?? 0) > 0 &&
+          (current.overview.lpIntelligence?.ownershipClass === "posm_nft" ||
+            (current.overview.lpIntelligence?.discoverySources ?? []).some((s) =>
+              /titan|known_titan|registry_titan/i.test(s),
+            )))
+      ) {
+        const kept = current.overview.lpIntelligence!;
+        stages = setStage(cloneStages(current.analysisStages), "liquidity", "done");
+        current = {
+          ...current,
+          analysisStages: stages,
+          overview: {
+            ...current.overview,
+            poolId: kept.poolId,
+            lpLockStatus: legacyLpStatus(kept.aggregateState),
+            lpLockDetail: kept.detail,
+            lpIntelligence: kept,
+          },
+        };
+        await publish(
+          current,
+          "liquidity:known-first-preserved",
+          Date.now() - startedAt,
+          {
+            stage: "liquidity",
+            action: "lp_known_first_early_exit",
+            completedUnits: 5,
+            totalUnits: 6,
+          },
+          { terminal: true },
+        );
+      } else {
       stages = setStage(
         cloneStages(current.analysisStages),
         "liquidity",
@@ -1956,6 +2745,16 @@ export async function enrichScanDeep(
         { ...current, analysisStages: stages },
         { reason: temporarilyUnavailableDetail("liquidity") },
       );
+      // Prefer any prior verified / Hook evidence over empty timeout stub.
+      // (priorLpForRefresh is try-scoped — re-load durable prior here for catch safety.)
+      const priorIntel =
+        current.overview.lpIntelligence ??
+        (await loadPriorLpForForceDeep({ response: current })) ??
+        null;
+      const softIntel = soft.overview.lpIntelligence;
+      const mergedIntel = softIntel
+        ? preferVerifiedLpAgainstIncomplete(priorIntel, softIntel)
+        : priorIntel;
       current = {
         ...soft,
         analysisStatus: "deep_running",
@@ -1966,11 +2765,34 @@ export async function enrichScanDeep(
             soft.analysisStages!.relationships,
           creator: current.analysisStages?.creator ?? soft.analysisStages!.creator,
           burn: current.analysisStages?.burn ?? soft.analysisStages!.burn,
-          liquidity: "partial",
+          liquidity:
+            mergedIntel &&
+            (mergedIntel.positions.some(
+              (p) => p.lockState === "LOCKED_VERIFIED_ONCHAIN",
+            ) ||
+              mergedIntel.ownershipClass === "hook_native" ||
+              ((mergedIntel.positions?.length ?? 0) > 0 &&
+                (mergedIntel.ownershipClass === "posm_nft" ||
+                  (mergedIntel.discoverySources ?? []).some((s) =>
+                    /titan|known_titan|registry_titan/i.test(s),
+                  ))))
+              ? "done"
+              : "partial",
           score:
             current.analysisStages?.score === "done"
               ? "done"
               : soft.analysisStages!.score,
+        },
+        overview: {
+          ...soft.overview,
+          ...(mergedIntel
+            ? {
+                poolId: mergedIntel.poolId,
+                lpLockStatus: legacyLpStatus(mergedIntel.aggregateState),
+                lpLockDetail: mergedIntel.detail,
+                lpIntelligence: mergedIntel,
+              }
+            : {}),
         },
       };
       await publish(
@@ -1990,6 +2812,7 @@ export async function enrichScanDeep(
         },
         { terminal: true },
       );
+      }
     }
   }
   };
@@ -2508,7 +3331,11 @@ export async function enrichScanDeep(
         ],
         {
           attempt,
-          hardBoundMs: Math.min(remainingMs(deadline) + 5_000, 188_000),
+          // Phase 13D.2 — adaptive hard bound (extends while discovery can progress).
+          hardBoundMs: computeAdaptiveHardBoundMs({
+            remainingDeadlineMs: remainingMs(deadline),
+            adaptiveLiquidityMaxMs: ADAPTIVE_LIQUIDITY_BUDGET.maxBudgetMs + 5_000,
+          }),
           onHardBound: () => {
             markAnalyzingStagesPartial("parallel_hard_bound");
             void publish(
@@ -2690,14 +3517,24 @@ export async function enrichScanDeep(
           });
           current = outcome.response;
         }
+        // Phase 13E.1: never let a stale `stages` snapshot overwrite Known-First
+        // liquidity:done / Hook terminal with analyzing/partial.
         current = {
           ...current,
           analysisStages: {
-            ...current.analysisStages!,
             ...stages,
+            ...current.analysisStages!,
             score: "done",
-            ...(current.lpTerminal?.terminalState === "SUCCESS_TERMINAL"
-              ? { liquidity: "done" as const }
+            ...(current.lpTerminal?.terminalState === "SUCCESS_TERMINAL" ||
+            hasVerifiedLockedResult(current) ||
+            current.overview.lpIntelligence?.ownershipClass === "hook_native"
+              ? {
+                  liquidity:
+                    current.analysisStages?.liquidity === "done" ||
+                    current.analysisStages?.liquidity === "unknown"
+                      ? current.analysisStages.liquidity
+                      : ("done" as const),
+                }
               : current.lpTerminal?.terminalState === "FAILED_TERMINAL"
                 ? { liquidity: "unknown" as const }
                 : {}),

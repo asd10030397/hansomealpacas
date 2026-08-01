@@ -11,6 +11,30 @@ export const DEEP_PUBLISH_PERSIST_CAP_MS = 2_500;
 export const DEEP_TERMINAL_PUBLISH_ESCAPE_MS = 3_000;
 
 /**
+ * Phase 13E.1 — Known-First Locked / Hook Native must survive Candidate KV latency.
+ * Live tip4 evidence: `terminal publish persist capped after 2500ms` while
+ * `[known-pons] hit` already verified #436637 — local settle without KV left status empty.
+ */
+export const DEEP_KNOWN_FIRST_PUBLISH_PERSIST_CAP_MS = 25_000;
+
+/** Escape budget for Known-First terminal publishes waiting on the publish chain. */
+export const DEEP_KNOWN_FIRST_TERMINAL_ESCAPE_MS = 28_000;
+
+/** Progress actions that carry durable Known-First LP evidence. */
+export function isKnownFirstDurablePublishAction(
+  action: string | undefined | null,
+): boolean {
+  if (!action) return false;
+  return (
+    action === "lp_known_first_early_exit" ||
+    action.includes("known-pons") ||
+    action.includes("known-titan") ||
+    action.includes("known-hook") ||
+    action.includes("known_first")
+  );
+}
+
+/**
  * Hard upper bound for the parallel wave barrier.
  * Aligns with DEEP_STAGE_BUDGET_MS.liquidity (180s) + publish escape headroom.
  * Instrumentation / safety net only — does not raise per-stage budgets.
@@ -55,7 +79,10 @@ export type DeepAttemptCancelReason =
   | "hard_bound"
   | "interactive_stale"
   | "external"
-  | "finalized";
+  | "finalized"
+  /** Phase 13C.1 — local coalesce without durable lease. */
+  | "orphan_zombie_coalesce"
+  | "zombie_coalesce";
 
 export type DeepAttemptHandle = {
   deepAttemptId: string;

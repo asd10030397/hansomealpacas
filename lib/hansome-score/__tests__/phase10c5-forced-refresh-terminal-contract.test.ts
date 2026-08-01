@@ -209,7 +209,7 @@ describe("Phase 10C-5 publish + verified helpers", () => {
     expect(hasVerifiedLockedResult(withVerified(base()))).toBe(true);
   });
 
-  it("shouldPublishLpBody accepts FAILED_TERMINAL unknown liquidity", () => {
+  it("shouldPublishLpBody accepts FAILED_TERMINAL unknown liquidity (non-cleared)", () => {
     const snap = base();
     const failed = resolveLpInterruptOutcome({
       response: snap,
@@ -227,6 +227,34 @@ describe("Phase 10C-5 publish + verified helpers", () => {
           ...failed.response.overview,
           lpIntelligence: {
             ...failed.response.overview.lpIntelligence!,
+            detail: "Force LP recovery exhausted — lock unknown.",
+            lockDistribution: {
+              available: false,
+              reason: "recovery_exhausted",
+            },
+          },
+        },
+      } as ScanResponse),
+    ).toBe(true);
+  });
+
+  it("shouldPublishLpBody rejects cleared shell even on FAILED_TERMINAL (13C)", () => {
+    const snap = base();
+    const failed = resolveLpInterruptOutcome({
+      response: snap,
+      contract: {
+        ...snap.lpTerminal!,
+        recoveryAttempts: MAX_LP_FORCE_RECOVERY_ATTEMPTS,
+      },
+      interruptReason: "recovery_exhausted",
+    });
+    expect(
+      shouldPublishLpBody({
+        ...failed.response,
+        overview: {
+          ...failed.response.overview,
+          lpIntelligence: {
+            ...failed.response.overview.lpIntelligence!,
             detail: "LP evidence cleared — awaiting fresh multi-version discovery.",
             lockDistribution: {
               available: false,
@@ -235,7 +263,7 @@ describe("Phase 10C-5 publish + verified helpers", () => {
           },
         },
       } as ScanResponse),
-    ).toBe(true);
+    ).toBe(false);
   });
 });
 

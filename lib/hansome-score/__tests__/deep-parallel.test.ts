@@ -102,6 +102,62 @@ describe("mergeParallelStageWrite", () => {
     expect(merged.analysisStages?.liquidity).toBe("done");
     expect(merged.analysisStages?.creator).toBe("done");
   });
+
+  it("13E.1: partial settle never wipes LOCKED_VERIFIED Known-First LP", () => {
+    const prev = baseSnap();
+    prev.overview = {
+      ...prev.overview,
+      lpLockStatus: "locked",
+      lpLockDetail: "Known-Pons bootstrap verified",
+      lpIntelligence: {
+        poolDetected: true,
+        positions: [
+          {
+            positionNftId: "436637",
+            lockState: "LOCKED_VERIFIED_ONCHAIN",
+            owner: "0x736D76699C26D0d966744cAe304C000d471f7F35",
+          },
+        ],
+        aggregateState: "ALL_LOCKED",
+        aggregateLockState: "LOCKED_VERIFIED_ONCHAIN",
+        knownPositionsVerified: true,
+        detail: "Known-Pons bootstrap",
+        discoverySources: ["pons_pre_parallel"],
+      } as ScanResponse["overview"]["lpIntelligence"],
+    };
+    const incoming = {
+      ...prev,
+      overview: {
+        ...prev.overview,
+        lpLockStatus: "unknown" as const,
+        lpLockDetail:
+          "Temporarily unavailable — liquidity did not finish in time.",
+        lpIntelligence: {
+          poolDetected: true,
+          positions: [],
+          aggregateState: "UNKNOWN_INCOMPLETE",
+          aggregateLockState: "UNABLE_TO_DETERMINE",
+          knownPositionsVerified: false,
+          detail:
+            "Temporarily unavailable — liquidity did not finish in time.",
+        } as unknown as ScanResponse["overview"]["lpIntelligence"],
+      },
+      analysisStages: {
+        ...prev.analysisStages!,
+        liquidity: "partial" as const,
+        relationships: "partial" as const,
+      },
+    };
+    const merged = mergeParallelStageWrite(prev, incoming, "partial");
+    expect(
+      merged.overview.lpIntelligence?.positions?.some(
+        (p) => p.positionNftId === "436637",
+      ),
+    ).toBe(true);
+    expect(merged.overview.lpIntelligence?.positions?.[0]?.lockState).toBe(
+      "LOCKED_VERIFIED_ONCHAIN",
+    );
+  });
 });
 
 describe("createDeepStagePublishHub", () => {
@@ -283,6 +339,27 @@ describe("enrichScanDeep parallel orchestration", () => {
     const fetchEthUsd = vi.fn().mockResolvedValue(3000);
 
     vi.resetModules();
+    // Keep parallel-wave timing deterministic: do not await live Known-Titan RPC.
+    vi.doMock("@/lib/hansome-score/lp/known-bootstrap-resolver", async () => {
+      const actual = await vi.importActual<
+        typeof import("@/lib/hansome-score/lp/known-bootstrap-resolver")
+      >("@/lib/hansome-score/lp/known-bootstrap-resolver");
+      return {
+        ...actual,
+        tryVerifyKnownTitanBootstrap: async () => null,
+        tryVerifyKnownPonsBootstrap: async () => null,
+        tryVerifyKnownHookBootstrap: async () => null,
+        staticKnownBootstrapSeeds: (token: string) => ({
+          ...actual.staticKnownBootstrapSeeds(token),
+          completeness: {
+            ...actual.staticKnownBootstrapSeeds(token).completeness,
+            knownTitan: false,
+            knownPons: false,
+            knownHook: false,
+          },
+        }),
+      };
+    });
     vi.doMock("@/lib/hansome-score/lp/multi", () => ({
       detectMultiVersionLpIntelligence: (...args: unknown[]) => detectLp(...args),
     }));
@@ -437,10 +514,8 @@ describe("enrichScanDeep parallel orchestration", () => {
       };
     });
 
-    let transferStarted = false;
-    let sawLiqDoneWhileTransferPending = false;
+    let sawLiqDoneWhileCreatorPending = false;
     fetchTransfersPaged.mockImplementation(async () => {
-      transferStarted = true;
       await new Promise((r) => setTimeout(r, 80));
       return {
         transfers: [],
@@ -516,12 +591,13 @@ describe("enrichScanDeep parallel orchestration", () => {
         deadline: Date.now() + 60_000,
         relationshipSampleSize: 1,
         onProgress: async (snap) => {
+          // 13E.1 Known-Titan pre-parallel may finish liquidity before transfers
+          // start; still require liquidity not gated behind creatorBurn done.
           if (
-            transferStarted &&
             snap.analysisStages?.liquidity === "done" &&
             snap.analysisStages?.creator !== "done"
           ) {
-            sawLiqDoneWhileTransferPending = true;
+            sawLiqDoneWhileCreatorPending = true;
           }
         },
       },
@@ -531,6 +607,6 @@ describe("enrichScanDeep parallel orchestration", () => {
     expect(fetchTransfersPaged).toHaveBeenCalledTimes(1);
     expect(result.analysisStages?.liquidity).toBe("done");
     expect(result.analysisStages?.creator).toBe("done");
-    expect(sawLiqDoneWhileTransferPending).toBe(true);
+    expect(sawLiqDoneWhileCreatorPending).toBe(true);
   });
 });

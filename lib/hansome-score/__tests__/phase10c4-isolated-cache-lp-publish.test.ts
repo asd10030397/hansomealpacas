@@ -211,10 +211,12 @@ describe("Phase 10C-4 forced LP refresh clears body", () => {
       /cleared for full refresh/,
     );
     expect(cleared.lpPublish).toBeUndefined();
+    // Phase 13C: rearm flips liquidity analyzing but does not destroy bodies
+    // (transactional clear is beginForceLpRefreshArm / clearStaleLpEvidence).
     const rearmed = rearmPartialForDeepRetry(sticky);
     expect(rearmed.analysisStages?.liquidity).toBe("analyzing");
-    expect(rearmed.overview.lpIntelligence.detail).toMatch(/LP evidence cleared/);
-    expect(rearmed.overview.lpIntelligence.positions).toEqual([]);
+    expect(rearmed.overview.lpIntelligence.positions?.length).toBeGreaterThan(0);
+    expect(rearmed.overview.lpIntelligence.detail).not.toMatch(/LP evidence cleared/);
   });
 
   it("timeout detail removed after successful refresh clear", () => {

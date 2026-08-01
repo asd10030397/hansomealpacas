@@ -307,80 +307,95 @@ export async function discoverTitanLocksForToken(
 
 
 /**
-
  * Resolve Titan lock(s) for specific Position NFT IDs without requiring token filter.
-
- * Scans the full locker count (batched) — cheap while count stays small (~tens).
-
+ *
+ * Phase 13E.1: prefer address-indexed lockers (manager + known children) before
+ * a bounded recent-window scan. Avoids full tokenLockerCount sweeps that starve
+ * HANSOME Known-Titan cold bootstrap under Candidate RPC latency.
+ * Classification unchanged — still requires getTokenLockData + ownerOf revalidation.
  */
-
 export async function lookupTitanLocksByPositionIds(
-
   positionNftIds: bigint[],
-
 ): Promise<Map<string, TitanLockMatch>> {
-
   const wanted = new Set(positionNftIds.map((id) => id.toString()));
-
   if (wanted.size === 0) return new Map();
 
-
-
   const c = client();
-
-  let count = 0;
-
-  try {
-
-    count = Number(
-
-      await c.readContract({
-
-        address: TITAN_LOCKER_MANAGER,
-
-        abi: titanLockerAbi,
-
-        functionName: "tokenLockerCount",
-
-      }),
-
-    );
-
-  } catch {
-
-    return new Map();
-
-  }
-
-  if (!Number.isFinite(count) || count <= 0) return new Map();
-
-
-
-  const ids = Array.from({ length: count }, (_, i) => i + 1);
-
-  const rows = await mapInBatches(ids, TITAN_BATCH, (lockId) => readLockData(c, lockId));
-
   const out = new Map<string, TitanLockMatch>();
 
-  for (const m of rows) {
+  const absorb = (rows: Array<TitanLockMatch | null>) => {
+    for (const m of rows) {
+      if (!m) continue;
+      const key = m.positionNftId.toString();
+      if (!wanted.has(key)) continue;
+      const prev = out.get(key);
+      if (!prev || m.unlockTime > prev.unlockTime) out.set(key, m);
+    }
+  };
 
-    if (!m) continue;
-
-    const key = m.positionNftId.toString();
-
-    if (!wanted.has(key)) continue;
-
-    const prev = out.get(key);
-
-    if (!prev || m.unlockTime > prev.unlockTime) out.set(key, m);
-
+  // 1) Address-indexed path (manager + known Titan children)
+  const addrs = new Set<string>();
+  for (const locker of LOCKER_REGISTRY) {
+    if (locker.id !== "titan_v2") continue;
+    addrs.add(locker.managerAddress.toLowerCase());
+    for (const child of locker.knownChildAddresses) {
+      addrs.add(child.toLowerCase());
+    }
   }
 
+  const candidateLockIds = new Set<number>();
+  await mapInBatches([...addrs], TITAN_BATCH, async (addr) => {
+    try {
+      const ids = (await c.readContract({
+        address: TITAN_LOCKER_MANAGER,
+        abi: titanLockerAbi,
+        functionName: "getTokenLockersForAddress",
+        args: [getAddress(addr) as Address],
+      })) as unknown as readonly (bigint | number)[];
+      for (const id of ids) candidateLockIds.add(Number(id));
+    } catch {
+      /* ignore */
+    }
+    return null;
+  });
+
+  if (candidateLockIds.size > 0) {
+    absorb(
+      await mapInBatches([...candidateLockIds], TITAN_BATCH, (lockId) =>
+        readLockData(c, lockId),
+      ),
+    );
+  }
+
+  // Address-index hit at least one wanted NFT — remaining seeds are typically EOA.
+  if (out.size > 0) {
+    return out;
+  }
+
+  // 2) Fallback: bounded recent window (same bound as discoverTitanLocksForToken)
+  let count = 0;
+  try {
+    count = Number(
+      await c.readContract({
+        address: TITAN_LOCKER_MANAGER,
+        abi: titanLockerAbi,
+        functionName: "tokenLockerCount",
+      }),
+    );
+  } catch {
+    return out;
+  }
+  if (!Number.isFinite(count) || count <= 0) return out;
+
+  const recentIds: number[] = [];
+  for (let i = count; i >= Math.max(1, count - 160); i--) recentIds.push(i);
+  absorb(
+    await mapInBatches(recentIds, TITAN_BATCH, (lockId) =>
+      readLockData(c, lockId),
+    ),
+  );
   return out;
-
 }
-
-
 
 export async function lookupTitanLockByPositionId(
 

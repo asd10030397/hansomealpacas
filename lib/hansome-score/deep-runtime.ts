@@ -77,22 +77,27 @@ export function leaseState(
 }
 
 /**
- * Required invariant:
- * analyzing ⇒ deepInflight OR retryScheduled OR valid lease
+ * Required invariant (Phase 13C.1):
+ * analyzing ⇒ retryScheduled OR valid durable lease
+ *
+ * Process-local `deepInflight` alone is NOT ownership — zombie coalesce
+ * entries previously masked orphans (BEER: analyzing + inflight + lease=none).
+ * `deepInflight` remains on the params for call-site compatibility / diagnostics.
  */
 export function isOrphanAnalyzing(params: {
   response: Pick<
     ScanResponse,
     "analysisStages" | "analysisStatus" | "deepRuntime" | "deepRetryCount"
   >;
+  /** @deprecated Process-local only — ignored for orphan ownership (13C.1). */
   deepInflight: boolean;
   now?: number;
 }): boolean {
   if (!hasAnalyzingDeepStage(params.response)) return false;
-  if (params.deepInflight) return false;
   const rt = params.response.deepRuntime;
   if (rt?.retryScheduled) return false;
   if (isLeaseValid(rt?.lease, params.now)) return false;
+  void params.deepInflight;
   return true;
 }
 
@@ -213,13 +218,19 @@ export function clearDeepLease(
 export function toDeepRuntimeDiagnostics(
   response: Pick<ScanResponse, "deepAttemptId" | "deepRetryCount" | "deepRuntime" | "deepStartedAt">,
   now = Date.now(),
+  opts?: { deepInflightLocal?: boolean },
 ): DeepRuntimeDiagnostics {
   const lease = response.deepRuntime?.lease;
+  const deepLeaseState = leaseState(lease, now);
   return {
     deepGeneration: response.deepAttemptId,
     deepWorkerId: lease?.workerId,
     deepAttempt: response.deepRetryCount,
-    deepLeaseState: leaseState(lease, now),
+    deepLeaseState,
+    /** Durable ownership — true only when lease is valid. */
+    deepLeaseOwned: deepLeaseState === "valid",
+    /** Process-local coalesce only — not durable ownership. */
+    deepInflightLocal: opts?.deepInflightLocal === true,
     deepStartedAt: lease?.startedAt ?? response.deepStartedAt,
     deepHeartbeatAt: lease?.heartbeatAt,
     deepExpiresAt: lease?.expiresAt,

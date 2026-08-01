@@ -30,6 +30,8 @@ export {
   ensureDeepAnalysis,
   peekScanSnapshot,
   recoverStaleDeepIfNeeded,
+  recoverOrphanAnalyzingIfNeeded,
+  evictLocalDeepCoalesce,
   SCAN_FULL_TTL_MS,
   SCAN_STALE_TTL_MS,
   DEEP_SCAN_MAX_EXECUTION_MS,
@@ -104,6 +106,30 @@ export {
   buildUniswapVersionCoverage,
   computeMultiVersionAggregate,
 } from "@/lib/hansome-score/lp/multi";
+export {
+  resolveKnownBootstrap,
+  mergeKnownBootstrapInputs,
+  preferVerifiedLpAgainstIncomplete,
+  staticKnownBootstrapSeeds,
+  tryVerifyKnownPonsBootstrap,
+  tryVerifyKnownTitanBootstrap,
+  tryVerifyKnownHookBootstrap,
+  KNOWN_PONS_EARLY_BUDGET_MS,
+  KNOWN_TITAN_EARLY_BUDGET_MS,
+  KNOWN_HOOK_EARLY_BUDGET_MS,
+} from "@/lib/hansome-score/lp/known-bootstrap-resolver";
+export {
+  AdaptiveDiscoveryBudget,
+  ADAPTIVE_LIQUIDITY_BUDGET,
+  ADAPTIVE_VERSION_BUDGETS,
+  computeAdaptiveHardBoundMs,
+} from "@/lib/hansome-score/lp/adaptive-discovery-budget";
+export {
+  loadLpPersistentSnapshot,
+  persistSnapshotFromLpPublish,
+  loadSnapshotForForceRefresh,
+  buildLpPersistentSnapshot,
+} from "@/lib/hansome-score/lp/lp-persistent-snapshot";
 export {
   emptyUniswapVersionCoverage,
   testCompleteVersionCoverage,

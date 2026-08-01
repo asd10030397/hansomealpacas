@@ -96,6 +96,36 @@ async function readLaunchedToken(
   }
 }
 
+function parsePositionsRow(row: unknown): {
+  token0: Address;
+  token1: Address;
+  fee: number;
+  tickLower: number;
+  tickUpper: number;
+  liquidity: bigint;
+} | null {
+  const r = row as Record<string, unknown> & {
+    [i: number]: unknown;
+  };
+  const token0 = (r.token0 ?? r[2]) as Address | undefined;
+  const token1 = (r.token1 ?? r[3]) as Address | undefined;
+  const fee = r.fee ?? r[4];
+  const tickLower = r.tickLower ?? r[5];
+  const tickUpper = r.tickUpper ?? r[6];
+  const liquidity = r.liquidity ?? r[7];
+  if (token0 == null || token1 == null || fee == null || liquidity == null) {
+    return null;
+  }
+  return {
+    token0: getAddress(token0) as Address,
+    token1: getAddress(token1) as Address,
+    fee: Number(fee),
+    tickLower: Number(tickLower),
+    tickUpper: Number(tickUpper),
+    liquidity: BigInt(liquidity as bigint | number | string),
+  };
+}
+
 async function readOwnerOf(
   c: PublicClient,
   npm: Address,
@@ -128,32 +158,13 @@ async function readPositions(
   liquidity: bigint;
 } | null> {
   try {
-    const row = (await c.readContract({
+    const row = await c.readContract({
       address: npm,
       abi: uniswapV3NpmAbi,
       functionName: "positions",
       args: [positionId],
-    })) as unknown;
-    const r = row as Record<string, unknown> & {
-      [i: number]: unknown;
-    };
-    const token0 = (r.token0 ?? r[2]) as Address | undefined;
-    const token1 = (r.token1 ?? r[3]) as Address | undefined;
-    const fee = r.fee ?? r[4];
-    const tickLower = r.tickLower ?? r[5];
-    const tickUpper = r.tickUpper ?? r[6];
-    const liquidity = r.liquidity ?? r[7];
-    if (token0 == null || token1 == null || fee == null || liquidity == null) {
-      return null;
-    }
-    return {
-      token0: getAddress(token0) as Address,
-      token1: getAddress(token1) as Address,
-      fee: Number(fee),
-      tickLower: Number(tickLower),
-      tickUpper: Number(tickUpper),
-      liquidity: BigInt(liquidity as bigint | number | string),
-    };
+    });
+    return parsePositionsRow(row);
   } catch {
     return null;
   }
@@ -176,6 +187,54 @@ async function resolvePoolAddress(
     return getAddress(pool) as Address;
   } catch {
     return null;
+  }
+}
+
+/**
+ * Parallel ownerOf + positions after getLaunchedToken (same classification gates).
+ * Cuts sequential RPC round-trips that starved Candidate liquidity budgets.
+ */
+async function readOwnerAndPositions(
+  c: PublicClient,
+  npm: Address,
+  positionId: bigint,
+): Promise<{
+  owner: Address | null;
+  pos: ReturnType<typeof parsePositionsRow>;
+}> {
+  try {
+    const results = await c.multicall({
+      allowFailure: true,
+      contracts: [
+        {
+          address: npm,
+          abi: uniswapV3NpmAbi,
+          functionName: "ownerOf",
+          args: [positionId],
+        },
+        {
+          address: npm,
+          abi: uniswapV3NpmAbi,
+          functionName: "positions",
+          args: [positionId],
+        },
+      ],
+    });
+    const ownerRaw = results[0];
+    const posRaw = results[1];
+    const owner =
+      ownerRaw.status === "success"
+        ? (getAddress(ownerRaw.result as Address) as Address)
+        : null;
+    const pos =
+      posRaw.status === "success" ? parsePositionsRow(posRaw.result) : null;
+    return { owner, pos };
+  } catch {
+    const [owner, pos] = await Promise.all([
+      readOwnerOf(c, npm, positionId),
+      readPositions(c, npm, positionId),
+    ]);
+    return { owner, pos };
   }
 }
 
@@ -205,14 +264,17 @@ export const ponsLaunchLockerAdapter: LockerAdapter = {
       return [];
     }
 
-    const owner = await readOwnerOf(ctx.client, npm, launched.positionId);
+    // Parallel ownerOf + positions (same gates; fewer RPC round-trips on Candidate).
+    const { owner, pos } = await readOwnerAndPositions(
+      ctx.client,
+      npm,
+      launched.positionId,
+    );
     if (!owner) return [];
     if (owner.toLowerCase() !== PONS_LAUNCH_LOCKER.toLowerCase()) {
       // Mapping exists but NFT is not held by the locker — do not claim locked.
       return [];
     }
-
-    const pos = await readPositions(ctx.client, npm, launched.positionId);
     if (!pos) return [];
 
     // Token must appear in the position pair (defense against stale mapping).
@@ -228,17 +290,17 @@ export const ponsLaunchLockerAdapter: LockerAdapter = {
     if (pos.liquidity <= 0n) return [];
 
     // Re-read ownerOf immediately before emit — still must equal locker.
-    const ownerRecheck = await readOwnerOf(ctx.client, npm, launched.positionId);
+    // Overlap with getPool to keep total round-trips low.
+    const [ownerRecheck, pool] = await Promise.all([
+      readOwnerOf(ctx.client, npm, launched.positionId),
+      resolvePoolAddress(ctx.client, pos.token0, pos.token1, pos.fee),
+    ]);
     if (
       !ownerRecheck ||
       ownerRecheck.toLowerCase() !== PONS_LAUNCH_LOCKER.toLowerCase()
     ) {
       return [];
     }
-
-    const pool =
-      (await resolvePoolAddress(ctx.client, pos.token0, pos.token1, pos.fee)) ??
-      null;
     if (!pool) return [];
 
     // Launched mapping poolFee should match positions fee when present.

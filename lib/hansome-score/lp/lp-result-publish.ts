@@ -564,11 +564,11 @@ export function shouldPublishLpBody(
   }
   const intel = incoming.overview?.lpIntelligence;
   if (!intel) return false;
-  // Cleared pending body must not publish as terminal evidence (unless failed hard terminal).
+  // Phase 13C: never dual-write a cleared pending shell as durable LP evidence
+  // (including FAILED_TERMINAL). Sticky cleared publish blocks recovery slots.
   if (
-    incoming.lpTerminal?.terminalState !== "FAILED_TERMINAL" &&
-    (intel.detail?.includes("LP evidence cleared") ||
-      intel.lockDistribution?.reason === "LP evidence cleared for full refresh")
+    intel.detail?.includes("LP evidence cleared") ||
+    intel.lockDistribution?.reason === "LP evidence cleared for full refresh"
   ) {
     return false;
   }

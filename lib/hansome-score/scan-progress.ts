@@ -310,7 +310,7 @@ export function shouldAcceptDeepSettle(
  * Re-arm a settled partial so Deep can continue incomplete stages.
  * Preserves `done` stages; flips retryable gaps back to `analyzing`.
  * Assigns a new deepAttemptId generation.
- * Phase 10C-4: force-LP path clears stale LP evidence bodies (not stage flags only).
+ * Phase 13C: re-arms stages only — LP body clear is owned by force-LP recovery txn.
  */
 export function rearmPartialForDeepRetry(response: ScanResponse): ScanResponse {
   const prior = response.analysisStages;
@@ -326,73 +326,17 @@ export function rearmPartialForDeepRetry(response: ScanResponse): ScanResponse {
     score: forceLp ? "analyzing" : nextStageAfterRearm(prior?.score),
   };
 
-  const base = forceLp
-    ? // Lazy import avoided — clear via local helper to keep scan-progress free of KV.
-      clearStaleLpEvidenceLocal(response)
-    : response;
-
+  // Phase 13C: do NOT clear LP bodies here. Auto-rearm used to call
+  // clearStaleLpEvidenceLocal on sticky incomplete, which destroyed mid-flight /
+  // soft-fail evidence without a recovery slot (13B.1 soak: cleared@~53s on cold).
+  // Explicit forceLp goes through beginForceLpRefreshArm (stash → arm → commit/rollback).
   return assignDeepAttempt({
-    ...base,
+    ...response,
     analysisPhase: "fast",
     analysisStatus: "deep_running",
     scoreProvisional: true,
     analysisStages: nextStages,
   });
-}
-
-/** Local clear (mirrors lp-result-publish.clearStaleLpEvidence; no KV). */
-function clearStaleLpEvidenceLocal(response: ScanResponse): ScanResponse {
-  const overview = response.overview;
-  if (!overview?.lpIntelligence) {
-    return { ...response, lpPublish: undefined };
-  }
-  return {
-    ...response,
-    lpPublish: undefined,
-    overview: {
-      ...overview,
-      poolId: null,
-      lpLockStatus: "unknown",
-      lpLockDetail: null,
-      lpIntelligence: {
-        ...overview.lpIntelligence,
-        poolId: null,
-        positions: [],
-        discoveryComplete: false,
-        knownPositionsVerified: false,
-        exhaustiveDiscoveryComplete: false,
-        discoverySources: [],
-        aggregateLockState: "UNABLE_TO_DETERMINE",
-        aggregateState: "UNKNOWN_INCOMPLETE",
-        positionCounts: {
-          detected: 0,
-          material: 0,
-          locked: 0,
-          unlocked: 0,
-          unknown: 0,
-        },
-        lockDistribution: {
-          ...overview.lpIntelligence.lockDistribution,
-          available: false,
-          reason: "LP evidence cleared for full refresh",
-          method: null,
-          lockedPct: null,
-          unlockedPct: null,
-          unknownPct: null,
-          lockedUsd: null,
-          unlockedUsd: null,
-          unknownUsd: null,
-          totalPositionUsd: null,
-          poolLiquidityUsd: null,
-          reconciledWithPool: false,
-        },
-        completenessWarning:
-          "Prior LP evidence invalidated — multi-version discovery re-armed.",
-        detail: "LP evidence cleared — awaiting fresh multi-version discovery.",
-        evidenceLevel: "unavailable",
-      },
-    },
-  };
 }
 
 /** Call when a deep attempt settles as partial/failed. */

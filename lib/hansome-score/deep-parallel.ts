@@ -16,9 +16,12 @@ import {
   type DeepProgressStage,
 } from "@/lib/hansome-score/deep-progress";
 import {
+  DEEP_KNOWN_FIRST_PUBLISH_PERSIST_CAP_MS,
+  DEEP_KNOWN_FIRST_TERMINAL_ESCAPE_MS,
   DEEP_PARALLEL_HARD_BOUND_MS,
   DEEP_PUBLISH_PERSIST_CAP_MS,
   DEEP_TERMINAL_PUBLISH_ESCAPE_MS,
+  isKnownFirstDurablePublishAction,
   isTerminalProgressAction,
   raceWithCap,
   type DeepAttemptHandle,
@@ -27,8 +30,35 @@ import {
   beginDeepStallSpan,
   endDeepStallSpan,
 } from "@/lib/hansome-score/deep-stall-trace";
+import { preferVerifiedLpAgainstIncomplete } from "@/lib/hansome-score/lp/known-bootstrap-resolver";
 import { mergeMonotonicAnalysisStages } from "@/lib/hansome-score/scan-progress";
-import type { ScanResponse } from "@/lib/hansome-score/types";
+import type { LpIntelligence, ScanResponse } from "@/lib/hansome-score/types";
+
+/** Phase 13E.1 — Known-First Locked/Hook wins over empty late/timeout sibling writes. */
+function mergeLpIntelligencePreferKnownFirst(
+  prev: LpIntelligence | null | undefined,
+  incoming: LpIntelligence | null | undefined,
+): LpIntelligence | null | undefined {
+  if (!incoming) return prev;
+  if (!prev) return incoming;
+  return preferVerifiedLpAgainstIncomplete(prev, incoming);
+}
+
+function hasDurableKnownFirstLp(snap: ScanResponse | null | undefined): boolean {
+  const intel = snap?.overview?.lpIntelligence;
+  if (!intel) return false;
+  if (intel.ownershipClass === "hook_native") {
+    return (
+      intel.hookPositionIndex != null ||
+      intel.v4OwnershipEvidence != null ||
+      (intel.ownershipClassEvidence?.length ?? 0) > 0 ||
+      (intel.positions?.length ?? 0) > 0
+    );
+  }
+  return (intel.positions ?? []).some(
+    (p) => p.lockState === "LOCKED_VERIFIED_ONCHAIN",
+  );
+}
 
 /** Explicit Deep parallel wave — score waits for these only. */
 export const DEEP_PARALLEL_STAGE_IDS = [
@@ -77,6 +107,27 @@ export type DeepStagePublishOptions = {
   /** When true, skip if attempt cancelled/finalized (default true for terminal). */
   fence?: boolean;
 };
+
+function resolvePublishPersistBudgets(
+  progress?: DeepProgressPatch,
+  stamped?: ScanResponse,
+): { persistCapMs: number; escapeMs: number; knownFirst: boolean } {
+  const knownFirst =
+    isKnownFirstDurablePublishAction(progress?.action) ||
+    hasDurableKnownFirstLp(stamped);
+  if (knownFirst) {
+    return {
+      persistCapMs: DEEP_KNOWN_FIRST_PUBLISH_PERSIST_CAP_MS,
+      escapeMs: DEEP_KNOWN_FIRST_TERMINAL_ESCAPE_MS,
+      knownFirst: true,
+    };
+  }
+  return {
+    persistCapMs: DEEP_PUBLISH_PERSIST_CAP_MS,
+    escapeMs: DEEP_TERMINAL_PUBLISH_ESCAPE_MS,
+    knownFirst: false,
+  };
+}
 
 export type DeepStagePublishHub = {
   /**
@@ -147,16 +198,22 @@ export function createDeepStagePublishHub(opts: {
   const persistCapped = async (
     stamped: ScanResponse,
     terminal: boolean,
+    persistCapMs: number,
+    knownFirst: boolean,
   ): Promise<"completed" | "capped" | "error"> => {
     if (!opts.onProgress) return "completed";
-    const raced = await raceWithCap(
-      opts.onProgress(stamped),
-      DEEP_PUBLISH_PERSIST_CAP_MS,
-    );
+    const work = opts.onProgress(stamped);
+    const raced = await raceWithCap(work, persistCapMs);
     if (raced.ok) return "completed";
-    if (terminal) {
+    // Known-First: keep the in-flight KV write alive and log the durability miss.
+    if (knownFirst) {
       console.warn(
-        `${prefix} terminal publish persist capped after ${DEEP_PUBLISH_PERSIST_CAP_MS}ms (stage settled locally)`,
+        `${prefix} known-first publish persist capped after ${persistCapMs}ms — continuing uncapped background persist`,
+      );
+      void work.catch(() => {});
+    } else if (terminal) {
+      console.warn(
+        `${prefix} terminal publish persist capped after ${persistCapMs}ms (stage settled locally)`,
       );
     }
     return "capped";
@@ -172,6 +229,7 @@ export function createDeepStagePublishHub(opts: {
     const terminal =
       publishOpts?.terminal === true ||
       isTerminalProgressAction(progress?.action) ||
+      isKnownFirstDurablePublishAction(progress?.action) ||
       label.includes(":timeout") ||
       label.includes(":error") ||
       label.endsWith(":done") ||
@@ -200,12 +258,22 @@ export function createDeepStagePublishHub(opts: {
       });
 
       const stamped = applyLocal(apply, label, ms, progress);
+      const budgets = resolvePublishPersistBudgets(progress, stamped);
       try {
-        const persistStatus = await persistCapped(stamped, terminal);
+        const persistStatus = await persistCapped(
+          stamped,
+          terminal,
+          budgets.persistCapMs,
+          budgets.knownFirst,
+        );
         endDeepStallSpan(span, persistStatus === "completed" ? "completed" : "timed_out", {
           publishSequence: stamped.deepProgress?.sequence,
           timeoutReason:
-            persistStatus === "capped" ? "publish_persist_cap" : undefined,
+            persistStatus === "capped"
+              ? budgets.knownFirst
+                ? "known_first_publish_persist_cap"
+                : "publish_persist_cap"
+              : undefined,
         });
       } catch (err) {
         endDeepStallSpan(span, "aborted", {
@@ -218,18 +286,24 @@ export function createDeepStagePublishHub(opts: {
 
     if (terminal) {
       // Escape: do not wait forever behind a hung mid-progress chain link.
+      // Known-First uses a longer escape so Locked/Hook can land in KV.
+      const preBudgets = resolvePublishPersistBudgets(progress);
       const chained = chain.then(run, run);
       chain = chained.catch(() => {});
-      return raceWithCap(chained, DEEP_TERMINAL_PUBLISH_ESCAPE_MS).then(
-        async (r) => {
-          if (r.ok) return;
-          // Chain still hung — apply locally so stage leaves analyzing.
-          if (shouldFenceOut({ ...publishOpts, terminal: true })) return;
-          applyLocal(apply, label, ms, progress);
-          const stamped = opts.get();
-          void persistCapped(stamped, true);
-        },
-      );
+      return raceWithCap(chained, preBudgets.escapeMs).then(async (r) => {
+        if (r.ok) return;
+        // Chain still hung — apply locally so stage leaves analyzing.
+        if (shouldFenceOut({ ...publishOpts, terminal: true })) return;
+        applyLocal(apply, label, ms, progress);
+        const stamped = opts.get();
+        const budgets = resolvePublishPersistBudgets(progress, stamped);
+        void persistCapped(
+          stamped,
+          true,
+          budgets.persistCapMs,
+          budgets.knownFirst,
+        );
+      });
     }
 
     chain = chain.then(run, run);
@@ -405,6 +479,12 @@ export function mergeParallelStageWrite(
     label.startsWith("score");
 
   if (takeScore) {
+    const mergedLp = mergeLpIntelligencePreferKnownFirst(
+      oPrev.lpIntelligence,
+      oIn.lpIntelligence,
+    );
+    const keepPrevLp =
+      mergedLp === oPrev.lpIntelligence && oPrev.lpIntelligence != null;
     return {
       ...incoming,
       analysisStages: stages,
@@ -413,16 +493,33 @@ export function mergeParallelStageWrite(
         ...oIn,
         // Preserve any sibling fields that landed on prev after incoming was built.
         relationship: oIn.relationship ?? oPrev.relationship,
-        lpIntelligence: oIn.lpIntelligence ?? oPrev.lpIntelligence,
-        lpLockStatus: oIn.lpLockStatus ?? oPrev.lpLockStatus,
-        lpLockDetail: oIn.lpLockDetail ?? oPrev.lpLockDetail,
-        poolId: oIn.poolId ?? oPrev.poolId,
+        lpIntelligence: mergedLp ?? oIn.lpIntelligence ?? oPrev.lpIntelligence,
+        lpLockStatus: keepPrevLp
+          ? (oPrev.lpLockStatus ?? oIn.lpLockStatus)
+          : (oIn.lpLockStatus ?? oPrev.lpLockStatus),
+        lpLockDetail: keepPrevLp
+          ? (oPrev.lpLockDetail ?? oIn.lpLockDetail)
+          : (oIn.lpLockDetail ?? oPrev.lpLockDetail),
+        poolId: keepPrevLp
+          ? (oPrev.poolId ?? oIn.poolId)
+          : (oIn.poolId ?? oPrev.poolId),
         creatorBehaviour: oIn.creatorBehaviour ?? oPrev.creatorBehaviour,
         supplyBurn: oIn.supplyBurn ?? oPrev.supplyBurn,
       },
       disclaimers: uniqStrings(prev.disclaimers, incoming.disclaimers),
     };
   }
+
+  const mergedLiqLp = takeLiq
+    ? mergeLpIntelligencePreferKnownFirst(
+        oPrev.lpIntelligence,
+        oIn.lpIntelligence,
+      )
+    : undefined;
+  const keepPrevLiq =
+    takeLiq &&
+    mergedLiqLp === oPrev.lpIntelligence &&
+    oPrev.lpIntelligence != null;
 
   const overview = {
     ...oPrev,
@@ -433,10 +530,17 @@ export function mergeParallelStageWrite(
       : {}),
     ...(takeLiq
       ? {
-          poolId: oIn.poolId ?? oPrev.poolId,
-          lpLockStatus: oIn.lpLockStatus ?? oPrev.lpLockStatus,
-          lpLockDetail: oIn.lpLockDetail ?? oPrev.lpLockDetail,
-          lpIntelligence: oIn.lpIntelligence ?? oPrev.lpIntelligence,
+          poolId: keepPrevLiq
+            ? (oPrev.poolId ?? oIn.poolId)
+            : (oIn.poolId ?? oPrev.poolId),
+          lpLockStatus: keepPrevLiq
+            ? (oPrev.lpLockStatus ?? oIn.lpLockStatus)
+            : (oIn.lpLockStatus ?? oPrev.lpLockStatus),
+          lpLockDetail: keepPrevLiq
+            ? (oPrev.lpLockDetail ?? oIn.lpLockDetail)
+            : (oIn.lpLockDetail ?? oPrev.lpLockDetail),
+          lpIntelligence:
+            mergedLiqLp ?? oIn.lpIntelligence ?? oPrev.lpIntelligence,
         }
       : {}),
     ...(takeCreatorBurn

@@ -36,6 +36,7 @@ vi.mock("@/lib/hansome-score/lp/position-cache", async () => {
 import { discoverV2Liquidity } from "@/lib/hansome-score/lp/adapters/v2";
 import { discoverV3Liquidity } from "@/lib/hansome-score/lp/adapters/v3";
 import { discoverV4Liquidity } from "@/lib/hansome-score/lp/adapters/v4";
+import { ADAPTIVE_VERSION_BUDGETS } from "@/lib/hansome-score/lp/adaptive-discovery-budget";
 import {
   VERSION_PROBE_BUDGET_MS,
   detectMultiVersionLpIntelligence,
@@ -115,7 +116,16 @@ function neverV4(): Promise<{ version: VersionDiscoveryResult; detect: DetectLpR
 
 describe("Phase 10C-3 version probe budget", () => {
   beforeEach(() => {
-    vi.useFakeTimers();
+    // AdaptiveDiscoveryBudget reads Date.now — must fake Date with timers.
+    vi.useFakeTimers({
+      toFake: [
+        "setTimeout",
+        "clearTimeout",
+        "setInterval",
+        "clearInterval",
+        "Date",
+      ],
+    });
     vi.mocked(discoverV2Liquidity).mockReset();
     vi.mocked(discoverV3Liquidity).mockReset();
     vi.mocked(discoverV4Liquidity).mockReset();
@@ -180,92 +190,100 @@ describe("Phase 10C-3 version probe budget", () => {
     );
   });
 
-  it("v3 timeout yields searched incomplete without inventing Locked", async () => {
-    vi.mocked(discoverV2Liquidity).mockResolvedValue(emptyV2());
-    vi.mocked(discoverV3Liquidity).mockImplementation(
-      () => new Promise(() => {}),
-    );
-    vi.mocked(discoverV4Liquidity).mockResolvedValue({
-      version: {
-        version: "v4",
-        protocolSupportStatus: "partial",
-        searched: true,
-        discoveryComplete: true,
-        lockAnalysisComplete: true,
-        pools: [],
-        positions: [],
-        detail: "v4 empty",
-        evidenceLevel: "on_chain_verified",
-      },
-      detect: {
-        intelligence: {
-          poolDetected: false,
-          poolsDetectedCount: 0,
-          poolId: null,
-          poolManagerBalanceRaw: "0",
-          poolManagerBalanceFormatted: "0",
-          aggregateLockState: "NONE",
-          aggregateLockStateDisplay: LP_AGGREGATE_STATE_DISPLAY.NONE,
-          aggregateState: "NONE",
-          aggregateStateDisplay: LP_AGGREGATE_STATE_DISPLAY.NONE,
-          positionCounts: {
-            detected: 0,
-            material: 0,
-            locked: 0,
-            unlocked: 0,
-            unknown: 0,
-          },
-          lockDistribution: {
-            available: false,
-            lockedPct: null,
-            unlockedPct: null,
-            unknownPct: null,
-            lockedUsd: null,
-            unlockedUsd: null,
-            unknownUsd: null,
-            totalPositionUsd: null,
-            poolLiquidityUsd: null,
-            reconciledWithPool: false,
-            method: null,
-            reason: null,
-          },
+  it(
+    "v3 timeout yields searched incomplete without inventing Locked",
+    async () => {
+      vi.mocked(discoverV2Liquidity).mockResolvedValue(emptyV2());
+      vi.mocked(discoverV3Liquidity).mockImplementation(
+        () => new Promise(() => {}),
+      );
+      vi.mocked(discoverV4Liquidity).mockResolvedValue({
+        version: {
+          version: "v4",
+          protocolSupportStatus: "partial",
+          searched: true,
           discoveryComplete: true,
-          completenessWarning: null,
-          ownershipRiskNote: "none",
-          sizeWarning: true,
+          lockAnalysisComplete: true,
+          pools: [],
           positions: [],
+          detail: "v4 empty",
           evidenceLevel: "on_chain_verified",
-          detail: "no pm",
-          discoverySources: [],
-          uniswapVersions: emptyUniswapVersionCoverage({
-            v4Searched: true,
-            v4DiscoveryComplete: true,
-            v4LockComplete: true,
-          }),
         },
-        legacyStatus: "none",
-      },
-    });
+        detect: {
+          intelligence: {
+            poolDetected: false,
+            poolsDetectedCount: 0,
+            poolId: null,
+            poolManagerBalanceRaw: "0",
+            poolManagerBalanceFormatted: "0",
+            aggregateLockState: "NONE",
+            aggregateLockStateDisplay: LP_AGGREGATE_STATE_DISPLAY.NONE,
+            aggregateState: "NONE",
+            aggregateStateDisplay: LP_AGGREGATE_STATE_DISPLAY.NONE,
+            positionCounts: {
+              detected: 0,
+              material: 0,
+              locked: 0,
+              unlocked: 0,
+              unknown: 0,
+            },
+            lockDistribution: {
+              available: false,
+              lockedPct: null,
+              unlockedPct: null,
+              unknownPct: null,
+              lockedUsd: null,
+              unlockedUsd: null,
+              unknownUsd: null,
+              totalPositionUsd: null,
+              poolLiquidityUsd: null,
+              reconciledWithPool: false,
+              method: null,
+              reason: null,
+            },
+            discoveryComplete: true,
+            completenessWarning: null,
+            ownershipRiskNote: "none",
+            sizeWarning: true,
+            positions: [],
+            evidenceLevel: "on_chain_verified",
+            detail: "no pm",
+            discoverySources: [],
+            uniswapVersions: emptyUniswapVersionCoverage({
+              v4Searched: true,
+              v4DiscoveryComplete: true,
+              v4LockComplete: true,
+            }),
+          },
+          legacyStatus: "none",
+        },
+      });
 
-    const pending = detectMultiVersionLpIntelligence({
-      tokenAddress: BEER,
-      poolManagerBalance: 0n,
-      decimals: 18,
-      hintAddresses: [],
-      candidatePositionIds: [],
-    });
-    await vi.advanceTimersByTimeAsync(VERSION_PROBE_BUDGET_MS.v3 + 50);
-    const result = await pending;
-    expect(
-      result.intelligence.positions.some(
-        (p) => p.lockState === "LOCKED_VERIFIED_ONCHAIN",
-      ),
-    ).toBe(false);
-    expect(result.intelligence.uniswapVersions?.byVersion.v3.searched).toBe(
-      true,
-    );
-    expect(
-      result.intelligence.uniswapVersions?.byVersion.v3.lockAnalysisComplete,
-    ).toBe(false);
-  });
+      const pending = detectMultiVersionLpIntelligence({
+        tokenAddress: BEER,
+        poolManagerBalance: 0n,
+        decimals: 18,
+        hintAddresses: [],
+        candidatePositionIds: [],
+      });
+      // v3 probe heartbeats every 4s while hung — stall never fires; must
+      // exhaust adaptive max ceiling (+ poll interval) for soft-incomplete.
+      await vi.advanceTimersByTimeAsync(
+        ADAPTIVE_VERSION_BUDGETS.v3.maxBudgetMs + 2_050,
+      );
+      const result = await pending;
+      expect(
+        result.intelligence.positions.some(
+          (p) => p.lockState === "LOCKED_VERIFIED_ONCHAIN",
+        ),
+      ).toBe(false);
+      expect(result.intelligence.uniswapVersions?.byVersion.v3.searched).toBe(
+        true,
+      );
+      expect(
+        result.intelligence.uniswapVersions?.byVersion.v3.lockAnalysisComplete,
+      ).toBe(false);
+    },
+    15_000,
+  );
 });

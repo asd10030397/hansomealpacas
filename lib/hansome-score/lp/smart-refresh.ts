@@ -1208,6 +1208,10 @@ export function recoverStaleSmartLpRefreshLock(
 
 /** Per-token one-shot full LP refresh flags (internal; consumed by Deep). */
 const forceLpFullRefreshOnce = new Set<string>();
+/** Phase 13C — cross-isolate force flag TTL (memory + KV). */
+const FORCE_LP_FLAG_TTL_MS = 3 * 60 * 1000;
+const forceLpFullRefreshUntil = new Map<string, number>();
+let testForceLpKv: Map<string, number> | null = null;
 /**
  * Manual user refresh — Deep must evaluate Smart LP (never skip liquidity).
  * Memory for same-isolate tests; KV for cross-isolate API → after() Deep.
@@ -1226,6 +1230,16 @@ function manualSmartLpKvKey(chainId: number, tokenAddress: string): string {
   );
 }
 
+function forceLpFlagKvKey(chainId: number, tokenAddress: string): string {
+  return scopedKvKey(
+    "scan",
+    "lp",
+    "force-flag",
+    chainId,
+    normalizeAddress(tokenAddress),
+  );
+}
+
 function isScanKvConfigured(): boolean {
   const url =
     process.env.KV_REST_API_URL?.trim() ||
@@ -1239,19 +1253,88 @@ function isScanKvConfigured(): boolean {
 }
 
 export function markForceLpFullRefresh(address: string): void {
-  forceLpFullRefreshOnce.add(normalizeAddress(address));
+  const key = normalizeAddress(address);
+  forceLpFullRefreshOnce.add(key);
+  forceLpFullRefreshUntil.set(key, Date.now() + FORCE_LP_FLAG_TTL_MS);
+}
+
+/** Phase 13C — durable force flag for cross-isolate Deep workers. */
+export async function markForceLpFullRefreshDurable(
+  chainId: number,
+  tokenAddress: string,
+): Promise<void> {
+  const addr = normalizeAddress(tokenAddress);
+  markForceLpFullRefresh(addr);
+  const until = Date.now() + FORCE_LP_FLAG_TTL_MS;
+  const kvKey = forceLpFlagKvKey(chainId, tokenAddress);
+  if (testForceLpKv) {
+    testForceLpKv.set(kvKey, until);
+    return;
+  }
+  if (!isScanKvConfigured()) return;
+  try {
+    const { kv } = await import("@vercel/kv");
+    await kv.set(kvKey, String(until), {
+      ex: Math.ceil(FORCE_LP_FLAG_TTL_MS / 1000),
+    });
+  } catch (err) {
+    console.warn("[force-lp] mark force flag KV failed:", err);
+  }
 }
 
 export function consumeForceLpFullRefresh(address: string): boolean {
   const key = normalizeAddress(address);
   if (forceLpFullRefreshOnce.has(key)) {
     forceLpFullRefreshOnce.delete(key);
+    forceLpFullRefreshUntil.delete(key);
+    return true;
+  }
+  const until = forceLpFullRefreshUntil.get(key);
+  if (until != null && until > Date.now()) {
+    forceLpFullRefreshUntil.delete(key);
     return true;
   }
   if (process.env.HANSOME_FORCE_LP_FULL_REFRESH === "1") {
     return true;
   }
   return false;
+}
+
+/** Phase 13C — consume memory + KV force flag (Deep entry). */
+export async function consumeForceLpFullRefreshDurable(
+  chainId: number,
+  tokenAddress: string,
+): Promise<boolean> {
+  const addr = normalizeAddress(tokenAddress);
+  if (consumeForceLpFullRefresh(addr)) return true;
+  if (process.env.HANSOME_FORCE_LP_FULL_REFRESH === "1") return true;
+  const kvKey = forceLpFlagKvKey(chainId, tokenAddress);
+  const now = Date.now();
+  if (testForceLpKv) {
+    const u = testForceLpKv.get(kvKey);
+    if (u != null && u > now) {
+      testForceLpKv.delete(kvKey);
+      return true;
+    }
+    return false;
+  }
+  if (!isScanKvConfigured()) return false;
+  try {
+    const { kv } = await import("@vercel/kv");
+    const raw = await kv.get<string | number>(kvKey);
+    const until = typeof raw === "string" ? Number(raw) : Number(raw);
+    if (Number.isFinite(until) && until > now) {
+      await kv.del(kvKey);
+      return true;
+    }
+  } catch {
+    /* ignore */
+  }
+  return false;
+}
+
+export function useForceLpFlagTestKv(map: Map<string, number> | null): void {
+  testForceLpKv = map;
 }
 
 export function useManualSmartLpTestKv(map: Map<string, number> | null): void {
@@ -1333,6 +1416,8 @@ export async function consumeManualSmartLpRefresh(
 
 export function clearForceLpFullRefreshForTests(): void {
   forceLpFullRefreshOnce.clear();
+  forceLpFullRefreshUntil.clear();
+  testForceLpKv = null;
   manualSmartLpRefreshOnce.clear();
   testManualKv = null;
 }

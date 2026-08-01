@@ -23,6 +23,11 @@ import {
   logBeerRemoteTrace,
 } from "@/lib/hansome-score/lp/beer-remote-trace";
 import { HOOK_NATIVE_LOCK_DISTRIBUTION_REASON } from "@/lib/hansome-score/lp/hook-native-lock-dist";
+import {
+  ADAPTIVE_VERSION_BUDGETS,
+  adaptiveTimedProbe,
+  type AdaptiveDiscoveryBudget,
+} from "@/lib/hansome-score/lp/adaptive-discovery-budget";
 import { formatTokenAmount } from "@/lib/hansome-score/rpc";
 import type {
   EvidenceLevel,
@@ -34,52 +39,37 @@ import type {
 } from "@/lib/hansome-score/types";
 
 /**
- * Phase 10C-3 — per-version probe budgets.
- * A hung v4 Quick LP (Blockscout/PM pages) must not erase a finished v3/Pons result.
- * Budgets stay below DEEP_STAGE_BUDGET_MS.liquidity (180s); probes still run in parallel.
+ * Phase 10C-3 / 13D.2 — per-version probe budgets (base).
+ * Adaptive path may expand while measurable progress continues.
+ * A hung v4 Quick LP must not erase a finished v3/Pons result.
  */
 export const VERSION_PROBE_BUDGET_MS = {
-  v2: 30_000,
-  /**
-   * Remote Production RPC + index can exceed 60s under parallel deep load.
-   * Keep below DEEP_STAGE_BUDGET_MS.liquidity (180s); Pons runs in parallel inside v3.
-   */
-  v3: 90_000,
-  /** Slightly above QUICK_LP_MAX_WALL_MS (45s); hard-detach if Quick ignores abort. */
-  v4: 55_000,
+  v2: ADAPTIVE_VERSION_BUDGETS.v2.baseBudgetMs,
+  v3: ADAPTIVE_VERSION_BUDGETS.v3.baseBudgetMs,
+  v4: ADAPTIVE_VERSION_BUDGETS.v4.baseBudgetMs,
 } as const;
 
-function timedVersionProbe<T>(
+/** Phase 13D.2 — adaptive version probe (extends while progress). */
+async function adaptiveVersionProbe<T>(
   label: "v2" | "v3" | "v4",
-  budgetMs: number,
-  work: () => Promise<T>,
+  work: (budget: AdaptiveDiscoveryBudget) => Promise<T>,
   onTimeout: () => T,
 ): Promise<T> {
-  return new Promise<T>((resolve) => {
-    let settled = false;
-    const timer = setTimeout(() => {
-      if (settled) return;
-      settled = true;
+  const cfg = ADAPTIVE_VERSION_BUDGETS[label];
+  const { result } = await adaptiveTimedProbe({
+    label: `version_${label}`,
+    config: { ...cfg },
+    work,
+    onTimeout: (budget) => {
+      const d = budget.diagnostics();
       console.warn(
-        `[lp-multi] ${label} probe budget exceeded (${budgetMs}ms) — soft-incomplete`,
+        `[lp-multi] ${label} adaptive terminate reason=${d.terminationReason}` +
+          ` elapsed=${d.elapsedMs}ms expansions=${d.expansionCount} — soft-incomplete`,
       );
-      resolve(onTimeout());
-    }, budgetMs);
-    void work()
-      .then((r) => {
-        if (settled) return;
-        settled = true;
-        clearTimeout(timer);
-        resolve(r);
-      })
-      .catch((err) => {
-        if (settled) return;
-        settled = true;
-        clearTimeout(timer);
-        console.warn(`[lp-multi] ${label} probe error:`, err);
-        resolve(onTimeout());
-      });
+      return onTimeout();
+    },
   });
+  return result;
 }
 
 function v2TimeoutResult(): VersionDiscoveryResult {
@@ -380,56 +370,96 @@ export async function detectMultiVersionLpIntelligence(
     }
   };
 
-  // Phase 10C-3: per-version budgets — hung v4 Quick must not drop finished v3/Pons.
-  const [v2, v3, v4pack] = await Promise.all([
-    timedVersionProbe(
-      "v2",
-      VERSION_PROBE_BUDGET_MS.v2,
-      () =>
-        discoverV2Liquidity({ tokenAddress: input.tokenAddress }).then(
-          async (r) => {
-            await notifyProbe("v2", r.pools.length, r.positions.length);
-            return r;
-          },
-        ),
-      () => {
-        versionTimedOut.add("v2");
-        return v2TimeoutResult();
-      },
-    ),
-    timedVersionProbe(
-      "v3",
-      VERSION_PROBE_BUDGET_MS.v3,
-      () =>
-        discoverV3Liquidity({ tokenAddress: input.tokenAddress }).then(
-          async (r) => {
-            await notifyProbe("v3", r.pools.length, r.positions.length);
-            return r;
-          },
-        ),
-      () => {
-        versionTimedOut.add("v3");
-        return v3TimeoutResult();
-      },
-    ),
-    timedVersionProbe(
-      "v4",
-      VERSION_PROBE_BUDGET_MS.v4,
-      () =>
-        discoverV4Liquidity(input).then(async (pack) => {
+  // Phase 10C-3 / 13D.2: adaptive per-version budgets — hung v4 must not drop v3/Pons.
+  // Phase 13E: start probes in parallel, but for Known-Pons tokens (BEER) settle as
+  // soon as v3 returns LOCKED_VERIFIED — do not wait on sibling v2/v4 wall time.
+  // Classification unchanged (same adapter gates); coverage remains honestly incomplete.
+  const v2P = adaptiveVersionProbe(
+    "v2",
+    (budget) =>
+      discoverV2Liquidity({ tokenAddress: input.tokenAddress }).then(
+        async (r) => {
+          budget.noteProgress(1 + r.pools.length + r.positions.length);
+          await notifyProbe("v2", r.pools.length, r.positions.length);
+          return r;
+        },
+      ),
+    () => {
+      versionTimedOut.add("v2");
+      return v2TimeoutResult();
+    },
+  );
+  const v3P = adaptiveVersionProbe(
+    "v3",
+    (budget) => {
+      // Heartbeat while Pons/factory work — prevents stall terminate under load.
+      budget.noteHeartbeat();
+      const beat = setInterval(() => budget.noteHeartbeat(), 4_000);
+      return discoverV3Liquidity({ tokenAddress: input.tokenAddress })
+        .then(async (r) => {
+          budget.noteProgress(1 + r.pools.length + r.positions.length);
+          await notifyProbe("v3", r.pools.length, r.positions.length);
+          return r;
+        })
+        .finally(() => clearInterval(beat));
+    },
+    () => {
+      versionTimedOut.add("v3");
+      return v3TimeoutResult();
+    },
+  );
+  const v4P = adaptiveVersionProbe(
+    "v4",
+    (budget) => {
+      budget.noteHeartbeat();
+      const beat = setInterval(() => budget.noteHeartbeat(), 4_000);
+      return discoverV4Liquidity(input)
+        .then(async (pack) => {
+          budget.noteProgress(
+            1 +
+              pack.version.pools.length +
+              pack.version.positions.length,
+          );
           await notifyProbe(
             "v4",
             pack.version.pools.length,
             pack.version.positions.length,
           );
           return pack;
-        }),
-      () => {
-        versionTimedOut.add("v4");
-        return v4TimeoutPack(input);
-      },
-    ),
-  ]);
+        })
+        .finally(() => clearInterval(beat));
+    },
+    () => {
+      versionTimedOut.add("v4");
+      return v4TimeoutPack(input);
+    },
+  );
+
+  const v3 = await v3P;
+  const ponsLockedEarly =
+    isBeerToken(input.tokenAddress) &&
+    v3.positions.some(
+      (p) =>
+        p.lockState === "LOCKED_VERIFIED_ONCHAIN" &&
+        (p.lockerName === "PonsLaunchLocker" ||
+          p.owner?.toLowerCase() ===
+            "0x736d76699c26d0d966744cae304c000d471f7f35"),
+    );
+
+  let v2: VersionDiscoveryResult;
+  let v4pack: Awaited<typeof v4P>;
+  if (ponsLockedEarly) {
+    // Sibling probes may still run in background; do not block publish path.
+    versionTimedOut.add("v2");
+    versionTimedOut.add("v4");
+    v2 = v2TimeoutResult();
+    v4pack = v4TimeoutPack(input);
+    console.info(
+      `[lp-multi] known-pons early-settle after v3 Locked (skip await v2/v4) token=${input.tokenAddress}`,
+    );
+  } else {
+    [v2, v4pack] = await Promise.all([v2P, v4P]);
+  }
 
   const v4 = v4pack.version;
   const v4Intel = v4pack.detect.intelligence;
